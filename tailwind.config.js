@@ -6,7 +6,8 @@ module.exports = {
         blue: '#475caa'
       },
       minHeight: {
-        '3/4': '75vh'
+        '3/4': '75vh',
+        '200-px': '200px'
       }
     }
   }
