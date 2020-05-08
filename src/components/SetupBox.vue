@@ -2,7 +2,7 @@
   <div class="mt-6 p-6 rounded-lg border border-solid border-gray-300 shadow-lg">
     <h2 v-if="title !== ''" class="py-4 text-3xl text-blue">{{ title }}</h2>
 
-    <div class="min-h-200-px text-xl text-center">
+    <div class="min-h-200-px py-5 text-xl text-center">
       <slot />
     </div>
 
