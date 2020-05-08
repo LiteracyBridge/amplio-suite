@@ -6,7 +6,7 @@
     </h1>
 
     <div class="grid grid-cols-3 gap-10">
-      <router-link to="/setup">
+      <router-link :to="{ name: 'Step-1' }">
         <Box img="/img/plan.png" title="1. Plan and Prepare">
           <p class="text-justify">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry.
