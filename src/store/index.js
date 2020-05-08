@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    step: 1
+    step: 1,
+    goals: []
   },
   mutations: {
     setStep (state, payload) {
@@ -16,6 +17,12 @@ export default new Vuex.Store({
     },
     prevStep (state) {
       state.step--
+    },
+    addGoal (state, payload) {
+      state.goals.push(payload)
+    },
+    removeGoal (state, index) {
+      state.goals.splice(index, 1)
     }
   },
   actions: {
@@ -27,6 +34,15 @@ export default new Vuex.Store({
     },
     prevStep ({ commit }) {
       commit('prevStep')
+    },
+    toggleGoal ({ commit, state }, goal) {
+      const index = state.goals.indexOf(goal)
+
+      if (index > -1) {
+        commit('removeGoal', index)
+      } else {
+        commit('addGoal', goal)
+      }
     }
   }
 })
