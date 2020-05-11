@@ -10,7 +10,9 @@ export default new Vuex.Store({
     listening: '',
     deployments: -1,
     deploymentFrequency: '',
-    deploymentInit: ''
+    deploymentInit: '',
+    feedbackFrequently: '',
+    feedbackFrequentlyOther: ''
   },
   mutations: {
     setStep (state, payload) {
@@ -39,6 +41,12 @@ export default new Vuex.Store({
     },
     setDeploymentInit (state, payload) {
       state.deploymentInit = payload
+    },
+    setFeedbackFrequently (state, payload) {
+      state.feedbackFrequently = payload
+    },
+    setFeedbackFrequentlyOther (state, payload) {
+      state.feedbackFrequentlyOther = payload
     }
   },
   actions: {
@@ -71,6 +79,12 @@ export default new Vuex.Store({
     },
     setDeploymentInit ({ commit }, payload) {
       commit('setDeploymentInit', payload)
+    },
+    setFeedbackFrequently ({ commit }, payload) {
+      commit('setFeedbackFrequently', payload)
+    },
+    setFeedbackFrequentlyOther ({ commit }, payload) {
+      commit('setFeedbackFrequentlyOther', payload)
     }
   }
 })
