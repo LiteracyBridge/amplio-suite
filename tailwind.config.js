@@ -1,6 +1,9 @@
 module.exports = {
   theme: {
     extend: {
+      boxShadow: {
+        hover: '0 8px 24px 0px rgba(0,0,0,0.5)'
+      },
       colors: {
         green: '#289b6a',
         blue: '#475caa'
