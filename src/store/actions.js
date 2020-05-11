@@ -10,6 +10,10 @@ const prevStep = ({ commit }) => {
   commit('prevStep')
 }
 
+const setProgramName = ({ commit }, payload) => {
+  commit('setProgramName', payload)
+}
+
 const toggleGoal = ({ commit, state }, goal) => {
   const index = state.goals.indexOf(goal)
 
@@ -53,6 +57,7 @@ export default {
   setStep,
   nextStep,
   prevStep,
+  setProgramName,
   toggleGoal,
   selectListening,
   setDeployments,

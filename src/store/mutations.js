@@ -10,6 +10,10 @@ const prevStep = (state) => {
   state.step--
 }
 
+const setProgramName = (state, payload) => {
+  state.programName = payload
+}
+
 const addGoal = (state, payload) => {
   state.goals.push(payload)
 }
@@ -49,6 +53,7 @@ export default {
   setStep,
   nextStep,
   prevStep,
+  setProgramName,
   addGoal,
   removeGoal,
   selectListening,

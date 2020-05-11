@@ -13,16 +13,30 @@
       aria-labelledby="programName"
       placeholder="Enter Program Name"
       class="mt-2 px-5 py-1 text-base rounded border border-solid border-gray-500"
+      :value="programName"
+      @input="(event) => setProgramName(event.target.value)"
     >
   </Box>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 import Box from '@/components/SetupBox'
 
 export default {
+  computed: {
+    ...mapState([
+      'programName'
+    ])
+  },
   components: {
     Box
+  },
+  methods: {
+    ...mapActions([
+      'setProgramName'
+    ])
   }
 }
 </script>
