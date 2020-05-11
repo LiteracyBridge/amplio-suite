@@ -32,7 +32,7 @@ import Box from '@/components/SetupBox'
 export default {
   data () {
     return {
-      amountOfInputs: 2,
+      amountOfInputs: 1,
       options: countryCodes
     }
   },
