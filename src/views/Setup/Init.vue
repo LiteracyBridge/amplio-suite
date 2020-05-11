@@ -1,8 +1,8 @@
 <template>
   <section class="container mx-auto mt-20 text-center">
     <header class="inline-flex">
-      <h1 class="text-2xl">Page {{ step }}/7</h1>
-      <progress class="ml-5" max="7" :value="step"></progress>
+      <h1 class="text-2xl">Page {{ step }}/{{ total }}</h1>
+      <progress class="ml-5" :max="total" :value="step"></progress>
     </header>
 
     <transition :name="transitionName" mode="out-in">
@@ -24,6 +24,7 @@ export default {
   ]),
   data () {
     return {
+      total: 8,
       transitionName: 'slide-left'
     }
   },
