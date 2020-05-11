@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     step: 1,
-    goals: []
+    goals: [],
+    listening: ''
   },
   mutations: {
     setStep (state, payload) {
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     },
     removeGoal (state, index) {
       state.goals.splice(index, 1)
+    },
+    selectListening (state, payload) {
+      state.listening = payload
     }
   },
   actions: {
@@ -43,6 +47,9 @@ export default new Vuex.Store({
       } else {
         commit('addGoal', goal)
       }
+    },
+    selectListening ({ commit }, payload) {
+      commit('selectListening', payload)
     }
   }
 })
