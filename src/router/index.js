@@ -51,6 +51,11 @@ const routes = [
         path: 'step-7',
         name: 'Step-7',
         component: () => import(/* webpackChunkName: "setup-7" */ '../views/Setup/Step7.vue')
+      },
+      {
+        path: 'step-8',
+        name: 'Step-8',
+        component: () => import(/* webpackChunkName: "setup-8" */ '../views/Setup/Step8.vue')
       }
     ]
   }
