@@ -9,7 +9,7 @@
       work towards? Select all that apply.
     </p>
 
-    <div class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto">
+    <div class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div v-for="(opt, index) in options" :key="index" class="relative">
         <img
           :src="`/img/goals/Goal-${index + 1}.png`"
