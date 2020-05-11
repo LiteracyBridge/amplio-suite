@@ -12,7 +12,8 @@ export default new Vuex.Store({
     deploymentFrequency: '',
     deploymentInit: '',
     feedbackFrequently: '',
-    feedbackFrequentlyOther: ''
+    feedbackFrequentlyOther: '',
+    languages: []
   },
   mutations: {
     setStep (state, payload) {
@@ -47,6 +48,9 @@ export default new Vuex.Store({
     },
     setFeedbackFrequentlyOther (state, payload) {
       state.feedbackFrequentlyOther = payload
+    },
+    setLanguages (state, payload) {
+      state.languages[payload.index] = payload.lang
     }
   },
   actions: {
@@ -85,6 +89,10 @@ export default new Vuex.Store({
     },
     setFeedbackFrequentlyOther ({ commit }, payload) {
       commit('setFeedbackFrequentlyOther', payload)
+    },
+    setLanguages ({ commit }, payload) {
+      const lang = typeof payload.opt === 'object' && payload.opt !== null ? payload.opt.label : ''
+      commit('setLanguages', { lang, index: payload.index })
     }
   }
 })
