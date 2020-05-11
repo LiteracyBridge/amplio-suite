@@ -7,7 +7,10 @@ export default new Vuex.Store({
   state: {
     step: 1,
     goals: [],
-    listening: ''
+    listening: '',
+    deployments: -1,
+    deploymentFrequency: '',
+    deploymentInit: ''
   },
   mutations: {
     setStep (state, payload) {
@@ -27,6 +30,15 @@ export default new Vuex.Store({
     },
     selectListening (state, payload) {
       state.listening = payload
+    },
+    setDeployments (state, payload) {
+      state.deployments = payload
+    },
+    setDeploymentFrequency (state, payload) {
+      state.deploymentFrequency = payload
+    },
+    setDeploymentInit (state, payload) {
+      state.deploymentInit = payload
     }
   },
   actions: {
@@ -50,6 +62,15 @@ export default new Vuex.Store({
     },
     selectListening ({ commit }, payload) {
       commit('selectListening', payload)
+    },
+    setDeployments ({ commit }, payload) {
+      commit('setDeployments', payload)
+    },
+    setDeploymentFrequency ({ commit }, payload) {
+      commit('setDeploymentFrequency', payload)
+    },
+    setDeploymentInit ({ commit }, payload) {
+      commit('setDeploymentInit', payload)
     }
   }
 })
