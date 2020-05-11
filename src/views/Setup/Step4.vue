@@ -29,8 +29,10 @@
       <select
         aria-labelledby="howOften"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        :value="deploymentFrequency"
         @change="(event) => setDeploymentFrequency(event.target.value)"
       >
+        <option value="">Select</option>
         <option value="Monthly">Monthly</option>
         <option value="Quarterly">Quarterly</option>
         <option value="Semi-Annually">Semi-Annually</option>
@@ -49,8 +51,8 @@
         <input
           type="date"
           aria-labelledby="firstDeployment"
-          :value="date"
           class="w-full py-2 pl-2 outline-none"
+          :value="date"
           @change="(event) => setDeploymentInit(event.target.value)"
         >
       </div>
@@ -67,7 +69,8 @@ import Calendar from '@/assets/svg/calendar.svg'
 export default {
   computed: {
     ...mapState([
-      'deployments'
+      'deployments',
+      'deploymentFrequency'
     ])
   },
   data () {
