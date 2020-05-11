@@ -11,6 +11,9 @@ module.exports = {
       },
       inset: {
         41: '41%'
+      },
+      spacing: {
+        96: '24rem'
       }
     }
   }
