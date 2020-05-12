@@ -1,7 +1,7 @@
 <template>
-  <div class="p-6 rounded-lg shadow-lg hover:shadow-hover" style="border: 1px solid #e0e0e0;">
+  <div class="p-6 rounded-lg border border-solid border-gray-300 dd shadow-lg hover:shadow-hover">
     <div class="overflow-hidden">
-      <img :src="img" class="transform duration-500 hover:scale-125">
+      <img :src="img" class="transform duration-500">
     </div>
     <h2 class="py-4 text-xl font-bold">{{ title }}</h2>
     <slot />
@@ -21,3 +21,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.dd:hover img {
+  transform: scale(1.25);
+}
+</style>
