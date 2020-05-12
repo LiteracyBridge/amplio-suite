@@ -11,19 +11,33 @@
         <Button text="PREV" />
       </router-link>
 
-      <router-link v-if="next !== ''" :to="{ name: next }" @click.native="nextStep">
-        <Button text="NEXT" />
+      <router-link
+        v-if="next !== ''"
+        :to="{ name: next }"
+        @click.native="() => { if(isFill) nextStep() }"
+        :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
+      >
+        <Button class="pointer-events-none" text="NEXT" />
       </router-link>
     </footer>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Button from '@/components/Button'
 
 export default {
+  computed: {
+    ...mapState([
+      'actualStep',
+      'completedSteps'
+    ]),
+    isFill () {
+      return this.completedSteps.includes(this.actualStep)
+    }
+  },
   components: {
     Button
   },
