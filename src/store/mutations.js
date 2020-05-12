@@ -1,13 +1,21 @@
 const setStep = (state, payload) => {
-  state.step = payload
+  state.actualStep = payload
 }
 
 const nextStep = (state) => {
-  state.step++
+  state.actualStep++
 }
 
 const prevStep = (state) => {
-  state.step--
+  state.actualStep--
+}
+
+const addCompletedStep = (state, payload) => {
+  state.completedSteps.push(payload)
+}
+
+const removeCompletedStep = (state, index) => {
+  state.completedSteps.splice(index, 1)
 }
 
 const setProgramName = (state, payload) => {
@@ -53,6 +61,8 @@ export default {
   setStep,
   nextStep,
   prevStep,
+  addCompletedStep,
+  removeCompletedStep,
   setProgramName,
   addGoal,
   removeGoal,

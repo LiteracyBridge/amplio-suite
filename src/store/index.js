@@ -10,8 +10,8 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
 
   state: {
-    step: 1,
-    lastFillStep: 0,
+    actualStep: 1,
+    completedSteps: [0],
 
     programName: '',
     goals: [],

@@ -1,3 +1,4 @@
+// General actions from the wizard
 const setStep = ({ commit }, payload) => {
   commit('setStep', payload)
 }
@@ -10,53 +11,106 @@ const prevStep = ({ commit }) => {
   commit('prevStep')
 }
 
-const setProgramName = ({ commit }, payload) => {
-  commit('setProgramName', payload)
+const addCompletedStep = ({ commit, state }, payload) => {
+  const index = state.completedSteps.indexOf(payload)
+  if (index === -1) commit('addCompletedStep', payload)
 }
 
-const toggleGoal = ({ commit, state }, goal) => {
+const removeCompletedStep = ({ commit, state }, payload) => {
+  const index = state.completedSteps.indexOf(payload)
+  if (index > -1) commit('removeCompletedStep', index)
+}
+
+// Step 1
+const setProgramName = ({ commit, dispatch }, payload) => {
+  commit('setProgramName', payload)
+
+  // Check if the step if completed
+  if (payload) dispatch('addCompletedStep', 1)
+  else dispatch('removeCompletedStep', 1)
+}
+
+// Step 2
+const toggleGoal = ({ commit, state, dispatch }, goal) => {
   const index = state.goals.indexOf(goal)
 
-  if (index > -1) {
-    commit('removeGoal', index)
-  } else {
-    commit('addGoal', goal)
-  }
+  if (index > -1) commit('removeGoal', index)
+  else commit('addGoal', goal)
+
+  // Check if the step if completed
+  if (state.goals.length > 0) dispatch('addCompletedStep', 2)
+  else dispatch('removeCompletedStep', 2)
 }
 
-const selectListening = ({ commit }, payload) => {
+// Step 3
+const selectListening = ({ commit, dispatch }, payload) => {
   commit('selectListening', payload)
+  dispatch('addCompletedStep', 3)
 }
 
-const setDeployments = ({ commit }, payload) => {
-  commit('setDeployments', payload)
+// Step 4
+const setDeployments = async ({ commit, state, dispatch }, payload) => {
+  await commit('setDeployments', payload)
+
+  // Check if the step if completed
+  const isComplete = (state.deployments > -1) && (state.deploymentFrequency !== '') && (state.deploymentInit !== '')
+  if (isComplete) dispatch('addCompletedStep', 4)
+  else dispatch('removeCompletedStep', 4)
 }
 
-const setDeploymentFrequency = ({ commit }, payload) => {
-  commit('setDeploymentFrequency', payload)
+const setDeploymentFrequency = async ({ commit, state, dispatch }, payload) => {
+  await commit('setDeploymentFrequency', payload)
+
+  // Check if the step if completed
+  const isComplete = (state.deployments > -1) && (state.deploymentFrequency !== '') && (state.deploymentInit !== '')
+  if (isComplete) dispatch('addCompletedStep', 4)
+  else dispatch('removeCompletedStep', 4)
 }
 
-const setDeploymentInit = ({ commit }, payload) => {
-  commit('setDeploymentInit', payload)
+const setDeploymentInit = async ({ commit, state, dispatch }, payload) => {
+  await commit('setDeploymentInit', payload)
+
+  // Check if the step if completed
+  const isComplete = (state.deployments > -1) && (state.deploymentFrequency !== '') && (state.deploymentInit !== '')
+  if (isComplete) dispatch('addCompletedStep', 4)
+  else dispatch('removeCompletedStep', 4)
 }
 
-const setFeedbackFrequently = ({ commit }, payload) => {
-  commit('setFeedbackFrequently', payload)
+// Step 5
+const setFeedbackFrequently = async ({ commit, state, dispatch }, payload) => {
+  await commit('setFeedbackFrequently', payload)
+
+  // Check if the step if completed
+  const isComplete = (state.feedbackFrequently !== '') && (state.feedbackFrequentlyOther !== '')
+  if (isComplete) dispatch('addCompletedStep', 5)
+  else dispatch('removeCompletedStep', 5)
 }
 
-const setFeedbackFrequentlyOther = ({ commit }, payload) => {
-  commit('setFeedbackFrequentlyOther', payload)
+const setFeedbackFrequentlyOther = async ({ commit, state, dispatch }, payload) => {
+  await commit('setFeedbackFrequentlyOther', payload)
+
+  // Check if the step if completed
+  const isComplete = (state.feedbackFrequently !== '') && (state.feedbackFrequentlyOther !== '')
+  if (isComplete) dispatch('addCompletedStep', 5)
+  else dispatch('removeCompletedStep', 5)
 }
 
-const setLanguages = ({ commit }, payload) => {
-  const lang = typeof payload.opt === 'object' && payload.opt !== null ? payload.opt.label : ''
-  commit('setLanguages', { lang, index: payload.index })
+// Step 6
+const setLanguages = async ({ commit, state, dispatch }, payload) => {
+  await commit('setLanguages', payload)
+
+  // Check if the step if completed
+  const fillValues = state.languages.filter(ele => ele !== '').length
+  if (fillValues > 0) dispatch('addCompletedStep', 6)
+  else dispatch('removeCompletedStep', 6)
 }
 
 export default {
   setStep,
   nextStep,
   prevStep,
+  addCompletedStep,
+  removeCompletedStep,
   setProgramName,
   toggleGoal,
   selectListening,
