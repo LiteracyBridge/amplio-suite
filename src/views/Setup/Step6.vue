@@ -4,18 +4,19 @@
     next="Step-7"
     title="You are doing great!"
   >
-    <p class="text-2xl font-semibold">
+    <p id="lang" class="text-2xl font-semibold">
       What languages will you develop your content in?
     </p>
 
-    <v-select
+    <input
       v-for="index in amountOfInputs"
       :key="index"
-      class="w-96 mt-4 mx-auto"
+      type="text"
+      aria-labelledby="lang"
       placeholder="Choose language"
-      :options="options"
-      @input="(opt) => setLanguages({ opt, index: index - 1 })"
-    />
+      class="block mx-auto mt-2 px-5 py-1 text-base rounded border border-solid border-gray-500"
+      @input="(event) => setLanguages({ lang: event.target.value, index: index - 1 })"
+    >
 
     <p class="mt-4 font-semibold cursor-pointer" @click="addInput">
       + Add language
