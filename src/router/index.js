@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+
+import store from '@/store'
+import Home from '@/views/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -14,7 +16,7 @@ const routes = [
     path: '/setup',
     name: 'Setup',
     redirect: { name: 'Step-1' },
-    // this generates a separate chunk (about.[hash].js) for this route
+    // this generates a separate chunk (setup.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Init.vue'),
     children: [
@@ -52,11 +54,6 @@ const routes = [
         path: 'step-7',
         name: 'Step-7',
         component: () => import(/* webpackChunkName: "setup-7" */ '../views/Setup/Step7.vue')
-      },
-      {
-        path: 'step-8',
-        name: 'Step-8',
-        component: () => import(/* webpackChunkName: "setup-8" */ '../views/Setup/Step8.vue')
       }
     ]
   }
@@ -66,6 +63,19 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  // Only check on /setup/step-[0-9] pages
+  if (to.name.startsWith('Step-')) {
+    const nextStep = +to.name.split('-')[1]
+    const isComplete = store.state.completedSteps.includes(nextStep - 1)
+
+    if (isComplete) next()
+    else next(false)
+  } else {
+    next()
+  }
 })
 
 export default router
