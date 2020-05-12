@@ -1,8 +1,8 @@
 <template>
   <section class="container mx-auto mt-20 text-center">
     <header class="inline-flex">
-      <h1 class="text-2xl">Page {{ step }}/{{ total }}</h1>
-      <progress class="ml-5" :max="total" :value="step"></progress>
+      <h1 class="text-2xl">Page {{ actualStep }}/{{ total }}</h1>
+      <progress class="ml-5" :max="total" :value="actualStep"></progress>
     </header>
 
     <transition :name="transitionName" mode="out-in">
@@ -20,7 +20,7 @@ import { mapActions, mapState } from 'vuex'
 
 export default {
   computed: mapState([
-    'step'
+    'actualStep'
   ]),
   data () {
     return {
