@@ -3,7 +3,9 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <span class="text-3xl tracking-tight text-white">AMPLIO</span>
+        <router-link to="/">
+          <span class="text-3xl tracking-tight text-white">AMPLIO</span>
+        </router-link>
 
         <!-- Burger button -->
         <div class="md:hidden">
