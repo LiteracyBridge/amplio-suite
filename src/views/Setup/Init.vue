@@ -29,7 +29,7 @@ export default {
     }
   },
   mounted () {
-    const step = this.$route.name.split('-')[1]
+    const step = +this.$route.name.split('-')[1]
     this.setStep(step)
   },
   beforeRouteUpdate (to, from, next) {
