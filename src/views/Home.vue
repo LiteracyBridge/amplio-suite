@@ -14,17 +14,21 @@
         </Box>
       </router-link>
 
-      <Box img="/img/learning.png" title="2. Learning Portal">
-        <p class="text-lg text-justify">
-          Access learning portal, job aids and community of practice
-        </p>
-      </Box>
+      <a href="https://amplio.moodlecloud.com/" target="_blank">
+        <Box img="/img/learning.png" title="2. Learning Portal">
+          <p class="text-lg text-justify">
+            Access learning portal, job aids and community of practice
+          </p>
+        </Box>
+      </a>
 
-      <Box img="/img/analytics.png" title="3. Analytics Dashboard">
-        <p class="text-lg text-justify">
-          Monitor user engagement and feedback through the Amplio Dashboard
-        </p>
-      </Box>
+      <a href="https://dashboard.amplio.org/" target="_blank">
+        <Box img="/img/analytics.png" title="3. Analytics Dashboard">
+          <p class="text-lg text-justify">
+            Monitor user engagement and feedback through the Amplio Dashboard
+          </p>
+        </Box>
+      </a>
     </div>
   </div>
 </template>
