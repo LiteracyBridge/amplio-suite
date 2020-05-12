@@ -12,6 +12,7 @@
       <select
         aria-labelledby="feedbackFrequently"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        :value="feedbackFrequently"
         @change="(event) => setFeedbackFrequently(event.target.value)"
       >
         <option value="">Select</option>
@@ -32,6 +33,7 @@
       <select
         aria-labelledby="feedbackFrequentlyOther"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        :value="feedbackFrequentlyOther"
         @change="(event) => setFeedbackFrequentlyOther(event.target.value)"
       >
         <option value="">Select</option>
@@ -46,11 +48,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
 
 export default {
+  computed: {
+    ...mapState([
+      'feedbackFrequently',
+      'feedbackFrequentlyOther'
+    ])
+  },
   components: {
     Box
   },
