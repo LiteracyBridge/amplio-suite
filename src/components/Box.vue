@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 rounded-lg border border-solid border-gray-300 dd shadow-lg hover:shadow-hover">
+  <div class="p-6 h-full bg-white rounded-lg dd shadow-box hover:shadow-hover">
     <div class="overflow-hidden">
       <img :src="img" class="transform duration-500">
     </div>

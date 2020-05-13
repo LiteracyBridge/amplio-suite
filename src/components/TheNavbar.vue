@@ -1,5 +1,5 @@
 <template>
-  <header class="py-1 px-10 bg-green">
+  <header class="py-1 px-10 bg-green shadow-navbar">
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
