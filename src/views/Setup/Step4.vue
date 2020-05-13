@@ -17,7 +17,7 @@
         @change="(event) => setDeployments(event.target.value)"
       >
         <option value="-1">Select</option>
-        <option v-for="index in 10" :key="index" :value="index">{{ index }}</option>
+        <option v-for="index in 20" :key="index" :value="index">{{ index }}</option>
       </select>
     </div>
 
