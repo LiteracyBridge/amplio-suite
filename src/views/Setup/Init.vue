@@ -24,7 +24,7 @@ export default {
   ]),
   data () {
     return {
-      total: 8,
+      total: 7,
       transitionName: 'slide-left'
     }
   },
