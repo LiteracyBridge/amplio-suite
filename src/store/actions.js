@@ -43,9 +43,15 @@ const toggleGoal = ({ commit, state, dispatch }, goal) => {
 }
 
 // Step 3
-const selectListening = ({ commit, dispatch }, payload) => {
-  commit('selectListening', payload)
-  dispatch('addCompletedStep', 3)
+const toggleListening = ({ commit, state, dispatch }, model) => {
+  const index = state.listeningModels.indexOf(model)
+
+  if (index > -1) commit('removeListeningModel', index)
+  else commit('addListeningModel', model)
+
+  // Check if the step if completed
+  if (state.listeningModels.length > 0) dispatch('addCompletedStep', 3)
+  else dispatch('removeCompletedStep', 3)
 }
 
 // Step 4
@@ -113,7 +119,7 @@ export default {
   removeCompletedStep,
   setProgramName,
   toggleGoal,
-  selectListening,
+  toggleListening,
   setDeployments,
   setDeploymentFrequency,
   setDeploymentInit,

@@ -13,18 +13,18 @@
         v-for="(opt, index) in options"
         :key="index"
         class="relative cursor-pointer rounded border border-gray-500"
-        @click="selectListening(opt)"
+        @click="toggleListening(opt)"
       >
         <img
           :src="`/img/listening/${opt}.png`"
-          :class="listening === opt ? 'opacity-25' : ''"
+          :class="listeningModels.includes(opt) ? 'opacity-25' : ''"
           class="block w-full hover:opacity-25"
         >
-        <p :class="listening === opt ? 'opacity-25' : ''" class="text-blue">
+        <p :class="listeningModels.includes(opt) ? 'opacity-25' : ''" class="text-blue">
           {{ opt }}
         </p>
         <Check
-          v-if="listening === opt"
+          v-if="listeningModels.includes(opt)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
@@ -66,7 +66,7 @@ import Check from '@/assets/svg/check-circle.svg'
 export default {
   computed: {
     ...mapState([
-      'listening'
+      'listeningModels'
     ])
   },
   data () {
@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'selectListening'
+      'toggleListening'
     ])
   }
 }

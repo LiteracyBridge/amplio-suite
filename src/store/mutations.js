@@ -30,8 +30,12 @@ const removeGoal = (state, index) => {
   state.goals.splice(index, 1)
 }
 
-const selectListening = (state, payload) => {
-  state.listening = payload
+const addListeningModel = (state, payload) => {
+  state.listeningModels.push(payload)
+}
+
+const removeListeningModel = (state, index) => {
+  state.listeningModels.splice(index, 1)
 }
 
 const setDeployments = (state, payload) => {
@@ -66,7 +70,8 @@ export default {
   setProgramName,
   addGoal,
   removeGoal,
-  selectListening,
+  addListeningModel,
+  removeListeningModel,
   setDeployments,
   setDeploymentFrequency,
   setDeploymentInit,
