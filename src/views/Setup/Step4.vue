@@ -22,21 +22,21 @@
     </div>
 
     <div v-if="deployments > 0" class="mt-10">
-      <p id="howOften" class="text-2xl font-semibold">
-        How often do you plan to deploy new content?
+      <p id="deploymentLength" class="text-2xl font-semibold">
+        What is the length of each deployment?
       </p>
 
       <select
-        aria-labelledby="howOften"
+        aria-labelledby="deploymentLength"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
         :value="deploymentFrequency"
         @change="(event) => setDeploymentFrequency(event.target.value)"
       >
         <option value="">Select</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Quarterly">Quarterly</option>
-        <option value="Semi-Annually">Semi-Annually</option>
-        <option value="Annually">Annually</option>
+        <option value="Month">Month</option>
+        <option value="Quarter">Quarter</option>
+        <option value="Six months">Six months</option>
+        <option value="One year">One year</option>
       </select>
     </div>
 
