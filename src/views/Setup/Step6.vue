@@ -27,14 +27,12 @@
 <script>
 import { mapActions } from 'vuex'
 
-import countryCodes from '@/data/countryCodes'
 import Box from '@/components/SetupBox'
 
 export default {
   data () {
     return {
-      amountOfInputs: 1,
-      options: countryCodes
+      amountOfInputs: 1
     }
   },
   components: {
