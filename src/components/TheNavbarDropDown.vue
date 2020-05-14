@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <button @click="isOpen = !isOpen">
+    <button @mouseover="isOpen = !isOpen">
       <slot />
     </button>
 
