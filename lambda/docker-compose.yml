@@ -3,20 +3,77 @@ version: '3.3'
 services:
   db:
     image: postgres
-    # restart: always
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_USER: amplio
+      POSTGRES_PASSWORD: fooFaBar
+      POSTGRES_DB: amplio_db
+    volumes:
+      - 'postgres-data:/var/lib/postgresql/data'
+    ports:
+      - '5432:5432'
 
-  lambda:
-    container_name: lambda
+  lambda-test:
     image: lambci/lambda:python3.8
-    command: lambda_function.lambda_handler
+    command: test_connection.lambda_handler
     environment:
+      # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
       DOCKER_LAMBDA_WATCH: 1
+
+      # Postgres config
+      POSTGRES_DB: amplio_db
+      POSTGRES_USER: amplio
+      POSTGRES_PASSWORD: fooFaBar
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
     volumes:
       - './:/var/task:ro,delegated'
     depends_on:
       - db
     ports:
       - '9001:9001'
+
+  lambda-init:
+    image: lambci/lambda:python3.8
+    command: init_table.lambda_handler
+    environment:
+      # Funtions with hot reload
+      DOCKER_LAMBDA_STAY_OPEN: 1
+      DOCKER_LAMBDA_WATCH: 1
+
+      # Postgres config
+      POSTGRES_DB: amplio_db
+      POSTGRES_USER: amplio
+      POSTGRES_PASSWORD: fooFaBar
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - './:/var/task:ro,delegated'
+    depends_on:
+      - db
+    ports:
+      - '9002:9001'
+
+  lambda-create-program:
+    image: lambci/lambda:python3.8
+    command: create_program.lambda_handler
+    environment:
+      # Funtions with hot reload
+      DOCKER_LAMBDA_STAY_OPEN: 1
+      DOCKER_LAMBDA_WATCH: 1
+
+      # Postgres config
+      POSTGRES_DB: amplio_db
+      POSTGRES_USER: amplio
+      POSTGRES_PASSWORD: fooFaBar
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - './:/var/task:ro,delegated'
+    depends_on:
+      - db
+    ports:
+      - '9003:9001'
+
+volumes:
+  postgres-data:
