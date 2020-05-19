@@ -1,0 +1,38 @@
+version: '3.3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: amplio
+      POSTGRES_PASSWORD: fooFaBar
+      POSTGRES_DB: amplio_db
+    volumes:
+      - 'postgres-data:/var/lib/postgresql/data'
+    ports:
+      - '5432:5432'
+
+  deps:
+    build: .
+    volumes:
+      - './:/usr/src/app'
+      - package:/usr/src/app/package
+
+  lambda-test:
+    image: lambci/lambda:python3.8
+    command: test.lambda_handler
+    environment:
+      # Funtions with hot reload
+      DOCKER_LAMBDA_STAY_OPEN: 1
+      DOCKER_LAMBDA_WATCH: 1
+    volumes:
+      - './:/var/task:ro,delegated'
+      - package:/var/task/package
+    depends_on:
+      - db
+    ports:
+      - '9001:9001'
+
+volumes:
+  package:
+  postgres-data:
