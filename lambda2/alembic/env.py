@@ -3,21 +3,49 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+import os, sys
+from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+sys.path.append(BASE_DIR)
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
+# this will overwrite the ini-file sqlalchemy.url path
+# with the path given in the config of the main code
+config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
+
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+# target_metadata = None
+from models import program
+from models import listening_model
+from models import program_language
+from models import program_listening_model
+from models import program_sustainable_development_goal
+from models import sustainable_development_goal
+
+
+target_metadata = [
+  program.Base.metadata,
+  # listening_model.Base.metadata,
+  # program_language.Base.metadata,
+  # program_listening_model.Base.metadata,
+  # program_sustainable_development_goal.Base.metadata,
+  # sustainable_development_goal.Base.metadata,
+]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
