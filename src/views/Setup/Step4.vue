@@ -52,7 +52,7 @@
           type="date"
           aria-labelledby="firstDeployment"
           class="w-full py-2 pl-2 outline-none"
-          :value="date"
+          :min="date"
           @change="(event) => setDeploymentInit(event.target.value)"
         >
       </div>
@@ -80,7 +80,9 @@ export default {
   },
   mounted () {
     const date = new Date()
-    this.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const dateNumber = (date.getDate()).toString().padStart(2, '0')
+    this.date = `${date.getFullYear()}-${month}-${dateNumber}`
   },
   components: {
     Box,
