@@ -17,14 +17,14 @@
       >
         <img
           :src="`/img/listening/${opt.label}.png`"
-          :class="listeningModels.includes(opt) ? 'opacity-25' : ''"
+          :class="listeningModels.includes(opt.value) ? 'opacity-25' : ''"
           class="block w-full hover:opacity-25"
         >
-        <p :class="listeningModels.includes(opt) ? 'opacity-25' : ''" class="text-blue">
+        <p :class="listeningModels.includes(opt.value) ? 'opacity-25' : ''" class="text-blue">
           {{ opt.label }}
         </p>
         <Check
-          v-if="listeningModels.includes(opt)"
+          v-if="listeningModels.includes(opt.value)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
