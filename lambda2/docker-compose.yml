@@ -18,7 +18,7 @@ services:
       - './:/usr/src/app'
       - package:/usr/src/app/package
 
-  lambda-test:
+  lambda-migration:
     image: lambci/lambda:python3.8
     command: db_migrations.lambda_handler
     environment:
@@ -32,6 +32,21 @@ services:
       - db
     ports:
       - '9001:9001'
+
+  lambda-new-program:
+    image: lambci/lambda:python3.8
+    command: new_program.lambda_handler
+    environment:
+      # Funtions with hot reload
+      DOCKER_LAMBDA_STAY_OPEN: 1
+      DOCKER_LAMBDA_WATCH: 1
+    volumes:
+      - './:/var/task:ro,delegated'
+      - package:/var/task/package
+    depends_on:
+      - db
+    ports:
+      - '9002:9001'
 
 volumes:
   package:
