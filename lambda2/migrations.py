@@ -27,21 +27,16 @@ def lambda_handler(event, context):
     version: string, opt
         Next version. By default is 'head' for upgrade and '-1' to downgrade
     """
-    # Validate input
-    if (not 'operation' in event):
-        return {
-            'status': 402,
-            'error': 'Operation must be specified'
-        }
+    if ('operation' in event and event['operation'] == 'downgrade'):
+        # Downgrade the db
+        if ('version' in event):
+            version = event['version']
+        else:
+            version = '-1'
 
-    if (event['operation'] not in ['upgrade', 'downgrade']):
-        return {
-            'status': 402,
-            'error': f'invalid operation `{event["operation"]}`'
-        }
-
-    # Upgrade the db
-    if (event['operation'] == 'upgrade'):
+        command.downgrade(alembic_cfg, version)
+    else:
+        # Upgrade the db
         if ('version' in event):
             version = event['version']
         else:
@@ -49,16 +44,7 @@ def lambda_handler(event, context):
 
         command.upgrade(alembic_cfg, version)
 
-    # Downgrade the db
-    if (event['operation'] == 'downgrade'):
-        if ('version' in event):
-            version = event['version']
-        else:
-            version = '-1'
-
-        command.downgrade(alembic_cfg, version)
-
     return {
         'status': 200,
-        'body': 'DB migrations done!'
+        'body': 'Migrations done'
     }
