@@ -8,12 +8,12 @@
     <button
       v-if="isOpen"
       tabindex="-1"
-      class="fixed inset-0 h-full w-full z-10 bg-black opacity-50 cursor-default"
+      class="fixed inset-0 h-full w-full z-10 cursor-default"
       @click="isOpen = false"
     />
 
     <!-- Options -->
-    <div v-if="isOpen" class="absolute right-0 mt-2 w-48 z-20 bg-white rounded-lg shadow-xl">
+    <div v-if="isOpen" class="absolute left-0 ml-2 mt-1 w-48 z-20 bg-white rounded-lg shadow-xl">
       <a
         v-for="(opt, index) in options"
         :key="index"
