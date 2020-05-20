@@ -13,15 +13,15 @@
         v-for="(opt, index) in options"
         :key="index"
         class="relative cursor-pointer rounded border border-gray-500"
-        @click="toggleListening(opt)"
+        @click="toggleListening(opt.value)"
       >
         <img
-          :src="`/img/listening/${opt}.png`"
+          :src="`/img/listening/${opt.label}.png`"
           :class="listeningModels.includes(opt) ? 'opacity-25' : ''"
           class="block w-full hover:opacity-25"
         >
         <p :class="listeningModels.includes(opt) ? 'opacity-25' : ''" class="text-blue">
-          {{ opt }}
+          {{ opt.label }}
         </p>
         <Check
           v-if="listeningModels.includes(opt)"
@@ -72,7 +72,10 @@ export default {
   data () {
     return {
       options: [
-        'Households', 'Groups', 'Community Workers', 'Place-based'
+        { label: 'Households', value: 'households' },
+        { label: 'Groups', value: 'groups' },
+        { label: 'Community Workers', value: 'community_workers' },
+        { label: 'Place-based', value: 'place_based' }
       ]
     }
   },

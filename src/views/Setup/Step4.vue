@@ -33,10 +33,10 @@
         @change="(event) => setDeploymentFrequency(event.target.value)"
       >
         <option value="">Select</option>
-        <option value="1 Month">1 Month</option>
-        <option value="1 Quarter">1 Quarter</option>
-        <option value="Six months">Six months</option>
-        <option value="One year">One year</option>
+        <option value="one_month">1 Month</option>
+        <option value="1_quarter">1 Quarter</option>
+        <option value="six_months">Six months</option>
+        <option value="one_year">One year</option>
       </select>
     </div>
 

@@ -17,9 +17,9 @@
       >
         <option value="">Select</option>
         <option value="Monthly">Monthly</option>
-        <option value="Quarterly">Quarterly</option>
-        <option value="Semi-Annually">Semi-Annually</option>
-        <option value="Annually">Annually</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="semi_annually">Semi-Annually</option>
+        <option value="annually">Annually</option>
       </select>
     </div>
 
@@ -37,11 +37,11 @@
         @change="(event) => setFeedbackFrequentlyOther(event.target.value)"
       >
         <option value="">Select</option>
-        <option value="Weekly">Weekly</option>
-        <option value="Bi-Weekly">Bi-Weekly</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Quarterly">Quarterly</option>
-        <option value="Not Applicable">Not Applicable</option>
+        <option value="weekly">Weekly</option>
+        <option value="bi_weekly">Bi-Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="not_applicable">Not Applicable</option>
       </select>
     </div>
   </Box>

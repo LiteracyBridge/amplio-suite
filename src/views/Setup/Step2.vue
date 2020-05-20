@@ -41,15 +41,15 @@ export default {
   data () {
     return {
       options: [
-        'No Poverty', 'Zero Hunger', 'Good health and well being',
-        'Quality education', 'Gender Equality', 'Clean water and sanitation',
-        'Affordable and clean energy', 'Decent work and economic growth',
-        'Industry, innovation and infrastructure', 'Reduced inequalities',
-        'Sustainable cities and communities',
-        'Responsible consumption and production',
-        'Climate action', 'Life below water', 'Life on land',
-        'Peace, justice and strong institutions',
-        'Parternship for the goals'
+        'no_poverty', 'zero_hunger', 'good_health_and_well _being',
+        'quality_education', 'gender_equality', 'clean_water_and_sanitation',
+        'affordable_and_clean_energy', 'decent_work_and_economic_growth',
+        'industry, innovation_and_infrastructure', 'reduced_inequalities',
+        'sustainable_cities_and_communities',
+        'responsible_consumption_and_production',
+        'climate_action', 'life_below_water', 'life_on_land',
+        'peace, justice_and_strong_institutions',
+        'parternship_for_the_goals'
       ]
     }
   },
