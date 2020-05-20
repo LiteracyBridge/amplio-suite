@@ -20,7 +20,7 @@ services:
 
   lambda-migration:
     image: lambci/lambda:python3.8
-    command: db_migrations.lambda_handler
+    command: migrations.lambda_handler
     environment:
       # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
@@ -49,5 +49,10 @@ services:
       - '9002:9001'
 
 volumes:
-  package:
   postgres-data:
+  package:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/package
+      o: bind
