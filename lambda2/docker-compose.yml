@@ -20,7 +20,7 @@ services:
 
   lambda-test:
     image: lambci/lambda:python3.8
-    command: test.lambda_handler
+    command: db_migrations.lambda_handler
     environment:
       # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
