@@ -2,9 +2,11 @@ import os
 import json
 import base64
 
-import boto3
-from botocore.exceptions import ClientError
 from dotenv import load_dotenv
+
+if os.getenv('ENV') == 'AWS':
+    import boto3
+    from botocore.exceptions import ClientError
 
 # Load .env file
 load_dotenv()
