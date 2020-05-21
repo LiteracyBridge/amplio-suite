@@ -20,6 +20,9 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('name', sa.String(50), nullable=False),
 
+        sa.Column('listening_model', sa.JSON(), nullable=False),
+        sa.Column('sustainable_development_goal', sa.JSON(), nullable=False),
+
         sa.Column('amount_deployment', sa.Integer, nullable=False),
         sa.Column('deployment_length', sa.String(50), nullable=False),
         sa.Column('first_deployment', sa.Date, nullable=False),
