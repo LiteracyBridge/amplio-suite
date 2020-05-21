@@ -2,16 +2,14 @@ import os
 import sys
 sys.path.append('/var/task/package')
 
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from utils import get_db_url
 from models.program import Program
 
-# Load .env file
-load_dotenv()
-
-engine = create_engine(os.getenv('DATABASE_URL'))
+DATABASE_URL = get_db_url()
+engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
