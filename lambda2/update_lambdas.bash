@@ -6,6 +6,7 @@ functions=( testFunction )
 
 echo -n "Zip the python libs: ..."
 zip -r9 -q partial.zip ./package
+zip -g -q partial.zip utils.py
 echo -e "\rZip the python libs: Done"
 
 for fun in "${functions[@]}"
