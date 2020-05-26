@@ -53,3 +53,10 @@ $ ./update_lambdas.bash
 ### API gatway
 
 TODO
+
+
+## For deploy
+
+Note some problems we had in staging, for the day we go to prod
+
+- [Add secrets manager to the VPC](https://aws.amazon.com/blogs/security/how-to-connect-to-aws-secrets-manager-service-within-a-virtual-private-cloud/)
