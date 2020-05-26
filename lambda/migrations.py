@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('/var/task/package')
+sys.path.append('./package')
 
 from dotenv import load_dotenv
 from alembic.config import Config
