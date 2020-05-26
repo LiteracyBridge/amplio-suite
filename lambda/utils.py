@@ -72,7 +72,7 @@ def get_secret(secret_name, region_name='us-west-2'):
 def get_db_url():
     if os.getenv('ENV') == 'AWS':
         config = get_secret('stg/postgres')
-        DATABASE_URL = f"postgresql+psycopg2://{config['username']}:{config['password']}@{config['host']}:{config['port']}/{config['dbInstanceIdentifier']}"
+        DATABASE_URL = f"postgresql+psycopg2://{config['username']}:{config['password']}@{config['host']}:{config['port']}/ampliosuite"
     else:
         DATABASE_URL = os.getenv('DATABASE_URL')
 
