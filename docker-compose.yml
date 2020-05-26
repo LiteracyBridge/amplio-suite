@@ -16,6 +16,7 @@ services:
     restart: always
     volumes:
       - ./lambda/default.conf:/etc/nginx/conf.d/default.conf
+      - ./lambda/api_proxy.conf:/etc/nginx/api_proxy.conf
     ports:
       - '9000:80'
 
