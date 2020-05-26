@@ -1,3 +1,5 @@
+import { postProgram } from '@/api/programs.api'
+
 // General actions from the wizard
 const setStep = ({ commit }, payload) => {
   commit('setStep', payload)
@@ -111,6 +113,27 @@ const setLanguages = async ({ commit, state, dispatch }, payload) => {
   else dispatch('removeCompletedStep', 6)
 }
 
+//
+const createProgram = async ({ state }) => {
+  const data = {
+    name: state.programName,
+    sustainable_development_goal: state.goals,
+    listening_model: state.listeningModels,
+    amount_deployment: state.deployments,
+    deployment_length: state.deploymentFrequency,
+    first_deployment: state.deploymentInit,
+    feedback_frequency: state.feedbackFrequently,
+    feedback_frequency2: state.feedbackFrequentlyOther
+  }
+
+  try {
+    const response = await postProgram(data)
+    console.log(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
   setStep,
   nextStep,
@@ -125,5 +148,6 @@ export default {
   setDeploymentInit,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
-  setLanguages
+  setLanguages,
+  createProgram
 }

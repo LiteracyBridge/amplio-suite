@@ -8,11 +8,21 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import Box from '@/components/SetupBox'
 
 export default {
   components: {
     Box
+  },
+  methods: {
+    ...mapActions([
+      'createProgram'
+    ])
+  },
+  mounted () {
+    this.createProgram()
   }
 }
 </script>
