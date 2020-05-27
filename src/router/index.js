@@ -13,9 +13,17 @@ const routes = [
     component: Home
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+  },
+  {
     path: '/setup',
     name: 'Setup',
     redirect: { name: 'Step-1' },
+    meta: { 
+      requiresAuth: true
+    },
     // this generates a separate chunk (setup.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Init.vue'),
@@ -66,15 +74,25 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // Only check on /setup/step-[0-9] pages
-  if (to.name.startsWith('Step-')) {
-    const nextStep = +to.name.split('-')[1]
-    const isComplete = store.state.completedSteps.includes(nextStep - 1)
+  // Check if the user is login
+  if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters['account/isLoggedIn']) {
+      // If the user is completing the wizard, check that the step is complete
+      if (to.name.startsWith('Step-')) {
+        const nextStep = +to.name.split('-')[1]
+        const isComplete = store.state.completedSteps.includes(nextStep - 1)
 
-    if (isComplete) next()
-    else next(false)
+        if (isComplete) next()
+        else next(false)
+      } else {
+        next()
+      }
+    }
+    else {
+      next('/login') 
+    }
   } else {
-    next()
+    next() 
   }
 })
 
