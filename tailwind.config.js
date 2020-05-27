@@ -12,7 +12,9 @@ module.exports = {
       },
       colors: {
         green: '#289b6a',
-        blue: '#475caa'
+        blue: '#475caa',
+        'semi-transparent': 'hsla(0, 0%, 4%, .2)',
+        'semi-transparent-darken': 'hsla(0, 0%, 4%, .3)' 
       },
       minHeight: {
         '3/4': '75vh',
