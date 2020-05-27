@@ -44,7 +44,8 @@ If you create a new table class, add this class in `lambda/migrations/env.py`
 
 ### Deploy lambda functions
 
-First run `docker-compose up` to create the `package` dir. Then
+- Create an empty `lambda/package` directory
+- Run `docker-compose up` to populate the `package` dir. Then
 
 ```bash
 $ ./update_lambdas.bash
