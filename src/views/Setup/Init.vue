@@ -10,7 +10,7 @@
     </transition>
 
     <footer class="py-6">
-      Need help? Contact us on <a class="text-blue" href="help@amplio.org">help@amplio.org</a>
+      Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
   </section>
 </template>
