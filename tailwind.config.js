@@ -23,8 +23,9 @@ module.exports = {
         'semi-transparent-darken': 'hsla(0, 0%, 4%, .3)' 
       },
       minHeight: {
-        '3/4': '75vh',
-        '200-px': '200px'
+        '200-px': '200px',
+        banner: 'calc(100vh - 104px)', // rest the footer
+        'banner-header': 'calc(100vh - 104px - 56px)' // rest the footer and the header
       },
       inset: {
         41: '41%'
