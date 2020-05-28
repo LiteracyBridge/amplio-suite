@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import store from '@/store'
 import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -10,12 +11,18 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: { 
+      requiresAuth: true
+    },
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+    component: Login,
+    meta: {
+      layout: 'login'
+    }
   },
   {
     path: '/setup',
