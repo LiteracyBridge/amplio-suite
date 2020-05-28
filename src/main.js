@@ -8,6 +8,13 @@ import './plugins/fontawesome'
 // Style
 import '@/assets/css/tailwind.scss'
 
+// Layouts
+import Default from '@/layouts/Default'
+import Login from '@/layouts/Login'
+
+Vue.component('default-layout', Default)
+Vue.component('login-layout', Login)
+
 Vue.config.productionTip = false
 
 new Vue({
