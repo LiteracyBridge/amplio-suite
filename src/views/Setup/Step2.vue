@@ -6,7 +6,7 @@
   >
     <p class="text-2xl font-semibold">
       Which Sustainable Development Goals (SDGs) does your program
-      work towards? Select all that apply.
+      work towards? Select/Deselect all that apply.
     </p>
 
     <div class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
