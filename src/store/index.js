@@ -17,7 +17,7 @@ export default new Vuex.Store({
     programName: '',
     goals: [],
     listeningModels: [],
-    deployments: -1,
+    deployments: 0,
     deploymentFrequency: '',
     deploymentInit: '',
     feedbackFrequently: '',
