@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto text-center">
 
-    <h1 class="my-20 text-4xl text-blue font-semibold">
+    <h1 class="py-20 text-4xl text-blue font-semibold">
       Welcome to Amplio Jenny!
     </h1>
 
