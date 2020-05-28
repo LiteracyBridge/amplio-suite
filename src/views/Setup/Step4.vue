@@ -10,15 +10,14 @@
         How many deployments will you conduct for this program?
       </p>
 
-      <select
+      <input
+        type="number"
+        min="0"
         aria-labelledby="deployments"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
         :value="deployments"
         @change="(event) => setDeployments(event.target.value)"
       >
-        <option value="-1">Select</option>
-        <option v-for="index in 20" :key="index" :value="index">{{ index }}</option>
-      </select>
     </div>
 
     <div v-if="deployments > 0" class="mt-10">
