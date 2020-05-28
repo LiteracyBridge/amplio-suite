@@ -52,6 +52,7 @@
           aria-labelledby="firstDeployment"
           class="w-full py-2 pl-2 outline-none"
           :min="date"
+          :value="deploymentInit"
           @change="(event) => setDeploymentInit(event.target.value)"
         >
       </div>
@@ -69,7 +70,8 @@ export default {
   computed: {
     ...mapState([
       'deployments',
-      'deploymentFrequency'
+      'deploymentFrequency',
+      'deploymentInit'
     ])
   },
   data () {
