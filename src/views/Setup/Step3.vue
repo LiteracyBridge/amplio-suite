@@ -12,15 +12,21 @@
       <div
         v-for="(opt, index) in options"
         :key="index"
-        class="relative cursor-pointer rounded border border-gray-500"
+        role="checkbox"
+        tabindex="0"
+        :aria-checked="listeningModels.includes(opt.value) ? 'true': 'false'"
+        :aria-describedby="`listeningModels-${index + 1}`"
+        class="relative cursor-pointer rounded border border-gray-500 focus-dashed s"
         @click="toggleListening(opt.value)"
+        @keyup.enter="toggleListening(opt.value)"
       >
         <img
           :src="`/img/listening/${opt.label}.png`"
+          :alt="opt.label"
           :class="listeningModels.includes(opt.value) ? 'opacity-25' : ''"
-          class="block w-full hover:opacity-25"
+          class="block w-full"
         >
-        <p :class="listeningModels.includes(opt.value) ? 'opacity-25' : ''" class="text-blue">
+        <p :id="`listeningModels-${index + 1}`" class="text-blue">
           {{ opt.label }}
         </p>
         <Check

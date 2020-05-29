@@ -10,13 +10,24 @@
     </p>
 
     <div class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
-      <div v-for="(opt, index) in options" :key="index" class="relative">
+      <div
+        v-for="(opt, index) in options"
+        :key="index"
+        role="checkbox"
+        tabindex="0"
+        :aria-checked="goals.includes(opt) ? 'true': 'false'"
+        :aria-describedby="`goal-${index + 1}`"
+        class="relative focus-dashed s"
+        @click="toggleGoal(opt)"
+        @keyup.enter="toggleGoal(opt)"
+      >
         <img
           :src="`/img/goals/Goal-${index + 1}.png`"
+          :alt="opt.replace(/ /g, ' ')"
           :class="goals.includes(opt) ? 'opacity-25' : ''"
-          class="block w-full cursor-pointer hover:opacity-25"
-          @click="toggleGoal(opt)"
+          class="block w-full cursor-pointer"
         >
+        <p :id="`goal-${index + 1}`" class="visually_hidden">{{ opt.replace(/ /g, ' ') }}</p>
         <Check
           v-if="goals.includes(opt)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
