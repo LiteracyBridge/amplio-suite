@@ -7,8 +7,16 @@
     </div>
 
     <footer class="flex" :class="prev !== '' ? 'justify-between' : 'justify-end'">
-      <router-link v-if="prev !== ''" :to="{ name: prev }" @click.native="prevStep">
-        <Button text="PREV" />
+      <router-link
+        v-if="prev !== ''"
+        :to="{ name: prev }"
+        @click.native="prevStep"
+        class="focus-dashed"  
+      >
+        <Button
+          text="PREV"
+          tabindex="-1"
+        />
       </router-link>
 
       <router-link
@@ -16,8 +24,13 @@
         :to="{ name: next }"
         @click.native="() => { if(isFill) nextStep() }"
         :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
+        class="focus-dashed"
       >
-        <Button class="pointer-events-none" text="NEXT" />
+        <Button
+          text="NEXT"
+          :aria-disabled="isFill? 'false' : 'true'"
+          tabindex="-1"
+        />
       </router-link>
     </footer>
   </div>

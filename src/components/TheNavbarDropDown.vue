@@ -1,6 +1,10 @@
 <template>
-  <div class="relative">
-    <button @mouseover="isOpen = !isOpen">
+  <div class="relative text-white">
+    <button
+      class="focus-dashed"
+      @mouseover="isOpen = !isOpen"
+      @keyup.enter="isOpen = !isOpen"
+    >
       <slot />
     </button>
 

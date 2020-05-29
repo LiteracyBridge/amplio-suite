@@ -1,44 +1,37 @@
 <template>
-  <div class="container mx-auto text-center">
-
+  <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
       Welcome to Amplio Jenny!
     </h1>
 
     <div class="grid grid-cols-3 gap-10">
-      <router-link :to="{ name: 'Step-1' }">
-        <Box img="/img/plan.png" title="1. Plan and Prepare">
-          <p class="text-lg text-justify">
-            Define your program specification and complete installation of required tools
-          </p>
-        </Box>
+      <router-link :to="{ name: 'Step-1' }" class="focus-dashed">
+        <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
+          Define your program specification and complete installation of required tools
+        </home-box>
       </router-link>
 
-      <a href="https://amplio.moodlecloud.com/" target="_blank">
-        <Box img="/img/learning.png" title="2. Learning Portal">
-          <p class="text-lg text-justify">
-            Access learning portal, job aids and community of practice
-          </p>
-        </Box>
+      <a href="https://amplio.moodlecloud.com/" target="_blank" class="focus-dashed">
+        <home-box img="/img/learning.png" alt="Go to the learning portal" title="2. Learning Portal">
+          Access learning portal, job aids and community of practice
+        </home-box>
       </a>
 
-      <a href="https://dashboard.amplio.org/" target="_blank">
-        <Box img="/img/analytics.png" title="3. Analytics Dashboard">
-          <p class="text-lg text-justify">
-            Monitor user engagement and feedback through the Amplio Dashboard
-          </p>
-        </Box>
+      <a href="https://dashboard.amplio.org/" target="_blank" class="focus-dashed">
+        <home-box img="/img/analytics.png" alt="Go to the dashboard portal" title="3. Analytics Dashboard">
+          Monitor user engagement and feedback through the Amplio Dashboard
+        </home-box>
       </a>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
-import Box from '@/components/Box'
+import HomeBox from '@/components/HomeBox'
 
 export default {
   components: {
-    Box
+    HomeBox
   }
 }
 </script>
