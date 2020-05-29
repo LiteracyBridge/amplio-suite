@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto pt-20 text-center">
+  <main class="container mx-auto pt-20 text-center">
     <header class="inline-flex">
       <h1 class="text-2xl">Page {{ actualStep }}/{{ total }}</h1>
       <progress class="ml-5" :max="total" :value="actualStep"></progress>
@@ -12,7 +12,7 @@
     <footer class="py-6">
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
-  </section>
+  </main>
 </template>
 
 <script>
