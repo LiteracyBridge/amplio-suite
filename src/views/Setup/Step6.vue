@@ -18,9 +18,13 @@
       @input="(event) => setLanguages({ lang: event.target.value, index: index - 1 })"
     >
 
-    <p class="mt-4 font-semibold cursor-pointer" @click="addInput">
+    <button
+      class="mt-4 p-2u font-semibold cursor-pointer focus-dashed"
+      @click="addInput"
+      @keyup.enter="addInput"
+    >
       + Add language
-    </p>
+    </button>
   </Box>
 </template>
 
