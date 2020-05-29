@@ -1,10 +1,12 @@
 <template>
   <div class="p-6 h-full bg-white rounded-lg dd shadow-box hover:shadow-hover">
     <div class="overflow-hidden">
-      <img :src="img" class="transform duration-500">
+      <img class="transform duration-500" :src="img" :alt="alt">
     </div>
     <h2 class="py-4 text-xl font-bold">{{ title }}</h2>
-    <slot />
+    <p class="text-lg text-justify">
+      <slot />
+    </p>
   </div>
 </template>
 
@@ -15,8 +17,13 @@ export default {
       type: String,
       required: true
     },
+    alt: {
+      type: String,
+      required: true
+    },
     title: {
-      type: String
+      type: String,
+      required: true
     }
   }
 }
