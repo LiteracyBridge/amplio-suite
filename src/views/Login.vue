@@ -1,5 +1,7 @@
 <template>
   <section class="container mx-auto text-center" :class="showError ? 'pt-20' : 'pt-40'">
+    <h1 class="visually_hidden">Amplio Suite Login</h1>
+
     <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
       Invalid Login or password.
     </v-notification>
@@ -8,32 +10,30 @@
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
       <form>
-        <div class="inline-flex items-center w-full mt-10 my-2 px-5 text-base bg-white rounded border border-solid border-gray-500">
-          <font-awesome-icon icon="user-circle" class="w-6 h-6 text-gray-500" />
+        <v-input
+          icon-left="user-circle"
+          type="text"
+          placeholder="Email address"
+          aria-label="Email address"
+          class="mt-10"
+          v-model="user"  
+        />
 
-          <input
-            type="text"
-            placeholder="Email address"
-            aria-label="Email address"
-            class="w-full py-2 pl-2 outline-none"
-            v-model="user"
-          >
-        </div>
-
-        <input
+        <v-input
           type="password"
           placeholder="Password"
           aria-label="Password"
-          class="block w-full py-2 px-5 text-base bg-white rounded border border-solid border-gray-500"
           v-model="password"
-        >
+        />
 
-        <p class="pt-2 text-sm text-right text-blue underline">
-          Forgot your password?
-        </p>
+        <div class="pt-2">
+          <a href="#" class="p-2 text-sm text-right text-blue underline focus-dashed">
+            Forgot your password?
+          </a>
+        </div>
 
         <Button
-          class="mt-8"
+          class="mt-8 focus-dashed"
           text="Sign In"
           type="submit"
           @click="handleLogin"
@@ -47,11 +47,13 @@
 import { mapActions } from 'vuex'
 
 import Button from '@/components/Button'
+import VInput from '@/components/VInput'
 import VNotification from '@/components/VNotification'
 
 export default {
   components: {
     Button,
+    VInput,
     VNotification
   },
   data () {
