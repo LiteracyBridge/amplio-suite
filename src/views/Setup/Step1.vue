@@ -8,14 +8,14 @@
     <p id="programName" class="text-2xl font-semibold">
       What is your program name?
     </p>
-    <input
+
+    <v-input 
       type="text"
       aria-labelledby="programName"
       placeholder="Enter Program Name"
-      class="mt-2 px-5 py-1 text-base rounded border border-solid border-gray-500"
       :value="programName"
       @input="(event) => setProgramName(event.target.value)"
-    >
+    />
   </Box>
 </template>
 
@@ -23,6 +23,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
+import VInput from '@/components/VInput'
 
 export default {
   computed: {
@@ -31,7 +32,8 @@ export default {
     ])
   },
   components: {
-    Box
+    Box,
+    VInput
   },
   methods: {
     ...mapActions([

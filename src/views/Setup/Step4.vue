@@ -10,14 +10,13 @@
         How many deployments will you conduct for this program?
       </p>
 
-      <input
+      <v-input
         type="number"
         min="0"
         aria-labelledby="deployments"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
         :value="deployments"
         @change="(event) => setDeployments(event.target.value)"
-      >
+      />
     </div>
 
     <div v-if="deployments > 0" class="mt-10">
@@ -27,7 +26,7 @@
 
       <select
         aria-labelledby="deploymentLength"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="deploymentFrequency"
         @change="(event) => setDeploymentFrequency(event.target.value)"
       >
@@ -44,18 +43,14 @@
         Choose your first deployment start date
       </p>
 
-      <div class="inline-flex items-center w-64 mt-2 px-5 text-base bg-white rounded border border-solid border-gray-500">
-        <Calendar class="w-4 h-4 text-gray-500" />
-
-        <input
-          type="date"
-          aria-labelledby="firstDeployment"
-          class="w-full py-2 pl-2 outline-none"
-          :min="date"
-          :value="deploymentInit"
-          @change="(event) => setDeploymentInit(event.target.value)"
-        >
-      </div>
+      <v-input
+        type="date"
+        iconLeft="calendar-alt"
+        aria-labelledby="firstDeployment"
+        :min="date"
+        :value="deploymentInit"
+        @change="(event) => setDeploymentInit(event.target.value)"
+      />
     </div>
   </Box>
 </template>
@@ -64,7 +59,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
-import Calendar from '@/assets/svg/calendar.svg'
+import VInput from '@/components/VInput'
 
 export default {
   computed: {
@@ -87,7 +82,7 @@ export default {
   },
   components: {
     Box,
-    Calendar
+    VInput
   },
   methods: {
     ...mapActions([
