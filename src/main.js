@@ -3,6 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+// Polyfill :focus-visible
+import 'focus-visible'
+
+// Custom plugins
 import './plugins/fontawesome'
 
 // Style
