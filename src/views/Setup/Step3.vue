@@ -16,7 +16,7 @@
         tabindex="0"
         :aria-checked="listeningModels.includes(opt.value) ? 'true': 'false'"
         :aria-describedby="`listeningModels-${index + 1}`"
-        class="relative cursor-pointer rounded border border-gray-500 focus-dashed s"
+        class="relative cursor-pointer rounded border border-gray-500 s"
         @click="toggleListening(opt.value)"
         @keyup.enter="toggleListening(opt.value)"
       >

@@ -17,7 +17,7 @@
         tabindex="0"
         :aria-checked="goals.includes(opt) ? 'true': 'false'"
         :aria-describedby="`goal-${index + 1}`"
-        class="relative focus-dashed s"
+        class="relative s"
         @click="toggleGoal(opt)"
         @keyup.enter="toggleGoal(opt)"
       >

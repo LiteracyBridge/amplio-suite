@@ -11,7 +11,7 @@
 
       <select
         aria-labelledby="feedbackFrequently"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="feedbackFrequently"
         @change="(event) => setFeedbackFrequently(event.target.value)"
       >
@@ -32,7 +32,7 @@
 
       <select
         aria-labelledby="feedbackFrequentlyOther"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500"
+        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="feedbackFrequentlyOther"
         @change="(event) => setFeedbackFrequentlyOther(event.target.value)"
       >

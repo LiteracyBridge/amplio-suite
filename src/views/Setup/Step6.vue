@@ -19,7 +19,7 @@
     >
 
     <button
-      class="mt-4 p-2u font-semibold cursor-pointer focus-dashed"
+      class="mt-4 p-2u font-semibold cursor-pointer"
       @click="addInput"
       @keyup.enter="addInput"
     >
