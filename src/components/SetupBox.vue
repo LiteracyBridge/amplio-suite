@@ -10,8 +10,7 @@
       <router-link
         v-if="prev !== ''"
         :to="{ name: prev }"
-        @click.native="prevStep"
-        class="focus-dashed"  
+        @click.native="prevStep"  
       >
         <Button
           text="PREV"
@@ -24,7 +23,6 @@
         :to="{ name: next }"
         @click.native="() => { if(isFill) nextStep() }"
         :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
-        class="focus-dashed"
       >
         <Button
           text="NEXT"

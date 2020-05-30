@@ -12,10 +12,17 @@
   overflow: hidden;
 }
 
-.focus-dashed:focus {
+// Use [:focus-visible polyfill](https://github.com/WICG/focus-visible) to show
+// dashed only when focus by keyboard
+.js-focus-visible :focus:not(.focus-visible) {  
+  outline: none;  
+}
+
+.js-focus-visible .focus-visible {
   outline: 3px dashed;
 }
-button.focus-dashed:focus {
+
+.js-focus-visible button.focus-visible {
   outline: 3px dashed black;
 }
 

@@ -1,7 +1,6 @@
 <template>
   <div class="relative text-white">
     <button
-      class="focus-dashed"
       @mouseover="isOpen = !isOpen"
       @keyup.enter="isOpen = !isOpen"
     >

@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link to="/" class="text-white focus-dashed">
+        <router-link to="/" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -11,7 +11,7 @@
         <div class="md:hidden">
           <button
             type="button"
-            class="block text-white hover:text-gray-500 focus-dashed"
+            class="block text-white hover:text-gray-500"
             @click="isOpen = !isOpen"
           >
             <Bars v-if="isOpen" class="h-6 w-6" />
@@ -42,13 +42,13 @@
           </div>
         </div>
 
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500 focus-dashed">
+        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
           Roadmap
         </a>
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500 focus-dashed">
+        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
           Content Library
         </a>
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500 focus-dashed">
+        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
           Feedback
         </a>
       </nav>

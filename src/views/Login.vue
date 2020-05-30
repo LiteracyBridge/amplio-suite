@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto text-center" :class="showError ? 'pt-20' : 'pt-40'">
+  <main class="container mx-auto text-center" :class="showError ? 'pt-20' : 'pt-40'">
     <h1 class="visually_hidden">Amplio Suite Login</h1>
 
     <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
@@ -27,20 +27,20 @@
         />
 
         <div class="pt-2">
-          <a href="#" class="p-2 text-sm text-right text-blue underline focus-dashed">
+          <a href="#" class="p-2 text-sm text-right text-blue underline">
             Forgot your password?
           </a>
         </div>
 
         <Button
-          class="mt-8 focus-dashed"
+          class="mt-8"
           text="Sign In"
           type="submit"
           @click="handleLogin"
         />
       </form>
     </div>
-  </section>
+  </main>
 </template>
 
 <script>
