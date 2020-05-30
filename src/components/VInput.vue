@@ -1,30 +1,27 @@
 <template>
-  <div class="w-full my-2 text-base bg-white rounded border border-solid border-gray-500">
-    <div v-if="iconLeft" class="absolute pin-l pin-t my-3 pl-5 pointer-events-none">
+  <div class="w-64 mx-auto my-2 text-base bg-white">
+    <div v-if="iconLeft" class="absolute pin-l pin-t pl-5 pt-2 pointer-events-none">
       <font-awesome-icon :icon="iconLeft" class="w-6 h-6 text-gray-500" />
     </div>
 
     <input
       :class="iconLeft ? 'pl-12' : 'pl-5'"
-      class="form-input block w-full py-3 pr-5 focus:outline-none focus:shadow-outline"
+      class="w-full block py-2 pr-5 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+      :value="value"
       v-bind="$attrs"
-      @input="handleInput"
+      v-on="$listeners"
     >
   </div>
 </template>
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
+    value: [String, Number],
     iconLeft: {
       type: String,
       default: ''
-    },
-    value: String
-  },
-  methods: {
-    handleInput (e) {
-      this.$emit('input', e.target.value)
     }
   }
 }
