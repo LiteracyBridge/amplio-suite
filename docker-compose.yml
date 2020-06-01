@@ -36,20 +36,7 @@ services:
       - './lambda:/usr/src/app'
       - package:/usr/src/app/package
 
-  lambda-test:
-    image: lambci/lambda:python3.8
-    command: test_function.lambda_handler
-    environment:
-      # Funtions with hot reload
-      DOCKER_LAMBDA_STAY_OPEN: 1
-      DOCKER_LAMBDA_WATCH: 1
-    volumes:
-      - './lambda:/var/task:ro,delegated'
-      - package:/var/task/package
-    depends_on:
-      - db
-
-  lambda-migration:
+  lambda-migration: &base
     image: lambci/lambda:python3.8
     command: migrations.lambda_handler
     environment:
@@ -62,18 +49,13 @@ services:
     depends_on:
       - db
 
+  lambda-test:
+    <<: *base
+    command: test_function.lambda_handler
+
   lambda-new-program:
-    image: lambci/lambda:python3.8
+    <<: *base
     command: new_program.lambda_handler
-    environment:
-      # Funtions with hot reload
-      DOCKER_LAMBDA_STAY_OPEN: 1
-      DOCKER_LAMBDA_WATCH: 1
-    volumes:
-      - './lambda:/var/task:ro,delegated'
-      - package:/var/task/package
-    depends_on:
-      - db
 
 volumes:
   node_modules:
