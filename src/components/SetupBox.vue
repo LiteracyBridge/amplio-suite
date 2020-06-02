@@ -1,37 +1,33 @@
 <template>
-  <div class="mt-6 p-6 bg-white rounded-lg shadow-box">
-    <h2 v-if="title !== ''" class="py-4 text-3xl text-blue">{{ title }}</h2>
+  <section class="mt-6 p-6 bg-white rounded-lg shadow-box">
+    <form v-on:submit.prevent>
+      <header>
+        <h2 v-if="title !== ''" class="py-4 text-3xl text-blue">{{ title }}</h2>
+      </header>
 
-    <div class="min-h-200-px py-5 text-center">
-      <slot />
-    </div>
+      <div class="min-h-200-px py-5 text-center">
+        <slot />
+      </div>
 
-    <footer class="flex" :class="prev !== '' ? 'justify-between' : 'justify-end'">
-      <router-link
-        v-if="prev !== ''"
-        :to="{ name: prev }"
-        @click.native="prevStep"  
-      >
+      <footer class="flex flex-row-reverse justify-between">
         <Button
-          text="PREV"
-          tabindex="-1"
-        />
-      </router-link>
-
-      <router-link
-        v-if="next !== ''"
-        :to="{ name: next }"
-        @click.native="() => { if(isFill) nextStep() }"
-        :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
-      >
-        <Button
+          v-if="next !== ''"
+          id="nextStep"
           text="NEXT"
-          :aria-disabled="isFill? 'false' : 'true'"
-          tabindex="-1"
+          type="submit"
+          :aria-disabled="isFill ? 'false' : 'true'"
+          :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
+          @click="handleNext"
+          />
+
+        <Button
+          v-if="prev !== ''"
+          text="PREV"
+          @click="handlePrev"
         />
-      </router-link>
-    </footer>
-  </div>
+      </footer>
+      </form>
+  </section>
 </template>
 
 <script>
@@ -70,7 +66,17 @@ export default {
     ...mapActions([
       'nextStep',
       'prevStep'
-    ])
+    ]),
+    handlePrev () {
+      this.prevStep()
+      this.$router.push({ name: this.prev  })
+    },
+    handleNext () {
+      if(this.isFill) {
+        this.nextStep()
+        this.$router.push({ name: this.next  })
+      }
+    }
   }
 }
 </script>
