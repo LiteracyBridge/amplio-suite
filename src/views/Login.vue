@@ -9,21 +9,24 @@
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
-      <form>
+      <form v-on:submit.prevent>
         <v-input
+          ref="user"
           icon-left="user-circle"
           type="text"
           placeholder="Email address"
           aria-label="Email address"
           class="mt-10"
-          v-model="user"  
+          :value="user"
+          @input="setUser($event.target.value)"
         />
 
         <v-input
           type="password"
           placeholder="Password"
           aria-label="Password"
-          v-model="password"
+          :value="password"
+          @input="setPassword($event.target.value)"
         />
 
         <div class="pt-2">
@@ -64,10 +67,19 @@ export default {
       showError: false
     }
   },
+  mounted () {
+    this.$refs.user.$el.children[1].focus()
+  },
   methods: {
     ...mapActions('account', [
       'login'
     ]),
+    setUser (value) {
+      this.user = value
+    },
+    setPassword (value) {
+      this.password = value
+    },
     async handleLogin () {
       const status = await this.login({ user: this.user, password: this.password })
 
