@@ -42,9 +42,10 @@
         <footer class="mt-10 text-center">
           <v-button
             tag="a"
+            href="https://amplio.moodlecloud.com/"
             target="_blank"
             text="Go to step 2: Learning Portal"
-            class="text-xl cursor-pointer"
+            class="py-4 text-xl cursor-pointer"
           />
         </footer>
       </div>
