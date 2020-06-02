@@ -71,6 +71,14 @@ const routes = [
         component: () => import(/* webpackChunkName: "setup-7" */ '../views/Setup/Step7.vue')
       }
     ]
+  },
+  {
+    path: '/installation',
+    name: 'installation',
+    component: () => import(/* webpackChunkName: "installation" */ '../views/Installation.vue'),
+    meta: { 
+      requiresAuth: true
+    }
   }
 ]
 
