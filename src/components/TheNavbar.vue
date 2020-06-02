@@ -59,6 +59,7 @@
             tabindex="0"
             class="block px-3 pt-3 md:pt-0 text-xl text-white rounded cursor-pointer hover:text-gray-500"
             @click="handleLogout"
+            @keyup.enter="handleLogout"
           >
             Log out
           </span>
