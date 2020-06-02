@@ -113,6 +113,10 @@ const setLanguages = async ({ commit, state, dispatch }, payload) => {
   else dispatch('removeCompletedStep', 6)
 }
 
+const addLangInput = ({ commit }) => {
+  commit('addLangInput')
+}
+
 //
 const createProgram = async ({ state }) => {
   const data = {
@@ -149,5 +153,6 @@ export default {
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
   setLanguages,
+  addLangInput,
   createProgram
 }

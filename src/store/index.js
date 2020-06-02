@@ -22,7 +22,8 @@ export default new Vuex.Store({
     deploymentInit: '',
     feedbackFrequently: '',
     feedbackFrequentlyOther: '',
-    languages: []
+    languages: [''],
+    amountOfLang: 1
   },
   mutations,
   actions,

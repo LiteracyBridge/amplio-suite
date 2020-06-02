@@ -61,6 +61,10 @@ const setLanguages = (state, payload) => {
   state.languages[payload.index] = payload.lang
 }
 
+const addLangInput = (state) => {
+  state.amountOfLang++
+}
+
 export default {
   setStep,
   nextStep,
@@ -77,5 +81,6 @@ export default {
   setDeploymentInit,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
-  setLanguages
+  setLanguages,
+  addLangInput
 }
