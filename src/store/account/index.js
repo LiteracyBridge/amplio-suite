@@ -45,6 +45,11 @@ export default {
         commit('authError')
         return 'error'
       }
+    },
+    logout ({ commit }) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      commit('logout')
     }
   }
 }
