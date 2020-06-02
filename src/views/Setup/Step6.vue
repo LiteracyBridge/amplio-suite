@@ -8,46 +8,55 @@
       What languages will you develop your content in?
     </p>
 
-    <input
-      v-for="index in amountOfInputs"
+    <v-input
+      v-for="index in amountOfLang"
       :key="index"
       :ref="`lang_${index}`"
+      :value="languages[index]"
       type="text"
       aria-labelledby="lang"
       placeholder="Choose language"
-      class="block mx-auto mt-2 px-5 py-1 text-base rounded border border-solid border-gray-500"
-      @input="(event) => setLanguages({ lang: event.target.value, index: index - 1 })"
-    >
+      @input="(event) => setLanguages({ lang: event.target.value, index })"
+    />
 
-    <button
+    <span
+      tabindex="0"
       class="mt-4 p-2u font-semibold cursor-pointer"
-      @click="addInput"
-      @keyup.enter="addInput"
+      @click="addLangInput"
+      @keyup.enter="addLangInput"
     >
       + Add language
-    </button>
+    </span>
   </Box>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
+import VInput from '@/components/VInput'
 
 export default {
-  data () {
-    return {
-      amountOfInputs: 1
-    }
+  components: {
+    Box,
+    VInput
+  },
+  computed: {
+    ...mapState([
+      'languages',
+      'amountOfLang'
+    ])
   },
   mounted () {
     this.$refs['lang_1'][0].$el.children[0].focus()
   },
   methods: {
     ...mapActions([
-      'setLanguages'
+      'setLanguages',
+      'addLangInput'
     ]),
-    addInput () {
+    addInput (event) {
+      console.log(event)
       this.amountOfInputs++
     }
   }
