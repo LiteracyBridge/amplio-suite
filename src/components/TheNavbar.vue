@@ -70,9 +70,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
 import DropDown from '@/components/TheNavbarDropDown'
+import cognitoAuth from '@/cognito'
 
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
@@ -95,12 +94,9 @@ export default {
     DropDown
   },
   methods: {
-    ...mapActions('account', [
-      'logout'
-    ]),
     handleLogout () {
-      this.logout()
-      this.$router.push('/login')
+      cognitoAuth.logout()
+      this.$router.go()
     }
   }
 }

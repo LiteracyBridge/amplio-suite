@@ -4,33 +4,29 @@ import VueRouter from 'vue-router'
 import store from '@/store'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
+import cognitoAuth from '@/cognito'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
     component: Home,
-    meta: { 
-      requiresAuth: true
-    },
+    beforeEnter: requireAuth
   },
   {
     path: '/login',
-    name: 'Login',
     component: Login,
+    name: 'Login',
+    beforeEnter: checkAuth,
     meta: {
       layout: 'login'
     }
   },
   {
     path: '/setup',
-    name: 'Setup',
     redirect: { name: 'Step-1' },
-    meta: { 
-      requiresAuth: true
-    },
+    beforeEnter: requireAuth,
     // this generates a separate chunk (setup.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Init.vue'),
@@ -74,11 +70,9 @@ const routes = [
   },
   {
     path: '/installation',
-    name: 'installation',
+    name: 'installation', //TODO: remove this name
     component: () => import(/* webpackChunkName: "installation" */ '../views/Installation.vue'),
-    meta: { 
-      requiresAuth: true
-    }
+    beforeEnter: requireAuth
   }
 ]
 
@@ -89,26 +83,40 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // Check if the user is login
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters['account/isLoggedIn']) {
-      // If the user is completing the wizard, check that the step is complete
-      if (to.name.startsWith('Step-')) {
-        const nextStep = +to.name.split('-')[1]
-        const isComplete = store.state.completedSteps.includes(nextStep - 1)
+  // If the user is completing the wizard, check that the step is complete
+  if (to.path.startsWith('step-')) {
+    const nextStep = +to.path.split('-')[1]
+    const isComplete = store.state.completedSteps.includes(nextStep - 1)
 
-        if (isComplete) next()
-        else next(false)
-      } else {
-        next()
-      }
-    }
-    else {
-      next('/login') 
-    }
+    if (isComplete) next()
+    else next(false)
   } else {
-    next() 
+    next()
   }
 })
+
+function requireAuth (to, from, next) {
+  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
+    if (!loggedIn) {
+      if (tokenOrError) return next()
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  })
+}
+
+function checkAuth(to, from, next) {
+  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
+    if (loggedIn) {
+      next({path: '/'})
+    } else {
+      next()
+    }
+  })
+}
 
 export default router

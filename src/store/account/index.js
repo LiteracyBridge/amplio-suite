@@ -1,4 +1,4 @@
-import { makeLogin } from '@/api/account.api'
+import cognitoAuth from '@/cognito'
 
 export default {
   namespaced: true,
@@ -17,39 +17,32 @@ export default {
     authRequest(state){
       state.status = 'loading'
     },
-    authSuccess(state, payload){
+    authSuccess(state){
       state.status = 'success'
-      state.token = payload.token
-      state.user = payload.user
     },
     authError(state){
       state.status = 'error'
     },
-    logout(state){
-      state.status = ''
-      state.token = ''
-    }
   },
 
   actions: {
     async login ({ commit }, payload) {
       commit('authRequest')
-      const token = await makeLogin(payload.user, payload.password)
+      // cognitoAuth.signup(payload.user, payload.user, payload.password, (err, result) => {
+      return new Promise((resolve) => {
+        cognitoAuth.authenticate(payload.user, payload.password, (err, result) => {
+          if (err) {
+            commit('authError')
+            resolve('error')
+          }
 
-      if (token) {
-        commit('authSuccess', { user: payload.user, token })
-        localStorage.setItem('token', token)
-        localStorage.setItem('user', payload.user)
-        return 'success'
-      } else {
-        commit('authError')
-        return 'error'
-      }
-    },
-    logout ({ commit }) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      commit('logout')
+          if (result) {
+            const token = result.getIdToken()
+            commit('authSuccess', { user: payload.user, token })
+            resolve('success')
+          }
+        })
+      })
     }
   }
 }
