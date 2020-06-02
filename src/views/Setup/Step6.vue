@@ -11,6 +11,7 @@
     <input
       v-for="index in amountOfInputs"
       :key="index"
+      :ref="`lang_${index}`"
       type="text"
       aria-labelledby="lang"
       placeholder="Choose language"
@@ -39,8 +40,8 @@ export default {
       amountOfInputs: 1
     }
   },
-  components: {
-    Box
+  mounted () {
+    this.$refs['lang_1'][0].$el.children[0].focus()
   },
   methods: {
     ...mapActions([

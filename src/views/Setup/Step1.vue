@@ -9,8 +9,9 @@
       What is your program name?
     </p>
 
-    <v-input 
+    <v-input
       type="text"
+      ref="programName"
       aria-labelledby="programName"
       placeholder="Enter Program Name"
       :value="programName"
@@ -34,6 +35,9 @@ export default {
   components: {
     Box,
     VInput
+  },
+  mounted () {
+    this.$refs.programName.$el.children[0].focus()
   },
   methods: {
     ...mapActions([

@@ -11,6 +11,7 @@
       </p>
 
       <v-input
+        ref="deployments"
         type="number"
         min="0"
         aria-labelledby="deployments"
@@ -79,6 +80,9 @@ export default {
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const dateNumber = (date.getDate()).toString().padStart(2, '0')
     this.date = `${date.getFullYear()}-${month}-${dateNumber}`
+
+    // Auto focus
+    this.$refs.deployments.$el.children[0].focus()
   },
   components: {
     Box,

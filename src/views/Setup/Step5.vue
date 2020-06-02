@@ -10,6 +10,7 @@
       </p>
 
       <select
+        ref="freq"
         aria-labelledby="feedbackFrequently"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="feedbackFrequently"
@@ -61,6 +62,9 @@ export default {
   },
   components: {
     Box
+  },
+  mounted () {
+    this.$refs.freq.focus()
   },
   methods: {
     ...mapActions([
