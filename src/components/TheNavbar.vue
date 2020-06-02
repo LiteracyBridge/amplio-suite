@@ -20,43 +20,57 @@
         </div>
       </div>
 
-      <nav :class="isOpen ? 'block' : 'hidden'" class="ml-5 md:flex">
-        <DropDown :options="options" class="hidden md:block">
-          <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
-        </DropDown>
+      <nav :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
+        <div class="inline-flex">
+          <DropDown :options="options" class="hidden md:block">
+            <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
+          </DropDown>
 
-        <!-- On mobile, hidden the dropdown and show this -->
-        <div class="md:hidden">
-          <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
-          <div class="ml-8">
-            <a
-              v-for="(opt, index) in options"
-              :key="index"
-              :href="opt.link"
-              :target="opt.target ? opt.target : '_self'"
-              class="block text-base text-white rounded hover:text-gray-500"
-              @click="isOpen = false"
-            >
-              {{ opt.name }}
-            </a>
+          <!-- On mobile, hidden the dropdown and show this -->
+          <div class="md:hidden">
+            <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
+            <div class="ml-8">
+              <a
+                v-for="(opt, index) in options"
+                :key="index"
+                :href="opt.link"
+                :target="opt.target ? opt.target : '_self'"
+                class="block text-base text-white rounded hover:text-gray-500"
+                @click="isOpen = false"
+              >
+                {{ opt.name }}
+              </a>
+            </div>
           </div>
+
+          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+            Roadmap
+          </a>
+          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+            Content Library
+          </a>
+          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+            Feedback
+          </a>
         </div>
 
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
-          Roadmap
-        </a>
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
-          Content Library
-        </a>
-        <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
-          Feedback
-        </a>
+        <div class="inline-flex">
+          <span
+            tabindex="0"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded cursor-pointer hover:text-gray-500"
+            @click="handleLogout"
+          >
+            Log out
+          </span>
+        </div>
       </nav>
     </div>
   </header>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import DropDown from '@/components/TheNavbarDropDown'
 
 import Bars from '@/assets/svg/bars.svg'
@@ -78,6 +92,15 @@ export default {
     Bars,
     Close,
     DropDown
+  },
+  methods: {
+    ...mapActions('account', [
+      'logout'
+    ]),
+    handleLogout () {
+      this.logout()
+      this.$router.push('/login')
+    }
   }
 }
 </script>
