@@ -78,8 +78,6 @@ const setDeploymentFrequency = async ({ commit, state, dispatch }, payload) => {
 const setDeploymentInit = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentInit', payload)
 
-  console.log(payload)
-
   // Check if the step if completed
   const isComplete = (state.deployments > -1) && (state.deploymentFrequency !== '') 
     && (state.deploymentInit !== '') && (new Date(payload) >= new Date())
