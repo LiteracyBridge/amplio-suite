@@ -7,7 +7,11 @@
     <div class="grid grid-cols-3 gap-10">
       <router-link :to="{ name: 'Step-1' }">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
-          Define your program specification and complete installation of required tools
+          Define your program specification and complete installation of required tools.
+          <br>
+          <router-link :to="{ name: 'installation' }" class="underline text-blue">
+            Install the ACM Bundle software
+        </router-link>
         </home-box>
       </router-link>
 
