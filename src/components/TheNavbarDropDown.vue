@@ -17,16 +17,18 @@
 
     <!-- Options -->
     <div v-if="isOpen" class="absolute left-0 ml-2 mt-1 w-48 z-20 bg-white rounded-lg shadow-xl">
-      <a
+      <component
         v-for="(opt, index) in options"
         :key="index"
-        :href="opt.link"
-        :target="opt.target ? opt.target : '_self'"
+        :is="opt.tag === 'router-link' ? 'router-link' : 'a'"
+        :to="opt.tag === 'router-link' ? opt.link : false"
+        :href="opt.tag === 'router-link' ? false : opt.link"
+        :target="opt.target ? opt.target : false"
         class="block px-4 py-2 text-gray-800 hover:bg-blue hover:text-white"
         @click="isOpen = false"
       >
         {{ opt.name }}
-      </a>
+      </component>
     </div>
   </div>
 </template>
