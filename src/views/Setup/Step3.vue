@@ -18,7 +18,8 @@
         :aria-describedby="`listeningModels-${index + 1}`"
         class="relative cursor-pointer rounded border border-gray-500 s"
         @click="toggleListening(opt.value)"
-        @keyup.enter="toggleListening(opt.value)"
+        @keyup.space="toggleListening(opt.value)"
+        @keyup.enter="clickOnButton"
       >
         <img
           :src="`/img/listening/${opt.label}.png`"
@@ -92,7 +93,10 @@ export default {
   methods: {
     ...mapActions([
       'toggleListening'
-    ])
+    ]),
+    clickOnButton () {
+      document.getElementById('nextStep').click()
+    }
   }
 }
 </script>

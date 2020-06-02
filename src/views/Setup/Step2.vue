@@ -4,12 +4,14 @@
     next="Step-3"
     title="Help us understand more about your program."
   >
-    <p class="text-2xl font-semibold">
+    <p id="sdg" class="text-2xl font-semibold">
       Which Sustainable Development Goals (SDGs) does your program
       work towards? Select/Deselect all that apply.
     </p>
 
-    <div class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
+    <div
+      aria-labelledby="sdg"
+      class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
         v-for="(opt, index) in options"
         :key="index"
@@ -19,7 +21,8 @@
         :aria-describedby="`goal-${index + 1}`"
         class="relative s"
         @click="toggleGoal(opt)"
-        @keyup.enter="toggleGoal(opt)"
+        @keyup.space="toggleGoal(opt)"
+        @keyup.enter="clickOnButton"
       >
         <img
           :src="`/img/goals/Goal-${index + 1}.png`"
@@ -71,7 +74,10 @@ export default {
   methods: {
     ...mapActions([
       'toggleGoal'
-    ])
+    ]),
+    clickOnButton () {
+      document.getElementById('nextStep').click()
+    }
   }
 }
 </script>
