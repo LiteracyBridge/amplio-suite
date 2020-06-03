@@ -87,6 +87,18 @@ export default class CognitoAuth {
     })
   }
 
+  confirmPassword(username, confirmationCode, newPassword) {
+    let userData = { Username: username, Pool: this.userPool }
+    let cognitoUser = new CognitoUser(userData)
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmPassword(confirmationCode, newPassword, {
+        onSuccess (){ resolve() },
+        onFailure (err){ reject(err) }
+      })
+    })
+  }
+
   // a helper function that allows us to
   // get the information for the current user
   getCurrentUser () {
