@@ -8,10 +8,6 @@
       <router-link :to="{ name: 'Step-1' }">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
           Define your program specification and complete installation of required tools.
-          <br>
-          <router-link :to="{ name: 'installation' }" class="underline text-blue">
-            Install the ACM Bundle software
-        </router-link>
         </home-box>
       </router-link>
 
@@ -27,6 +23,11 @@
         </home-box>
       </a>
     </div>
+
+    <p class="mt-10 text-lg">
+      <router-link to="/download" class="underline text-blue">Click here</router-link>
+      to download required tools and supporting applications.
+    </p>
   </main>
 </template>
 
