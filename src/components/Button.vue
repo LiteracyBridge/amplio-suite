@@ -2,7 +2,7 @@
   <component
     :is="tag"
     :class="color"
-    class="inline-flex items-center px-5 py-2 text-white rounded"
+    class="inline-flex items-center justify-center px-5 py-2 text-white rounded"
     v-bind="$attrs"
     v-on="$listeners"
   >
