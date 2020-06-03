@@ -28,8 +28,8 @@ export default {
   actions: {
     async login ({ commit }, payload) {
       commit('authRequest')
-      // cognitoAuth.signup(payload.user, payload.user, payload.password, (err, result) => {
       return new Promise((resolve) => {
+        // cognitoAuth.signup(payload.user, payload.user, payload.password, (err, result) => {
         cognitoAuth.authenticate(payload.user, payload.password, (err, result) => {
           if (err) {
             commit('authError')

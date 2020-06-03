@@ -72,6 +72,23 @@ export default class CognitoAuth {
     })
   }
 
+  forgotPassword(username, cb) {
+    let userData = { Username: username, Pool: this.userPool }
+    let cognitoUser = new CognitoUser(userData)
+
+    cognitoUser.forgotPassword({
+        onSuccess: function (result) {
+            cb(null, result)
+        },
+        onFailure: function (err) {
+            cb(err);
+        },
+        inputVerificationCode: function (result) {
+          console.log('Verification code: ', result)
+        }
+    })
+  }
+
   // a helper function that allows us to
   // get the information for the current user
   getCurrentUser () {
