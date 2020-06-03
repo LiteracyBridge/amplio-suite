@@ -1,7 +1,5 @@
 <template>
-  <main class="container mx-auto text-center" :class="showError ? 'pt-20' : 'pt-40'">
-    <h1 class="visually_hidden">Amplio Suite Login</h1>
-
+  <main class="container mx-auto text-center" :class="showError ? 'pt-4' : 'pt-24'">
     <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
       Invalid Login or password.
     </v-notification>
@@ -9,43 +7,48 @@
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
-      <form v-on:submit.prevent>
-        <v-input
-          ref="user"
-          icon-left="user-circle"
-          type="text"
-          placeholder="Email address"
-          aria-label="Email address"
-          class="mt-10"
-          :value="user"
-          @input="setUser($event.target.value)"
-        />
+      <h1 class="mt-10 text-xl">Sign in to Amplio Suite</h1>
 
-        <v-input
-          type="password"
-          placeholder="Password"
-          aria-label="Password"
-          :value="password"
-          @input="setPassword($event.target.value)"
-        />
+      <div class="mt-5 p-6 bg-white rounded-lg shadow-box">
+        <form v-on:submit.prevent>
+          <v-input
+            ref="user"
+            icon-left="user-circle"
+            type="text"
+            placeholder="Email address"
+            aria-label="Email address"
+            class="my-0"
+            :value="user"
+            @input="setUser($event.target.value)"
+          />
 
-        <div class="pt-2">
-          <a href="#" class="p-2 text-sm text-right text-blue underline">
-            Forgot your password?
-          </a>
-        </div>
+          <v-input
+            type="password"
+            placeholder="Password"
+            aria-label="Password"
+            class="my-0 mt-4"
+            :value="password"
+            @input="setPassword($event.target.value)"
+          />
 
-        <Button
-          type="submit"
-          :iconLeft="status === 'loading' ? 'spinner' : ''"
-          size="2x"
-          :pulse="status === 'loading'"
-          :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
-          text="Sign In"
-          class="mt-8"
-          @click="handleLogin"
-        />
-      </form>
+          <div class="mt-2">
+            <router-link to="/password_reset" class="float-right text-sm text-right text-blue underline">
+              Forgot your password?
+            </router-link>
+          </div>
+
+          <Button
+            type="submit"
+            :iconLeft="status === 'loading' ? 'spinner' : ''"
+            size="2x"
+            :pulse="status === 'loading'"
+            :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
+            text="Sign In"
+            class="w-full mt-8"
+            @click="handleLogin"
+          />
+        </form>
+      </div>
     </div>
   </main>
 </template>
@@ -95,7 +98,11 @@ export default {
       if (status === 'success') {
         this.$router.push('/')
       } else {
+        this.user = ''
+        this.password = ''
         this.showError = true
+
+        this.$refs.user.$el.children[1].focus()
       }
     }
   }
