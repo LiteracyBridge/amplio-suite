@@ -93,8 +93,12 @@ export default class CognitoAuth {
 
     return new Promise((resolve, reject) => {
       cognitoUser.confirmPassword(confirmationCode, newPassword, {
-        onSuccess (){ resolve() },
-        onFailure (err){ reject(err) }
+        onSuccess (){
+          resolve()
+        },
+        onFailure (err){
+          reject(err)
+        }
       })
     })
   }
