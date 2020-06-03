@@ -1,17 +1,17 @@
 <template>
   <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
-      Software Installation
+      Software Download
     </h1>
 
     <section class="p-6 bg-white rounded-lg shadow-box">
       <div class="min-h-200-px py-5 text-left">
         <p class="text-2xl font-semibold">
-          1. Download and install <a class="underline text-blue" href="#">Dropbox</a>
+          1. Download and install <a class="underline text-blue" href="https://www.dropbox.com/downloading" target="_blank">Dropbox</a>
         </p>
 
         <p class="text-2xl font-semibold pt-5">
-          2. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/windows/" target="_blank">Audacity</a>
+          2. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/" target="_blank">Audacity</a>
         </p>
 
         <p class="text-2xl font-semibold pt-5">
@@ -28,13 +28,13 @@
           <li class="block">
             <span class="inline-flex items-center">
               <font-awesome-icon icon="check" class="w-4 h-4 pr-3 text-gray-500" />
-              Audio content manager
+              Audio Content Manager
             </span>
           </li>
           <li class="block">
             <span class="inline-flex items-center">
               <font-awesome-icon icon="check" class="w-4 h-4 pr-3 text-gray-500" />
-              TB loader
+              Talking Book Loader
             </span>
           </li>
         </ul>
