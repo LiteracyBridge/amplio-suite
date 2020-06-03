@@ -77,9 +77,8 @@ const routes = [
     ]
   },
   {
-    path: '/installation',
-    name: 'installation', //TODO: remove this name
-    component: () => import(/* webpackChunkName: "installation" */ '../views/Installation.vue'),
+    path: '/download',
+    component: () => import(/* webpackChunkName: "download" */ '../views/Download.vue'),
     beforeEnter: requireAuth
   }
 ]

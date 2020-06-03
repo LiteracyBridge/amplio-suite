@@ -84,7 +84,7 @@ export default {
         { name: 'Learning Portal', link: 'https://amplio.moodlecloud.com/', target: '_blank' },
         { name: 'Analytics Dashboard', link: 'https://dashboard.amplio.org/', target: '_blank' },
         { name: 'Applications & Tools', link: '#' },
-        { name: 'Software Installation', link: '/installation', tag: 'router-link' }
+        { name: 'Software Installation', link: '/download', tag: 'router-link' }
       ]
     }
   },
