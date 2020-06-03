@@ -60,6 +60,7 @@ export default class CognitoAuth {
                 IdentityPoolId: config.UserPoolId,
                 Logins: logins
             })
+
             cb(null, result)
         },
         onFailure: function (err) {
@@ -82,9 +83,6 @@ export default class CognitoAuth {
         },
         onFailure: function (err) {
             cb(err);
-        },
-        inputVerificationCode: function (result) {
-          console.log('Verification code: ', result)
         }
     })
   }

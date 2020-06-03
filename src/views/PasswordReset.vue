@@ -26,6 +26,7 @@
             size="2x"
             text="Send password reset email"
             class="mt-4"
+            @click="handleReset"
           />
         </form>
       </div>
@@ -41,6 +42,7 @@
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
 import VNotification from '@/components/VNotification'
+import cognitoAuth from '@/cognito'
 
 export default {
   components: {
@@ -61,6 +63,11 @@ export default {
   methods: {
     setUser (value) {
       this.user = value
+    },
+    handleReset () {
+      cognitoAuth.forgotPassword(this.user, (err, result) => {
+        console.log(err, result)
+      })
     }
   }
 }
