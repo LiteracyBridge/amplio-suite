@@ -36,9 +36,13 @@
         </div>
 
         <Button
-          class="mt-8"
-          text="Sign In"
           type="submit"
+          :iconLeft="status === 'loading' ? 'spinner' : ''"
+          size="2x"
+          :pulse="status === 'loading'"
+          :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
+          text="Sign In"
+          class="mt-8"
           @click="handleLogin"
         />
       </form>
@@ -47,7 +51,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -58,6 +62,11 @@ export default {
     Button,
     VInput,
     VNotification
+  },
+  computed: {
+    ...mapState('account', [
+      'status'
+    ])
   },
   data () {
     return {
