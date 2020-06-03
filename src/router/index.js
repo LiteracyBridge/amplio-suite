@@ -24,6 +24,14 @@ const routes = [
     }
   },
   {
+    path: '/password_reset',
+    component: () => import(/* webpackChunkName: "password_reset" */ '../views/PasswordReset.vue'),
+    beforeEnter: checkAuth,
+    meta: {
+      layout: 'login'
+    }
+  },
+  {
     path: '/setup',
     redirect: { name: 'Step-1' },
     beforeEnter: requireAuth,
