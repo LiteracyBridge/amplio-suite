@@ -4,7 +4,7 @@
       <img class="transform duration-500" :src="img" :alt="alt">
     </div>
     <h2 class="py-4 text-xl font-bold">{{ title }}</h2>
-    <p class="text-lg text-justify">
+    <p class="text-lg text-center">
       <slot />
     </p>
   </div>
