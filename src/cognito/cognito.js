@@ -60,6 +60,7 @@ export default class CognitoAuth {
                 IdentityPoolId: config.UserPoolId,
                 Logins: logins
             })
+
             cb(null, result)
         },
         onFailure: function (err) {
@@ -69,6 +70,36 @@ export default class CognitoAuth {
         // newPasswordRequired: function (userAttributes, requiredAttributes) {
             console.log('New Password Is Required')
         }
+    })
+  }
+
+  forgotPassword(username, cb) {
+    let userData = { Username: username, Pool: this.userPool }
+    let cognitoUser = new CognitoUser(userData)
+
+    cognitoUser.forgotPassword({
+        onSuccess: function (result) {
+            cb(null, result)
+        },
+        onFailure: function (err) {
+            cb(err);
+        }
+    })
+  }
+
+  confirmPassword(username, confirmationCode, newPassword) {
+    let userData = { Username: username, Pool: this.userPool }
+    let cognitoUser = new CognitoUser(userData)
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmPassword(confirmationCode, newPassword, {
+        onSuccess (){
+          resolve()
+        },
+        onFailure (err){
+          reject(err)
+        }
+      })
     })
   }
 

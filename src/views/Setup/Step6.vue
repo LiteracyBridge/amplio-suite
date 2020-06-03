@@ -55,8 +55,7 @@ export default {
       'setLanguages',
       'addLangInput'
     ]),
-    addInput (event) {
-      console.log(event)
+    addInput () {
       this.amountOfInputs++
     }
   }

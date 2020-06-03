@@ -3,6 +3,9 @@
     <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
       Invalid email.
     </v-notification>
+    <v-notification v-model="showSuccess" icon="exclamation-circle">
+      {{successTitle}}
+    </v-notification>
 
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
@@ -21,11 +24,22 @@
             @input="setUser($event.target.value)"
           />
 
+          <v-input
+            v-if="$attrs.reset_password_token"
+            type="password"
+            placeholder="Enter your password"
+            aria-label="Enter your Password"
+            class="my-0"
+            :value="password"
+            @input="setPassword($event.target.value)"
+          />
+
           <Button
             type="submit"
             size="2x"
-            text="Send password reset email"
+            :text="$attrs.reset_password_token ? 'Set new password': 'Send password reset email'"
             class="mt-4"
+            @click="handleReset"
           />
         </form>
       </div>
@@ -41,6 +55,7 @@
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
 import VNotification from '@/components/VNotification'
+import cognitoAuth from '@/cognito'
 
 export default {
   components: {
@@ -51,8 +66,10 @@ export default {
   data () {
     return {
       user: '',
-
-      showError: false
+      password: '',
+      showError: false,
+      showSuccess: false,
+      successTitle: 'Password successfully reset'
     }
   },
   mounted () {
@@ -61,6 +78,36 @@ export default {
   methods: {
     setUser (value) {
       this.user = value
+    },
+    setPassword (value) {
+      this.password = value
+    },
+    handleReset () {
+      if (this.$attrs.reset_password_token) {
+        return cognitoAuth.confirmPassword(this.user, this.$attrs.reset_password_token, this.password)
+        .then(() => {
+          this.user = ''
+          this.password = ''
+          this.showSuccess = true
+          this.showError = false
+        })
+        .catch(() => {
+          this.showSuccess = false
+          this.showError = true
+        })
+      } else {
+        cognitoAuth.forgotPassword(this.user, (err) => {
+          if (err) {
+            this.showSuccess = false
+            this.showError = true
+          } else {
+            this.user = ''
+            this.successTitle = "Password reset email sent"
+            this.showSuccess = true
+            this.showError = false
+          }
+        })
+      }
     }
   }
 }
