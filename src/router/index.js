@@ -22,6 +22,7 @@ const routes = [
     meta: {
       layout: 'login'
     },
+    props: (route) => ({ notify: route.query.notify })
   },
   {
     path: '/password_reset',

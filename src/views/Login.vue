@@ -1,9 +1,5 @@
 <template>
-  <main class="container mx-auto text-center" :class="showError ? 'pt-4' : 'pt-24'">
-    <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
-      Invalid Login or password.
-    </v-notification>
-
+  <main class="container mx-auto text-center pt-24">
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
@@ -54,29 +50,25 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
-import VNotification from '@/components/VNotification'
 
 export default {
   components: {
     Button,
     VInput,
-    VNotification
   },
   computed: {
     ...mapState('account', [
       'status'
-    ])
+    ]),
   },
   data () {
     return {
       user: '',
       password: '',
-
-      showError: false
     }
   },
   mounted () {
@@ -85,6 +77,9 @@ export default {
   methods: {
     ...mapActions('account', [
       'login'
+    ]),
+    ...mapMutations('notification', [
+      'alert'
     ]),
     setUser (value) {
       this.user = value
@@ -100,7 +95,8 @@ export default {
       } else {
         this.user = ''
         this.password = ''
-        this.showError = true
+
+        this.alert('Invalid Login or password')
 
         this.$refs.user.$el.children[1].focus()
       }

@@ -1,12 +1,5 @@
 <template>
-  <main class="container mx-auto text-center" :class="showError ? 'pt-4' : 'pt-24'">
-    <v-notification v-model="showError" icon="exclamation-circle" type="is-danger">
-      Invalid email.
-    </v-notification>
-    <v-notification v-model="showSuccess" icon="exclamation-circle">
-      {{successTitle}}
-    </v-notification>
-
+  <main class="container mx-auto text-center pt-24">
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
@@ -52,30 +45,30 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
-import VNotification from '@/components/VNotification'
 import cognitoAuth from '@/cognito'
 
 export default {
   components: {
     Button,
     VInput,
-    VNotification
   },
   data () {
     return {
       user: '',
       password: '',
-      showError: false,
-      showSuccess: false,
-      successTitle: 'Password successfully reset'
     }
   },
   mounted () {
     this.$refs.email.$el.children[0].focus()
   },
   methods: {
+    ...mapMutations('notification', [
+      'alert',
+      'notice'
+    ]),
     setUser (value) {
       this.user = value
     },
@@ -86,25 +79,19 @@ export default {
       if (this.$attrs.reset_password_token) {
         return cognitoAuth.confirmPassword(this.user, this.$attrs.reset_password_token, this.password)
         .then(() => {
-          this.user = ''
-          this.password = ''
-          this.showSuccess = true
-          this.showError = false
+          this.notice('Password reset successful')
+          this.$router.push('/login')
         })
         .catch(() => {
-          this.showSuccess = false
-          this.showError = true
+          this.alert('Invalid email')
         })
       } else {
         cognitoAuth.forgotPassword(this.user, (err) => {
           if (err) {
-            this.showSuccess = false
-            this.showError = true
+            this.alert('Invalid email')
           } else {
+            this.notice('Password reset email sent')
             this.user = ''
-            this.successTitle = "Password reset email sent"
-            this.showSuccess = true
-            this.showError = false
           }
         })
       }
