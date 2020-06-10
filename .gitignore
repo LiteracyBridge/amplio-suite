@@ -1,3 +1,8 @@
+# Win installer
+installer/acm.jar
+installer/lib
+installer/jre_setup.exe
+
 # build output
 dist
 
