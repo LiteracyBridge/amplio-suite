@@ -61,3 +61,17 @@ TODO
 Note some problems we had in staging, for the day we go to prod
 
 - [Add secrets manager to the VPC](https://aws.amazon.com/blogs/security/how-to-connect-to-aws-secrets-manager-service-within-a-virtual-private-cloud/)
+
+## Minimum browser requirements
+
+### Browsers versions
+The following are the minimum supported browsers versions:
+
+Google Chrome 80.0+
+Firefox 75.0+
+Safari 13+
+Opera 67+
+Edge 18+
+
+### Screen resolutions
+The minimum supported screen resolution is 1366x768. Mobile devices and screen resolutions less than 1366x768 are not supported.
