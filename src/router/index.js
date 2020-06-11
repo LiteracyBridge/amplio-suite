@@ -31,7 +31,6 @@ const routes = [
     meta: {
       layout: 'login'
     },
-    props: (route) => ({ reset_password_token: route.query.reset_password_token })
   },
   {
     path: '/setup',
@@ -105,24 +104,17 @@ router.beforeEach((to, from, next) => {
 })
 
 function requireAuth (to, from, next) {
-  if (to.query.reset_password_token) {
-    next({
-      path:'/password_reset',
-      query: to.query
-    })
-  } else {
-    cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
-      if (!loggedIn) {
-        if (tokenOrError) return next()
-        next({
-          path: '/login',
-          query: { redirect: to.fullPath }
-        })
-      } else {
-        next()
-      }
-    })
-  }
+  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
+    if (!loggedIn) {
+      if (tokenOrError) return next()
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  })
 }
 
 function checkAuth(to, from, next) {
