@@ -79,6 +79,26 @@ const routes = [
     ]
   },
   {
+    path: '/program',
+    redirect: { path: '/program/general' },
+    component: () => import(/* webpackChunkName: "program" */ '../views/Program/index.vue'),
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: 'general',
+        component: () => import(/* webpackChunkName: "general" */ '../views/Program/General.vue')
+      },
+      {
+        path: 'deployment',
+        component: () => import(/* webpackChunkName: "deployment" */ '../views/Program/Deployment.vue')
+      },
+      {
+        path: 'content',
+        component: () => import(/* webpackChunkName: "content" */ '../views/Program/Content.vue')
+      }
+    ]
+  },
+  {
     path: '/download',
     component: () => import(/* webpackChunkName: "download" */ '../views/Download.vue'),
     beforeEnter: requireAuth
