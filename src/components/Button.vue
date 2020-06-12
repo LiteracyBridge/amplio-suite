@@ -12,7 +12,7 @@
       :size="size"
       :pulse="pulse"
       class="w-6 h-6" />
-    <span class="ml-2">{{ text }}</span>
+    <span :class="iconLeft !== '' ? 'ml-2' : ''">{{ text }}</span>
   </component>
 </template>
 

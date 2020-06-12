@@ -1,0 +1,29 @@
+.visually_hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  width: 1px !important;
+  overflow: hidden;
+}
+
+// Use [:focus-visible polyfill](https://github.com/WICG/focus-visible) to show
+// dashed only when focus by keyboard
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.js-focus-visible .focus-visible {
+  outline: 3px dashed;
+}
+
+.js-focus-visible button.focus-visible {
+  outline: 3px dashed black;
+}
+
+// Use on step 2 and 3
+.s:focus img,
+.s:hover img {
+  opacity: 0.25;
+}
