@@ -33,6 +33,9 @@ module.exports = {
       },
       spacing: {
         96: '24rem'
+      },
+      gridTemplateColumns: {
+        program: 'minmax(100px, auto) 1fr'
       }
     }
   }
