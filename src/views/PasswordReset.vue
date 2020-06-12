@@ -12,13 +12,25 @@
             type="email"
             placeholder="Enter your email address"
             aria-label="Enter your Email address"
+            :disabled="resetEmailSent"
             class="my-0"
             :value="user"
             @input="setUser($event.target.value)"
           />
 
           <v-input
-            v-if="$attrs.reset_password_token"
+            v-if="resetEmailSent"
+            ref="resetToken"
+            type="text"
+            placeholder="Enter your reset token"
+            aria-label="Enter your reset token"
+            class="my-0"
+            :value="resetToken"
+            @input="setResetToken($event.target.value)"
+          />
+
+          <v-input
+            v-if="resetEmailSent"
             type="password"
             placeholder="Enter your password"
             aria-label="Enter your Password"
@@ -30,11 +42,21 @@
           <Button
             type="submit"
             size="2x"
-            :text="$attrs.reset_password_token ? 'Set new password': 'Send password reset email'"
+            :text="resetEmailSent ? 'Set new password' : 'Send password reset email'"
             class="mt-4"
-            @click="handleReset"
+            @click="resetEmailSent ? resetPassword() : sendEmail()"
           />
+
         </form>
+
+        <p class="text-sm mt-4" v-if="resetEmailSent">
+          Didn't get your password reset email?
+        </p>
+        <p class="text-sm mt-4" v-if="resetEmailSent">
+          <a class="text-blue underline" @click="resetForm" href="javascript:">
+            Click here to try again!
+          </a>
+        </p>
       </div>
 
       <p class="text-sm mt-4">
@@ -59,6 +81,8 @@ export default {
     return {
       user: '',
       password: '',
+      resetToken: '',
+      resetEmailSent: false,
     }
   },
   mounted () {
@@ -75,9 +99,21 @@ export default {
     setPassword (value) {
       this.password = value
     },
-    handleReset () {
-      if (this.$attrs.reset_password_token) {
-        return cognitoAuth.confirmPassword(this.user, this.$attrs.reset_password_token, this.password)
+    setResetToken (value) {
+      this.resetToken = value
+    },
+    sendEmail () {
+      cognitoAuth.forgotPassword(this.user, (err) => {
+        if (err) {
+          this.alert('Too many attempts')
+        } else {
+          this.notice('Password reset email sent')
+          this.resetEmailSent = true
+        }
+      })
+    },
+    resetPassword () {
+      return cognitoAuth.confirmPassword(this.user, this.resetToken, this.password)
         .then(() => {
           this.notice('Password reset successful')
           this.$router.push('/login')
@@ -85,16 +121,12 @@ export default {
         .catch(() => {
           this.alert('Invalid email')
         })
-      } else {
-        cognitoAuth.forgotPassword(this.user, (err) => {
-          if (err) {
-            this.alert('Invalid email')
-          } else {
-            this.notice('Password reset email sent')
-            this.user = ''
-          }
-        })
-      }
+    },
+    resetForm () {
+      this.resetEmailSent = false
+      this.user = ''
+      this.password = ''
+      this.resetToken = ''
     }
   }
 }
