@@ -1,7 +1,7 @@
 # Win installer
 installer/acm.jar
 installer/lib
-installer/jre_setup.exe
+installer/jre
 
 # build output
 dist
