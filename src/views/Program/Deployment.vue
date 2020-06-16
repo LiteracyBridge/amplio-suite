@@ -8,7 +8,7 @@
       :key="index"
       class="flex items-center justify-between"
     >
-      <p :id="`dep_${index}`">Deployment {{ index }}</p>
+      <p :id="`dep_${index}`">Deployment {{ index + 1 }}</p>
       <v-input
         type="date"
         iconLeft="calendar-alt"
@@ -57,12 +57,21 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
 import VModal from '@/components/VModal'
 
 export default {
+  computed: {
+    ...mapState([
+      'deployments',
+      'deploymentFrequency',
+      'deploymentInit'
+    ])
+  },
   components: {
     Box,
     VButton,
@@ -73,18 +82,28 @@ export default {
     return {
       isModalOpen: false,
 
-      // This data must by come from vuex
-      startDeployments: [
-        '2019-05-01',
-        '2019-07-01',
-        '2019-09-01'
-      ],
-      endDeployments: [
-        '2019-07-01',
-        '2019-09-01',
-        '2019-11-01'
-      ]
+      startDeployments: [],
+      endDeployments: []
     }
+  },
+  mounted () {
+    const increment = this.deploymentFrequency === 'one_month' ? 1 :
+      this.deploymentFrequency === '1_quarter' ? 3 :
+        this.deploymentFrequency === 'six_months' ? 6 :
+          this.deploymentFrequency === 'one_year' ? 12 : 0
+
+    this.startDeployments = [this.deploymentInit]
+    for (let i=1; i < this.deployments; i++) {
+      const prev = new Date(this.startDeployments[i - 1])
+      const next = new Date(prev.setMonth(prev.getMonth() + increment))
+      this.startDeployments.push(next.toISOString().split('T')[0])
+    }
+
+    this.endDeployments = this.startDeployments.map(date => {
+      const start = new Date(date)
+      const end = new Date(start.setMonth(start.getMonth() + increment))
+      return end.toISOString().split('T')[0]
+    })
   }
 }
 </script>

@@ -10,7 +10,7 @@
         ref="programName"
         aria-labelledby="programName"
         placeholder="Enter Program Name"
-        value="UNICEF Program"
+        :value="programName"
         mx="mx-0"
       />
 
@@ -20,19 +20,20 @@
         ref="deployments"
         aria-labelledby="deployments"
         placeholder="Number of Deployments"
-        value="3"
+        :value="deployments"
         mx="mx-0"
       />
 
       <p id="langs" class="px-4">Languages</p>
       <div>
         <div
-          v-for="lang in languages"
-          :key="lang"
+          v-for="index in amountOfLang"
+          :key="index"
           class="flex"
         >
           <v-input
-            :value="lang"
+            :ref="`lang_${index}`"
+            :value="languages[index]"
             type="text"
             aria-labelledby="lang"
             placeholder="Choose language"
@@ -72,12 +73,22 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
 import VModal from '@/components/VModal'
 
 export default {
+  computed: {
+    ...mapState([
+      'programName',
+      'deployments',
+      'languages',
+      'amountOfLang'
+    ])
+  },
   components: {
     Box,
     VButton,
@@ -86,10 +97,7 @@ export default {
   },
   data () {
     return {
-      isModalOpen: false,
-
-      // This data must by come from vuex
-      languages: ['English', 'French']
+      isModalOpen: false
     }
   }
 }
