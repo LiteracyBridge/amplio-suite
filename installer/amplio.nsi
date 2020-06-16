@@ -8,7 +8,7 @@ Unicode true
 ;--------------------------------
 ;Config vars
 
-  !define NAME "ACM-new"
+  !define NAME "ACM"
   !define FULL_NAME "Amplio Audio Content Manager"
   !define VERSION "1.0"
 
@@ -24,7 +24,7 @@ Unicode true
   OutFile "${NAME} ${VERSION} Installer.exe"
 
   ;Instalation path
-  InstallDir $PROFILE\LiteracyBridge\${NAME}
+  InstallDir $PROFILE\Amplio\${NAME}
 
 ;--------------------------------
 ;Interface Settings
@@ -109,16 +109,7 @@ Section
   File acm.jar
   File /r lib
   File /r images
-  File jre_setup.exe
-
-  ;Install java
-  SetDetailsPrint both
-  DetailPrint "Installing Java"
-  SetDetailsPrint none
-  ExecWait '"$INSTDIR\jre_setup.exe" /s INSTALLDIR="$INSTDIR\jre"'
-  Delete "$INSTDIR\jre_setup.exe"
-  SetDetailsPrint both
-  DetailPrint "Java successfully installed"
+  File /r jre  ;Local JRE 8
 
   ;Update the base path
   Push path_to_replace #text to be replaced
