@@ -17,7 +17,6 @@ const routes = [
   {
     path: '/login',
     component: Login,
-    name: 'Login',
     beforeEnter: checkAuth,
     meta: {
       layout: 'login'
@@ -80,7 +79,7 @@ const routes = [
   {
     path: '/program',
     redirect: { path: '/program/general' },
-    component: () => import(/* webpackChunkName: "program" */ '../views/Program/index.vue'),
+    component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
     beforeEnter: requireAuth,
     children: [
       {

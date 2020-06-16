@@ -31,6 +31,7 @@
 
 <script>
 export default {
+  name: 'Program',
   data () {
     return {
       sections: [
