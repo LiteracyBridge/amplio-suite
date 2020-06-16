@@ -1,6 +1,6 @@
 <template>
   <Box
-    next="Step-2"
+    :next="{ name: 'Step-2' }"
     title="Let’s start by getting your program details. If your
     program details change later, you can always update the program
     specification to match your requirements."

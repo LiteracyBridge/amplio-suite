@@ -1,7 +1,6 @@
 <template>
   <Box
-    prev="Step-6"
-    next="Home"
+    next="/program"
     title="Thank you! We automatically updated the Program Specification based
     on your responses. Please complete the remaining details."
   />

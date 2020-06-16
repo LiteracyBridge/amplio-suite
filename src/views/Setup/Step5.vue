@@ -1,7 +1,7 @@
 <template>
   <Box
-    prev="Step-4"
-    next="Step-6"
+    :prev="{ name: 'Step-4' }"
+    :next="{ name: 'Step-6' }"
     title="You are doing great!"
   >
     <div>

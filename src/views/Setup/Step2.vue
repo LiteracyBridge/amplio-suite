@@ -1,7 +1,7 @@
 <template>
   <Box
-    prev="Step-1"
-    next="Step-3"
+    :prev="{ name: 'Step-1' }"
+    :next="{ name: 'Step-3' }"
     title="Help us understand more about your program."
   >
     <p id="sdg" class="text-2xl font-semibold">

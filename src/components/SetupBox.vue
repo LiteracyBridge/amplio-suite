@@ -54,11 +54,11 @@ export default {
       default: ''
     },
     prev: {
-      type: String,
+      type: [String, Object],
       default: ''
     },
     next: {
-      type: String,
+      type: [String, Object],
       default: ''
     }
   },
@@ -69,12 +69,12 @@ export default {
     ]),
     handlePrev () {
       this.prevStep()
-      this.$router.push({ name: this.prev  })
+      this.$router.push(this.prev)
     },
     handleNext () {
       if(this.isFill) {
         this.nextStep()
-        this.$router.push({ name: this.next  })
+        this.$router.push(this.next)
       }
     }
   }
