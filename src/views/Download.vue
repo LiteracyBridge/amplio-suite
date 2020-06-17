@@ -15,7 +15,7 @@
         </p>
 
         <p class="text-2xl font-semibold pt-5">
-          3. Download and install <a class="underline text-blue" href="#">ACM Bundle</a>. This installer includes:
+          3. Download and install <a class="underline text-blue" href="/ACM_1.0_Installer.exe" download>ACM Bundle</a>. This installer includes:
         </p>
 
         <ul class="pl-10 pt-5 text-2xl">
