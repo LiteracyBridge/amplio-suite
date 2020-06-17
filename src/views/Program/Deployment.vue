@@ -21,7 +21,7 @@
         type="date"
         iconLeft="calendar-alt"
         :aria-labelledby="`dep_${index}`"
-        :value="date"
+        :value="endDeployments[index]"
         mx="mx-0"
       />
 
