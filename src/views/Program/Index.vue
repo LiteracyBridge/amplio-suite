@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto text-center">
     <div class="my-6 px-4 flex justify-start">
-      <h1 class="text-2xl text-blue">UNICEF Program</h1>
+      <h1 class="text-2xl text-blue">{{ programName }} Program</h1>
     </div>
 
     <nav class="flex">
@@ -30,8 +30,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'Program',
+  computed: {
+    ...mapState([
+      'programName'
+    ])
+  },
   data () {
     return {
       sections: [
