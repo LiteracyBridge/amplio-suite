@@ -87,8 +87,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "general" */ '../views/Program/General.vue')
       },
       {
-        path: 'deployment',
-        component: () => import(/* webpackChunkName: "deployment" */ '../views/Program/Deployment.vue')
+        path: 'deployments',
+        component: () => import(/* webpackChunkName: "deployments" */ '../views/Program/Deployments.vue')
       },
       {
         path: 'content',

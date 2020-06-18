@@ -43,7 +43,7 @@ export default {
     return {
       sections: [
         { name: 'general' },
-        { name: 'deployment' },
+        { name: 'deployments' },
         { name: 'content' },
         { name: 'recipients', disabled: true },
         { name: 'components', disabled: true },
