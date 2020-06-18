@@ -35,7 +35,8 @@ module.exports = {
         96: '24rem'
       },
       gridTemplateColumns: {
-        program: 'minmax(100px, auto) 1fr'
+        program: 'minmax(100px, auto) 1fr',
+        deployments: 'auto repeat(3, 1fr) 50px'
       }
     }
   }

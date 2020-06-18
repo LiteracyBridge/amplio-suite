@@ -3,38 +3,43 @@
     title="Deployment"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
-    <div
-      v-for="(date, index) in startDeployments"
-      :key="index"
-      class="flex items-center justify-between"
-    >
-      <p :id="`dep_${index}`">Deployment {{ index + 1 }}</p>
-      <v-input
-        type="date"
-        iconLeft="calendar-alt"
-        :aria-labelledby="`dep_${index}`"
-        :value="date"
-        mx="mx-0"
-      />
+    <div class="grid grid-cols-deployments items-center justify-between">
+      <p class="col-start-2 text-sm text-gray-500 text-left">Start Date</p>
+      <p class="text-sm text-gray-500 text-left">End Date</p>
+      <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <v-input
-        type="date"
-        iconLeft="calendar-alt"
-        :aria-labelledby="`dep_${index}`"
-        :value="endDeployments[index]"
-        mx="mx-0"
-      />
+      <template v-for="(date, index) in startDeployments">
+        <p :key="`${index}-a`" :id="`dep_${index}`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
+        <v-input
+          :key="`${index}-b`"
+          type="date"
+          iconLeft="calendar-alt"
+          :aria-labelledby="`dep_${index}`"
+          :value="date"
+          mx="mx-0"
+        />
 
-      <select
-        aria-labelledby="deploymentLength"
-        class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-      >
-        <option value="all">All</option>
-      </select>
+        <v-input
+          :key="`${index}-c`"
+          type="date"
+          iconLeft="calendar-alt"
+          :aria-labelledby="`dep_${index}`"
+          :value="endDeployments[index]"
+          mx="mx-0"
+        />
 
-      <button @click="isModalOpen = true">
-        <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-      </button>
+        <select
+          :key="`${index}-d`"
+          aria-labelledby="deploymentLength"
+          class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+        >
+          <option value="all">All</option>
+        </select>
+
+        <button :key="`${index}-e`" @click="isModalOpen = true">
+          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
+        </button>
+      </template>
     </div>
 
     <v-modal v-model="isModalOpen">
