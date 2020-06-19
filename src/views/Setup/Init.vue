@@ -19,7 +19,7 @@
 import { mapActions, mapState } from 'vuex'
 
 export default {
-  computed: mapState([
+  computed: mapState('program', [
     'actualStep'
   ]),
   data () {
@@ -39,7 +39,7 @@ export default {
     next()
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'setStep'
     ])
   }

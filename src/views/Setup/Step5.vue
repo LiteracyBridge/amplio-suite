@@ -55,10 +55,10 @@ import Box from '@/components/SetupBox'
 
 export default {
   computed: {
-    ...mapState([
-      'feedbackFrequently',
-      'feedbackFrequentlyOther'
-    ])
+    ...mapState('program', {
+      feedbackFrequently: state => state.general.feedbackFrequently,
+      feedbackFrequentlyOther: state => state.general.feedbackFrequentlyOther
+    })
   },
   components: {
     Box
@@ -67,7 +67,7 @@ export default {
     this.$refs.freq.focus()
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'setFeedbackFrequently',
       'setFeedbackFrequentlyOther'
     ])

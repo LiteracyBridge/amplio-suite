@@ -42,16 +42,16 @@ export default {
     VInput
   },
   computed: {
-    ...mapState([
-      'languages',
-      'amountOfLang'
-    ])
+    ...mapState('program', {
+      languages: state => state.general.languages,
+      amountOfLang: state => state.general.amountOfLang
+    })
   },
   mounted () {
     this.$refs['lang_1'][0].$el.children[0].focus()
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'setLanguages',
       'addLangInput'
     ]),

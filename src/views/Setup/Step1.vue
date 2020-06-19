@@ -28,9 +28,9 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState([
-      'programName'
-    ])
+    ...mapState('program', {
+      programName: state => state.general.programName
+    })
   },
   components: {
     Box,
@@ -40,7 +40,7 @@ export default {
     this.$refs.programName.$el.children[0].focus()
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'setProgramName'
     ])
   }

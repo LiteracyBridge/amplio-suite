@@ -48,9 +48,9 @@ import Check from '@/assets/svg/check-circle.svg'
 
 export default {
   computed: {
-    ...mapState([
-      'goals'
-    ])
+    ...mapState('program', {
+      goals: state => state.content.goals
+    })
   },
   data () {
     return {
@@ -72,7 +72,7 @@ export default {
     Check
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'toggleGoal'
     ]),
     clickOnButton () {

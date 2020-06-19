@@ -16,7 +16,7 @@ export default {
     Box
   },
   methods: {
-    ...mapActions([
+    ...mapActions('program', [
       'createProgram'
     ])
   },

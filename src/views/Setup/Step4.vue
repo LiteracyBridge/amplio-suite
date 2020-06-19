@@ -15,12 +15,12 @@
         type="number"
         min="0"
         aria-labelledby="deployments"
-        :value="deployments"
-        @change="(event) => setDeployments(event.target.value)"
+        :value="amount"
+        @change="(event) => setDeploymentsAmount(event.target.value)"
       />
     </div>
 
-    <div v-if="deployments > 0" class="mt-10">
+    <div v-if="amount > 0" class="mt-10">
       <p id="deploymentLength" class="text-2xl font-semibold">
         What is the length of each deployment?
       </p>
@@ -28,8 +28,8 @@
       <select
         aria-labelledby="deploymentLength"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        :value="deploymentFrequency"
-        @change="(event) => setDeploymentFrequency(event.target.value)"
+        :value="frequency"
+        @change="(event) => setDeploymentsFrequency(event.target.value)"
       >
         <option value="">Select</option>
         <option value="one_month">1 Month</option>
@@ -39,7 +39,7 @@
       </select>
     </div>
 
-    <div v-if="deployments > 0" class="mt-10">
+    <div v-if="amount > 0" class="mt-10">
       <p id="firstDeployment" class="text-2xl font-semibold">
         Choose your first deployment start date
       </p>
@@ -49,8 +49,8 @@
         iconLeft="calendar-alt"
         aria-labelledby="firstDeployment"
         :min="date"
-        :value="deploymentInit"
-        @change="(event) => setDeploymentInit(event.target.value)"
+        :value="first"
+        @change="(event) => setDeploymentsFirst(event.target.value)"
       />
     </div>
   </Box>
@@ -64,11 +64,11 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState([
-      'deployments',
-      'deploymentFrequency',
-      'deploymentInit'
-    ])
+    ...mapState('program', {
+      amount: state => state.deployments.amount,
+      first: state => state.deployments.first,
+      frequency: state => state.deployments.frequency
+    })
   },
   data () {
     return {
@@ -89,10 +89,10 @@ export default {
     VInput
   },
   methods: {
-    ...mapActions([
-      'setDeployments',
-      'setDeploymentFrequency',
-      'setDeploymentInit'
+    ...mapActions('program', [
+      'setDeploymentsAmount',
+      'setDeploymentsFrequency',
+      'setDeploymentsFirst'
     ])
   }
 }
