@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import multiguard from 'vue-router-multiguard'
 
 import store from '@/store'
 import Home from '@/views/Home.vue'
@@ -34,10 +35,8 @@ const routes = [
   {
     path: '/setup',
     redirect: { name: 'Step-1' },
-    beforeEnter: requireAuth,
-    // this generates a separate chunk (setup.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Init.vue'),
+    beforeEnter: multiguard([requireAuth, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
@@ -109,18 +108,14 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  // If the user is completing the wizard, check that the step is complete
-  if (to.path.startsWith('step-')) {
-    const nextStep = +to.path.split('-')[1]
-    const isComplete = store.state.completedSteps.includes(nextStep - 1)
+function stepIsCompleted (to, from, next) {
+  // Check if the step is completed
+  const nextStep = +to.path.split('-')[1]
+  const isComplete = store.state.program.completedSteps.includes(nextStep - 1)
 
-    if (isComplete) next()
-    else next(false)
-  } else {
-    next()
-  }
-})
+  if (isComplete) next()
+  else next(false)
+}
 
 function requireAuth (to, from, next) {
   cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
