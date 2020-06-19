@@ -11,6 +11,7 @@
         aria-labelledby="programName"
         placeholder="Enter Program Name"
         :value="programName"
+        @input="(event) => setProgramName(event.target.value)"
         mx="mx-0"
       />
 
@@ -20,7 +21,7 @@
         ref="deployments"
         aria-labelledby="deployments"
         placeholder="Number of Deployments"
-        :value="deployments"
+        :value="amountDeployments"
         mx="mx-0"
       />
 
@@ -64,8 +65,7 @@
         </div>
 
         <footer class="flex justify-between">
-          <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
-          <v-button @click="isModalOpen = false" text="Confirm" />
+          <v-button @click="isModalOpen = false" text="Ok" />
         </footer>
       </section>
     </v-modal>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
@@ -82,12 +82,12 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState([
-      'programName',
-      'deployments',
-      'languages',
-      'amountOfLang'
-    ])
+    ...mapState('program', {
+      programName: state => state.general.programName,
+      amountDeployments: state => state.deployments.amount,
+      languages: state => state.general.languages,
+      amountOfLang: state => state.general.amountOfLang
+    })
   },
   components: {
     Box,
@@ -99,6 +99,11 @@ export default {
     return {
       isModalOpen: false
     }
+  },
+  methods: {
+    ...mapActions('program', [
+      'setProgramName'
+    ])
   }
 }
 </script>

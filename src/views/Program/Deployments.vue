@@ -71,11 +71,11 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState([
-      'deployments',
-      'deploymentFrequency',
-      'deploymentInit'
-    ])
+    ...mapState('program', {
+      deploymentsAmount: state => state.deployments.amount,
+      deploymentsFirst: state => state.deployments.first,
+      deploymentsFrequency: state => state.deployments.frequency
+    })
   },
   components: {
     Box,
@@ -92,13 +92,13 @@ export default {
     }
   },
   mounted () {
-    const increment = this.deploymentFrequency === 'one_month' ? 1 :
-      this.deploymentFrequency === '1_quarter' ? 3 :
-        this.deploymentFrequency === 'six_months' ? 6 :
-          this.deploymentFrequency === 'one_year' ? 12 : 0
+    const increment = this.deploymentsFrequency === 'one_month' ? 1 :
+      this.deploymentsFrequency === '1_quarter' ? 3 :
+        this.deploymentsFrequency === 'six_months' ? 6 :
+          this.deploymentsFrequency === 'one_year' ? 12 : 0
 
-    this.startDeployments = [this.deploymentInit]
-    for (let i=1; i < this.deployments; i++) {
+    this.startDeployments = [this.deploymentsFirst]
+    for (let i=1; i < this.deploymentsAmount; i++) {
       const prev = new Date(this.startDeployments[i - 1])
       const next = new Date(prev.setMonth(prev.getMonth() + increment))
       this.startDeployments.push(next.toISOString().split('T')[0])
