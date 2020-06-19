@@ -11,12 +11,24 @@
     </div>
 
     <footer class="flex justify-between">
-      <slot name="footer"></slot>
+      <v-button text="Discard Changes" color="bg-gray-400" />
+      <v-button
+        @click="() => updateProgram({ tab: title.toLowerCase() })"
+        :iconLeft="status === 'loading' ? 'spinner' : ''"
+        size="2x"
+        :pulse="status === 'loading'"
+        :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
+        text="Save Change"
+      />
     </footer>
   </section>
 </template>
 
 <script>
+import { mapState , mapActions} from 'vuex'
+
+import VButton from '@/components/Button'
+
 export default {
   props: {
     title: {
@@ -27,6 +39,19 @@ export default {
       type: String,
       default: ''
     }
+  },
+  components: {
+    VButton
+  },
+  computed: {
+    ...mapState('program', {
+      status: state => state.status
+    })
+  },
+  methods: {
+    ...mapActions('program', [
+      'updateProgram'
+    ])
   }
 }
 </script>
