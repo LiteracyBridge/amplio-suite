@@ -9,6 +9,10 @@
     <div class="min-h-200-px py-5 text-center">
       <slot />
     </div>
+
+    <footer class="flex justify-between">
+      <slot name="footer"></slot>
+    </footer>
   </section>
 </template>
 
