@@ -145,6 +145,16 @@ const addDeploymentsDate = ({ commit, state }) => {
   commit('addDeploymentsDate', newDate)
 }
 
+const setDeploymentsDate = ({ commit }, payload) => {
+  commit('setDirty', { tab: 'deployments', status: true })
+  commit('setDeploymentsDate', payload)
+}
+
+const removeDeploymentsDate = ({ commit }, payload) => {
+  commit('setDirty', { tab: 'deployments', status: true })
+  commit('removeDeploymentsDate', payload)
+}
+
 /****************************************
   Step 5
 ****************************************/
@@ -238,6 +248,8 @@ export default {
   setDeploymentsFrequency,
   setDeploymentsFirst,
   addDeploymentsDate,
+  setDeploymentsDate,
+  removeDeploymentsDate,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
   setLanguages,

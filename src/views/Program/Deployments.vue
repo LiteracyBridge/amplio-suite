@@ -16,6 +16,7 @@
           iconLeft="calendar-alt"
           :aria-label="`Start of deployment ${index}`"
           :value="date.start"
+          @change="(event) => setDeploymentsDate({ index, what: 'start', date: event.target.value })"
           mx="mx-0"
         />
 
@@ -25,6 +26,7 @@
           iconLeft="calendar-alt"
           :aria-label="`End of deployment ${index}`"
           :value="date.end"
+          @change="(event) => setDeploymentsDate({ index, what: 'end', date: event.target.value })"
           mx="mx-0"
         />
 
@@ -38,7 +40,7 @@
 
         <button
           :key="`${index}-e`"
-          @click="isModalOpen = true"
+          @click="() => handleOpen(index)"
           :aria-label="`Delete deployment ${index}`"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
@@ -59,7 +61,7 @@
       <p>This deployment will be deleted.</p>
 
       <template v-slot:footer>
-        <v-button @click="isModalOpen = false" text="Confirm" />
+        <v-button @click="confirmDelete" text="Confirm" />
         <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
       </template>
     </v-modal>
@@ -88,13 +90,24 @@ export default {
   },
   data () {
     return {
-      isModalOpen: false
+      isModalOpen: false,
+      index: 0
     }
   },
   methods: {
     ...mapActions('program', [
-      'addDeploymentsDate'
-    ])
+      'addDeploymentsDate',
+      'setDeploymentsDate',
+      'removeDeploymentsDate'
+    ]),
+    handleOpen(index) {
+      this.index = index
+      this.isModalOpen = true
+    },
+    confirmDelete() {
+      this.removeDeploymentsDate({ index: this.index })
+      this.isModalOpen = false
+    }
   }
 }
 </script>

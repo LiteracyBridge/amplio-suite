@@ -88,6 +88,16 @@ const addDeploymentsDate = (state, payload) => {
   state.deployments.dates.push(payload)
 }
 
+const setDeploymentsDate = (state, payload) => {
+  const { index, what, date } = payload
+  state.deployments.dates[index][what] = date
+}
+
+const removeDeploymentsDate = (state, payload) => {
+  const { index } = payload
+  state.deployments.dates.splice(index, 1)
+}
+
 /****************************************
   Content
 ****************************************/
@@ -126,6 +136,8 @@ export default {
   setDeploymentsFirst,
   setDeploymentsDates,
   addDeploymentsDate,
+  setDeploymentsDate,
+  removeDeploymentsDate,
   addGoal,
   removeGoal,
   addListeningModel,
