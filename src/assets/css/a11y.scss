@@ -8,6 +8,10 @@
   overflow: hidden;
 }
 
+.has-dialog {
+  overflow: hidden;
+}
+
 // Use [:focus-visible polyfill](https://github.com/WICG/focus-visible) to show
 // dashed only when focus by keyboard
 .js-focus-visible :focus:not(.focus-visible) {
