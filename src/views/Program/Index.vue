@@ -67,10 +67,8 @@ export default {
       sections: [
         { name: 'general' },
         { name: 'deployments' },
-        { name: 'content' },
-        { name: 'recipients', disabled: true },
-        { name: 'components', disabled: true },
-        { name: 'values', disabled: true }
+        { name: 'content', disabled: true },
+        { name: 'recipients', disabled: true }
       ],
 
       transitionName: 'slide-left',
