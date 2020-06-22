@@ -19,6 +19,7 @@
 import { mapActions, mapState } from 'vuex'
 
 export default {
+  name: 'Setup',
   computed: mapState('program', [
     'actualStep'
   ]),

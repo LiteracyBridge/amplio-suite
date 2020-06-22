@@ -35,7 +35,7 @@ const routes = [
   {
     path: '/setup',
     redirect: { name: 'Step-1' },
-    component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Init.vue'),
+    component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Index.vue'),
     beforeEnter: multiguard([requireAuth, stepIsCompleted]),
     children: [
       {
@@ -114,6 +114,7 @@ function stepIsCompleted (to, from, next) {
   const isComplete = store.state.program.completedSteps.includes(nextStep - 1)
 
   if (isComplete) next()
+  else if (from.path === '/') next('/')
   else next(false)
 }
 
