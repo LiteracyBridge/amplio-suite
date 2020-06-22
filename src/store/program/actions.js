@@ -155,6 +155,7 @@ const createProgram = async ({ commit, state }) => {
   commit('setDirty', { tab: 'general', status: false })
   commit('setDirty', { tab: 'deployments', status: false })
   commit('setDirty', { tab: 'content', status: false })
+  commit('completedSetup')
 
   console.log(data)
   // try {

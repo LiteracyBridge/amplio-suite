@@ -38,6 +38,10 @@ const getProgramError = (state) => {
   state.status = 'error'
 }
 
+const completedSetup = (state) => {
+  state.setupIsComplete = true
+}
+
 /****************************************
   General Tab
 ****************************************/
@@ -105,6 +109,7 @@ export default {
   getProgramRequest,
   getProgramSuccess,
   getProgramError,
+  completedSetup,
   setProgramName,
   setLanguages,
   addLangInput,

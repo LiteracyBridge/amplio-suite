@@ -8,6 +8,7 @@ export default {
     status: '',
     actualStep: 1,
     completedSteps: [0, 7], // First and last step all fill by default
+    setupIsComplete: false,
 
     general: {
       dirty: false,
