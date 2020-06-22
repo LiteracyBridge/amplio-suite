@@ -68,35 +68,65 @@ const toggleListening = ({ commit, state, dispatch }, model) => {
 /****************************************
   Step 4
 ****************************************/
+const calculateDeploymentsDates = (amount, first, frequency) => {
+  const increment = frequency === 'one_month' ? 1 :
+    frequency === '1_quarter' ? 3 :
+      frequency === 'six_months' ? 6 :
+        frequency === 'one_year' ? 12 : 0
+
+  const dates = []
+  for (let i=0; i<amount; i++) {
+    dates.push({ start: '', end: '' })
+  }
+  dates[0].start = first
+
+  for (let i=1; i<amount; i++) {
+    const prev = new Date(dates[i - 1].start)
+    const next = new Date(prev.setMonth(prev.getMonth() + increment))
+    dates[i].start = next.toISOString().split('T')[0]
+  }
+
+  for (let i=0; i<amount; i++) {
+    const start = new Date(dates[i].start)
+    const end = new Date(start.setMonth(start.getMonth() + increment))
+    dates[i].end = end.toISOString().split('T')[0]
+  }
+
+  return dates
+}
+
+const checkIfStepIsComplete = (amount, first, frequency, commit, dispatch) => {
+  const isComplete = (amount > -1) && (frequency !== '')
+    && (first !== '') && (new Date(first) > new Date())
+  if (isComplete) {
+    const dates = calculateDeploymentsDates(amount, first, frequency)
+    commit('setDeploymentsDates', dates)
+    dispatch('addCompletedStep', 4)
+  } else {
+    dispatch('removeCompletedStep', 4)
+  }
+}
+
 const setDeploymentsAmount = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsAmount', payload)
   commit('setDirty', { tab: 'general', status: true })
 
-  // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
-    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
-  if (isComplete) dispatch('addCompletedStep', 4)
-  else dispatch('removeCompletedStep', 4)
+  const { amount, first, frequency } = state.deployments
+  checkIfStepIsComplete(amount, first, frequency, commit, dispatch)
 }
 
 const setDeploymentsFrequency = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsFrequency', payload)
 
-  // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
-    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
-  if (isComplete) dispatch('addCompletedStep', 4)
-  else dispatch('removeCompletedStep', 4)
+  const { amount, first, frequency } = state.deployments
+  checkIfStepIsComplete(amount, first, frequency, commit, dispatch)
 }
 
 const setDeploymentsFirst = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsFirst', payload)
 
-  // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
-    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
-  if (isComplete) dispatch('addCompletedStep', 4)
-  else dispatch('removeCompletedStep', 4)
+  const { amount, first, frequency } = state.deployments
+  checkIfStepIsComplete(amount, first, frequency, commit, dispatch)
 }
 
 /****************************************

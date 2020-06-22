@@ -80,6 +80,10 @@ const setDeploymentsFirst = (state, payload) => {
   state.deployments.first = payload
 }
 
+const setDeploymentsDates = (state, payload) => {
+  state.deployments.dates = payload
+}
+
 /****************************************
   Content
 ****************************************/
@@ -116,6 +120,7 @@ export default {
   setDeploymentsAmount,
   setDeploymentsFrequency,
   setDeploymentsFirst,
+  setDeploymentsDates,
   addGoal,
   removeGoal,
   addListeningModel,

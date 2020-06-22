@@ -24,7 +24,8 @@ export default {
       dirty: false,
       amount: 0,
       first: '',
-      frequency: ''
+      frequency: '',
+      dates: []
     },
 
     content: {
