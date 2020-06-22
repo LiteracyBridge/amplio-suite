@@ -27,20 +27,12 @@
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
 
-    <v-modal v-model="isModalOpen">
-      <section>
-        <header class="my-4">
-          <h2 class="text-2xl text-bold">Save the change</h2>
-        </header>
+    <v-modal v-model="isModalOpen" title="Save the change">
+      <p>Save or discard the change before continue.</p>
 
-        <div class="pt-6 pb-20 text-xl">
-          <p>Save or discard the change before continue.</p>
-        </div>
-
-        <footer class="flex justify-end">
-          <v-button @click="isModalOpen = false" text="Ok" />
-        </footer>
-      </section>
+      <template v-slot:footer>
+        <v-button @click="isModalOpen = false" text="Ok" />
+      </template>
     </v-modal>
   </main>
 </template>
