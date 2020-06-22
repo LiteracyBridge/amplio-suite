@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-functions_to_deploy=( test_function migrations program_create programs_index )
+functions_to_deploy=( test_function migrations program_create programs_index program_retrieve )
 
 # Lambda role
 role_arn="arn:aws:iam::261167734304:role/AmplioSuiteLambda"
