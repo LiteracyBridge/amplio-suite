@@ -5,7 +5,7 @@
     </h1>
 
     <div class="grid grid-cols-3 gap-10">
-      <router-link :to="{ name: 'Step-1' }">
+      <router-link :to="linkTo">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
           Define your program specification and complete installation of required tools.
         </home-box>
@@ -32,11 +32,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import HomeBox from '@/components/HomeBox'
 
 export default {
   components: {
     HomeBox
+  },
+  computed: {
+    ...mapState('program', [
+      'actualStep',
+      'setupIsComplete'
+    ]),
+    linkTo() {
+      if (!this.setupIsComplete) {
+        return { name: `Step-${this.actualStep}` }
+      } else {
+        return '/program'
+      }
+    }
   }
 }
 </script>
