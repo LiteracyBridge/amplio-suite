@@ -8,12 +8,28 @@ from sqlalchemy.orm import sessionmaker
 from utils import get_db_url
 from models.program import Program
 
+from alembic.config import Config
+from alembic import command
+
+# Load .env file
+load_dotenv()
+alembic_cfg = Config(os.getenv('ALEMBIC_INI'))
+
 DATABASE_URL = get_db_url()
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 def lambda_handler(event, context):
+    try:
+        command.upgrade(alembic_cfg, 'head')
+    except BaseException as err:
+        return {
+            'status': 503,
+            'headers': {'Retry-After': 5},
+            'error': str(err)
+        }
+
     """
     Insert new program to the db
 
