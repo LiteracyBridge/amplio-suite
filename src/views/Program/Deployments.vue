@@ -9,12 +9,12 @@
       <p class="text-sm text-gray-500 text-left">Component</p>
 
       <template v-for="(date, index) in startDeployments">
-        <p :key="`${index}-a`" :id="`dep_${index}`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
+        <p :key="`${index}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
         <v-input
           :key="`${index}-b`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-labelledby="`dep_${index}`"
+          :aria-label="`Start of deployment ${index}`"
           :value="date"
           mx="mx-0"
         />
@@ -23,40 +23,36 @@
           :key="`${index}-c`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-labelledby="`dep_${index}`"
+          :aria-label="`End of deployment ${index}`"
           :value="endDeployments[index]"
           mx="mx-0"
         />
 
         <select
           :key="`${index}-d`"
-          aria-labelledby="deploymentLength"
+          :aria-label="`Components of the deployment ${index}`"
           class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         >
           <option value="all">All</option>
         </select>
 
-        <button :key="`${index}-e`" @click="isModalOpen = true">
+        <button
+          :key="`${index}-e`"
+          @click="isModalOpen = true"
+          :aria-label="`Delete deployment ${index}`"
+        >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
       </template>
     </div>
 
-    <v-modal v-model="isModalOpen">
-      <section>
-        <header class="my-4">
-          <h2 class="text-2xl text-bold">Delete Deployment</h2>
-        </header>
+    <v-modal v-model="isModalOpen" title="Delete Deployment">
+      <p>This deployment will be deleted.</p>
 
-        <div class="pt-6 pb-20 text-xl">
-          <p>This deployment will be deleted.</p>
-        </div>
-
-        <footer class="flex justify-between">
-          <v-button text="Cancel" color="bg-gray-400" class="text-black" />
-          <v-button text="Confirm" />
-        </footer>
-      </section>
+      <template v-slot:footer>
+        <v-button @click="isModalOpen = false" text="Confirm" />
+        <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
+      </template>
     </v-modal>
   </box>
 </template>

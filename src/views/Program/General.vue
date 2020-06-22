@@ -36,38 +36,31 @@
             :ref="`lang_${index}`"
             :value="languages[index]"
             type="text"
-            aria-labelledby="lang"
+            aria-labelledby="langs"
             placeholder="Choose language"
             mx="mx-0"
           />
-          <button @click="isModalOpen = true">
+          <button @click="isModalOpen = true" aria-label="Delete language">
             <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
           </button>
         </div>
 
         <span
           tabindex="0"
-          class="mt-4 p-2u font-semibold cursor-pointer"
+          class="mt-4 p-2u text-green font-bold cursor-pointer"
         >
           + Add language
         </span>
       </div>
     </div>
 
-    <v-modal v-model="isModalOpen">
-      <section>
-        <header class="my-4">
-          <h2 class="text-2xl text-bold">Delete Deployment</h2>
-        </header>
+    <v-modal v-model="isModalOpen" title="Delete Language">
+      <p>This language will be deleted.</p>
 
-        <div class="pt-6 pb-20 text-xl">
-          <p>This deployment will be deleted.</p>
-        </div>
-
-        <footer class="flex justify-between">
-          <v-button @click="isModalOpen = false" text="Ok" />
-        </footer>
-      </section>
+      <template v-slot:footer>
+        <v-button @click="isModalOpen = false" text="Confirm" />
+        <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
+      </template>
     </v-modal>
   </box>
 </template>
