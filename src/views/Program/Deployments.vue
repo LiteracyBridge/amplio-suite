@@ -1,6 +1,6 @@
 <template>
   <box
-    title="Deployment"
+    title="Deployments"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
     <div class="grid grid-cols-deployments items-center justify-between">
@@ -44,6 +44,15 @@
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
       </template>
+
+      <span
+          tabindex="0"
+          class="mt-4 p-2u text-green font-bold cursor-pointer"
+          @click="addDeploymentsDate"
+          @keyup.enter="addDeploymentsDate"
+        >
+          + Add deployment
+        </span>
     </div>
 
     <v-modal v-model="isModalOpen" title="Delete Deployment">
@@ -58,7 +67,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
@@ -81,6 +90,11 @@ export default {
     return {
       isModalOpen: false
     }
+  },
+  methods: {
+    ...mapActions('program', [
+      'addDeploymentsDate'
+    ])
   }
 }
 </script>

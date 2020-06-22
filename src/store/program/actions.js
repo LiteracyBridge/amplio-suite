@@ -109,7 +109,6 @@ const checkIfStepIsComplete = (amount, first, frequency, commit, dispatch) => {
 
 const setDeploymentsAmount = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsAmount', payload)
-  commit('setDirty', { tab: 'general', status: true })
 
   const { amount, first, frequency } = state.deployments
   checkIfStepIsComplete(amount, first, frequency, commit, dispatch)
@@ -127,6 +126,23 @@ const setDeploymentsFirst = async ({ commit, state, dispatch }, payload) => {
 
   const { amount, first, frequency } = state.deployments
   checkIfStepIsComplete(amount, first, frequency, commit, dispatch)
+}
+
+const addDeploymentsDate = ({ commit, state }) => {
+  const { amount, frequency, dates } = state.deployments
+  const increment = frequency === 'one_month' ? 1 :
+    frequency === '1_quarter' ? 3 :
+      frequency === 'six_months' ? 6 :
+        frequency === 'one_year' ? 12 : 0
+
+  const newDate = {}
+  const lastDate = new Date(dates[dates.length - 1].end)
+  newDate.start = lastDate.toISOString().split('T')[0]
+  newDate.end = new Date(lastDate.setMonth(lastDate.getMonth() + increment)).toISOString().split('T')[0]
+
+  commit('setDirty', { tab: 'deployments', status: true })
+  commit('setDeploymentsAmount', parseInt(amount) + 1)
+  commit('addDeploymentsDate', newDate)
 }
 
 /****************************************
@@ -221,6 +237,7 @@ export default {
   setDeploymentsAmount,
   setDeploymentsFrequency,
   setDeploymentsFirst,
+  addDeploymentsDate,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
   setLanguages,

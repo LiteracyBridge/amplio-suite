@@ -84,6 +84,10 @@ const setDeploymentsDates = (state, payload) => {
   state.deployments.dates = payload
 }
 
+const addDeploymentsDate = (state, payload) => {
+  state.deployments.dates.push(payload)
+}
+
 /****************************************
   Content
 ****************************************/
@@ -121,6 +125,7 @@ export default {
   setDeploymentsFrequency,
   setDeploymentsFirst,
   setDeploymentsDates,
+  addDeploymentsDate,
   addGoal,
   removeGoal,
   addListeningModel,
