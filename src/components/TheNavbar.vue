@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <nav :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
+      <nav aria-label="Primary" :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
         <div class="inline-flex">
           <DropDown :options="options" class="hidden md:block">
             <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>

@@ -1,10 +1,10 @@
 <template>
   <main class="container mx-auto text-center">
-    <div class="my-6 px-4 flex justify-start">
+    <div class="py-6 px-4 flex justify-start">
       <h1 class="text-2xl text-blue">{{ programName }} Program</h1>
     </div>
 
-    <nav class="flex">
+    <nav aria-label="Program sections" class="flex">
       <component
         v-for="section in sections"
         :key="section.name"
