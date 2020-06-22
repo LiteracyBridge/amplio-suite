@@ -53,7 +53,7 @@ def lambda_handler(event, context):
     for key in valid_keys:
         if key not in event:
             return {
-                'status': 402,
+                'status': 422,
                 'error': f'{key} must be specified'
             }
 
@@ -61,7 +61,7 @@ def lambda_handler(event, context):
         program = Program(**event)
     except ValueError as err:
         return {
-            'status': 402,
+            'status': 422,
             'error': str(err)
         }
 
