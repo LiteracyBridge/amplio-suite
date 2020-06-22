@@ -15,17 +15,7 @@
         mx="mx-0"
       />
 
-      <p id="deployments" class="px-4">Number of Deployments</p>
-      <v-input
-        type="number"
-        ref="deployments"
-        aria-labelledby="deployments"
-        placeholder="Number of Deployments"
-        :value="amountDeployments"
-        mx="mx-0"
-      />
-
-      <p id="langs" class="px-4">Languages</p>
+      <p id="langs" class="h-full px-4 pt-4">Languages</p>
       <div>
         <div
           v-for="index in amountOfLang"
@@ -38,6 +28,7 @@
             type="text"
             aria-labelledby="langs"
             placeholder="Choose language"
+            @input="(event) => setLanguages({ lang: event.target.value, index })"
             mx="mx-0"
           />
           <button @click="isModalOpen = true" aria-label="Delete language">
@@ -48,6 +39,8 @@
         <span
           tabindex="0"
           class="mt-4 p-2u text-green font-bold cursor-pointer"
+          @click="addInput"
+          @keyup.enter="addInput"
         >
           + Add language
         </span>
@@ -77,7 +70,6 @@ export default {
   computed: {
     ...mapState('program', {
       programName: state => state.general.programName,
-      amountDeployments: state => state.deployments.amount,
       languages: state => state.general.languages,
       amountOfLang: state => state.general.amountOfLang
     })
@@ -95,8 +87,15 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'setProgramName'
-    ])
+      'setProgramName',
+      'setLanguages',
+      'addLangInput'
+    ]),
+    async addInput () {
+      await this.addLangInput()
+      const key = `lang_${this.amountOfLang}`
+      this.$refs[key][0].$el.children[0].focus()
+    }
   }
 }
 </script>
