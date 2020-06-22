@@ -84,7 +84,7 @@ const addGoal = (state, payload) => {
 }
 
 const removeGoal = (state, index) => {
-  state.goals.splice(index, 1)
+  state.content.goals.splice(index, 1)
 }
 
 const addListeningModel = (state, payload) => {

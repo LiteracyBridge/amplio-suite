@@ -70,9 +70,11 @@ const toggleListening = ({ commit, state, dispatch }, model) => {
 ****************************************/
 const setDeploymentsAmount = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsAmount', payload)
+  commit('setDirty', { tab: 'general', status: true })
 
   // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '') && (state.deployments.first !== '')
+  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
+    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
   if (isComplete) dispatch('addCompletedStep', 4)
   else dispatch('removeCompletedStep', 4)
 }
@@ -81,7 +83,8 @@ const setDeploymentsFrequency = async ({ commit, state, dispatch }, payload) => 
   await commit('setDeploymentsFrequency', payload)
 
   // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '') && (state.deployments.first !== '')
+  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
+    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
   if (isComplete) dispatch('addCompletedStep', 4)
   else dispatch('removeCompletedStep', 4)
 }
@@ -90,7 +93,8 @@ const setDeploymentsFirst = async ({ commit, state, dispatch }, payload) => {
   await commit('setDeploymentsFirst', payload)
 
   // Check if the step if completed
-  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '') && (state.deployments.first !== '')
+  const isComplete = (state.deployments.amount > -1) && (state.deployments.frequency !== '')
+    && (state.deployments.first !== '') && (new Date(state.deployments.first) > new Date())
   if (isComplete) dispatch('addCompletedStep', 4)
   else dispatch('removeCompletedStep', 4)
 }
@@ -102,7 +106,7 @@ const setFeedbackFrequently = async ({ commit, state, dispatch }, payload) => {
   await commit('setFeedbackFrequently', payload)
 
   // Check if the step if completed
-  const isComplete = (state.feedbackFrequently !== '') && (state.feedbackFrequentlyOther !== '')
+  const isComplete = (state.general.feedbackFrequently !== '') && (state.general.feedbackFrequentlyOther !== '')
   if (isComplete) dispatch('addCompletedStep', 5)
   else dispatch('removeCompletedStep', 5)
 }
@@ -111,7 +115,7 @@ const setFeedbackFrequentlyOther = async ({ commit, state, dispatch }, payload) 
   await commit('setFeedbackFrequentlyOther', payload)
 
   // Check if the step if completed
-  const isComplete = (state.feedbackFrequently !== '') && (state.feedbackFrequentlyOther !== '')
+  const isComplete = (state.general.feedbackFrequently !== '') && (state.general.feedbackFrequentlyOther !== '')
   if (isComplete) dispatch('addCompletedStep', 5)
   else dispatch('removeCompletedStep', 5)
 }
@@ -129,8 +133,8 @@ const setLanguages = async ({ commit, state, dispatch }, payload) => {
   else dispatch('removeCompletedStep', 6)
 }
 
-const addLangInput = ({ commit }) => {
-  commit('addLangInput')
+const addLangInput = async ({ commit }) => {
+  await commit('addLangInput')
 }
 
 /****************************************
