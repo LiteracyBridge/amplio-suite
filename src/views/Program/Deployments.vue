@@ -8,14 +8,14 @@
       <p class="text-sm text-gray-500 text-left">End Date</p>
       <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <template v-for="(date, index) in startDeployments">
+      <template v-for="(date, index) in dates">
         <p :key="`${index}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
         <v-input
           :key="`${index}-b`"
           type="date"
           iconLeft="calendar-alt"
           :aria-label="`Start of deployment ${index}`"
-          :value="date"
+          :value="date.start"
           mx="mx-0"
         />
 
@@ -24,7 +24,7 @@
           type="date"
           iconLeft="calendar-alt"
           :aria-label="`End of deployment ${index}`"
-          :value="endDeployments[index]"
+          :value="date.end"
           mx="mx-0"
         />
 
@@ -68,9 +68,7 @@ import VModal from '@/components/VModal'
 export default {
   computed: {
     ...mapState('program', {
-      deploymentsAmount: state => state.deployments.amount,
-      deploymentsFirst: state => state.deployments.first,
-      deploymentsFrequency: state => state.deployments.frequency
+      dates: state => state.deployments.dates
     })
   },
   components: {
@@ -81,30 +79,8 @@ export default {
   },
   data () {
     return {
-      isModalOpen: false,
-
-      startDeployments: [],
-      endDeployments: []
+      isModalOpen: false
     }
-  },
-  mounted () {
-    const increment = this.deploymentsFrequency === 'one_month' ? 1 :
-      this.deploymentsFrequency === '1_quarter' ? 3 :
-        this.deploymentsFrequency === 'six_months' ? 6 :
-          this.deploymentsFrequency === 'one_year' ? 12 : 0
-
-    this.startDeployments = [this.deploymentsFirst]
-    for (let i=1; i < this.deploymentsAmount; i++) {
-      const prev = new Date(this.startDeployments[i - 1])
-      const next = new Date(prev.setMonth(prev.getMonth() + increment))
-      this.startDeployments.push(next.toISOString().split('T')[0])
-    }
-
-    this.endDeployments = this.startDeployments.map(date => {
-      const start = new Date(date)
-      const end = new Date(start.setMonth(start.getMonth() + increment))
-      return end.toISOString().split('T')[0]
-    })
   }
 }
 </script>
