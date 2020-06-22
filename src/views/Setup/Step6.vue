@@ -21,9 +21,9 @@
 
     <span
       tabindex="0"
-      class="mt-4 p-2u font-semibold cursor-pointer"
-      @click="addLangInput"
-      @keyup.enter="addLangInput"
+      class="mt-4 p-1 text-green font-bold cursor-pointer"
+      @click="addInput"
+      @keyup.enter="addInput"
     >
       + Add language
     </span>
@@ -55,8 +55,10 @@ export default {
       'setLanguages',
       'addLangInput'
     ]),
-    addInput () {
-      this.amountOfInputs++
+    async addInput () {
+      await this.addLangInput()
+      const key = `lang_${this.amountOfLang}`
+      this.$refs[key][0].$el.children[0].focus()
     }
   }
 }
