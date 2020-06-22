@@ -26,6 +26,7 @@
           iconLeft="calendar-alt"
           :aria-label="`End of deployment ${index}`"
           :value="date.end"
+          :min="date.start"
           @change="(event) => setDeploymentsDate({ index, what: 'end', date: event.target.value })"
           mx="mx-0"
         />
