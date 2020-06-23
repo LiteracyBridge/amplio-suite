@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/',
     component: Home,
-    beforeEnter: requireAuth
+    beforeEnter: multiguard([requireAuth, selectOneProgram])
   },
   {
     path: '/login',
@@ -76,6 +76,11 @@ const routes = [
     ]
   },
   {
+    path: '/programs',
+    component: () => import(/* webpackChunkName: "programs" */ '../views/Programs.vue'),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/program',
     redirect: { path: '/program/general' },
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
@@ -107,6 +112,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+function selectOneProgram (to, from, next) {
+  const { selectedProgram, allPrograms } = store.state.program
+
+  if (selectedProgram) next()
+  else if (allPrograms.length > 1) next('/programs')
+  // else next('/error') // The user dont have programs
+}
 
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
