@@ -6,6 +6,9 @@ export default {
 
   state: {
     status: '',
+    selectedProgram: '',
+    allPrograms: [],
+
     actualStep: 1,
     completedSteps: [0, 7], // First and last step all fill by default
     setupIsComplete: false,

@@ -1,5 +1,5 @@
 /****************************************
-  Commons
+  Setup steps
 ****************************************/
 const setStep = (state, payload) => {
   state.actualStep = payload
@@ -21,9 +21,24 @@ const removeCompletedStep = (state, index) => {
   state.completedSteps.splice(index, 1)
 }
 
+const completedSetup = (state) => {
+  state.setupIsComplete = true
+}
+
+/****************************************
+
+****************************************/
 const setDirty = (state, payload) => {
   const { tab, status } = payload
   state[tab].dirty = status
+}
+
+const setAllPrograms = (state, payload) => {
+  state.allPrograms = payload
+}
+
+const setSelectedProgram = (state, payload) => {
+  state.selectedProgram = payload
 }
 
 const getProgramRequest = (state) => {
@@ -36,10 +51,6 @@ const getProgramSuccess = (state) => {
 
 const getProgramError = (state) => {
   state.status = 'error'
-}
-
-const completedSetup = (state) => {
-  state.setupIsComplete = true
 }
 
 /****************************************
@@ -123,11 +134,13 @@ export default {
   prevStep,
   addCompletedStep,
   removeCompletedStep,
+  completedSetup,
   setDirty,
+  setAllPrograms,
+  setSelectedProgram,
   getProgramRequest,
   getProgramSuccess,
   getProgramError,
-  completedSetup,
   setProgramName,
   setLanguages,
   addLangInput,
