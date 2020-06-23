@@ -15,6 +15,7 @@ zip -r9 -q partial.zip ./package
 zip -g -q partial.zip utils.py
 zip -g -q partial.zip .env
 zip -r9 -g -q partial.zip models
+zip -r9 -g -q partial.zip amplio
 echo -e "\rZip the python libs: Done"
 
 for fun in "${functions_to_deploy[@]}"
