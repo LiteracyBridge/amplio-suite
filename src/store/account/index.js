@@ -5,6 +5,11 @@ export default {
 
   state: () => ({
     status: '',
+    user: {
+      email: '',
+      name: '',
+      img: ''
+    }
   }),
 
   getters: {
@@ -20,6 +25,9 @@ export default {
     authError(state){
       state.status = 'error'
     },
+    setUser(state, payload) {
+      state.user = payload
+    }
   },
 
   actions: {
@@ -35,7 +43,8 @@ export default {
 
           if (result) {
             const token = result.getIdToken()
-            commit('authSuccess', { user: payload.user, token })
+            commit('setUser', { email: payload.user, token })
+            commit('authSuccess')
             resolve('success')
           }
         })
