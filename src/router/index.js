@@ -88,7 +88,7 @@ const routes = [
     path: '/programs/:id/settings',
     redirect: { path: '/programs/:id/settings/general' },
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
-    beforeEnter: requireAuth,
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms]),
     children: [
       {
         path: 'general',
@@ -126,13 +126,16 @@ function fetchAllPrograms (to, from, next) {
 
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
-  const s = to.path.split('/')
-  const nextStep = +s[s.length -1].split('-')[1]
-  const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
 
-  if (isComplete) next()
-  else if (from.path === '/') next('/')
-  else next(false)
+  if (!to.path.includes('wizard')) next()
+  else {
+    const s = to.path.split('/')
+    const nextStep = +s[s.length -1].split('-')[1]
+    const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
+
+    if (isComplete) next()
+    else next(false)
+  }
 }
 
 function requireAuth (to, from, next) {
