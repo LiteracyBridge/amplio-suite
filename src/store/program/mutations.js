@@ -1,33 +1,3 @@
-/****************************************
-  Setup steps
-****************************************/
-const setStep = (state, payload) => {
-  state.actualStep = payload
-}
-
-const nextStep = (state) => {
-  state.actualStep++
-}
-
-const prevStep = (state) => {
-  state.actualStep--
-}
-
-const addCompletedStep = (state, payload) => {
-  state.completedSteps.push(payload)
-}
-
-const removeCompletedStep = (state, index) => {
-  state.completedSteps.splice(index, 1)
-}
-
-const completedSetup = (state) => {
-  state.setupIsComplete = true
-}
-
-/****************************************
-
-****************************************/
 const setDirty = (state, payload) => {
   const { tab, status } = payload
   state[tab].dirty = status
@@ -129,12 +99,6 @@ const removeListeningModel = (state, index) => {
 }
 
 export default {
-  setStep,
-  nextStep,
-  prevStep,
-  addCompletedStep,
-  removeCompletedStep,
-  completedSetup,
   setDirty,
   setAllPrograms,
   setSelectedProgram,
