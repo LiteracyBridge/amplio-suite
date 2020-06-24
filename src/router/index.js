@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/',
     component: Home,
-    beforeEnter: multiguard([requireAuth, selectOneProgram])
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms])
   },
   {
     path: '/login',
@@ -113,12 +113,19 @@ const router = new VueRouter({
   routes
 })
 
-function selectOneProgram (to, from, next) {
-  const { selectedProgram, allPrograms } = store.state.program
+async function fetchAllPrograms (to, from, next) {
+  const { allPrograms } = store.state.programIndex
+  const { codeName } = store.state.program
 
-  if (selectedProgram) next()
-  else if (allPrograms.length > 1) next('/programs')
-  // else next('/error') // The user dont have programs
+  if (codeName) {
+    next()
+  } else if (allPrograms.length === 0) {
+    await store.dispatch('programIndex/getAllPrograms')
+    next()
+  }
+  else if (allPrograms.length > 1) {
+    next('/programs')
+  }
 }
 
 function stepIsCompleted (to, from, next) {

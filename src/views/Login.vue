@@ -78,9 +78,6 @@ export default {
     ...mapActions('account', [
       'login'
     ]),
-    ...mapActions('program', [
-      'getAllPrograms'
-    ]),
     ...mapMutations('notification', [
       'alert'
     ]),
@@ -94,7 +91,6 @@ export default {
       const status = await this.login({ user: this.user, password: this.password })
 
       if (status === 'success') {
-        await this.getAllPrograms()
         this.$router.push('/')
       } else {
         this.user = ''
