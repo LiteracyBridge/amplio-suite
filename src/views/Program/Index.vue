@@ -9,7 +9,7 @@
         v-for="section in sections"
         :key="section.name"
         :is="section.disabled ? 'span' : 'router-link'"
-        :to="section.disabled ? '' : `/program/${section.name}`"
+        :to="section.disabled ? '' : `/programs/${codeNameId}/settings/${section.name}`"
         :class="[
           $route.path.endsWith(section.name) ? 'bg-green text-white' : 'text-black',
           section.disabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -51,7 +51,8 @@ export default {
   },
   computed: {
     ...mapState('program', {
-      programName: state => state.general.programName
+      programName: state => state.general.programName,
+      codeNameId: 'codeNameId'
     })
   },
   data () {
@@ -68,8 +69,11 @@ export default {
     }
   },
   beforeRouteUpdate (to, from, next) {
-    const toName = to.path.split('/')[2]
-    const fromName = from.path.split('/')[2]
+    const sTo = to.path.split('/')
+    const sFrom = from.path.split('/')
+    const toName = sTo[sTo.length - 1]
+    const fromName = sFrom[sFrom.length - 1]
+
     const sections = this.sections.map(section => section.name)
     this.transitionName = sections.indexOf(toName) < sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
     const dirty = this.$store.state.program[fromName].dirty
@@ -83,7 +87,8 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    const fromName = from.path.split('/')[2]
+    const sFrom = from.path.split('/')
+    const fromName = sFrom[sFrom.length - 1]
     const dirty = this.$store.state.program[fromName].dirty
 
     // Check if the data is save

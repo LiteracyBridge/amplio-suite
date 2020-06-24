@@ -91,7 +91,7 @@ export default {
       const status = await this.login({ user: this.user, password: this.password })
 
       if (status === 'success') {
-        this.$router.push('/')
+        this.$router.push('/programs')
       } else {
         this.user = ''
         this.password = ''

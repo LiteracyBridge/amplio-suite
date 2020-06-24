@@ -1,7 +1,7 @@
 <template>
   <Box
     ref="box"
-    next="/program"
+    :next="`/programs/${codeNameId}/settings`"
     title="Thank you! We automatically updated the Program Specification based
     on your responses. Please complete the remaining details."
   />
@@ -19,7 +19,10 @@ export default {
   computed: {
     ...mapState('wizard', {
       wizarsIsComplete: 'isComplete'
-    })
+    }),
+    ...mapState('program', [
+      'codeNameId'
+    ])
   },
   methods: {
     ...mapActions('program', [

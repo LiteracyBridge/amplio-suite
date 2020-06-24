@@ -9,38 +9,44 @@
 
     <div class="grid grid-cols-4 gap-10">
       <div
-        v-for="(program, index) in allPrograms"
+        v-for="(codeName, index) in allPrograms"
         :key="index"
         tabindex="0"
         class="p-6 h-full bg-white rounded-lg shadow-box cursor-pointer hover:shadow-hover"
-        @click="selectProgram(program)"
-        @keyup.space="selectProgram(program)"
+        @click="selectProgram(codeName)"
+        @keyup.space="selectProgram(codeName)"
       >
         <div class="overflow-hidden">
           <img class="transform duration-500" src="/img/program.png">
         </div>
-        <h3 class="py-4 text-xl font-bold">{{ program.name }}</h3>
+        <h3 class="py-4 text-xl font-bold">{{ codeName }}</h3>
       </div>
     </div>
   </main>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('program', [
+    ...mapState('programIndex', [
       'allPrograms'
     ])
   },
+  mounted () {
+    this.getAllPrograms()
+  },
   methods: {
-    ...mapMutations('program', [
-      'setSelectedProgram'
+    ...mapActions('program', [
+      'setCodeName'
     ]),
-    selectProgram (programName) {
-      this.setSelectedProgram(programName)
-      this.$router.push('/')
+    ...mapActions('programIndex', [
+      'getAllPrograms'
+    ]),
+    async selectProgram (codeName) {
+      const id = await this.setCodeName(codeName)
+      this.$router.push(`/programs/${id}`)
     }
   }
 }

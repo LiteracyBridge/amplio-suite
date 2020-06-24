@@ -41,15 +41,15 @@ export default {
     HomeBox
   },
   computed: {
-    ...mapState('wizard', [
-      'actualStep',
-      'isComplete'
-    ]),
+    ...mapState('wizard', {
+      wizardActualStep: 'actualStep',
+      wizardIsComplete: 'isComplete'
+    }),
     linkTo() {
-      if (!this.isComplete) {
-        return { name: `Step-${this.actualStep}` }
+      if (!this.wizardIsComplete) {
+        return `${this.$route.path}/wizard/step-${this.wizardActualStep}`
       } else {
-        return '/program'
+        return `${this.$route.path}/setting`
       }
     }
   }

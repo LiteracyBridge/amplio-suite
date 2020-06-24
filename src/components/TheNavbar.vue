@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link to="/" class="text-white">
+        <router-link :to="`/programs/${codeNameId}`" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import DropDown from '@/components/TheNavbarDropDown'
 import cognitoAuth from '@/cognito'
 
@@ -77,6 +79,11 @@ import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
 export default {
+  computed: {
+    ...mapState('program', [
+      'codeNameId'
+    ])
+  },
   data () {
     return {
       isOpen: false,
