@@ -1,5 +1,4 @@
 // import { postProgram } from '@/api/programs.api'
-import { getPrograms } from '@/api/programs.api'
 
 const setProgramName = ({ commit }, payload) => {
   commit('setProgramName', payload)
@@ -114,15 +113,6 @@ const updateProgram = async ({ commit }, payload) => {
   })
 }
 
-const getAllPrograms = async ({ commit }) => {
-  const allPrograms = await getPrograms()
-  await commit('setAllPrograms', allPrograms)
-
-  if (allPrograms.length === 1) {
-    await commit('setSelectedProgram', allPrograms[0].name)
-  }
-}
-
 export default {
   setProgramName,
   toggleGoal,
@@ -138,6 +128,5 @@ export default {
   setLanguages,
   addLangInput,
   createProgram,
-  updateProgram,
-  getAllPrograms
+  updateProgram
 }

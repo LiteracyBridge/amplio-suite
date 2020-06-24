@@ -3,12 +3,8 @@ const setDirty = (state, payload) => {
   state[tab].dirty = status
 }
 
-const setAllPrograms = (state, payload) => {
-  state.allPrograms = payload
-}
-
-const setSelectedProgram = (state, payload) => {
-  state.selectedProgram = payload
+const setCodeName = (state, payload) => {
+  state.codeName = payload
 }
 
 const getProgramRequest = (state) => {
@@ -100,8 +96,7 @@ const removeListeningModel = (state, index) => {
 
 export default {
   setDirty,
-  setAllPrograms,
-  setSelectedProgram,
+  setCodeName,
   getProgramRequest,
   getProgramSuccess,
   getProgramError,

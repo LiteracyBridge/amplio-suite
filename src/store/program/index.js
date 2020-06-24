@@ -6,8 +6,7 @@ export default {
 
   state: {
     status: '',
-    selectedProgram: '',
-    allPrograms: [],
+    codeName: '',
 
     general: {
       dirty: false,
