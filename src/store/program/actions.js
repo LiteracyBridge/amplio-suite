@@ -1,5 +1,12 @@
 // import { postProgram } from '@/api/programs.api'
 
+const setCodeName = async ({ commit }, name) => {
+  const id = name.replace(/ /g, '-').toLocaleLowerCase()
+  commit('setCodeName', { name, id})
+
+  return id
+}
+
 const setProgramName = ({ commit }, payload) => {
   commit('setProgramName', payload)
   commit('setDirty', { tab: 'general', status: true })
@@ -114,6 +121,7 @@ const updateProgram = async ({ commit }, payload) => {
 }
 
 export default {
+  setCodeName,
   setProgramName,
   toggleGoal,
   toggleListening,

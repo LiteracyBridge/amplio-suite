@@ -4,7 +4,8 @@ const setDirty = (state, payload) => {
 }
 
 const setCodeName = (state, payload) => {
-  state.codeName = payload
+  state.codeName = payload.name
+  state.codeNameId = payload.id
 }
 
 const getProgramRequest = (state) => {

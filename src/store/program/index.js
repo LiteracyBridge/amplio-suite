@@ -7,6 +7,7 @@ export default {
   state: {
     status: '',
     codeName: '',
+    codeNameId: '',
 
     general: {
       dirty: false,
