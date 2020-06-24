@@ -12,8 +12,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    component: Home,
-    beforeEnter: multiguard([requireAuth, fetchAllPrograms])
+    redirect: { path: '/login' }
   },
   {
     path: '/login',
@@ -33,7 +32,17 @@ const routes = [
     },
   },
   {
-    path: '/setup',
+    path: '/programs',
+    component: () => import(/* webpackChunkName: "programs" */ '../views/Programs.vue'),
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/programs/:id',
+    component: Home,
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms])
+  },
+  {
+    path: '/programs/:id/wizard',
     redirect: { name: 'Step-1' },
     component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Index.vue'),
     beforeEnter: multiguard([requireAuth, stepIsCompleted]),
@@ -76,13 +85,8 @@ const routes = [
     ]
   },
   {
-    path: '/programs',
-    component: () => import(/* webpackChunkName: "programs" */ '../views/Programs.vue'),
-    beforeEnter: requireAuth
-  },
-  {
-    path: '/program',
-    redirect: { path: '/program/general' },
+    path: '/programs/:id/settings',
+    redirect: { path: '/programs/:id/settings/general' },
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
     beforeEnter: requireAuth,
     children: [
@@ -113,24 +117,17 @@ const router = new VueRouter({
   routes
 })
 
-async function fetchAllPrograms (to, from, next) {
+function fetchAllPrograms (to, from, next) {
   const { allPrograms } = store.state.programIndex
-  const { codeName } = store.state.program
 
-  if (codeName) {
-    next()
-  } else if (allPrograms.length === 0) {
-    await store.dispatch('programIndex/getAllPrograms')
-    next()
-  }
-  else if (allPrograms.length > 1) {
-    next('/programs')
-  }
+  if (allPrograms.length === 0) next('/programs')
+  else next()
 }
 
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
-  const nextStep = +to.path.split('-')[1]
+  const s = to.path.split('/')
+  const nextStep = +s[s.length -1].split('-')[1]
   const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
 
   if (isComplete) next()
