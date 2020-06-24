@@ -11,6 +11,7 @@ from models.program import Program
 from alembic.config import Config
 from alembic import command
 
+from dotenv import load_dotenv
 # Load .env file
 load_dotenv()
 alembic_cfg = Config(os.getenv('ALEMBIC_INI'))

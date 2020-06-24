@@ -14,6 +14,8 @@ echo -n "Zip the python libs: ..."
 zip -r9 -q partial.zip ./package
 zip -g -q partial.zip utils.py
 zip -g -q partial.zip .env
+zip -r9 -g -q partial.zip migrations
+zip -g -q partial.zip alembic.ini
 zip -r9 -g -q partial.zip models
 zip -r9 -g -q partial.zip amplio
 echo -e "\rZip the python libs: Done"
@@ -25,14 +27,10 @@ do
 	cp partial.zip ${fun}.zip
 	zip -g -q ${fun}.zip ${fun}.py
 
-	if [[ "migrations" == $fun ]]; then
-		zip -r9 -g -q ${fun}.zip migrations
-		zip -r9 -g -q ${fun}.zip alembic.ini
-	fi
-
   if [[ "$functions" == *"$fun"* ]]; then
     echo -e "\tUpdating function ${fun}"
   	aws lambda update-function-configuration \
+			--timeout 30 \
 			--function-name ${fun} \
 			--environment "Variables={ENV=AWS}" >> output
   	aws lambda update-function-code \
@@ -41,6 +39,7 @@ do
   else
     echo -e "\tCreating function ${fun}"
     aws lambda create-function \
+			--timeout 30 \
 			--role ${role_arn} \
 			--function-name ${fun} \
 			--runtime python3.8 \

@@ -7,6 +7,9 @@ from amplio.rolemanager import manager
 
 from alembic.config import Config
 from alembic import command
+
+from dotenv import load_dotenv
+
 # Load .env file
 load_dotenv()
 alembic_cfg = Config(os.getenv('ALEMBIC_INI'))
@@ -37,9 +40,10 @@ def lambda_handler(event, context):
     email: string
     """
 
-    email = event['request']['email']
+    email = event['email']
 
+    programs = manager.get_programs_for_user(email).items()
     return {
         'status': 200,
-        'programs': manager.get_programs_for_user(email).items()
+        'programs': programs
     }

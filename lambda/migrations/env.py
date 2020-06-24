@@ -30,20 +30,9 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 from models import program
-from models import listening_model
-from models import program_language
-from models import program_listening_model
-from models import program_sustainable_development_goal
-from models import sustainable_development_goal
-
 
 target_metadata = [
   program.Base.metadata,
-  # listening_model.Base.metadata,
-  # program_language.Base.metadata,
-  # program_listening_model.Base.metadata,
-  # program_sustainable_development_goal.Base.metadata,
-  # sustainable_development_goal.Base.metadata,
 ]
 
 # other values from the config, defined by the needs of env.py,
