@@ -1,9 +1,8 @@
 <template>
   <div>
-    <main class="container mx-auto text-center pt-4">
+    <router-view class="min-h-banner">
       <TheNotification />
-    </main>
-    <router-view class="min-h-banner" />
+    </router-view>
 
     <TheFooter />
   </div>

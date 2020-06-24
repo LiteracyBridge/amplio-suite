@@ -1,5 +1,7 @@
 <template>
-  <main class="container mx-auto text-center pt-24">
+  <main :class="hidden ? 'pt-24' : 'pt-10'" class="container mx-auto text-center">
+    <slot />
+
     <div class="mx-auto" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
@@ -64,6 +66,9 @@ export default {
     ...mapState('account', [
       'status'
     ]),
+    ...mapState('notification', [
+      'hidden'
+    ])
   },
   data () {
     return {
