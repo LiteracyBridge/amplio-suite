@@ -124,7 +124,7 @@ function selectOneProgram (to, from, next) {
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
   const nextStep = +to.path.split('-')[1]
-  const isComplete = store.state.program.completedSteps.includes(nextStep - 1)
+  const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
 
   if (isComplete) next()
   else if (from.path === '/') next('/')

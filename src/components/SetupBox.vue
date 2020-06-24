@@ -37,7 +37,7 @@ import Button from '@/components/Button'
 
 export default {
   computed: {
-    ...mapState('program', [
+    ...mapState('wizard', [
       'actualStep',
       'completedSteps'
     ]),
@@ -63,7 +63,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'nextStep',
       'prevStep'
     ]),

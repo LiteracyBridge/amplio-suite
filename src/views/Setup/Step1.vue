@@ -40,7 +40,7 @@ export default {
     this.$refs.programName.$el.children[0].focus()
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'setProgramName'
     ])
   }

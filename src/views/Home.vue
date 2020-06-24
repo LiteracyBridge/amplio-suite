@@ -41,12 +41,12 @@ export default {
     HomeBox
   },
   computed: {
-    ...mapState('program', [
+    ...mapState('wizard', [
       'actualStep',
-      'setupIsComplete'
+      'isComplete'
     ]),
     linkTo() {
-      if (!this.setupIsComplete) {
+      if (!this.isComplete) {
         return { name: `Step-${this.actualStep}` }
       } else {
         return '/program'

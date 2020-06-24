@@ -17,17 +17,23 @@ export default {
     Box
   },
   computed: {
-    ...mapState('program', [
-      'setupIsComplete'
-    ])
+    ...mapState('wizard', {
+      wizarsIsComplete: 'isComplete'
+    })
   },
   methods: {
     ...mapActions('program', [
       'createProgram'
+    ]),
+    ...mapActions('wizard', [
+      'addCompletedStep',
+      'setIsCompleted'
     ])
   },
   mounted () {
-    if (!this.setupIsComplete) {
+    if (!this.wizarsIsComplete) {
+      this.addCompletedStep(7)
+      this.setIsCompleted()
       this.createProgram()
     }
     this.$refs.box.$el.querySelector('button').focus()

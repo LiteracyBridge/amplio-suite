@@ -91,7 +91,7 @@ export default {
     Check
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'toggleListening'
     ]),
     clickOnButton () {

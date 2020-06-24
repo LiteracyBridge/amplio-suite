@@ -67,7 +67,7 @@ export default {
     this.$refs.freq.focus()
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'setFeedbackFrequently',
       'setFeedbackFrequentlyOther'
     ])

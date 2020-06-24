@@ -51,8 +51,10 @@ export default {
     this.$refs['lang_1'][0].$el.children[0].focus()
   },
   methods: {
+    ...mapActions('wizard', [
+      'setLanguages'
+    ]),
     ...mapActions('program', [
-      'setLanguages',
       'addLangInput'
     ]),
     async addInput () {
