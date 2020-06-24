@@ -14,8 +14,8 @@
             placeholder="Email address"
             aria-label="Email address"
             class="my-0"
-            :value="user"
-            @input="setUser($event.target.value)"
+            :value="email"
+            @input="setEmail($event.target.value)"
           />
 
           <v-input
@@ -67,7 +67,7 @@ export default {
   },
   data () {
     return {
-      user: '',
+      email: '',
       password: '',
     }
   },
@@ -81,19 +81,19 @@ export default {
     ...mapMutations('notification', [
       'alert'
     ]),
-    setUser (value) {
-      this.user = value
+    setEmail (value) {
+      this.email = value
     },
     setPassword (value) {
       this.password = value
     },
     async handleLogin () {
-      const status = await this.login({ user: this.user, password: this.password })
+      const status = await this.login({ email: this.email, password: this.password })
 
       if (status === 'success') {
         this.$router.push('/programs')
       } else {
-        this.user = ''
+        this.email = ''
         this.password = ''
 
         this.alert('Invalid Login or password')
