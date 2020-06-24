@@ -44,8 +44,8 @@ const routes = [
   {
     path: '/programs/:id/wizard',
     redirect: { name: 'Step-1' },
-    component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Index.vue'),
-    beforeEnter: multiguard([requireAuth, stepIsCompleted]),
+    component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
