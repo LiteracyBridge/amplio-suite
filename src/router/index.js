@@ -5,7 +5,6 @@ import multiguard from 'vue-router-multiguard'
 import store from '@/store'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
-import cognitoAuth from '@/cognito'
 
 Vue.use(VueRouter)
 
@@ -139,27 +138,18 @@ function stepIsCompleted (to, from, next) {
 }
 
 function requireAuth (to, from, next) {
-  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
-    if (!loggedIn) {
-      if (tokenOrError) return next()
-      next({
-        path: '/login',
-        query: { redirect: to.fullPath }
-      })
-    } else {
-      next()
-    }
-  })
+  store.dispatch('account/requireAuth')
+    .then(() => next())
+    .catch(() => next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    }))
 }
 
 function checkAuth(to, from, next) {
-  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
-    if (loggedIn) {
-      next({path: '/'})
-    } else {
-      next()
-    }
-  })
+  store.dispatch('account/requireAuth')
+    .then(() => next({ path: '/programs' }))
+    .catch(() => next())
 }
 
 export default router
