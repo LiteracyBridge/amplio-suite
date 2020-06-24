@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import wizard from './wizard'
 import program from './program'
 import account from './account'
 import notification from './notification'
@@ -11,6 +12,7 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
 
   modules: {
+    wizard,
     program,
     account,
     notification
