@@ -7,7 +7,8 @@ const postProgram = (program) => httpClient.post(END_POINT, program)
 
 const getPrograms = () => {
     // const { email } = store.state.account.user
-    return [{ name: 'some program name', id: '' }, { name: 'Program 2', id: '' }]
+    // return ['Code Name 1', 'Other code name']
+    return ['Code Name 1']
 }
 
 export {
