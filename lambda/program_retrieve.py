@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             }
 
     try:
-        program = Program.query.filter(Program.project == event['project_code']).first()
+        program = session.query(Program).filter(Program.project == event['project_code']).first()
     except ValueError as err:
         return {
             'status': 404,

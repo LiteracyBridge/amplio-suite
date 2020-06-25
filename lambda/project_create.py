@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from utils import get_db_url
-from models.program import Program
+from models.project import Project
 
 from alembic.config import Config
 from alembic import command
@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             }
 
     try:
-        project = Project(project: event['name'], projectcode: event['name'])
+        project = Project(project= event['name'], projectcode= event['name'])
     except ValueError as err:
         return {
             'status': 422,

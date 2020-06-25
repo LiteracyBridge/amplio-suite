@@ -72,20 +72,14 @@ class Program(Base):
         return feedback_frequency2
 
 def validate_list_input(opts, keys, text):
-    """
-    Validate if all the elements of the entered list are in the list of valid keys
-
-    parameter
-    ---------
-    opts: list
-        Input list
-    keys: list
-        Valid keys
-    text: string
-        Text to add on the error message
-    """
     valid_keys = [opt in keys for opt in opts]
 
     if not all(valid_keys):
         invalid_keys = [opt for i, opt in enumerate(opts) if not valid_keys[i]]
         raise ValueError(f"Invalid {text} {invalid_keys}")
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_sa_instance_state']
+        return state

@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 sys.path.append('/var/task/package')
 
 from sqlalchemy import create_engine
@@ -7,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 from utils import get_db_url
 from models.project import Project
+from models.deployment import Deployment
 
 from alembic.config import Config
 from alembic import command
@@ -41,8 +43,8 @@ def lambda_handler(event, context):
             }
 
     try:
-        project = Project.query.get(event['project_id'])
-        deployments = Deployment.query.filter(Deployment.project == event['project_id'])
+        project = session.query(Project).get(event['project_id'])
+        deployments = session.query(Deployment).filter(Deployment.project == event['project_id'])
     except ValueError as err:
         return {
             'status': 404,
@@ -50,6 +52,6 @@ def lambda_handler(event, context):
         }
     return {
         'status': 200,
-        'project': project,
-        'deployments': deployments
+        'project': json.dumps(project.__getstate__()),
+        'deployments': json.dumps([deployment.__getstate__() for deployment in deployments])
     }
