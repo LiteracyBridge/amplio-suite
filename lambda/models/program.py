@@ -26,6 +26,7 @@ class Program(Base):
     __tablename__ = "programs"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
+    project = Column(String(255), nullable=False)
     sustainable_development_goal = Column(JSON, nullable=False)
     listening_model = Column(JSON, nullable=False)
     amount_deployment = Column(Integer, nullable=False)
