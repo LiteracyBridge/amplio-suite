@@ -49,9 +49,9 @@ services:
     depends_on:
       - db
 
-  lambda-new-program:
+  lambda-program_create:
     <<: *base
-    command: new_program.lambda_handler
+    command: program_create.lambda_handler
 
 volumes:
   node_modules:
