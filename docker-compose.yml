@@ -49,10 +49,6 @@ services:
     depends_on:
       - db
 
-  lambda-test:
-    <<: *base
-    command: test_function.lambda_handler
-
   lambda-new-program:
     <<: *base
     command: new_program.lambda_handler
