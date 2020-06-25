@@ -30,6 +30,8 @@ def upgrade():
         sa.Column('feedback_frequency', sa.String(50), nullable=False),
         sa.Column('feedback_frequency2', sa.String(50), nullable=False),
     )
+    op.create_index(op.f('ix_programs_id'), 'programs', ['id'], unique=False)
 
 def downgrade():
+    op.drop_index(op.f('ix_programs_id'), table_name='programs')
     op.drop_table('programs')
