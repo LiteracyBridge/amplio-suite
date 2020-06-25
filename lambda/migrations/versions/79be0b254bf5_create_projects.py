@@ -26,7 +26,6 @@ def upgrade():
     sa.UniqueConstraint('projectcode', name='projects_uniqueness_key')
     )
     op.create_index(op.f('ix_projects_projectcode'), 'projects', ['projectcode'], unique=False)
-
     # ### end Alembic commands ###
 
 

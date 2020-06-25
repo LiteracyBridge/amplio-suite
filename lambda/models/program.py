@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import Column, Integer, String, Date, JSON
+from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,6 +24,9 @@ Base = declarative_base()
 
 class Program(Base):
     __tablename__ = "programs"
+    __table_args__ = (
+        UniqueConstraint('project', name='programs_uniqueness_key'),
+    )
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
     project = Column(String(255), nullable=False)

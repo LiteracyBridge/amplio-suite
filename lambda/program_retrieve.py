@@ -31,7 +31,7 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
-    valid_keys = ['program_id']
+    valid_keys = ['project_code']
 
     for key in valid_keys:
         if key not in event:
@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             }
 
     try:
-        program = Program.query.get(program_id)
+        program = Program.query.filter(Program.project == event['project_code']).first()
     except ValueError as err:
         return {
             'status': 404,
