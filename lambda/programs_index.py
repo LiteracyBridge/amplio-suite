@@ -26,20 +26,6 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
-    """
-    List programs by user
-
-    HTTP
-    ----
-    method: POST
-    auth: True
-    enpoint:
-
-    Parameters
-    ----------
-    email: string
-    """
-
     email = event['email']
 
     program_items = manager.get_programs_for_user(email).items()

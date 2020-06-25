@@ -31,22 +31,6 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
-    """
-    Insert new program to the db
-
-    HTTP
-    ----
-    method: POST
-    auth: True
-    enpoint:
-
-    Parameters
-    ----------
-    name: string
-        Program name
-    amount_deployment: Integer
-    """
-    # Validate the input keys
     valid_keys = ['program_id']
 
     for key in valid_keys:
