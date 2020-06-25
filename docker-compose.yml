@@ -25,7 +25,7 @@ services:
     environment:
       POSTGRES_USER: amplio
       POSTGRES_PASSWORD: fooFaBar
-      POSTGRES_DB: amplio_db
+      POSTGRES_DB: ampliosuite
     volumes:
       - 'postgres-data:/var/lib/postgresql/data'
 
