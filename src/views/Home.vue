@@ -49,7 +49,7 @@ export default {
       if (!this.wizardIsComplete) {
         return `${this.$route.path}/wizard/step-${this.wizardActualStep}`
       } else {
-        return `${this.$route.path}/setting`
+        return `${this.$route.path}/settings`
       }
     }
   }
