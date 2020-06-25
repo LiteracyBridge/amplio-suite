@@ -1,3 +1,10 @@
+import { getDefaultState } from './index'
+
+// eslint-disable-next-line no-unused-vars
+const resetState = (state) => {
+  state = Object.assign(state, getDefaultState())
+}
+
 const setDirty = (state, payload) => {
   const { tab, status } = payload
   state[tab].dirty = status
@@ -96,6 +103,7 @@ const removeListeningModel = (state, index) => {
 }
 
 export default {
+  resetState,
   setDirty,
   setCodeName,
   getProgramRequest,

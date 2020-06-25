@@ -1,3 +1,10 @@
+import { getDefaultState } from './index'
+
+// eslint-disable-next-line no-unused-vars
+const resetState = (state) => {
+  state = Object.assign(state, getDefaultState())
+}
+
 const setStep = (state, payload) => {
   state.actualStep = payload
 }
@@ -24,6 +31,7 @@ const setIsCompleted = (state) => {
 
 
 export default {
+  resetState,
   setStep,
   nextStep,
   prevStep,

@@ -1,6 +1,9 @@
 // import { postProgram } from '@/api/programs.api'
 
 const setCodeName = async ({ commit }, name) => {
+  commit('resetState')
+  commit('wizard/resetState', {}, { root: true })
+
   const id = name.replace(/ /g, '-').toLocaleLowerCase()
   commit('setCodeName', { name, id})
 
