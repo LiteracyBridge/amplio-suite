@@ -31,10 +31,12 @@ fileConfig(config.config_file_name)
 # target_metadata = None
 from models import program
 from models import project
+from models import deployment
 
 target_metadata = [
   program.Base.metadata,
   project.Base.metadata,
+  deployment.Base.metadata,
 ]
 
 # other values from the config, defined by the needs of env.py,
