@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             }
 
     try:
-        project = Project(project: event.name, projectcode: event.name)
+        project = Project(project: event['name'], projectcode: event['name'])
     except ValueError as err:
         return {
             'status': 422,

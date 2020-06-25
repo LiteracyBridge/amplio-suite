@@ -41,8 +41,8 @@ def lambda_handler(event, context):
             }
 
     try:
-        project = Project.query.get(project_id)
-        deployments = Deployment.query.filter(Deployment.project == project_id)
+        project = Project.query.get(event['project_id'])
+        deployments = Deployment.query.filter(Deployment.project == event['project_id'])
     except ValueError as err:
         return {
             'status': 404,
