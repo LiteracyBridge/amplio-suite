@@ -42,8 +42,12 @@ def lambda_handler(event, context):
 
     email = event['email']
 
-    programs = manager.get_programs_for_user(email).items()
+    program_items = manager.get_programs_for_user(email).items()
+    roles = {}
+    for program, role in program_items:
+        roles[program] = role
+
     return {
         'status': 200,
-        'programs': programs
+        'programs': roles
     }
