@@ -1,4 +1,24 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+
+function warn_no_env_local_bash() {
+	echo 'export AWS_ACCESS_KEY_ID=""' > env.local.bash
+	echo 'export AWS_SECRET_ACCESS_KEY=""' >> env.local.bash
+	echo "*** Please fill ${PWD}/env.local.bash with your AWS credentials"
+	exit 1
+}
+
+. env.local.bash || warn_no_env_local_bash
+
+function die() {
+	echo $1
+	exit 1
+}
+
+[ -n "$AWS_ACCESS_KEY_ID" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
+[ -n "$AWS_SECRET_ACCESS_KEY" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
+export AWS_DEFAULT_REGION=us-west-2
 
 functions_to_deploy=( test_function migrations program_create programs_index program_retrieve )
 
@@ -19,6 +39,8 @@ zip -g -q partial.zip alembic.ini
 zip -r9 -g -q partial.zip models
 zip -r9 -g -q partial.zip amplio
 echo -e "\rZip the python libs: Done"
+
+set +e
 
 for fun in "${functions_to_deploy[@]}"
 do
