@@ -5,6 +5,11 @@ export default {
 
   state: () => ({
     status: '',
+    user: {
+      email: '',
+      name: '',
+      img: ''
+    }
   }),
 
   getters: {
@@ -20,6 +25,9 @@ export default {
     authError(state){
       state.status = 'error'
     },
+    setUser(state, payload) {
+      state.user = payload
+    }
   },
 
   actions: {
@@ -27,7 +35,7 @@ export default {
       commit('authRequest')
       return new Promise((resolve) => {
         // cognitoAuth.signup(payload.user, payload.user, payload.password, (err, result) => {
-        cognitoAuth.authenticate(payload.user, payload.password, (err, result) => {
+        cognitoAuth.authenticate(payload.email, payload.password, (err, result) => {
           if (err) {
             commit('authError')
             resolve('error')
@@ -35,8 +43,41 @@ export default {
 
           if (result) {
             const token = result.getIdToken()
-            commit('authSuccess', { user: payload.user, token })
+            const user = {
+              email: payload.email,
+              name: payload.email.split('@')[0],
+              token
+            }
+
+            localStorage.setItem('user', JSON.stringify(user))
+
+            commit('setUser', user)
+            commit('authSuccess')
             resolve('success')
+          }
+        })
+      })
+    },
+    async requireAuth ({ commit }) {
+      // Resolve if the user is authenticated
+      // Else reject
+      const loadUser = () => {
+        // Retrieve the object from storage
+        const user = localStorage.getItem('user')
+        commit('setUser', JSON.parse(user))
+      }
+
+      return new Promise((resolve, reject) => {
+        cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
+          if (!loggedIn) {
+            if (tokenOrError) {
+              loadUser()
+              resolve()
+            }
+            else reject()
+          } else {
+            loadUser()
+            resolve()
           }
         })
       })

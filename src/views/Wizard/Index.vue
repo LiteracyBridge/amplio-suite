@@ -16,11 +16,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'Setup',
-  computed: mapState('program', [
+  computed: mapState('wizard', [
     'actualStep'
   ]),
   data () {
@@ -40,7 +40,7 @@ export default {
     next()
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'setStep'
     ])
   }

@@ -1,29 +1,18 @@
-/****************************************
-  Commons
-****************************************/
-const setStep = (state, payload) => {
-  state.actualStep = payload
-}
+import { getDefaultState } from './index'
 
-const nextStep = (state) => {
-  state.actualStep++
-}
-
-const prevStep = (state) => {
-  state.actualStep--
-}
-
-const addCompletedStep = (state, payload) => {
-  state.completedSteps.push(payload)
-}
-
-const removeCompletedStep = (state, index) => {
-  state.completedSteps.splice(index, 1)
+// eslint-disable-next-line no-unused-vars
+const resetState = (state) => {
+  state = Object.assign(state, getDefaultState())
 }
 
 const setDirty = (state, payload) => {
   const { tab, status } = payload
   state[tab].dirty = status
+}
+
+const setCodeName = (state, payload) => {
+  state.codeName = payload.name
+  state.codeNameId = payload.id
 }
 
 const getProgramRequest = (state) => {
@@ -36,10 +25,6 @@ const getProgramSuccess = (state) => {
 
 const getProgramError = (state) => {
   state.status = 'error'
-}
-
-const completedSetup = (state) => {
-  state.setupIsComplete = true
 }
 
 /****************************************
@@ -118,16 +103,12 @@ const removeListeningModel = (state, index) => {
 }
 
 export default {
-  setStep,
-  nextStep,
-  prevStep,
-  addCompletedStep,
-  removeCompletedStep,
+  resetState,
   setDirty,
+  setCodeName,
   getProgramRequest,
   getProgramSuccess,
   getProgramError,
-  completedSetup,
   setProgramName,
   setLanguages,
   addLangInput,

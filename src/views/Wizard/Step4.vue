@@ -89,7 +89,7 @@ export default {
     VInput
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'setDeploymentsAmount',
       'setDeploymentsFrequency',
       'setDeploymentsFirst'

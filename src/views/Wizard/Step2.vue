@@ -72,7 +72,7 @@ export default {
     Check
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('wizard', [
       'toggleGoal'
     ]),
     clickOnButton () {

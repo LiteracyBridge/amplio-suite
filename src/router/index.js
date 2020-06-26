@@ -5,15 +5,13 @@ import multiguard from 'vue-router-multiguard'
 import store from '@/store'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
-import cognitoAuth from '@/cognito'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    component: Home,
-    beforeEnter: requireAuth
+    redirect: { path: '/login' }
   },
   {
     path: '/login',
@@ -33,53 +31,63 @@ const routes = [
     },
   },
   {
-    path: '/setup',
+    path: '/programs',
+    component: () => import(/* webpackChunkName: "programs" */ '../views/Programs.vue'),
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/programs/:id',
+    component: Home,
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms])
+  },
+  {
+    path: '/programs/:id/wizard',
     redirect: { name: 'Step-1' },
-    component: () => import(/* webpackChunkName: "setup" */ '../views/Setup/Index.vue'),
-    beforeEnter: multiguard([requireAuth, stepIsCompleted]),
+    component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
         name: 'Step-1',
-        component: () => import(/* webpackChunkName: "setup-1" */ '../views/Setup/Step1.vue')
+        component: () => import(/* webpackChunkName: "setup-1" */ '../views/Wizard/Step1.vue')
       },
       {
         path: 'step-2',
         name: 'Step-2',
-        component: () => import(/* webpackChunkName: "setup-2" */ '../views/Setup/Step2.vue')
+        component: () => import(/* webpackChunkName: "setup-2" */ '../views/Wizard/Step2.vue')
       },
       {
         path: 'step-3',
         name: 'Step-3',
-        component: () => import(/* webpackChunkName: "setup-3" */ '../views/Setup/Step3.vue')
+        component: () => import(/* webpackChunkName: "setup-3" */ '../views/Wizard/Step3.vue')
       },
       {
         path: 'step-4',
         name: 'Step-4',
-        component: () => import(/* webpackChunkName: "setup-4" */ '../views/Setup/Step4.vue')
+        component: () => import(/* webpackChunkName: "setup-4" */ '../views/Wizard/Step4.vue')
       },
       {
         path: 'step-5',
         name: 'Step-5',
-        component: () => import(/* webpackChunkName: "setup-5" */ '../views/Setup/Step5.vue')
+        component: () => import(/* webpackChunkName: "setup-5" */ '../views/Wizard/Step5.vue')
       },
       {
         path: 'step-6',
         name: 'Step-6',
-        component: () => import(/* webpackChunkName: "setup-6" */ '../views/Setup/Step6.vue')
+        component: () => import(/* webpackChunkName: "setup-6" */ '../views/Wizard/Step6.vue')
       },
       {
         path: 'step-7',
         name: 'Step-7',
-        component: () => import(/* webpackChunkName: "setup-7" */ '../views/Setup/Step7.vue')
+        component: () => import(/* webpackChunkName: "setup-7" */ '../views/Wizard/Step7.vue')
       }
     ]
   },
   {
-    path: '/program',
-    redirect: { path: '/program/general' },
+    path: '/programs/:id/settings',
+    redirect: { path: '/programs/:id/settings/general' },
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
-    beforeEnter: requireAuth,
+    beforeEnter: multiguard([requireAuth, fetchAllPrograms]),
     children: [
       {
         path: 'general',
@@ -108,38 +116,40 @@ const router = new VueRouter({
   routes
 })
 
+function fetchAllPrograms (to, from, next) {
+  const { allPrograms } = store.state.programIndex
+
+  if (allPrograms.length === 0) next('/programs')
+  else next()
+}
+
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
-  const nextStep = +to.path.split('-')[1]
-  const isComplete = store.state.program.completedSteps.includes(nextStep - 1)
 
-  if (isComplete) next()
-  else if (from.path === '/') next('/')
-  else next(false)
+  if (!to.path.includes('wizard')) next()
+  else {
+    const s = to.path.split('/')
+    const nextStep = +s[s.length -1].split('-')[1]
+    const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
+
+    if (isComplete) next()
+    else next(false)
+  }
 }
 
 function requireAuth (to, from, next) {
-  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
-    if (!loggedIn) {
-      if (tokenOrError) return next()
-      next({
-        path: '/login',
-        query: { redirect: to.fullPath }
-      })
-    } else {
-      next()
-    }
-  })
+  store.dispatch('account/requireAuth')
+    .then(() => next())
+    .catch(() => next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    }))
 }
 
 function checkAuth(to, from, next) {
-  cognitoAuth.isAuthenticated((tokenOrError, loggedIn) => {
-    if (loggedIn) {
-      next({path: '/'})
-    } else {
-      next()
-    }
-  })
+  store.dispatch('account/requireAuth')
+    .then(() => next({ path: '/programs' }))
+    .catch(() => next())
 }
 
 export default router

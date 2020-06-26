@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link to="/" class="text-white">
+        <router-link :to="`/programs/${codeNameId}`" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -55,6 +55,23 @@
         </div>
 
         <div class="inline-flex">
+          <select
+            v-if="allPrograms.length > 1"
+            aria-label="Select a program"
+            class="px-4 py-1 rounded"
+            :value="codeName"
+            @change="changeProgram"
+          >
+            <option value="">Select a program</option>
+            <option
+              v-for="(name, index) in allPrograms"
+              :key="index"
+              :value="name"
+            >
+              {{ name }}
+            </option>
+          </select>
+
           <span
             tabindex="0"
             class="block px-3 pt-3 md:pt-0 text-xl text-white rounded cursor-pointer hover:text-gray-500"
@@ -70,6 +87,8 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 import DropDown from '@/components/TheNavbarDropDown'
 import cognitoAuth from '@/cognito'
 
@@ -77,6 +96,15 @@ import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
 export default {
+  computed: {
+    ...mapState('programIndex', [
+      'allPrograms'
+    ]),
+    ...mapState('program', [
+      'codeName',
+      'codeNameId'
+    ])
+  },
   data () {
     return {
       isOpen: false,
@@ -94,6 +122,13 @@ export default {
     DropDown
   },
   methods: {
+    ...mapActions('program', [
+      'setCodeName'
+    ]),
+    async changeProgram (event) {
+      const id = await this.setCodeName(event.target.value)
+      this.$router.push(`/programs/${id}`)
+    },
     handleLogout () {
       cognitoAuth.logout()
       this.$router.go()

@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
-      Welcome to Amplio Jenny!
+      Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
     </h1>
 
     <div class="grid grid-cols-3 gap-10">
@@ -41,15 +41,18 @@ export default {
     HomeBox
   },
   computed: {
-    ...mapState('program', [
-      'actualStep',
-      'setupIsComplete'
+    ...mapState('wizard', {
+      wizardActualStep: 'actualStep',
+      wizardIsComplete: 'isComplete'
+    }),
+    ...mapState('account', [
+      'user'
     ]),
     linkTo() {
-      if (!this.setupIsComplete) {
-        return { name: `Step-${this.actualStep}` }
+      if (!this.wizardIsComplete) {
+        return `${this.$route.path}/wizard/step-${this.wizardActualStep}`
       } else {
-        return '/program'
+        return `${this.$route.path}/settings`
       }
     }
   }
