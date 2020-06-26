@@ -11,7 +11,7 @@ const setCodeName = async ({ commit }, name) => {
 }
 
 const setProgramName = ({ commit }, payload) => {
-  commit('setProgramName', payload)
+  commit('setProgramName', payload.replace(/\s+/g,' ').trim())
   commit('setDirty', { tab: 'general', status: true })
 }
 
