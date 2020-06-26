@@ -1,5 +1,78 @@
 // import { postProgram } from '@/api/programs.api'
 
+// Helper
+const calculateDeploymentsDates = (state) => {
+  const { amount, first, frequency } = state.deployments
+
+  const increment = frequency === 'one_month' ? 1 :
+    frequency === '1_quarter' ? 3 :
+      frequency === 'six_months' ? 6 :
+        frequency === 'one_year' ? 12 : 0
+
+  const dates = []
+  for (let i=0; i<amount; i++) {
+    dates.push({ start: '', end: '' })
+  }
+  dates[0].start = first
+
+  for (let i=1; i<amount; i++) {
+    const prev = new Date(dates[i - 1].start)
+    const next = new Date(prev.setMonth(prev.getMonth() + increment))
+    dates[i].start = next.toISOString().split('T')[0]
+  }
+
+  for (let i=0; i<amount; i++) {
+    const start = new Date(dates[i].start)
+    const end = new Date(start.setMonth(start.getMonth() + increment))
+    dates[i].end = end.toISOString().split('T')[0]
+  }
+
+  return dates
+}
+
+const isCompleted = async ({ state, commit }, section) => {
+  let result
+
+  switch (section) {
+    case 'programName': {
+      result = state.general.programName !== ''
+      break
+    }
+    case 'goals': {
+      result = state.content.goals.length > 0
+      break
+    }
+    case 'listeningModels': {
+      result = state.content.listeningModels.length > 0
+      break
+    }
+    case 'deployments': {
+      const { amount, first, frequency } = state.deployments
+      result = (amount > 0) && (frequency !== '')
+        && (first !== '') && (new Date(first) > new Date())
+      break
+    }
+    case 'feedback': {
+      const { feedbackFrequently, feedbackFrequentlyOther } = state.general
+      result = (feedbackFrequently !== '') && (feedbackFrequentlyOther !== '')
+      break
+    }
+    case 'languages': {
+      result = state.general.languages.filter(ele => ele !== '').length
+      break
+    }
+    default:
+      break
+  }
+
+  if (result && section === 'deployments') {
+    const dates = calculateDeploymentsDates(state)
+    commit('setDeploymentsDates', dates)
+  }
+
+  return result
+}
+
 const setCodeName = async ({ commit }, name) => {
   commit('resetState')
   commit('wizard/resetState', {}, { root: true })
@@ -124,6 +197,7 @@ const updateProgram = async ({ commit }, payload) => {
 }
 
 export default {
+  isCompleted,
   setCodeName,
   setProgramName,
   toggleGoal,

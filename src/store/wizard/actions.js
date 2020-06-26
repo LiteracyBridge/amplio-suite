@@ -24,122 +24,71 @@ const setIsCompleted = ({ commit }) => {
   commit('setIsCompleted')
 }
 
-// Step 1
-const setProgramName = ({ dispatch }, payload) => {
-  dispatch('program/setProgramName', payload, { root: true })
+// Helper
+const check = async (section, step, dispatch) => {
+  const result = await dispatch('program/isCompleted', section, { root: true } )
+  if (result) dispatch('addCompletedStep', step)
+  else dispatch('removeCompletedStep', step)
+}
 
-  // Check if the step if completed
-  if (payload) dispatch('addCompletedStep', 1)
-  else dispatch('removeCompletedStep', 1)
+// Step 1
+const setProgramName = async ({ dispatch }, payload) => {
+  await dispatch('program/setProgramName', payload, { root: true })
+
+  await check('programName', 1, dispatch)
 }
 
 // Step 2
-const toggleGoal = async ({ rootState, dispatch }, goal) => {
+const toggleGoal = async ({ dispatch }, goal) => {
   await dispatch('program/toggleGoal', goal, { root: true })
 
-  // Check if the step if completed
-  if (rootState.program.content.goals.length > 0) dispatch('addCompletedStep', 2)
-  else dispatch('removeCompletedStep', 2)
+  await check('goals', 2, dispatch)
 }
 
 // Step 3
-const toggleListening = async ({ rootState, dispatch }, model) => {
+const toggleListening = async ({ dispatch }, model) => {
   await dispatch('program/toggleListening', model, { root: true })
 
-  // Check if the step if completed
-  if (rootState.program.content.listeningModels.length > 0) dispatch('addCompletedStep', 3)
-  else dispatch('removeCompletedStep', 3)
+  await check('listeningModels', 3, dispatch)
 }
 
 // Step 4
-const calculateDeploymentsDates = (amount, first, frequency) => {
-  const increment = frequency === 'one_month' ? 1 :
-    frequency === '1_quarter' ? 3 :
-      frequency === 'six_months' ? 6 :
-        frequency === 'one_year' ? 12 : 0
-
-  const dates = []
-  for (let i=0; i<amount; i++) {
-    dates.push({ start: '', end: '' })
-  }
-  dates[0].start = first
-
-  for (let i=1; i<amount; i++) {
-    const prev = new Date(dates[i - 1].start)
-    const next = new Date(prev.setMonth(prev.getMonth() + increment))
-    dates[i].start = next.toISOString().split('T')[0]
-  }
-
-  for (let i=0; i<amount; i++) {
-    const start = new Date(dates[i].start)
-    const end = new Date(start.setMonth(start.getMonth() + increment))
-    dates[i].end = end.toISOString().split('T')[0]
-  }
-
-  return dates
-}
-
-const checkIfStepIsComplete = (rootState, commit, dispatch) => {
-  const { amount, first, frequency } = rootState.program.deployments
-  const isComplete = (amount > -1) && (frequency !== '')
-    && (first !== '') && (new Date(first) > new Date())
-
-  if (isComplete) {
-    const dates = calculateDeploymentsDates(amount, first, frequency)
-    commit('program/setDeploymentsDates', dates, { root: true })
-    dispatch('addCompletedStep', 4)
-  } else {
-    dispatch('removeCompletedStep', 4)
-  }
-}
-
-const setDeploymentsAmount = async ({ rootState, commit, dispatch }, payload) => {
+const setDeploymentsAmount = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsAmount', payload, { root: true })
 
-  checkIfStepIsComplete(rootState, commit, dispatch)
+  await check('deployments', 4, dispatch)
 }
 
-const setDeploymentsFrequency = async ({ rootState, commit, dispatch }, payload) => {
+const setDeploymentsFrequency = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsFrequency', payload, { root: true })
 
-  checkIfStepIsComplete(rootState, commit, dispatch)
+  await check('deployments', 4, dispatch)
 }
 
-const setDeploymentsFirst = async ({ rootState, commit, dispatch }, payload) => {
+const setDeploymentsFirst = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsFirst', payload, { root: true })
 
-  checkIfStepIsComplete(rootState, commit, dispatch)
+  await check('deployments', 4, dispatch)
 }
 
 // Step 5
-const setFeedbackFrequently = async ({ rootState, dispatch }, payload) => {
+const setFeedbackFrequently = async ({ dispatch }, payload) => {
   await dispatch('program/setFeedbackFrequently', payload, { root: true })
 
-  // Check if the step if completed
-  const { feedbackFrequently, feedbackFrequentlyOther } = rootState.program.general
-  const isComplete = (feedbackFrequently !== '') && (feedbackFrequentlyOther !== '')
-  if (isComplete) dispatch('addCompletedStep', 5)
-  else dispatch('removeCompletedStep', 5)
+  await check('feedback', 5, dispatch)
 }
 
-const setFeedbackFrequentlyOther = async ({ rootState, dispatch }, payload) => {
+const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
   await dispatch('program/setFeedbackFrequentlyOther', payload, { root: true })
 
-  // Check if the step if completed
-  const { feedbackFrequently, feedbackFrequentlyOther } = rootState.program.general
-  const isComplete = (feedbackFrequently !== '') && (feedbackFrequentlyOther !== '')
-  if (isComplete) dispatch('addCompletedStep', 5)
-  else dispatch('removeCompletedStep', 5)
+  await check('feedback', 5, dispatch)
 }
 
 // Step 6
-const setLanguages = async ({ rootState, dispatch }, payload) => {
+const setLanguages = async ({ dispatch }, payload) => {
   await dispatch('program/setLanguages', payload, { root: true })
 
-  // Check if the step if completed
-  const fillValues = rootState.program.general.languages.filter(ele => ele !== '').length
-  if (fillValues > 0) dispatch('addCompletedStep', 6)
-  else dispatch('removeCompletedStep', 6)
+  await check('languages', 6, dispatch)
 }
 
 export default {
