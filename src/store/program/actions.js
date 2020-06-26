@@ -196,7 +196,7 @@ const createProgram = async ({ commit, state }) => {
   try {
     await postProgram(data)
   } catch (error) {
-    console.log(error)
+    commit('notification/alert', error, { root: true })
   }
 }
 
