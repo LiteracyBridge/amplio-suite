@@ -2,7 +2,7 @@
   <main class="container mx-auto text-center">
     <header class="py-20 text-blue font-semibold">
       <h1 class="text-4xl">
-        Welcome to Amplio Jenny!
+        Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
       </h1>
       <h2 class="text-2xl">Select a Program Specification</h2>
     </header>
@@ -30,6 +30,9 @@ export default {
   computed: {
     ...mapState('programIndex', [
       'allPrograms'
+    ]),
+    ...mapState('account', [
+      'user'
     ])
   },
   mounted () {
