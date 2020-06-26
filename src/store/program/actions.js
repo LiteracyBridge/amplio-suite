@@ -1,4 +1,4 @@
-// import { postProgram } from '@/api/programs.api'
+import { postProgram } from '@/api/programs.api'
 
 // Helper
 const calculateDeploymentsDates = (state) => {
@@ -174,13 +174,11 @@ const createProgram = async ({ commit, state }) => {
   commit('setDirty', { tab: 'deployments', status: false })
   commit('setDirty', { tab: 'content', status: false })
 
-  console.log(data)
-  // try {
-  //   const response = await postProgram(data)
-  //   console.log(response)
-  // } catch (error) {
-  //   console.log(error)
-  // }
+  try {
+    await postProgram(data)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const updateProgram = async ({ commit }, payload) => {
