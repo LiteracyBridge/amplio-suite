@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('projectcode', sa.String(length=255), nullable=False),
     sa.Column('project', sa.String(length=255), nullable=False),
     sa.Column('active', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('projectcode')
+    sa.UniqueConstraint('projectcode', name='projects_uniqueness_key')
     )
     op.create_index(op.f('ix_projects_projectcode'), 'projects', ['projectcode'], unique=False)
     # ### end Alembic commands ###

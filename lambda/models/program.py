@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import Column, Integer, String, Date, JSON
+from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,8 +24,12 @@ Base = declarative_base()
 
 class Program(Base):
     __tablename__ = "programs"
+    __table_args__ = (
+        UniqueConstraint('project', name='programs_uniqueness_key'),
+    )
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
+    project = Column(String(255), nullable=False)
     sustainable_development_goal = Column(JSON, nullable=False)
     listening_model = Column(JSON, nullable=False)
     amount_deployment = Column(Integer, nullable=False)
@@ -68,20 +72,14 @@ class Program(Base):
         return feedback_frequency2
 
 def validate_list_input(opts, keys, text):
-    """
-    Validate if all the elements of the entered list are in the list of valid keys
-
-    parameter
-    ---------
-    opts: list
-        Input list
-    keys: list
-        Valid keys
-    text: string
-        Text to add on the error message
-    """
     valid_keys = [opt in keys for opt in opts]
 
     if not all(valid_keys):
         invalid_keys = [opt for i, opt in enumerate(opts) if not valid_keys[i]]
         raise ValueError(f"Invalid {text} {invalid_keys}")
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_sa_instance_state']
+        return state

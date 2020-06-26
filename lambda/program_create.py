@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 
     valid_keys = ['name', 'amount_deployment', 'deployment_length',
                   'first_deployment', 'feedback_frequency',
-                  'feedback_frequency2']
+                  'feedback_frequency2', 'project']
 
     for key in valid_keys:
         if key not in event:

@@ -18,3 +18,9 @@ class Deployment(Base):
     distribution = Column(String(255))
     comment = Column(String)
     component = Column(String, nullable=False)
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['_sa_instance_state']
+        return state

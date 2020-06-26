@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from utils import get_db_url
-from models.program import Program
+from models.project import Project
 
 from alembic.config import Config
 from alembic import command
@@ -31,7 +31,7 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
-    valid_keys = ['project_code']
+    valid_keys = ['name']
 
     for key in valid_keys:
         if key not in event:
@@ -41,13 +41,18 @@ def lambda_handler(event, context):
             }
 
     try:
-        program = session.query(Program).filter(Program.project == event['project_code']).first()
+        project = Project(project= event['name'], projectcode= event['name'])
     except ValueError as err:
         return {
-            'status': 404,
+            'status': 422,
             'error': str(err)
         }
+
+    session.add(project)
+    session.commit()
+
     return {
-        'status': 200,
-        'program': program
+        'status': 202,
+        'message': 'successfully created project',
+        'projectcode': project.projectcode
     }

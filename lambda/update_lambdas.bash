@@ -9,7 +9,7 @@ function warn_no_env_local_bash() {
 	exit 1
 }
 
-. env.local.bash || warn_no_env_local_bash
+[ -a env.local.bash ] && . env.local.bash || warn_no_env_local_bash
 
 function die() {
 	echo $1
@@ -20,7 +20,7 @@ function die() {
 [ -n "$AWS_SECRET_ACCESS_KEY" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
 export AWS_DEFAULT_REGION=us-west-2
 
-functions_to_deploy=( test_function migrations program_create programs_index program_retrieve )
+functions_to_deploy=( migrations program_create program_retrieve programs_index project_create project_retrieve )
 
 # Lambda role
 role_arn="arn:aws:iam::261167734304:role/AmplioSuiteLambda"

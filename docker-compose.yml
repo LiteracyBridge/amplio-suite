@@ -61,6 +61,14 @@ services:
     <<: *base
     command: programs_index.lambda_handler
 
+  lambda-project_retrieve:
+    <<: *base
+    command: project_retrieve.lambda_handler
+
+  lambda-project_create:
+    <<: *base
+    command: project_create.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
