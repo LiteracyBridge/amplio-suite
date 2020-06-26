@@ -25,8 +25,8 @@ const setIsCompleted = ({ commit }) => {
 }
 
 // Helper
-const check = async (section, step, dispatch) => {
-  const result = await dispatch('program/isCompleted', section, { root: true } )
+const check = async (attrs, step, dispatch) => {
+  const result = await dispatch('program/isCompleted', attrs, { root: true } )
   if (result) dispatch('addCompletedStep', step)
   else dispatch('removeCompletedStep', step)
 }
@@ -56,32 +56,37 @@ const toggleListening = async ({ dispatch }, model) => {
 const setDeploymentsAmount = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsAmount', payload, { root: true })
 
-  await check('deployments', 4, dispatch)
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  await check(attrs, 4, dispatch)
 }
 
 const setDeploymentsFrequency = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsFrequency', payload, { root: true })
 
-  await check('deployments', 4, dispatch)
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  await check(attrs, 4, dispatch)
 }
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
   await dispatch('program/setDeploymentsFirst', payload, { root: true })
 
-  await check('deployments', 4, dispatch)
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  await check(attrs, 4, dispatch)
 }
 
 // Step 5
 const setFeedbackFrequently = async ({ dispatch }, payload) => {
   await dispatch('program/setFeedbackFrequently', payload, { root: true })
 
-  await check('feedback', 5, dispatch)
+  const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
+  await check(attrs, 5, dispatch)
 }
 
 const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
   await dispatch('program/setFeedbackFrequentlyOther', payload, { root: true })
 
-  await check('feedback', 5, dispatch)
+  const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
+  await check(attrs, 5, dispatch)
 }
 
 // Step 6

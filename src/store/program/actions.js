@@ -30,47 +30,45 @@ const calculateDeploymentsDates = (state) => {
   return dates
 }
 
-const isCompleted = async ({ state, commit }, section) => {
-  let result
+const isCompleted = ({ state }, payload) => {
+  const isFill = (attr) => {
+    let partial
 
-  switch (section) {
-    case 'programName': {
-      result = state.general.programName !== ''
-      break
+    switch (attr) {
+      case 'programName':
+        partial = state.general.programName !== ''
+        break
+      case 'goals':
+      case 'listeningModels':
+        partial = state.content[attr].length > 0
+        break
+      case 'deploymentsAmount':
+        partial = state.deployments.amount > 0
+        break
+      case 'deploymentsFrequency':
+        partial = state.deployments.frequency !== ''
+        break
+      case 'deploymentsFirst':
+        partial = new Date(state.deployments.first) > new Date()
+        break
+      case 'feedbackFrequently':
+      case 'feedbackFrequentlyOther':
+        partial = state.general[attr] !== ''
+        break
+      case 'languages':
+        partial = state.general.languages.filter(ele => ele !== '').length > 0
+        break
+      default:
+        break
     }
-    case 'goals': {
-      result = state.content.goals.length > 0
-      break
-    }
-    case 'listeningModels': {
-      result = state.content.listeningModels.length > 0
-      break
-    }
-    case 'deployments': {
-      const { amount, first, frequency } = state.deployments
-      result = (amount > 0) && (frequency !== '')
-        && (first !== '') && (new Date(first) > new Date())
-      break
-    }
-    case 'feedback': {
-      const { feedbackFrequently, feedbackFrequentlyOther } = state.general
-      result = (feedbackFrequently !== '') && (feedbackFrequentlyOther !== '')
-      break
-    }
-    case 'languages': {
-      result = state.general.languages.filter(ele => ele !== '').length
-      break
-    }
-    default:
-      break
+
+    return partial
   }
 
-  if (result && section === 'deployments') {
-    const dates = calculateDeploymentsDates(state)
-    commit('setDeploymentsDates', dates)
-  }
+  if (!Array.isArray(payload)) payload = [payload]
 
-  return result
+  const result = payload.map(attr => isFill(attr))
+  return result.every(Boolean)
 }
 
 const setCodeName = async ({ commit }, name) => {
@@ -102,16 +100,37 @@ const toggleListening = ({ commit, state }, model) => {
   else commit('addListeningModel', model)
 }
 
-const setDeploymentsAmount = async ({ commit }, payload) => {
+const setDeploymentsAmount = async ({ state, commit, dispatch }, payload) => {
   await commit('setDeploymentsAmount', payload)
+
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const result = await dispatch('isCompleted', attrs)
+  if (result) {
+    const dates = calculateDeploymentsDates(state)
+    commit('setDeploymentsDates', dates)
+  }
 }
 
-const setDeploymentsFrequency = async ({ commit }, payload) => {
+const setDeploymentsFrequency = async ({ state, commit, dispatch }, payload) => {
   await commit('setDeploymentsFrequency', payload)
+
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const result = await dispatch('isCompleted', attrs)
+  if (result) {
+    const dates = calculateDeploymentsDates(state)
+    commit('setDeploymentsDates', dates)
+  }
 }
 
-const setDeploymentsFirst = async ({ commit }, payload) => {
+const setDeploymentsFirst = async ({ state, commit, dispatch }, payload) => {
   await commit('setDeploymentsFirst', payload)
+
+  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const result = await dispatch('isCompleted', attrs)
+  if (result) {
+    const dates = calculateDeploymentsDates(state)
+    commit('setDeploymentsDates', dates)
+  }
 }
 
 const setDeploymentsDate = ({ commit }, payload) => {
