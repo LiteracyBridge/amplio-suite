@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!hidden" :class="bgColor" class="flex items-center justify-between mb-8 p-4">
+  <div v-if="!hidden" :class="bgColor" class="absolute container flex items-center justify-between p-4">
     <div>
       <font-awesome-icon v-if="type == 'alert'" class="mr-2" :icon="'exclamation-circle'" />
       {{text}}
@@ -29,6 +29,13 @@ export default {
     bgColor () {
       return this.type === 'alert' ? 'bg-red-200'
         : 'bg-gray-200'
+    }
+  },
+  watch: {
+    hidden () {
+      if (!this.hidden) {
+        setTimeout(() => this.close(), 5000)
+      }
     }
   },
   methods: {
