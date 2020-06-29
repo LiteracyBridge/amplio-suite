@@ -241,6 +241,7 @@ const addLangInput = async ({ commit }) => {
 const createProgram = async ({ commit, state }) => {
   const data = {
     name: state.general.programName,
+    project: state.codeName,
     sustainable_development_goal: state.content.goals,
     listening_model: state.content.listeningModels,
     amount_deployment: state.deployments.amount,
