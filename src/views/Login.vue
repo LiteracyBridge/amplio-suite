@@ -2,6 +2,11 @@
   <main class="container mx-auto pt-4 text-center">
     <slot />
 
+    <h1 class="visually_hidden">
+      {{ tabActive === 'Sign In' ? 'Sign In into Amplio-Suite'
+        : 'Register into Amplio-Suite' }}
+    </h1>
+
     <div class="mx-auto pt-20" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
