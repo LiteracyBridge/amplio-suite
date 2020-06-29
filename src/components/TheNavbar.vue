@@ -49,7 +49,11 @@
           <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
             Content Library
           </a>
-          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+          <a
+            target="_blank"
+            href="https://forms.gle/DNC5uT9iZFrxCyLH8"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500"
+          >
             Feedback
           </a>
         </div>
