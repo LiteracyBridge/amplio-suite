@@ -84,6 +84,16 @@ export default {
       'notice'
     ]),
     async handleRegister () {
+      const isFill = [
+        this.fullName !== '', this.email !== '',
+        this.emailConfirmation !== '', this.password !== ''
+      ].every(Boolean)
+
+      if (!isFill) {
+        this.alert('All the field are required')
+        return
+      }
+
       try {
         await this.register({ email: this.email, password: this.password })
         this.notice('Check your email to validate the registration')
