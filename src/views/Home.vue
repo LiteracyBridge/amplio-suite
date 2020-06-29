@@ -7,7 +7,7 @@
     <div class="grid grid-cols-3 gap-10">
       <router-link :to="linkTo">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
-          Define your program specification and complete installation of required tools.
+          Define your requirements and complete/modify the program specification document.
         </home-box>
       </router-link>
 
