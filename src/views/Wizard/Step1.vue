@@ -5,16 +5,17 @@
     program details change later, you can always update the program
     specification to match your requirements."
   >
-    <p id="programName" class="text-2xl font-semibold">
+    <p class="text-2xl font-semibold">
       What is your program name?
     </p>
 
     <v-input
-      type="text"
       ref="programName"
-      aria-labelledby="programName"
-      placeholder="Enter Program Name"
+      type="text"
+      name="programName"
+      label="Enter Program Name"
       :value="programName"
+      mx="mx-auto my-4"
       @input="(event) => setProgramName(event.target.value)"
     />
   </Box>

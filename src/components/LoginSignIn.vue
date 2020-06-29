@@ -2,20 +2,20 @@
   <form v-on:submit.prevent>
     <v-input
       ref="user"
-      icon-left="user-circle"
       type="text"
-      placeholder="Email address"
-      aria-label="Email address"
-      class="my-0"
+      icon-left="user-circle"
+      name="emailAddress"
+      label="Email address"
+      class="my-6"
       :value="email"
       @input="email = $event.target.value"
     />
 
     <v-input
       type="password"
-      placeholder="Password"
-      aria-label="Password"
-      class="my-0 mt-4"
+      name="password"
+      label="Password"
+      class="my-6"
       :value="password"
       @input="password = $event.target.value"
     />
