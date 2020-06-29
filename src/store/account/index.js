@@ -33,12 +33,11 @@ export default {
   actions: {
     async login ({ commit }, payload) {
       commit('authRequest')
-      return new Promise((resolve) => {
-        // cognitoAuth.signup(payload.user, payload.user, payload.password, (err, result) => {
+      return new Promise((resolve, reject) => {
         cognitoAuth.authenticate(payload.email, payload.password, (err, result) => {
           if (err) {
             commit('authError')
-            resolve('error')
+            reject(err)
           }
 
           if (result) {
@@ -54,6 +53,22 @@ export default {
             commit('setUser', user)
             commit('authSuccess')
             resolve('success')
+          }
+        })
+      })
+    },
+    async register ({ commit }, payload) {
+      commit('authRequest')
+      return new Promise((resolve, reject) => {
+        cognitoAuth.signup(payload.email, payload.email, payload.password, (err, result) => {
+          if (err) {
+            commit('authError')
+            reject(err)
+          }
+
+          if (result) {
+            commit('authSuccess')
+            resolve('sucess')
           }
         })
       })
