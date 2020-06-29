@@ -1,8 +1,8 @@
 <template>
-  <main :class="hidden ? 'pt-24' : 'pt-10'" class="container mx-auto text-center">
+  <main class="container mx-auto pt-4 text-center">
     <slot />
 
-    <div class="mx-auto" style="max-width:300px;">
+    <div class="mx-auto pt-20" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
 
       <ul class="mt-5 flex">
@@ -13,8 +13,8 @@
         >
           <span
             tabindex="0"
-            :class="tab === tabActive ? 'bg-white border-l border-t border-r rounded-t text-green' : 'text-black'"
-            class="inline-block py-2 px-4 font-semibold cursor-pointer hover:text-green"
+            :class="tab === tabActive ? 'bg-white border-l border-t border-r rounded-t text-green shadow-box' : 'text-black'"
+            class="inline-block py-2 px-4 font-semibold cursor-pointer hover:text-green af"
             @keyup.space="tabActive = tab"
             @click="tabActive = tab"
           >
@@ -23,7 +23,10 @@
         </li>
       </ul>
 
-      <div class="p-6 bg-white rounded-lg shadow-box">
+      <div
+        class="p-6 bg-white shadow-box"
+        :style="{borderRadius: tabActive === 'Sign In' ? '0 0.5rem 0.5rem 0.5rem' : '0.5rem' }"
+      >
         <SignIn v-if="tabActive === 'Sign In'" />
         <SignRegister v-if="tabActive === 'Register'" />
       </div>
@@ -55,3 +58,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.af::after {
+  content: ' ';
+  position: absolute;
+  background-color: white;
+  width: 190px;
+  height: 10px;
+  margin-left: -69px;
+  margin-top: 32px;
+  z-index: 999;
+}
+</style>
