@@ -33,7 +33,7 @@
       >
         <option value="">Select</option>
         <option value="one_month">1 Month</option>
-        <option value="1_quarter">1 Quarter</option>
+        <option value="one_quarter">1 Quarter</option>
         <option value="six_months">Six months</option>
         <option value="one_year">One year</option>
       </select>
