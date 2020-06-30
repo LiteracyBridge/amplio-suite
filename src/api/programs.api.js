@@ -18,7 +18,19 @@ const getPrograms = async () => {
   }
 }
 
+const getProgram = async (programCode) => {
+  let response = await httpClient.get('/program', {
+    params: {
+      project_code: programCode
+    }
+  })
+  let { program } = response.data
+
+  return program
+}
+
 export {
   postProgram,
-  getPrograms
+  getPrograms,
+  getProgram,
 }

@@ -27,6 +27,12 @@ const getProgramError = (state) => {
   state.status = 'error'
 }
 
+const setProgram = (state, program) => {
+  // FIXME: set every relevant value
+  state.general.programName = program.name
+  console.log("FIXME: set every relevant value")
+}
+
 /****************************************
   General Tab
 ****************************************/
@@ -109,6 +115,7 @@ export default {
   getProgramRequest,
   getProgramSuccess,
   getProgramError,
+  setProgram,
   setProgramName,
   setLanguages,
   addLangInput,
