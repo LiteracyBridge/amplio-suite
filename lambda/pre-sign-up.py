@@ -6,9 +6,9 @@ def lambda_handler(event, context):
   event['response']['autoConfirmUser'] = False
 
   email = event['request']['userAttributes']['email']
-  roles = manager.get_defined_roles_for_user(email)
+  is_known = any(manager.is_email_known(email))
 
-  if not roles['program_domain']:
+  if not is_known:
     raise Exception('Invalid email domain')
 
   # Return to Amazon Cognito
