@@ -106,6 +106,10 @@ export default {
 
         if (error.code === 'InvalidPasswordException') {
           this.alert(error.message)
+        } else if (error.code === 'UserLambdaValidationException') {
+          this.alert('The email address provided does not match our records in the system. Please contact support@amplio.org')
+        } else {
+          this.alert(error.message)
         }
 
         this.$refs.name.$el.children[1].focus()
