@@ -35,8 +35,11 @@ export default {
       'user'
     ])
   },
-  mounted () {
-    this.getAllPrograms()
+  async mounted () {
+    await this.getAllPrograms()
+    if (this.allPrograms.length === 1) {
+      this.selectProgram(this.allPrograms[0])
+    }
   },
   methods: {
     ...mapActions('program', [
