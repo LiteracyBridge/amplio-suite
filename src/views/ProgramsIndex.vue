@@ -4,10 +4,19 @@
       <h1 class="text-4xl">
         Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
       </h1>
-      <h2 class="text-2xl">Select a Program Specification</h2>
+      <h2 v-if="status === 'success'" class="text-2xl">Select a Program Specification</h2>
+      <h2 v-else-if="status === 'error'" class="text-2xl">Error</h2>
+      <h2 v-else class="text-2xl">Loading programs...</h2>
     </header>
 
-    <div class="grid grid-cols-4 gap-10">
+    <font-awesome-icon
+      v-if="!['success', 'error'].includes(status)"
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20" />
+
+    <div v-else class="grid grid-cols-4 gap-10">
       <div
         v-for="(codeName, index) in allPrograms"
         :key="index"
@@ -29,6 +38,7 @@ import { mapState, mapActions } from 'vuex'
 export default {
   computed: {
     ...mapState('programIndex', [
+      'status',
       'allPrograms'
     ]),
     ...mapState('account', [
