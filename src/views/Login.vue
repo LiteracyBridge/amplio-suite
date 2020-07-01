@@ -33,7 +33,7 @@
         :style="{borderRadius: tabActive === 'Sign In' ? '0 0.5rem 0.5rem 0.5rem' : '0.5rem' }"
       >
         <SignIn v-if="tabActive === 'Sign In'" />
-        <SignRegister v-if="tabActive === 'Register'" />
+        <SignRegister v-if="tabActive === 'Register'" v-on:change-tab="changeTab" />
       </div>
     </div>
   </main>
@@ -59,6 +59,11 @@ export default {
     return {
       tabs: ['Sign In', 'Register'],
       tabActive: 'Sign In'
+    }
+  },
+  methods: {
+    changeTab(e) {
+      this.tabActive = 'Sign In'
     }
   }
 }

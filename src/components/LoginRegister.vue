@@ -97,6 +97,7 @@ export default {
       try {
         await this.register({ email: this.email, password: this.password })
         this.notice('Check your email to validate the registration')
+        this.$emit('change-tab')
       }
       catch (error) {
         this.fullName = ''
