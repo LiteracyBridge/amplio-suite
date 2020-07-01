@@ -17,7 +17,7 @@
             :disabled="resetEmailSent"
             class="my-0"
             :value="user"
-            @input="setUser($event.target.value)"
+            @input="user = $event.target.value"
           />
 
           <v-input
@@ -28,7 +28,7 @@
             aria-label="Enter your reset token"
             class="my-0"
             :value="resetToken"
-            @input="setResetToken($event.target.value)"
+            @input="resetToken = $event.target.value"
           />
 
           <v-input
@@ -38,12 +38,15 @@
             aria-label="Enter your Password"
             class="my-0"
             :value="password"
-            @input="setPassword($event.target.value)"
+            @input="password = $event.target.value"
           />
 
           <Button
             type="submit"
+            :iconLeft="status === 'loading' ? 'spinner' : ''"
             size="2x"
+            :pulse="status === 'loading'"
+            :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
             :text="resetEmailSent ? 'Set new password' : 'Send password reset email'"
             class="mt-4"
             @click="resetEmailSent ? resetPassword() : sendEmail()"
@@ -69,15 +72,20 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
+
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
-import cognitoAuth from '@/cognito'
 
 export default {
   components: {
     Button,
     VInput,
+  },
+  computed: {
+    ...mapState('account', [
+      'status'
+    ]),
   },
   data () {
     return {
@@ -91,38 +99,33 @@ export default {
     this.$refs.email.$el.children[0].focus()
   },
   methods: {
+    ...mapActions('account', [
+      'forgotPassword',
+      'confirmNewPassword'
+    ]),
     ...mapMutations('notification', [
       'alert',
       'notice'
     ]),
-    setUser (value) {
-      this.user = value
+    async sendEmail () {
+      try {
+        await this.forgotPassword({ user: this.user })
+        this.notice('Password reset email sent')
+        this.resetEmailSent = true
+      }
+      catch {
+        this.alert('Too many attempts')
+      }
     },
-    setPassword (value) {
-      this.password = value
-    },
-    setResetToken (value) {
-      this.resetToken = value
-    },
-    sendEmail () {
-      cognitoAuth.forgotPassword(this.user, (err) => {
-        if (err) {
-          this.alert('Too many attempts')
-        } else {
-          this.notice('Password reset email sent')
-          this.resetEmailSent = true
-        }
-      })
-    },
-    resetPassword () {
-      return cognitoAuth.confirmPassword(this.user, this.resetToken, this.password)
-        .then(() => {
-          this.notice('Password reset successful')
-          this.$router.push('/login')
-        })
-        .catch(() => {
-          this.alert('Invalid email')
-        })
+    async resetPassword () {
+      try {
+        await this.confirmNewPassword({ user: this.user, password: this.password, resetToken: this.resetToken })
+        this.notice('Password reset successful')
+        this.$router.push('/login')
+      }
+      catch {
+        this.alert('Invalid email')
+      }
     },
     resetForm () {
       this.resetEmailSent = false

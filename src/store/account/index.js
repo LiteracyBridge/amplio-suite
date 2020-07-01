@@ -68,10 +68,35 @@ export default {
 
           if (result) {
             commit('authSuccess')
-            resolve('sucess')
+            resolve('success')
           }
         })
       })
+    },
+    async forgotPassword ({ commit }, payload) {
+      commit('authRequest')
+      return new Promise((resolve, reject) => {
+        cognitoAuth.forgotPassword(payload.user, (err) => {
+          if (err) {
+            commit('authError')
+            reject(err)
+          } else {
+            commit('authSuccess')
+            resolve('success')
+          }
+        })
+      })
+    },
+    async confirmNewPassword ({ commit }, payload) {
+      commit('authRequest')
+
+      try {
+        await cognitoAuth.confirmPassword(payload.user, payload.resetToken, payload.password)
+        commit('authSuccess')
+      }
+      catch {
+        commit('authSuccess')
+      }
     },
     async requireAuth ({ commit }) {
       // Resolve if the user is authenticated
