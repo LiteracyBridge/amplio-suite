@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
 unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
 
@@ -20,7 +20,7 @@ function die() {
 [ -n "$AWS_SECRET_ACCESS_KEY" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
 export AWS_DEFAULT_REGION=us-west-2
 
-functions_to_deploy=( pre-sign-up migrations program_create program_retrieve programs_index project_create project_retrieve )
+functions_to_deploy=( cognito_pre_sign_up cognito_custom_message migrations program_create program_retrieve programs_index project_create project_retrieve )
 
 # Lambda role
 role_arn="arn:aws:iam::261167734304:role/AmplioSuiteLambda"
