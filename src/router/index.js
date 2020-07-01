@@ -32,7 +32,7 @@ const routes = [
   },
   {
     path: '/programs',
-    component: () => import(/* webpackChunkName: "programs" */ '../views/Programs.vue'),
+    component: () => import(/* webpackChunkName: "programs-index" */ '../views/ProgramsIndex.vue'),
     beforeEnter: requireAuth
   },
   {
