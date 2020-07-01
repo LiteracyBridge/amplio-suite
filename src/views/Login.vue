@@ -62,7 +62,7 @@ export default {
     }
   },
   methods: {
-    changeTab(e) {
+    changeTab() {
       this.tabActive = 'Sign In'
     }
   }
