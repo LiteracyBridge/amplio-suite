@@ -94,7 +94,6 @@
 import { mapState, mapActions } from 'vuex'
 
 import DropDown from '@/components/TheNavbarDropDown'
-import cognitoAuth from '@/cognito'
 
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
@@ -129,12 +128,15 @@ export default {
     ...mapActions('program', [
       'setCodeName'
     ]),
+    ...mapActions('account', [
+      'logout'
+    ]),
     async changeProgram (event) {
       const id = await this.setCodeName(event.target.value)
       this.$router.push(`/programs/${id}`)
     },
     handleLogout () {
-      cognitoAuth.logout()
+      this.logout()
       this.$router.go()
     }
   }

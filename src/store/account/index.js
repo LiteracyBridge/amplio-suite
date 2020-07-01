@@ -98,6 +98,10 @@ export default {
         commit('authSuccess')
       }
     },
+    async logout ({ commit }) {
+      commit('setUser', { email: '', name: '', img: '' })
+      cognitoAuth.logout()
+    },
     async requireAuth ({ commit }) {
       // Resolve if the user is authenticated
       // Else reject
