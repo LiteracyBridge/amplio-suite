@@ -52,6 +52,6 @@ def lambda_handler(event, context):
         }
     return {
         'status': 200,
-        'project': json.dumps(project.__getstate__()),
-        'deployments': json.dumps([deployment.__getstate__() for deployment in deployments])
+        'project': json.dumps(project.to_dict()),
+        'deployments': json.dumps([deployment.to_dict() for deployment in deployments])
     }

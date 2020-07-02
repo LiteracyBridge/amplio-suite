@@ -1,10 +1,11 @@
 from sqlalchemy import Column, Integer, String, Date, UniqueConstraint
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_serializer import SerializerMixin
 
 Base = declarative_base()
 
-class Deployment(Base):
+class Deployment(Base, SerializerMixin):
     __tablename__ = "deployments"
     __table_args__ = (
         UniqueConstraint('project', 'deployment', name='deployments_uniqueness_key'),
@@ -18,9 +19,3 @@ class Deployment(Base):
     distribution = Column(String(255))
     comment = Column(String)
     component = Column(String, nullable=False)
-
-
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        del state['_sa_instance_state']
-        return state
