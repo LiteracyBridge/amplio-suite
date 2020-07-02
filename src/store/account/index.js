@@ -60,6 +60,15 @@ export default {
     async register ({ commit }, payload) {
       commit('authRequest')
       return new Promise((resolve, reject) => {
+        const isFill = [
+          payload.fullName !== '', payload.email !== '',
+          payload.emailConfirmation !== '', payload.password !== ''
+        ].every(Boolean)
+
+        if (!isFill) {
+          reject('Not fill')
+        }
+
         cognitoAuth.signup(payload.email, payload.email, payload.password, (err, result) => {
           if (err) {
             commit('authError')
