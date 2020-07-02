@@ -34,7 +34,7 @@ export default {
   watch: {
     hidden () {
       if (!this.hidden) {
-        setTimeout(() => this.close(), 5000)
+        setTimeout(() => this.close(), 10000)
       }
     }
   },
