@@ -9,6 +9,10 @@ export default {
       email: '',
       name: '',
       img: ''
+    },
+    signUp: {
+      send: false,
+      email: ''
     }
   }),
 
@@ -27,12 +31,26 @@ export default {
     },
     setUser(state, payload) {
       state.user = payload
+    },
+    setSignUp(state, payload) {
+      state.signUp.send = true
+      state.signUp.email = payload
+    },
+    clearSignUp(state) {
+      state.signUp.send = false
+      state.signUp.email = ''
     }
   },
 
   actions: {
-    async login ({ commit }, payload) {
+    async login ({ commit, state }, payload) {
       commit('authRequest')
+
+      if (state.signUp.send) {
+        await cognitoAuth.confirmRegistration(payload.email, payload.token)
+        commit('clearSignUp')
+      }
+
       return new Promise((resolve, reject) => {
         cognitoAuth.authenticate(payload.email, payload.password, (err, result) => {
           if (err) {
@@ -77,6 +95,7 @@ export default {
 
           if (result) {
             commit('authSuccess')
+            commit('setSignUp', payload.email)
             resolve('success')
           }
         })

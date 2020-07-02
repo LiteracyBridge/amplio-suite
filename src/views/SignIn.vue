@@ -29,6 +29,16 @@
             @input="password = $event.target.value"
           />
 
+          <v-input
+            v-if="signUp.send"
+            type="text"
+            name="confirmationToken"
+            label="Confirmation token"
+            class="mt-6 mb-2"
+            :value="token"
+            @input="token = $event.target.value"
+          />
+
           <div class="mt-2">
             <router-link to="/password-reset" class="float-right text-sm text-right text-blue underline">
               Forgot your password?
@@ -68,17 +78,21 @@ export default {
   },
   computed: {
     ...mapState('account', [
-      'status'
+      'status',
+      'signUp'
     ]),
   },
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      token: ''
     }
   },
   mounted () {
     this.$refs.user.$el.children[1].focus()
+
+    if (this.signUp.send) this.email = this.signUp.email
   },
   methods: {
     ...mapActions('account', [
@@ -89,7 +103,7 @@ export default {
     ]),
     async handleLogin () {
       try {
-        await this.login({ email: this.email, password: this.password })
+        await this.login({ email: this.email, password: this.password, token: this.token })
         this.$router.push('/programs')
       }
       catch {
