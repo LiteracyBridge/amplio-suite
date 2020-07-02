@@ -4,7 +4,7 @@ import multiguard from 'vue-router-multiguard'
 
 import store from '@/store'
 import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
+import Login from '@/views/SignIn.vue'
 
 Vue.use(VueRouter)
 
@@ -19,12 +19,19 @@ const routes = [
     beforeEnter: checkAuth,
     meta: {
       layout: 'login'
-    },
-    props: (route) => ({ notify: route.query.notify })
+    }
   },
   {
-    path: '/password_reset',
-    component: () => import(/* webpackChunkName: "password_reset" */ '../views/PasswordReset.vue'),
+    path: '/register',
+    component: () => import(/* webpackChunkName: "sign-up" */ '../views/SignUp.vue'),
+    beforeEnter: checkAuth,
+    meta: {
+      layout: 'login'
+    }
+  },
+  {
+    path: '/password-reset',
+    component: () => import(/* webpackChunkName: "password-reset" */ '../views/PasswordReset.vue'),
     beforeEnter: checkAuth,
     meta: {
       layout: 'login'
