@@ -26,7 +26,7 @@
             type="text"
             placeholder="Enter your reset token"
             aria-label="Enter your reset token"
-            class="my-0"
+            class="my-6"
             :value="resetToken"
             @input="resetToken = $event.target.value"
           />
@@ -36,7 +36,7 @@
             type="password"
             placeholder="Enter your password"
             aria-label="Enter your Password"
-            class="my-0"
+            class="mt-6 mb-0"
             :value="password"
             @input="password = $event.target.value"
           />
