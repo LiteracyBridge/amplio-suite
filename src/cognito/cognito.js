@@ -111,12 +111,18 @@ export default class CognitoAuth {
 
   // a function that allows us to confirm newly
   // registered users of our app
-  confirmRegistration (username, code, cb) {
+  confirmRegistration (username, code) {
     let cognitoUser = new CognitoUser({
         Username: username,
         Pool: this.userPool
     })
-    cognitoUser.confirmRegistration(code, true, cb)
+
+    return new Promise((resolve) => {
+      cognitoUser.confirmRegistration(code, true, (e) => {
+        console.log(e)
+        resolve(e)
+      })
+    })
   }
 
   // does what it says on the tin, allows users
