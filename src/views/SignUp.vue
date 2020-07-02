@@ -102,8 +102,8 @@ export default {
     async handleRegister () {
       try {
         await this.register({ email: this.email, password: this.password })
-        this.notice('Check your email to validate the registration')
-        this.$emit('change-tab')
+        this.notice('Check your email and copy the validation code')
+        this.$router.push('/login')
       }
       catch (error) {
         this.fullName = ''
