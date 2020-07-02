@@ -12,8 +12,8 @@
           <v-input
             ref="email"
             type="email"
-            placeholder="Enter your email address"
-            aria-label="Enter your Email address"
+            name="email"
+            label="Email"
             :disabled="resetEmailSent"
             class="my-0"
             :value="user"
@@ -65,7 +65,7 @@
       </div>
 
       <p class="text-sm mt-4">
-        Already have login and password? <router-link class="text-blue underline" to="/login">Sign in</router-link>
+        Already have login and password? <router-link class="text-green font-bold" to="/login">Sign in</router-link>
       </p>
     </div>
   </main>
