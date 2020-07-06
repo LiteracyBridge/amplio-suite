@@ -54,33 +54,33 @@ const setFeedbackFrequentlyOther = (state, payload) => {
   Deployments Tab
 ****************************************/
 const setDeploymentsAmount = (state, payload) => {
-  state.deployments.amount = payload
+  state.deploymentsConfig.amount = payload
 }
 
 const setDeploymentsFrequency = (state, payload) => {
-  state.deployments.frequency = payload
+  state.deploymentsConfig.frequency = payload
 }
 
 const setDeploymentsFirst = (state, payload) => {
-  state.deployments.first = payload
+  state.deploymentsConfig.first = payload
 }
 
-const setDeploymentsDates = (state, payload) => {
-  state.deployments.dates = payload
+const setAllDeployments = (state, payload) => {
+  state.deployments.data = payload
 }
 
-const addDeploymentsDate = (state, payload) => {
-  state.deployments.dates.push(payload)
+const addDeployment = (state, payload) => {
+  state.deployments.data.push(payload)
 }
 
-const setDeploymentsDate = (state, payload) => {
-  const { index, what, date } = payload
-  state.deployments.dates[index][what] = date
-}
-
-const removeDeploymentsDate = (state, payload) => {
+const removeDeployment = (state, payload) => {
   const { index } = payload
-  state.deployments.dates.splice(index, 1)
+  state.deployments.data.splice(index, 1)
+}
+
+const setDeploymentDate = (state, payload) => {
+  const { index, what, date } = payload
+  state.deployments.data[index].date[what] = date
 }
 
 /****************************************
@@ -115,10 +115,12 @@ export default {
   setDeploymentsAmount,
   setDeploymentsFrequency,
   setDeploymentsFirst,
-  setDeploymentsDates,
-  addDeploymentsDate,
-  setDeploymentsDate,
-  removeDeploymentsDate,
+
+  setAllDeployments,
+  addDeployment,
+  removeDeployment,
+  setDeploymentDate,
+
   addGoal,
   removeGoal,
   addListeningModel,

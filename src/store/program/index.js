@@ -1,3 +1,4 @@
+import getters from './getters'
 import actions from './actions'
 import mutations from './mutations'
 
@@ -12,12 +13,16 @@ export const getDefaultState = () => ({
     feedbackFrequentlyOther: ''
   },
 
-  deployments: {
+  deploymentsConfig: {
     dirty: false,
     amount: 0,
     first: '',
-    frequency: '',
-    dates: []
+    frequency: ''
+  },
+
+  deployments: {
+    dirty: false,
+    data: []
   },
 
   content: {
@@ -37,6 +42,7 @@ export default {
   namespaced: true,
 
   state: Object.assign(baseState, getDefaultState()),
+  getters,
   mutations,
   actions
 }
