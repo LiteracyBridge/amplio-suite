@@ -60,7 +60,7 @@ export default {
       sections: [
         { name: 'general' },
         { name: 'deployments' },
-        { name: 'content', disabled: true },
+        { name: 'content' },
         { name: 'recipients', disabled: true }
       ],
 
