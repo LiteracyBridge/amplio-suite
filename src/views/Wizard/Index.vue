@@ -2,7 +2,7 @@
   <main class="container mx-auto pt-20 text-center">
     <header class="inline-flex">
       <h1 class="text-2xl">Page {{ actualStep }}/{{ total }}</h1>
-      <progress class="ml-5" :max="total" :value="actualStep"></progress>
+      <progress class="ml-5 self-center" :max="total" :value="actualStep"></progress>
     </header>
 
     <transition :name="transitionName" mode="out-in">
