@@ -26,6 +26,8 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
+    # FIXME: we should **not** receive an email, but get it from the current
+    # auth token - this index should be scoped for the current user
     email = event['email']
 
     program_items = manager.get_programs_for_user(email).items()

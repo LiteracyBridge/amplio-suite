@@ -9,6 +9,7 @@ const getPrograms = async () => {
   const { email } = store.state.account.user
 
   try {
+    // FIXME: this `POST` should actually be a `GET` but there's a CORS issue to solve with AWS API Gateway
     const response = await httpClient.post('programs', { email })
     return Object.keys(response.data.programs)
   }
