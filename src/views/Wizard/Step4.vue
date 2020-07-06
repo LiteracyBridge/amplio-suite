@@ -65,9 +65,9 @@ import VInput from '@/components/VInput'
 export default {
   computed: {
     ...mapState('program', {
-      amount: state => state.deployments.amount,
-      first: state => state.deployments.first,
-      frequency: state => state.deployments.frequency
+      amount: state => state.deploymentsConfig.amount,
+      first: state => state.deploymentsConfig.first,
+      frequency: state => state.deploymentsConfig.frequency
     })
   },
   data () {

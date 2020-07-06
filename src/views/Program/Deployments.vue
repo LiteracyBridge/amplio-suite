@@ -8,7 +8,7 @@
       <p class="text-sm text-gray-500 text-left">End Date</p>
       <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <template v-for="(date, index) in dates">
+      <template v-for="(date, index) in deploymentsDates">
         <p :key="`${index}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
         <v-input
           :key="`${index}-b`"
@@ -16,7 +16,7 @@
           iconLeft="calendar-alt"
           :aria-label="`Start of deployment ${index}`"
           :value="date.start"
-          @change="(event) => setDeploymentsDate({ index, what: 'start', date: event.target.value })"
+          @change="(event) => setDeploymentDate({ index, what: 'start', date: event.target.value })"
           mx="mx-0"
         />
 
@@ -27,7 +27,7 @@
           :aria-label="`End of deployment ${index}`"
           :value="date.end"
           :min="date.start"
-          @change="(event) => setDeploymentsDate({ index, what: 'end', date: event.target.value })"
+          @change="(event) => setDeploymentDate({ index, what: 'end', date: event.target.value })"
           mx="mx-0"
         />
 
@@ -51,8 +51,8 @@
       <span
           tabindex="0"
           class="mt-4 p-2u text-green font-bold cursor-pointer"
-          @click="addDeploymentsDate"
-          @keyup.enter="addDeploymentsDate"
+          @click="addEmptyDeployment"
+          @keyup.enter="addEmptyDeployment"
         >
           + Add deployment
         </span>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
@@ -79,9 +79,9 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState('program', {
-      dates: state => state.deployments.dates
-    })
+    ...mapGetters('program', [
+      'deploymentsDates'
+    ])
   },
   components: {
     Box,
@@ -97,16 +97,16 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'addDeploymentsDate',
-      'setDeploymentsDate',
-      'removeDeploymentsDate'
+      'addEmptyDeployment',
+      'removeDeployment',
+      'setDeploymentDate'
     ]),
     handleOpen(index) {
       this.index = index
       this.isModalOpen = true
     },
     confirmDelete() {
-      this.removeDeploymentsDate({ index: this.index })
+      this.removeDeployment({ index: this.index })
       this.isModalOpen = false
     }
   }
