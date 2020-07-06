@@ -32,13 +32,28 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import HomeBox from '@/components/HomeBox'
 
 export default {
   components: {
     HomeBox
+  },
+  methods: {
+    ...mapActions('program', [
+      'fetchProgram'
+    ]),
+  },
+  watch: {
+    'codeNameId': {
+      handler (newVal) {
+        if (newVal) { // check if userid is available
+        this.fetchProgram(newVal)
+        }
+      },
+      immediate: true // make this watch function is called when component created
+    }
   },
   computed: {
     ...mapState('wizard', {
@@ -47,6 +62,9 @@ export default {
     }),
     ...mapState('account', [
       'user'
+    ]),
+    ...mapState('program', [
+      'codeNameId'
     ]),
     linkTo() {
       if (!this.wizardIsComplete) {

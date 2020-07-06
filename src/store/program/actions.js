@@ -1,4 +1,4 @@
-import { postProgram } from '@/api/programs.api'
+import { postProgram, getProgram } from '@/api/programs.api'
 
 const playlists =  [
   {
@@ -241,6 +241,7 @@ const addLangInput = async ({ commit }) => {
 const createProgram = async ({ commit, state }) => {
   const data = {
     name: state.general.programName,
+    project: state.codeName,
     sustainable_development_goal: state.content.goals,
     listening_model: state.content.listeningModels,
     amount_deployment: state.deployments.amount,
@@ -258,6 +259,17 @@ const createProgram = async ({ commit, state }) => {
     await postProgram(data)
   } catch (error) {
     commit('notification/alert', error, { root: true })
+  }
+}
+
+const fetchProgram = async ({ commit }, programCode) => {
+  commit('getProgramRequest')
+  try {
+    let program = await getProgram(programCode)
+    commit('getProgramSuccess')
+    commit('setProgram', program)
+  } catch (error) {
+    commit('getProgramError')
   }
 }
 
@@ -294,5 +306,6 @@ export default {
   setLanguages,
   addLangInput,
   createProgram,
+  fetchProgram,
   updateProgram
 }

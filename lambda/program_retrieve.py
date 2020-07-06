@@ -31,17 +31,19 @@ def lambda_handler(event, context):
             'error': str(err)
         }
 
-    valid_keys = ['project_code']
-
-    for key in valid_keys:
-        if key not in event:
-            return {
-                'status': 422,
-                'error': f'{key} must be specified'
-            }
+    try:
+        project_code = event['project_code']
+    except KeyError as err:
+        print(f'Error retrieving project_code: {err}')
+        return {
+            'status': 422,
+            'error': 'project_code must be specified'
+        }
 
     try:
-        program = session.query(Program).filter(Program.project == event['project_code']).first()
+        program = session.query(Program).filter(Program.project == project_code).first()
+        if program is not None:
+            program = program.to_dict()
     except ValueError as err:
         return {
             'status': 404,

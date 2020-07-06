@@ -3,6 +3,7 @@ from datetime import date
 from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_serializer import SerializerMixin
 
 valid_sdg = [
     'no_poverty', 'zero_hunger', 'good_health_and_well _being',
@@ -22,7 +23,7 @@ time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
 
 Base = declarative_base()
 
-class Program(Base):
+class Program(Base, SerializerMixin):
     __tablename__ = "programs"
     __table_args__ = (
         UniqueConstraint('project', name='programs_uniqueness_key'),
@@ -71,15 +72,10 @@ class Program(Base):
             raise ValueError("Invalid 'feedback_frequency2' argument")
         return feedback_frequency2
 
+# should validate_list_input belong to a utils package of some sort?
 def validate_list_input(opts, keys, text):
     valid_keys = [opt in keys for opt in opts]
 
     if not all(valid_keys):
         invalid_keys = [opt for i, opt in enumerate(opts) if not valid_keys[i]]
         raise ValueError(f"Invalid {text} {invalid_keys}")
-
-
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        del state['_sa_instance_state']
-        return state
