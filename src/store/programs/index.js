@@ -6,7 +6,7 @@ export default {
 
   state: () => ({
     status: '',
-    allPrograms: [],
+    programs: [],
   }),
 
   mutations,

@@ -60,7 +60,7 @@
 
         <div class="inline-flex">
           <select
-            v-if="allPrograms.length > 1"
+            v-if="programs.length > 1"
             aria-label="Select a program"
             class="px-4 py-1 rounded"
             :value="codeName"
@@ -68,7 +68,7 @@
           >
             <option value="">Select a program</option>
             <option
-              v-for="(name, index) in allPrograms"
+              v-for="(name, index) in programs"
               :key="index"
               :value="name"
             >
@@ -100,8 +100,8 @@ import Close from '@/assets/svg/close.svg'
 
 export default {
   computed: {
-    ...mapState('programIndex', [
-      'allPrograms'
+    ...mapState('programs', [
+      'programs'
     ]),
     ...mapState('program', [
       'codeName',

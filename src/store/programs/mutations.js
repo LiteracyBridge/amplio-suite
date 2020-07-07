@@ -11,7 +11,7 @@ const getAllError = (state) => {
 }
 
 const setAllPrograms = (state, payload) => {
-  state.allPrograms = payload
+  state.programs = payload
 }
 
 export default {

@@ -124,9 +124,9 @@ const router = new VueRouter({
 })
 
 function fetchAllPrograms (to, from, next) {
-  const { allPrograms } = store.state.programIndex
+  const { programs } = store.state.programs
 
-  if (allPrograms.length === 0) next('/programs')
+  if (programs.length === 0) next('/programs')
   else next()
 }
 

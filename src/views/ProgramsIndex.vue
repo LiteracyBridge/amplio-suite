@@ -18,7 +18,7 @@
 
     <div v-else class="grid grid-cols-4 gap-10">
       <div
-        v-for="(codeName, index) in allPrograms"
+        v-for="(codeName, index) in programs"
         :key="index"
         tabindex="0"
         class="p-6 h-full bg-white rounded-lg shadow-box cursor-pointer hover:shadow-hover"
@@ -37,9 +37,9 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('programIndex', [
+    ...mapState('programs', [
       'status',
-      'allPrograms'
+      'programs'
     ]),
     ...mapState('account', [
       'user'
@@ -47,15 +47,15 @@ export default {
   },
   async mounted () {
     await this.getAllPrograms()
-    if (this.allPrograms.length === 1) {
-      this.selectProgram(this.allPrograms[0])
+    if (this.programs.length === 1) {
+      this.selectProgram(this.programs[0])
     }
   },
   methods: {
     ...mapActions('program', [
       'setCodeName'
     ]),
-    ...mapActions('programIndex', [
+    ...mapActions('programs', [
       'getAllPrograms'
     ]),
     async selectProgram (codeName) {
