@@ -8,54 +8,55 @@
       <p class="text-sm text-gray-500 text-left">End Date</p>
       <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <template v-for="(date, index) in deploymentsDates">
-        <p :key="`${index}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
+      <template v-for="item in deployments">
+        <p :key="`${item.id}-a`" class="pr-4 col-start-1">Deployment {{ item.id }}</p>
+
         <v-input
-          :key="`${index}-b`"
+          :key="`${item.id}-b`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-label="`Start of deployment ${index}`"
-          :value="date.start"
-          @change="(event) => setDeploymentDate({ index, what: 'start', date: event.target.value })"
+          :aria-label="`Start of deployment ${item.id}`"
+          :value="item.startDate"
+          @change="(event) => setDeploymentDate({ id: item.id, what: 'startDate', date: event.target.value })"
           mx="mx-0"
         />
 
         <v-input
-          :key="`${index}-c`"
+          :key="`${item.id}-c`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-label="`End of deployment ${index}`"
-          :value="date.end"
-          :min="date.start"
-          @change="(event) => setDeploymentDate({ index, what: 'end', date: event.target.value })"
+          :aria-label="`End of deployment ${item.id}`"
+          :value="item.endDate"
+          :min="item.startDate"
+          @change="(event) => setDeploymentDate({ id: item.id, what: 'endDate', date: event.target.value })"
           mx="mx-0"
         />
 
         <select
-          :key="`${index}-d`"
-          :aria-label="`Components of the deployment ${index}`"
+          :key="`${item.id}-d`"
+          :aria-label="`Components of the deployment ${item.id}`"
           class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         >
-          <option value="all">All</option>
+          <option value="">All</option>
         </select>
 
         <button
-          :key="`${index}-e`"
-          @click="() => handleOpen(index)"
-          :aria-label="`Delete deployment ${index}`"
+          :key="`${item.id}-e`"
+          @click="() => handleOpen(item.id)"
+          :aria-label="`Delete deployment ${item.id}`"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
       </template>
 
       <span
-          tabindex="0"
-          class="mt-4 p-2u text-green font-bold cursor-pointer"
-          @click="addEmptyDeployment"
-          @keyup.enter="addEmptyDeployment"
-        >
-          + Add deployment
-        </span>
+        tabindex="0"
+        class="mt-4 p-2u text-green font-bold cursor-pointer"
+        @click="addEmptyDeployment"
+        @keyup.enter="addEmptyDeployment"
+      >
+        + Add deployment
+      </span>
     </div>
 
     <v-modal v-model="isModalOpen" title="Delete Deployment">
@@ -70,7 +71,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
@@ -79,9 +80,9 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapGetters('program', [
-      'deploymentsDates'
-    ])
+    ...mapState('program', {
+      deployments: state => state.deployments.items
+    })
   },
   components: {
     Box,
@@ -92,7 +93,7 @@ export default {
   data () {
     return {
       isModalOpen: false,
-      index: 0
+      itemId: 0
     }
   },
   methods: {
@@ -101,12 +102,12 @@ export default {
       'removeDeployment',
       'setDeploymentDate'
     ]),
-    handleOpen(index) {
-      this.index = index
+    handleOpen(id) {
+      this.itemId = id
       this.isModalOpen = true
     },
     confirmDelete() {
-      this.removeDeployment({ index: this.index })
+      this.removeDeployment({ id: this.itemId })
       this.isModalOpen = false
     }
   }

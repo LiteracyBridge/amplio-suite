@@ -49,7 +49,7 @@ import Check from '@/assets/svg/check-circle.svg'
 export default {
   computed: {
     ...mapState('program', {
-      goals: state => state.content.goals
+      goals: state => state.projectData.data.goals
     })
   },
   data () {
