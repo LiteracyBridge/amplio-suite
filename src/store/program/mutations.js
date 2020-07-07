@@ -71,41 +71,38 @@ const setDeploymentsFirst = (state, payload) => {
   state.deploymentsConfig.first = payload
 }
 
-const setAllDeployments = (state, payload) => {
-  state.deployments.data = payload
-}
-
+//
 const addDeployment = (state, payload) => {
-  state.deployments.data.push(payload)
+  state.deployments.items.push(payload)
 }
 
 const removeDeployment = (state, payload) => {
   const { index } = payload
-  state.deployments.data.splice(index, 1)
+  state.deployments.items.splice(index, 1)
 }
 
 const setDeploymentDate = (state, payload) => {
   const { index, what, date } = payload
-  state.deployments.data[index].date[what] = date
+  state.deployments.items[index][what] = date
 }
 
 /****************************************
   Content
 ****************************************/
 const addGoal = (state, payload) => {
-  state.content.goals.push(payload)
+  state.projectData.data.goals.push(payload)
 }
 
 const removeGoal = (state, index) => {
-  state.content.goals.splice(index, 1)
+  state.projectData.data.goals.splice(index, 1)
 }
 
 const addListeningModel = (state, payload) => {
-  state.content.listeningModels.push(payload)
+  state.projectData.data.listeningModels.push(payload)
 }
 
 const removeListeningModel = (state, index) => {
-  state.content.listeningModels.splice(index, 1)
+  state.projectData.data.listeningModels.splice(index, 1)
 }
 
 export default {
@@ -123,7 +120,6 @@ export default {
   setDeploymentsFrequency,
   setDeploymentsFirst,
 
-  setAllDeployments,
   addDeployment,
   removeDeployment,
   setDeploymentDate,

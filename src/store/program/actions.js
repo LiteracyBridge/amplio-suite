@@ -1,79 +1,39 @@
 import { postProgram, getProgram } from '@/api/programs.api'
 
-const playlists =  [
-  {
-    title: 'playlist 1',
-    audience: '',
-    messages: [
-      {
-        title: 'message 1',
-        language: '',
-        variant: ''
-      },
-      {
-        title: 'message 2',
-        language: '',
-        variant: ''
-      },
-      {
-        title: 'message 3',
-        language: '',
-        variant: ''
-      }
-    ]
-  },
-  {
-    title: 'playlist 2',
-    audience: '',
-    messages: [
-      {
-        title: 'message 1',
-        language: '',
-        variant: ''
-      },
-      {
-        title: 'message 2',
-        language: '',
-        variant: ''
-      }
-    ]
-  }
-]
-
 // Helper
-const calculateDeployments = (state) => {
-  const { amount, first, frequency } = state.deploymentsConfig
+// const calculateDeployments = (state) => {
+//   const { amount, first, frequency } = state.deploymentsConfig
 
-  const increment = frequency === 'one_month' ? 1 :
-    frequency === '1_quarter' ? 3 :
-      frequency === 'six_months' ? 6 :
-        frequency === 'one_year' ? 12 : 0
+//   const increment = frequency === 'one_month' ? 1 :
+//     frequency === '1_quarter' ? 3 :
+//       frequency === 'six_months' ? 6 :
+//         frequency === 'one_year' ? 12 : 0
 
-  const deplos = []
-  for (let i=0; i<amount; i++) {
-    deplos.push({
-      date: {
-        start: '', end: ''
-      },
-      playlists
-    })
-  }
-  deplos[0].date.start = first
+//   const deplos = []
+//   for (let i=0; i<amount; i++) {
+//     deplos.push({
+//       date: {
+//         start: '', end: ''
+//       },
+//       playlists
+//     })
+//   }
+//   deplos[0].date.start = first
 
-  for (let i=1; i<amount; i++) {
-    const prev = new Date(deplos[i - 1].date.start)
-    const next = new Date(prev.setMonth(prev.getMonth() + increment))
-    deplos[i].date.start = next.toISOString().split('T')[0]
-  }
+//   for (let i=1; i<amount; i++) {
+//     const prev = new Date(deplos[i - 1].date.start)
+//     const next = new Date(prev.setMonth(prev.getMonth() + increment))
+//     deplos[i].date.start = next.toISOString().split('T')[0]
+//   }
 
-  for (let i=0; i<amount; i++) {
-    const start = new Date(deplos[i].date.start)
-    const end = new Date(start.setMonth(start.getMonth() + increment))
-    deplos[i].date.end = end.toISOString().split('T')[0]
-  }
+//   for (let i=0; i<amount; i++) {
+//     const start = new Date(deplos[i].date.start)
+//     const end = new Date(start.setMonth(start.getMonth() + increment))
+//     deplos[i].date.end = end.toISOString().split('T')[0]
+//   }
 
-  return deplos
-}
+//   return deplos
+// }
 
 const isCompleted = ({ state }, payload) => {
   const isFill = (attr) => {
@@ -85,7 +45,7 @@ const isCompleted = ({ state }, payload) => {
         break
       case 'goals':
       case 'listeningModels':
-        partial = state.content[attr].length > 0
+        partial = state.projectData.data[attr].length > 0
         break
       case 'deploymentsAmount':
         partial = state.deploymentsConfig.amount > 0
@@ -132,93 +92,76 @@ const setProgramName = ({ commit }, payload) => {
 }
 
 const toggleGoal = ({ commit, state }, goal) => {
-  const index = state.content.goals.indexOf(goal)
+  const index = state.projectData.data.goals.indexOf(goal)
 
   if (index > -1) commit('removeGoal', index)
   else commit('addGoal', goal)
 }
 
 const toggleListening = ({ commit, state }, model) => {
-  const index = state.content.listeningModels.indexOf(model)
+  const index = state.projectData.data.listeningModels.indexOf(model)
 
   if (index > -1) commit('removeListeningModel', index)
   else commit('addListeningModel', model)
 }
 
-const setDeploymentsAmount = async ({ state, commit, dispatch }, payload) => {
+const setDeploymentsAmount = async ({ commit }, payload) => {
   await commit('setDeploymentsAmount', payload)
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
-
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
-  const result = await dispatch('isCompleted', attrs)
-  if (result) {
-    const deployments = calculateDeployments(state)
-    commit('setAllDeployments', deployments)
-  }
 }
 
-const setDeploymentsFrequency = async ({ state, commit, dispatch }, payload) => {
+const setDeploymentsFrequency = async ({ commit }, payload) => {
   await commit('setDeploymentsFrequency', payload)
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
-
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
-  const result = await dispatch('isCompleted', attrs)
-  if (result) {
-    const deployments = calculateDeployments(state)
-    commit('setAllDeployments', deployments)
-  }
 }
 
-const setDeploymentsFirst = async ({ state, commit, dispatch }, payload) => {
+const setDeploymentsFirst = async ({ commit }, payload) => {
   await commit('setDeploymentsFirst', payload)
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
-
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
-  const result = await dispatch('isCompleted', attrs)
-  if (result) {
-    const deployments = calculateDeployments(state)
-    commit('setAllDeployments', deployments)
-  }
-}
-
-const setAllDeployments = ({ commit }, payload) => {
-  commit('setDirty', { tab: 'deployments', status: true })
-  commit('setAllDeployments', payload)
 }
 
 const addEmptyDeployment = ({ commit, state }) => {
-  const { amount, frequency } = state.deploymentsConfig
-  const deployments = state.deployments.data
+  const { frequency } = state.deploymentsConfig
+  const deployments = state.deployments.items
   const increment = frequency === 'one_month' ? 1 :
-    frequency === '1_quarter' ? 3 :
+    frequency === 'one_quarter' ? 3 :
       frequency === 'six_months' ? 6 :
         frequency === 'one_year' ? 12 : 0
 
-  const deplo = {
-    date: {},
-    playlists
+  const lastId = +deployments[deployments.length - 1].id
+  const newDeplo = {
+    id: lastId + 1,
+    component: ''
   }
-  const lastDate = new Date(deployments[deployments.length - 1].date.end)
-  deplo.date.start = lastDate.toISOString().split('T')[0]
-  deplo.date.end = new Date(lastDate.setMonth(lastDate.getMonth() + increment)).toISOString().split('T')[0]
+
+  const lastDate = new Date(deployments[deployments.length - 1].endDate)
+  newDeplo.startDate = lastDate.toISOString().split('T')[0]
+  newDeplo.endDate = new Date(lastDate.setMonth(lastDate.getMonth() + increment)).toISOString().split('T')[0]
 
   commit('setDirty', { tab: 'deployments', status: true })
-  commit('setDeploymentsAmount', parseInt(amount) + 1)
-  commit('addDeployment', deplo)
+  commit('addDeployment', newDeplo)
 }
 
 const removeDeployment = ({ commit, state }, payload) => {
-  const deployments = state.deployments.data
+  const items = state.deployments.items
+    .map((item, index) => ({ id: item.id, index }))
+    .filter(item => item.id === payload.id)
 
-  if (deployments.length >= payload.index) {
+  if (items.length > 0) {
     commit('setDirty', { tab: 'deployments', status: true })
-    commit('removeDeployment', payload)
+    commit('removeDeployment', { index: items[0].index })
   }
 }
 
-const setDeploymentDate = ({ commit }, payload) => {
-  commit('setDirty', { tab: 'deployments', status: true })
-  commit('setDeploymentDate', payload)
+const setDeploymentDate = ({ commit, state }, payload) => {
+  const items = state.deployments.items
+    .map((item, index) => ({ id: item.id, index }))
+    .filter(item => item.id === payload.id)
+
+  if (items.length > 0) {
+    commit('setDirty', { tab: 'deployments', status: true })
+    commit('setDeploymentDate', { ...payload, index: items[0].index })
+  }
 }
 
 const setFeedbackFrequently = async ({ commit }, payload) => {
@@ -296,7 +239,6 @@ export default {
   setDeploymentsFrequency,
   setDeploymentsFirst,
 
-  setAllDeployments,
   addEmptyDeployment,
   removeDeployment,
   setDeploymentDate,
