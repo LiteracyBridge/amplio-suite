@@ -1,21 +1,20 @@
 import { getPrograms } from '@/api/programs.api'
 
-const getAllPrograms = async ({ commit }) => {
+const getAllPrograms = async ({ commit, state }) => {
+  if (state.status == 'loading') {
+    return
+  }
   commit('getAllRequest')
 
-  let allPrograms
   try {
-    allPrograms = await getPrograms()
+    let allPrograms = await getPrograms()
+    await commit('getAllSuccess', allPrograms)
+
+    if (allPrograms.length === 1) {
+      await commit('program/setCodeName', allPrograms[0], { root: true })
+    }
   } catch {
     commit('getAllError')
-    return 1
-  }
-
-  commit('getAllSuccess')
-  await commit('setAllPrograms', allPrograms)
-
-  if (allPrograms.length === 1) {
-    await commit('program/setCodeName', allPrograms[0], { root: true })
   }
 }
 

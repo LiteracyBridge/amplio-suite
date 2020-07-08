@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link :to="`/programs/${codeNameId}`" class="text-white">
+        <router-link :to="`/programs/${programCode}`" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -63,7 +63,7 @@
             v-if="programs.length > 1"
             aria-label="Select a program"
             class="px-4 py-1 rounded"
-            :value="codeName"
+            :value="programCode"
             @change="changeProgram"
           >
             <option value="">Select a program</option>
@@ -99,14 +99,16 @@ import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
 export default {
+  async mounted () {
+    await this.getAllPrograms()
+  },
   computed: {
+    ...mapState('project', [
+      'programCode'
+    ]),
     ...mapState('programs', [
       'programs'
     ]),
-    ...mapState('program', [
-      'codeName',
-      'codeNameId'
-    ])
   },
   data () {
     return {
@@ -125,8 +127,8 @@ export default {
     DropDown
   },
   methods: {
-    ...mapActions('program', [
-      'setCodeName'
+    ...mapActions('programs', [
+      'getAllPrograms'
     ]),
     ...mapActions('account', [
       'logout'

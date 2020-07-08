@@ -2,21 +2,17 @@ const getAllRequest = (state) => {
   state.status = 'loading'
 }
 
-const getAllSuccess = (state) => {
+const getAllSuccess = (state, programs) => {
   state.status = 'success'
+  state.programs = programs
 }
 
 const getAllError = (state) => {
   state.status = 'error'
 }
 
-const setAllPrograms = (state, payload) => {
-  state.programs = payload
-}
-
 export default {
   getAllRequest,
   getAllSuccess,
   getAllError,
-  setAllPrograms
 }
