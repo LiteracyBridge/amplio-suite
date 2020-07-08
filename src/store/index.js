@@ -7,6 +7,8 @@ import program from './program'
 import account from './account'
 import notification from './notification'
 
+import uiContent from './uiContent'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -17,6 +19,7 @@ export default new Vuex.Store({
     programIndex,
     program,
     account,
-    notification
+    notification,
+    uiContent
   }
 })
