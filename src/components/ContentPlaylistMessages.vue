@@ -1,22 +1,19 @@
 <template>
-  <div class="py-4">
-    <template
-      v-for="message in selectedPlaylist.messages"
-    >
-      <div :key="`${message.title}-a`" class="flex items-center px-4">
-        <p>Message Title</p>
-
+  <div>
+    <template v-for="message in selectedPlaylist.messages">
+      <div :key="`${message.title}-a`" class="flex items-center mt-4">
         <v-input
           type="text"
-          mx="flex-1 px-4 mx-0"
-          aria-labelledby="title"
+          name="messageTitle"
+          label="Message title"
+          mx="w-full px-4 mx-0"
           :value="message.title"
         />
 
         <span
           @click="toggleOpenMessage(message)"
           :class="message.title === selectedMessage.title ? 'text-blue underline font-semibold' : 'text-black'"
-          class="py-2 text-left cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+          class="w-48 py-2 px-4 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
         >
           {{ message.title === selectedMessage.title ? 'Hide Details' : 'Show Details' }}
           <font-awesome-icon :icon="message.title === selectedMessage.title ? 'chevron-up' : 'chevron-down'" />
