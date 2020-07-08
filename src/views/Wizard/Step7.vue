@@ -20,12 +20,12 @@ export default {
     ...mapState('wizard', {
       wizarsIsComplete: 'isComplete'
     }),
-    ...mapState('program', [
+    ...mapState('programData', [
       'codeNameId'
     ])
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'createProgram'
     ]),
     ...mapActions('wizard', [

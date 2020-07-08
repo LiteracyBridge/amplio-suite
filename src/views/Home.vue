@@ -41,7 +41,7 @@ export default {
     HomeBox
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'fetchDeployments',
       'fetchContent'
     ]),

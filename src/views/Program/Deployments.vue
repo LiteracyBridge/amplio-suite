@@ -90,7 +90,7 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       deployments: state => state.deployments.items
     })
   },
@@ -110,7 +110,7 @@ export default {
     this.fetchDeployments()
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'fetchDeployments',
       'createDeployment',
       'removeDeployment',

@@ -16,12 +16,10 @@ const getPrograms = async () => {
   }
 }
 
-const getProgram = async () => {
-  const { codeName } = store.state.program
-
+const getProgram = async (programCode) => {
   const response = await httpClient.get(END_POINT, {
     params: {
-      project_code: codeName
+      project_code: programCode
     }
   })
 

@@ -51,13 +51,13 @@ export default {
     VButton
   },
   computed: {
-    ...mapGetters('program', [
+    ...mapGetters('programData', [
       'httpStatus',
       'tabStatus'
     ])
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'saveChanges',
       'discardChanges'
     ])

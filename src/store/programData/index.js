@@ -4,10 +4,10 @@ import getters from './getters'
 
 
 export const getDefaultState = () => ({
-  projectData: {
+  programData: {
     dirty: false,
     status: 'success',
-    project_code: 'my-test-project-1',
+    programCode: 'my-test-project-1',
     data: {
       goals: [],
       listeningModels: []

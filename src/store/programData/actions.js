@@ -14,7 +14,7 @@ const isCompleted = ({ state }, payload) => {
         break
       case 'goals':
       case 'listeningModels':
-        partial = state.projectData.data[attr].length > 0
+        partial = state.programData.data[attr].length > 0
         break
       case 'deploymentsAmount':
         partial = state.deploymentsConfig.amount > 0
@@ -59,14 +59,14 @@ const setProgramName = ({ commit }, payload) => {
 }
 
 const toggleGoal = ({ commit, state }, goal) => {
-  const index = state.projectData.data.goals.indexOf(goal)
+  const index = state.programData.data.goals.indexOf(goal)
 
   if (index > -1) commit('removeGoal', index)
   else commit('addGoal', goal)
 }
 
 const toggleListening = ({ commit, state }, model) => {
-  const index = state.projectData.data.listeningModels.indexOf(model)
+  const index = state.programData.data.listeningModels.indexOf(model)
 
   if (index > -1) commit('removeListeningModel', index)
   else commit('addListeningModel', model)
@@ -130,8 +130,8 @@ const createProgram = async ({ commit, state }) => {
   const data = {
     name: state.general.programName,
     project: state.codeName,
-    sustainable_development_goal: state.projectData.data.goals,
-    listening_model: state.projectData.data.listeningModels,
+    sustainable_development_goal: state.programData.data.goals,
+    listening_model: state.programData.data.listeningModels,
     amount_deployment: +state.deploymentsConfig.amount,
     deployment_length: state.deploymentsConfig.frequency,
     first_deployment: state.deploymentsConfig.first,

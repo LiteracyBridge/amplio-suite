@@ -4,8 +4,8 @@ import store from '@/store'
 const END_POINT = '/content'
 
 const getContent = async () => {
-  const projectCode = store.state.program.codeName
-  const deploymentName = store.state.program.deployments.items[0].deploymentname
+  const projectCode = store.state.programData.codeName
+  const deploymentName = store.state.programData.deployments.items[0].deploymentname
 
   try {
     const response = await httpClient.get(END_POINT, {

@@ -55,7 +55,7 @@ import Box from '@/components/SetupBox'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       feedbackFrequently: state => state.general.feedbackFrequently,
       feedbackFrequentlyOther: state => state.general.feedbackFrequentlyOther
     })

@@ -26,49 +26,49 @@ const setIsCompleted = ({ commit }) => {
 
 // Helper
 const check = async (attrs, step, dispatch) => {
-  const result = await dispatch('program/isCompleted', attrs, { root: true } )
+  const result = await dispatch('programData/isCompleted', attrs, { root: true } )
   if (result) dispatch('addCompletedStep', step)
   else dispatch('removeCompletedStep', step)
 }
 
 // Step 1
 const setProgramName = async ({ dispatch }, payload) => {
-  await dispatch('program/setProgramName', payload, { root: true })
+  await dispatch('programData/setProgramName', payload, { root: true })
 
   await check('programName', 1, dispatch)
 }
 
 // Step 2
 const toggleGoal = async ({ dispatch }, goal) => {
-  await dispatch('program/toggleGoal', goal, { root: true })
+  await dispatch('programData/toggleGoal', goal, { root: true })
 
   await check('goals', 2, dispatch)
 }
 
 // Step 3
 const toggleListening = async ({ dispatch }, model) => {
-  await dispatch('program/toggleListening', model, { root: true })
+  await dispatch('programData/toggleListening', model, { root: true })
 
   await check('listeningModels', 3, dispatch)
 }
 
 // Step 4
 const setDeploymentsAmount = async ({ dispatch }, payload) => {
-  await dispatch('program/setDeploymentsAmount', payload, { root: true })
+  await dispatch('programData/setDeploymentsAmount', payload, { root: true })
 
   const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
 }
 
 const setDeploymentsFrequency = async ({ dispatch }, payload) => {
-  await dispatch('program/setDeploymentsFrequency', payload, { root: true })
+  await dispatch('programData/setDeploymentsFrequency', payload, { root: true })
 
   const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
 }
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
-  await dispatch('program/setDeploymentsFirst', payload, { root: true })
+  await dispatch('programData/setDeploymentsFirst', payload, { root: true })
 
   const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
@@ -76,14 +76,14 @@ const setDeploymentsFirst = async ({ dispatch }, payload) => {
 
 // Step 5
 const setFeedbackFrequently = async ({ dispatch }, payload) => {
-  await dispatch('program/setFeedbackFrequently', payload, { root: true })
+  await dispatch('programData/setFeedbackFrequently', payload, { root: true })
 
   const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
   await check(attrs, 5, dispatch)
 }
 
 const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
-  await dispatch('program/setFeedbackFrequentlyOther', payload, { root: true })
+  await dispatch('programData/setFeedbackFrequentlyOther', payload, { root: true })
 
   const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
   await check(attrs, 5, dispatch)
@@ -91,7 +91,7 @@ const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
 
 // Step 6
 const setLanguages = async ({ dispatch }, payload) => {
-  await dispatch('program/setLanguages', payload, { root: true })
+  await dispatch('programData/setLanguages', payload, { root: true })
 
   await check('languages', 6, dispatch)
 }

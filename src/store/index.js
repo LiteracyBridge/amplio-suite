@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import wizard from './wizard'
 import project from './project'
 import programs from './programs'
-import program from './program'
+import programData from './programData'
 import account from './account'
 import notification from './notification'
 
@@ -19,7 +19,7 @@ export default new Vuex.Store({
     wizard,
     project,
     programs,
-    program,
+    programData,
     account,
     notification,
     uiContent

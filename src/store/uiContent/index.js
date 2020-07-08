@@ -33,7 +33,7 @@ export default {
 
   actions: {
     toggleOpenDeployment ({ commit, state, rootState }, payload) {
-      const { playlists } = rootState.program.content
+      const { playlists } = rootState.programData.content
 
       if (state.selectedDeployment.deploymentname === payload.deploymentname) commit('clearDeployment')
       else {

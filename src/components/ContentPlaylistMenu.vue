@@ -34,7 +34,7 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       playlists: state => state.content.playlists
     }),
     ...mapState('uiContent', [
@@ -46,7 +46,7 @@ export default {
     ...mapActions('uiContent', [
       'toggleOpenPlaylist'
     ]),
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'addPlaylist'
     ])
   }

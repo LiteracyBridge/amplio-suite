@@ -48,7 +48,7 @@ import Box from '@/components/ProgramBox'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       deployments: state => state.deployments.items
     }),
     ...mapState('uiContent', [
@@ -67,7 +67,7 @@ export default {
     this.toggleOpenDeployment(this.deployments[0])
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'fetchContent'
     ]),
     ...mapActions('uiContent', [

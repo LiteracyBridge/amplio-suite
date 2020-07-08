@@ -90,19 +90,19 @@ const setDeploymentDate = (state, payload) => {
   Content
 ****************************************/
 const addGoal = (state, payload) => {
-  state.projectData.data.goals.push(payload)
+  state.programData.data.goals.push(payload)
 }
 
 const removeGoal = (state, index) => {
-  state.projectData.data.goals.splice(index, 1)
+  state.programData.data.goals.splice(index, 1)
 }
 
 const addListeningModel = (state, payload) => {
-  state.projectData.data.listeningModels.push(payload)
+  state.programData.data.listeningModels.push(payload)
 }
 
 const removeListeningModel = (state, index) => {
-  state.projectData.data.listeningModels.splice(index, 1)
+  state.programData.data.listeningModels.splice(index, 1)
 }
 
 

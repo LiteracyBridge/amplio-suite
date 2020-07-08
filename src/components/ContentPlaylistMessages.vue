@@ -68,7 +68,7 @@ export default {
     ...mapActions('uiContent', [
       'toggleOpenMessage'
     ]),
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'addMessage'
     ]),
     addNewMessage() {
