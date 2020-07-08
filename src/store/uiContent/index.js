@@ -39,14 +39,13 @@ export default {
       else {
         commit('setDeployment', payload)
         commit('setPlaylist', playlists[0])
-        commit('setMessage', playlists[0].messages[0])
+        commit('clearMessage')
       }
     },
     toggleOpenPlaylist ({ commit, state }, payload) {
-      if (state.selectedPlaylist.title === payload.title) commit('clearPlaylist')
-      else {
+      if (state.selectedPlaylist.title !== payload.title) {
         commit('setPlaylist', payload)
-        commit('setMessage', payload.messages[0])
+        commit('clearMessage')
       }
     },
     toggleOpenMessage ({ commit, state }, payload) {
