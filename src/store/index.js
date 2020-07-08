@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import wizard from './wizard'
+import project from './project'
 import programs from './programs'
 import program from './program'
 import account from './account'
@@ -16,6 +17,7 @@ export default new Vuex.Store({
 
   modules: {
     wizard,
+    project,
     programs,
     program,
     account,

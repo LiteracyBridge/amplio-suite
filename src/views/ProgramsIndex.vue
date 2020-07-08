@@ -52,15 +52,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions('program', [
-      'setCodeName'
-    ]),
     ...mapActions('programs', [
       'getAllPrograms'
     ]),
-    async selectProgram (codeName) {
-      const id = await this.setCodeName(codeName)
-      this.$router.push(`/programs/${id}`)
+    async selectProgram (programCode) {
+      this.$router.push(`/programs/${programCode}`)
     }
   }
 }

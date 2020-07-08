@@ -43,9 +43,10 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
-    path: '/programs/:id',
+    path: '/programs/:programCode',
     component: Home,
-    beforeEnter: multiguard([requireAuth, fetchAllPrograms])
+    props: true,
+    beforeEnter: requireAuth
   },
   {
     path: '/programs/:id/wizard',

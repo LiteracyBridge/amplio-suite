@@ -132,8 +132,8 @@ export default {
       'logout'
     ]),
     async changeProgram (event) {
-      const id = await this.setCodeName(event.target.value)
-      this.$router.push(`/programs/${id}`)
+      let projectCode = event.target.value
+      this.$router.push(`/programs/${projectCode}`)
     },
     handleLogout () {
       this.logout()

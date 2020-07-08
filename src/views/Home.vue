@@ -4,7 +4,7 @@
       Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
     </h1>
 
-    <div class="grid grid-cols-3 gap-10">
+    <div v-if="projectLoaded" class="grid grid-cols-3 gap-10">
       <router-link :to="linkTo">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
           Define your requirements and complete/modify the program specification document.
@@ -42,16 +42,18 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'fetchProgram',
       'fetchDeployments',
       'fetchContent'
     ]),
+    ...mapActions('project', [
+      'fetchProject'
+    ]),
   },
   watch: {
-    'codeNameId': {
+    'programCode': {
       async handler (newVal) {
         if (newVal) { // check if userid is available
-        await this.fetchProgram()
+        await this.fetchProject(newVal)
         await this.fetchDeployments()
         await this.fetchContent()
         }
@@ -59,22 +61,22 @@ export default {
       immediate: true // make this watch function is called when component created
     }
   },
+  props: ['programCode'],
   computed: {
-    ...mapState('wizard', {
-      wizardActualStep: 'actualStep',
-      wizardIsComplete: 'isComplete'
-    }),
+    ...mapState('project', [
+      'project'
+    ]),
+    projectLoaded() {
+      return this.$store.state.project.status === 'success'
+    },
     ...mapState('account', [
       'user'
     ]),
-    ...mapState('program', [
-      'codeNameId'
-    ]),
     linkTo() {
-      if (!this.wizardIsComplete) {
-        return `${this.$route.path}/wizard/step-${this.wizardActualStep}`
-      } else {
+      if (this.project) {
         return `${this.$route.path}/settings`
+      } else {
+        return `${this.$route.path}/wizard`
       }
     }
   }
