@@ -53,6 +53,15 @@ export default {
       isFocus: false
     }
   },
+  mounted () {
+    if (this.value !== '') this.isFocus = true
+  },
+  watch: {
+    value () {
+      if (this.value !== '') this.isFocus = true
+      else this.isFocus = false
+    }
+  },
   methods: {
     handleBlur () {
       if (!this.value) this.isFocus = false
