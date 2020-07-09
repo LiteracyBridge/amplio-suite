@@ -7,7 +7,7 @@ export default {
   state: {
     status: '',
     programCode: '',
-    project: {
+    program: {
       name: '',
       active: false,
     }

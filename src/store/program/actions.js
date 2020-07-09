@@ -1,0 +1,15 @@
+import { getProgram } from '@/api/programs.api'
+
+const fetchProgram = async ({ commit }, programCode) => {
+  commit('getProgramRequest', programCode)
+  try {
+    let program = await getProgram(programCode)
+    commit('getProgramSuccess', program)
+  } catch (error) {
+    commit('getProgramError', error)
+  }
+}
+
+export default {
+  fetchProgram
+}

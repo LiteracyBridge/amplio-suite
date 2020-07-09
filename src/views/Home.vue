@@ -4,7 +4,7 @@
       Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
     </h1>
 
-    <div v-if="projectLoaded" class="grid grid-cols-3 gap-10">
+    <div v-if="programLoaded" class="grid grid-cols-3 gap-10">
       <router-link :to="linkTo">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Plan and Prepare">
           Define your requirements and complete/modify the program specification document.
@@ -45,15 +45,15 @@ export default {
       'fetchDeployments',
       'fetchContent'
     ]),
-    ...mapActions('project', [
-      'fetchProject'
+    ...mapActions('program', [
+      'fetchProgram'
     ]),
   },
   watch: {
     'programCode': {
       async handler (newVal) {
         if (newVal) { // check if userid is available
-        await this.fetchProject(newVal)
+        await this.fetchProgram(newVal)
         await this.fetchDeployments()
         await this.fetchContent()
         }
@@ -63,17 +63,17 @@ export default {
   },
   props: ['programCode'],
   computed: {
-    ...mapState('project', [
-      'project'
+    ...mapState('program', [
+      'program'
     ]),
-    projectLoaded() {
-      return this.$store.state.project.status === 'success'
+    programLoaded() {
+      return this.$store.state.program.status === 'success'
     },
     ...mapState('account', [
       'user'
     ]),
     linkTo() {
-      if (this.project) {
+      if (this.program) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`

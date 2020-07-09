@@ -103,7 +103,7 @@ export default {
     await this.getAllPrograms()
   },
   computed: {
-    ...mapState('project', [
+    ...mapState('program', [
       'programCode'
     ]),
     ...mapState('programs', [
@@ -134,8 +134,8 @@ export default {
       'logout'
     ]),
     async changeProgram (event) {
-      let projectCode = event.target.value
-      this.$router.push(`/programs/${projectCode}`)
+      let programCode = event.target.value
+      this.$router.push(`/programs/${programCode}`)
     },
     handleLogout () {
       this.logout()
