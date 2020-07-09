@@ -45,11 +45,18 @@ export default {
       'user'
     ])
   },
+  watch: {
+    'programs': {
+      handler (programs) {
+        if (programs.length == 1) {
+          this.selectProgram(programs[0])
+        }
+      },
+      immediate: true
+    }
+  },
   async mounted () {
     await this.getAllPrograms()
-    if (this.programs.length === 1) {
-      this.selectProgram(this.programs[0])
-    }
   },
   methods: {
     ...mapActions('programs', [

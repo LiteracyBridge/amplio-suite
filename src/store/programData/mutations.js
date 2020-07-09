@@ -10,11 +10,6 @@ const setDirty = (state, payload) => {
   state[tab].dirty = status
 }
 
-const setCodeName = (state, payload) => {
-  state.codeName = payload.name
-  state.codeNameId = payload.id
-}
-
 const getProgramRequest = (state) => {
   state.general.status = 'loading'
 }
@@ -146,7 +141,6 @@ const setContent = (state, payload) => {
 export default {
   resetState,
   setDirty,
-  setCodeName,
   getProgramRequest,
   getProgramError,
   setProgram,

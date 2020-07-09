@@ -45,14 +45,6 @@ const isCompleted = ({ state }, payload) => {
   return result.every(Boolean)
 }
 
-const setCodeName = async ({ commit }, programCode) => {
-  commit('resetState')
-  commit('wizard/resetState', {}, { root: true })
-  commit('setCodeName', { name: programCode, id: programCode})
-
-  return programCode
-}
-
 const setProgramName = ({ commit }, payload) => {
   commit('setProgramName', payload.replace(/\s+/g,' ').trim())
   commit('setDirty', { tab: 'general', status: true })
@@ -292,7 +284,6 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
 
 export default {
   isCompleted,
-  setCodeName,
   setProgramName,
   toggleGoal,
   toggleListening,

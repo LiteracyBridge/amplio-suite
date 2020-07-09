@@ -9,10 +9,6 @@ const getAllPrograms = async ({ commit, state }) => {
   try {
     let allPrograms = await getPrograms()
     await commit('getAllSuccess', allPrograms)
-
-    if (allPrograms.length === 1) {
-      await commit('programData/setCodeName', allPrograms[0], { root: true })
-    }
   } catch {
     commit('getAllError')
   }
