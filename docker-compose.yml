@@ -69,6 +69,18 @@ services:
     <<: *base
     command: project_create.lambda_handler
 
+  lambda-content_create:
+    <<: *base
+    command: content_create.lambda_handler
+
+  lambda-content_update:
+    <<: *base
+    command: content_update.lambda_handler
+
+  lambda-content_retrieve:
+    <<: *base
+    command: content_retrieve.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
