@@ -32,11 +32,13 @@ fileConfig(config.config_file_name)
 from models import program
 from models import project
 from models import deployment
+from models import content
 
 target_metadata = [
   program.Base.metadata,
   project.Base.metadata,
   deployment.Base.metadata,
+  content.Base.metadata
 ]
 
 # other values from the config, defined by the needs of env.py,
