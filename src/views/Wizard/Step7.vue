@@ -1,7 +1,7 @@
 <template>
   <Box
     ref="box"
-    :next="`/programs/${codeNameId}/settings`"
+    :next="`/programs/${programCode}/settings`"
     title="Thank you! We automatically updated the Program Specification based
     on your responses. Please complete the remaining details."
   />
@@ -20,8 +20,8 @@ export default {
     ...mapState('wizard', {
       wizarsIsComplete: 'isComplete'
     }),
-    ...mapState('programData', [
-      'codeNameId'
+    ...mapState('program', [
+      'programCode'
     ])
   },
   methods: {

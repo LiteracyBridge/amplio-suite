@@ -52,7 +52,6 @@ export const getDefaultState = () => ({
 const baseState = {
   status: '',
   codeName: '',
-  codeNameId: ''
 }
 
 export default {

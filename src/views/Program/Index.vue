@@ -9,7 +9,7 @@
         v-for="section in sections"
         :key="section.name"
         :is="section.disabled ? 'span' : 'router-link'"
-        :to="section.disabled ? '' : `/programs/${codeNameId}/settings/${section.name}`"
+        :to="section.disabled ? '' : `/programs/${programCode}/settings/${section.name}`"
         :class="[
           $route.path.endsWith(section.name) ? 'bg-green text-white' : 'text-black',
           section.disabled ? 'opacity-50 cursor-not-allowed' : ''
@@ -50,9 +50,9 @@ export default {
     VModal
   },
   computed: {
-    ...mapState('programData', {
+    ...mapState('program', {
       programName: state => state.general.programName,
-      codeNameId: 'codeNameId'
+      programCode: 'programCode'
     })
   },
   data () {
