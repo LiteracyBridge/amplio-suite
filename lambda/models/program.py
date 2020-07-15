@@ -4,10 +4,10 @@ from dateutil.relativedelta import relativedelta
 
 from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
 
 from models.deployment import Deployment
+from models.base import Base
 
 valid_sdg = [
     'no_poverty', 'zero_hunger', 'good_health_and_well _being',
@@ -24,8 +24,6 @@ valid_listening_model = ['households', 'groups', 'community_workers', 'place_bas
 time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
 time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
-
-Base = declarative_base()
 
 class DeploymentFreq(Enum):
     one_month = 1

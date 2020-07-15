@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String, Boolean, UniqueConstraint
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
 
-Base = declarative_base()
+from models.base import Base
 
 class Project(Base, SerializerMixin):
     __tablename__ = "projects"

@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date, UniqueConstraint
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
 
-Base = declarative_base()
+from models.base import Base
 
 class Deployment(Base, SerializerMixin):
     __tablename__ = "deployments"

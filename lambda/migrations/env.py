@@ -29,17 +29,13 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
+from models.base import Base
 from models import program
 from models import project
 from models import deployment
 from models import content
 
-target_metadata = [
-  program.Base.metadata,
-  project.Base.metadata,
-  deployment.Base.metadata,
-  content.Base.metadata
-]
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

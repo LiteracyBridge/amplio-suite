@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, JSON, UniqueConstraint
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
 
+from models.base import Base
 
 def message_template(index):
     return {
@@ -22,8 +22,6 @@ def playlist_template(index):
             message_template(1)
         ]
     }
-
-Base = declarative_base()
 
 class Content(Base, SerializerMixin):
     __tablename__ = 'content'
