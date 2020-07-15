@@ -1,6 +1,6 @@
 <template>
   <box
-    title="General"
+    title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
     <div class="grid grid-cols-program items-center gap-2 text-left">

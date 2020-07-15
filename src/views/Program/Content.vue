@@ -1,6 +1,6 @@
 <template>
   <box
-    title="Content"
+    title="content"
     help="You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
   >
     <div

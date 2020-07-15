@@ -1,6 +1,6 @@
 <template>
   <box
-    title="Deployments"
+    title="deployments"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
     <div class="grid grid-cols-deployments items-center justify-between">
