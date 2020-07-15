@@ -183,11 +183,11 @@ const createProgram = async ({ commit, state }) => {
   const data = {
     name: state.general.programName,
     project: state.codeName,
-    sustainable_development_goal: state.content.goals,
-    listening_model: state.content.listeningModels,
-    amount_deployment: state.deployments.amount,
-    deployment_length: state.deployments.frequency,
-    first_deployment: state.deployments.first,
+    sustainable_development_goal: state.projectData.data.goals,
+    listening_model: state.projectData.data.listeningModels,
+    amount_deployment: +state.deploymentsConfig.amount,
+    deployment_length: state.deploymentsConfig.frequency,
+    first_deployment: state.deploymentsConfig.first,
     feedback_frequency: state.general.feedbackFrequently,
     feedback_frequency2: state.general.feedbackFrequentlyOther
   }
