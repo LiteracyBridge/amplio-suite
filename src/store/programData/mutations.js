@@ -58,8 +58,8 @@ const setDeploymentsAmount = (state, payload) => {
   state.deploymentsConfig.amount = payload
 }
 
-const setDeploymentsFrequency = (state, payload) => {
-  state.deploymentsConfig.frequency = payload
+const setDeploymentsLength = (state, payload) => {
+  state.deploymentsConfig.length = payload
 }
 
 const setDeploymentsFirst = (state, payload) => {
@@ -148,7 +148,7 @@ export default {
   setLanguages,
   addLangInput,
   setDeploymentsAmount,
-  setDeploymentsFrequency,
+  setDeploymentsLength,
   setDeploymentsFirst,
 
   addDeployment,

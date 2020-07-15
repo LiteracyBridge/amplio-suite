@@ -19,8 +19,8 @@ const isCompleted = ({ state }, payload) => {
       case 'deploymentsAmount':
         partial = state.deploymentsConfig.amount > 0
         break
-      case 'deploymentsFrequency':
-        partial = state.deploymentsConfig.frequency !== ''
+      case 'deploymentsLength':
+        partial = state.deploymentsConfig.length !== ''
         break
       case 'deploymentsFirst':
         partial = new Date(state.deploymentsConfig.first) > new Date()
@@ -69,8 +69,8 @@ const setDeploymentsAmount = async ({ commit }, payload) => {
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
 }
 
-const setDeploymentsFrequency = async ({ commit }, payload) => {
-  await commit('setDeploymentsFrequency', payload)
+const setDeploymentsLength = async ({ commit }, payload) => {
+  await commit('setDeploymentsLength', payload)
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
 }
 
@@ -125,7 +125,7 @@ const createProgram = async ({ commit, state }) => {
     sustainable_development_goal: state.programData.data.goals,
     listening_model: state.programData.data.listeningModels,
     amount_deployment: +state.deploymentsConfig.amount,
-    deployment_length: state.deploymentsConfig.frequency,
+    deployment_length: state.deploymentsConfig.length,
     first_deployment: state.deploymentsConfig.first,
     feedback_frequency: state.general.feedbackFrequently,
     feedback_frequency2: state.general.feedbackFrequentlyOther
@@ -288,7 +288,7 @@ export default {
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,
-  setDeploymentsFrequency,
+  setDeploymentsLength,
   setDeploymentsFirst,
   setDeploymentDate,
 

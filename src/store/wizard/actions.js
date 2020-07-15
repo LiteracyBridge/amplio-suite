@@ -56,21 +56,21 @@ const toggleListening = async ({ dispatch }, model) => {
 const setDeploymentsAmount = async ({ dispatch }, payload) => {
   await dispatch('programData/setDeploymentsAmount', payload, { root: true })
 
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
 }
 
-const setDeploymentsFrequency = async ({ dispatch }, payload) => {
-  await dispatch('programData/setDeploymentsFrequency', payload, { root: true })
+const setDeploymentsLength = async ({ dispatch }, payload) => {
+  await dispatch('programData/setDeploymentsLength', payload, { root: true })
 
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
 }
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
   await dispatch('programData/setDeploymentsFirst', payload, { root: true })
 
-  const attrs = ['deploymentsAmount', 'deploymentsFrequency', 'deploymentsFirst']
+  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
   await check(attrs, 4, dispatch)
 }
 
@@ -108,7 +108,7 @@ export default {
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,
-  setDeploymentsFrequency,
+  setDeploymentsLength,
   setDeploymentsFirst,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,

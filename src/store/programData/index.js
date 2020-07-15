@@ -30,7 +30,7 @@ export const getDefaultState = () => ({
     dirty: false,
     amount: 0,
     first: '',
-    frequency: ''
+    length: '',
   },
 
   deployments: {
