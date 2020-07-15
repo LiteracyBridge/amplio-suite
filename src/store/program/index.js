@@ -1,5 +1,6 @@
 import actions from './actions'
 import mutations from './mutations'
+import getters from './getters'
 
 
 export const getDefaultState = () => ({
@@ -57,5 +58,6 @@ export default {
 
   state: Object.assign(baseState, getDefaultState()),
   mutations,
-  actions
+  actions,
+  getters
 }

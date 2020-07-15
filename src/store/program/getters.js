@@ -1,9 +1,20 @@
-const deploymentsDates = (state) => {
-  return state.deployments.data.map(deplo => {
-    return deplo.date
-  })
+const httpStatus = (state) => {
+  return {
+    general: state.general.status,
+    deployments: state.deployments.status,
+    content: state.content.status
+  }
+}
+
+const tabStatus = (state) => {
+  return {
+    general: state.general.dirty,
+    deployments: state.deployments.dirty,
+    content: state.content.dirty
+  }
 }
 
 export default {
-  deploymentsDates
+  httpStatus,
+  tabStatus
 }
