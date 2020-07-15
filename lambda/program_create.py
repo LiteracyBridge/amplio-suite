@@ -1,57 +1,91 @@
-import os
 import sys
 sys.path.append('/var/task/package')
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from enum import Enum
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
-from utils import get_db_url
+from utils import create_db_session
 from models.program import Program
+from models.content import Content
+from models.deployment import Deployment
+from decorators import migration, validate_keys
 
-from alembic.config import Config
-from alembic import command
 
-from dotenv import load_dotenv
-# Load .env file
-load_dotenv()
-alembic_cfg = Config(os.getenv('ALEMBIC_INI'))
+class DeploymentFreq(Enum):
+    one_month = 1
+    one_quarter = 3
+    six_months = 6
+    one_year = 12
 
-DATABASE_URL = get_db_url()
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
+keys = ['name', 'project', 'amount_deployment',
+        'deployment_length', 'first_deployment',
+        'feedback_frequency', 'feedback_frequency2']
 
+empty_playlist = [
+    {
+        'title': 'Playlist 1',
+        'audience': '',
+        'messages': [
+            {
+                'title': "Message Title 1",
+                'language': '',
+                'format': '',
+                'default_category': '',
+                'variant': '',
+                'sdg_goal': '',
+                'sdg_target': ''
+            }
+        ]
+    }
+]
+
+session = create_db_session()
+
+@migration
+@validate_keys(keys)
 def lambda_handler(event, context):
     try:
-        command.upgrade(alembic_cfg, 'head')
-    except BaseException as err:
-        return {
-            'status': 503,
-            'headers': {'Retry-After': 5},
-            'error': str(err)
-        }
-
-    valid_keys = ['name', 'amount_deployment', 'deployment_length',
-                  'first_deployment', 'feedback_frequency',
-                  'feedback_frequency2', 'project']
-
-    for key in valid_keys:
-        if key not in event:
-            return {
-                'status': 422,
-                'error': f'{key} must be specified'
-            }
-
-    try:
         program = Program(**event)
+        session.add(program)
+        session.commit()
     except ValueError as err:
         return {
             'status': 422,
             'error': str(err)
         }
 
-    session.add(program)
-    session.commit()
+    # Populate the deployment table
+    increment = DeploymentFreq[event['deployment_length']].value
+    for i in range(1, event['amount_deployment'] + 1):
+        startdate = datetime.strptime(event['first_deployment'], '%Y-%m-%d') + relativedelta(months=increment * (i - 1))
+        enddate = datetime.strptime(event['first_deployment'], '%Y-%m-%d') + relativedelta(months=increment * i)
+
+        data = {
+            'project': event['project'],
+            'deployment': str(i),
+            'deploymentname': str(i),
+            'deploymentnumber': i,
+            'startdate': startdate,
+            'enddate': enddate,
+            'component': ''
+        }
+
+        deployment = Deployment(**data)
+        session.add(deployment)
+        session.commit()
+
+    # Populate the content table
+    for i in range(1, event['amount_deployment'] + 1):
+        data = {
+            'program_code': event['project'],
+            'deployment_id': str(i),
+            'content': empty_playlist
+        }
+
+        content = Content(**data)
+        session.add(content)
+        session.commit()
 
     return {
         'status': 202,
