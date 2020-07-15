@@ -1,0 +1,24 @@
+import httpClient from './httpClient'
+import store from '@/store'
+
+const END_POINT = '/deployment'
+
+const getDeployments = async () => {
+  const projectCode = store.state.program.codeName
+
+  try {
+    const response = await httpClient.get(END_POINT, {
+      params: { program_code: projectCode }
+    })
+    return {
+      projectCode,
+      items: response.data.deployments
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export {
+  getDeployments
+}
