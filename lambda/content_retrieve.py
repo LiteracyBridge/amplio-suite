@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     if content:
         return {
             'status': 200,
-            'content': content.to_dict()
+            **content.to_dict()
         }
 
     return {
