@@ -49,17 +49,17 @@ services:
     depends_on:
       - db
 
-  lambda-program_create:
+  lambda-programs_index:
     <<: *base
-    command: program_create.lambda_handler
+    command: programs_index.lambda_handler
 
   lambda-program_retrieve:
     <<: *base
     command: program_retrieve.lambda_handler
 
-  lambda-programs_index:
+  lambda-program_create:
     <<: *base
-    command: programs_index.lambda_handler
+    command: program_create.lambda_handler
 
   lambda-project_retrieve:
     <<: *base
@@ -69,6 +69,10 @@ services:
     <<: *base
     command: project_create.lambda_handler
 
+  lambda-content_retrieve:
+    <<: *base
+    command: content_retrieve.lambda_handler
+
   lambda-content_create:
     <<: *base
     command: content_create.lambda_handler
@@ -77,9 +81,13 @@ services:
     <<: *base
     command: content_update.lambda_handler
 
-  lambda-content_retrieve:
+  lambda-deployment_retrieve:
     <<: *base
-    command: content_retrieve.lambda_handler
+    command: deployment_retrieve.lambda_handler
+
+  lambda-deployment_update:
+    <<: *base
+    command: deployment_update.lambda_handler
 
 volumes:
   node_modules:
