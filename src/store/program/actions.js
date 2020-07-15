@@ -199,6 +199,14 @@ const updateProgram = async ({ commit }, payload) => {
   })
 }
 
+const discardChanges = async ({ dispatch }, tab) => {
+  if (tab === 'deployments') {
+    await dispatch('fetchDeployments')
+  } else if (tab === 'content') {
+    await dispatch('fetchContent')
+  }
+}
+
 
 const fetchDeployments = async ({ commit }) => {
   commit('getDeploymentsRequest')
@@ -246,6 +254,7 @@ export default {
   fetchProgram,
   updateProgram,
 
+  discardChanges,
   fetchDeployments,
   fetchContent
 }
