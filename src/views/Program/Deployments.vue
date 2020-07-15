@@ -9,41 +9,41 @@
       <p class="text-sm text-gray-500 text-left">Component</p>
 
       <template v-for="item in deployments">
-        <p :key="`${item.id}-a`" class="pr-4 col-start-1">Deployment {{ item.id }}</p>
+        <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ item.deploymentname }}</p>
 
         <v-input
-          :key="`${item.id}-b`"
+          :key="`${item.deploymentname}-b`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-label="`Start of deployment ${item.id}`"
-          :value="item.startDate"
-          @change="(event) => setDeploymentDate({ id: item.id, what: 'startDate', date: event.target.value })"
+          :aria-label="`Start of deployment ${item.deploymentname}`"
+          :value="item.startdate"
+          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'startDate', date: event.target.value })"
           mx="mx-0"
         />
 
         <v-input
-          :key="`${item.id}-c`"
+          :key="`${item.deploymentname}-c`"
           type="date"
           iconLeft="calendar-alt"
-          :aria-label="`End of deployment ${item.id}`"
-          :value="item.endDate"
+          :aria-label="`End of deployment ${item.deploymentname}`"
+          :value="item.enddate"
           :min="item.startDate"
-          @change="(event) => setDeploymentDate({ id: item.id, what: 'endDate', date: event.target.value })"
+          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'endDate', date: event.target.value })"
           mx="mx-0"
         />
 
         <select
-          :key="`${item.id}-d`"
-          :aria-label="`Components of the deployment ${item.id}`"
+          :key="`${item.deploymentname}-d`"
+          :aria-label="`Components of the deployment ${item.deploymentname}`"
           class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         >
           <option value="">All</option>
         </select>
 
         <button
-          :key="`${item.id}-e`"
-          @click="() => handleOpen(item.id)"
-          :aria-label="`Delete deployment ${item.id}`"
+          :key="`${item.deploymentname}-e`"
+          @click="() => handleOpen(item.deploymentname)"
+          :aria-label="`Delete deployment ${item.deploymentname}`"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>

@@ -35,7 +35,7 @@ export default {
     toggleOpenDeployment ({ commit, state, rootState }, payload) {
       const { playlists } = rootState.program.content
 
-      if (state.selectedDeployment.id === payload.id) commit('clearDeployment')
+      if (state.selectedDeployment.deploymentname === payload.deploymentname) commit('clearDeployment')
       else {
         commit('setDeployment', payload)
         commit('setPlaylist', playlists[0])

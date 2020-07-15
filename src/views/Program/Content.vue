@@ -5,19 +5,19 @@
   >
     <div
       v-for="deplo in deployments"
-      :key="deplo.id"
+      :key="deplo.deploymentname"
       class="-mx-6"
     >
       <h3
         @click="toggleOpenDeployment(deplo)"
-        :class="deplo.id === selectedDeployment.id ? 'bg-gray-400' : 'bg-white'"
+        :class="deplo.deploymentname === selectedDeployment.deploymentname ? 'bg-gray-400' : 'bg-white'"
         class="px-6 py-4 text-xl text-left cursor-pointer border-2 border-gray-600 hover:bg-gray-400"
       >
-        Deployment {{ deplo.id }}
-        <font-awesome-icon :icon="deplo.id === selectedDeployment.id ? 'chevron-down' : 'chevron-right'" />
+        Deployment {{ deplo.deploymentname }}
+        <font-awesome-icon :icon="deplo.deploymentname === selectedDeployment.deploymentname ? 'chevron-down' : 'chevron-right'" />
       </h3>
       <div
-        :class="deplo.id === selectedDeployment.id ? 'h-96' : 'h-0'"
+        :class="deplo.deploymentname === selectedDeployment.deploymentname ? 'h-96' : 'h-0'"
         class="grid transition-all duration-700 overflow-hidden"
         style="grid-template-columns: 1.3fr 5fr;"
       >
