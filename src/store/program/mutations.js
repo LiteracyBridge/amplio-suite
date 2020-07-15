@@ -105,6 +105,38 @@ const removeListeningModel = (state, index) => {
   state.projectData.data.listeningModels.splice(index, 1)
 }
 
+
+
+const getDeploymentsRequest = (state) => {
+  state.deployments.status = 'loading'
+}
+
+const getDeploymentsError = (state) => {
+  state.deployments.status = 'error'
+}
+
+const setDeployments = (state, payload) => {
+  state.deployments.status = 'success'
+  state.deployments.projectCode = payload.projectCode
+  state.deployments.items = payload.items
+}
+
+const getContentRequest = (state) => {
+  state.content.status = 'loading'
+}
+
+const getContentError = (state) => {
+  state.content.status = 'error'
+}
+
+const setContent = (state, payload) => {
+  state.content.status = 'success'
+  state.content.projectCode = payload.projectCode
+  state.content.deploymentName = payload.deploymentName
+  state.content.playlists = payload.playlists
+}
+
+
 export default {
   resetState,
   setDirty,
@@ -129,5 +161,12 @@ export default {
   addListeningModel,
   removeListeningModel,
   setFeedbackFrequently,
-  setFeedbackFrequentlyOther
+  setFeedbackFrequentlyOther,
+
+  getDeploymentsRequest,
+  getDeploymentsError,
+  setDeployments,
+  getContentRequest,
+  getContentError,
+  setContent
 }

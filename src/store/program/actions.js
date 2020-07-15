@@ -1,39 +1,7 @@
 import { postProgram, getProgram } from '@/api/programs.api'
+import { getDeployments } from '@/api/deployment.api'
+import { getContent } from '@/api/content.api'
 
-// Helper
-// const calculateDeployments = (state) => {
-//   const { amount, first, frequency } = state.deploymentsConfig
-
-//   const increment = frequency === 'one_month' ? 1 :
-//     frequency === '1_quarter' ? 3 :
-//       frequency === 'six_months' ? 6 :
-//         frequency === 'one_year' ? 12 : 0
-
-//   const deplos = []
-//   for (let i=0; i<amount; i++) {
-//     deplos.push({
-//       date: {
-//         start: '', end: ''
-//       },
-//       playlists
-//     })
-//   }
-//   deplos[0].date.start = first
-
-//   for (let i=1; i<amount; i++) {
-//     const prev = new Date(deplos[i - 1].date.start)
-//     const next = new Date(prev.setMonth(prev.getMonth() + increment))
-//     deplos[i].date.start = next.toISOString().split('T')[0]
-//   }
-
-//   for (let i=0; i<amount; i++) {
-//     const start = new Date(deplos[i].date.start)
-//     const end = new Date(start.setMonth(start.getMonth() + increment))
-//     deplos[i].date.end = end.toISOString().split('T')[0]
-//   }
-
-//   return deplos
-// }
 
 const isCompleted = ({ state }, payload) => {
   const isFill = (attr) => {
@@ -203,12 +171,16 @@ const createProgram = async ({ commit, state }) => {
   }
 }
 
-const fetchProgram = async ({ commit }, programCode) => {
+const fetchProgram = async ({ commit, dispatch }, programCode) => {
   commit('getProgramRequest')
   try {
     let program = await getProgram(programCode)
     commit('getProgramSuccess')
     commit('setProgram', program)
+
+    commit('wizard/setIsCompleted', null, { root: true })
+    await dispatch('fetchDeployments')
+    await dispatch('fetchContent')
   } catch (error) {
     commit('getProgramError')
   }
@@ -225,6 +197,31 @@ const updateProgram = async ({ commit }, payload) => {
       resolve('ok')
     }, 3000)
   })
+}
+
+
+const fetchDeployments = async ({ commit }) => {
+  commit('getDeploymentsRequest')
+
+  try {
+    const response = await getDeployments()
+    commit('setDeployments', response)
+  } catch (error) {
+    commit('getDeploymentError')
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const fetchContent = async ({ commit }) => {
+  commit('getContentRequest')
+
+  try {
+    const response = await getContent()
+    commit('setContent', response)
+  } catch (error) {
+    commit('getContentError')
+    commit('notification/alert', error.toString(), { root: true })
+  }
 }
 
 export default {
@@ -247,5 +244,8 @@ export default {
   addLangInput,
   createProgram,
   fetchProgram,
-  updateProgram
+  updateProgram,
+
+  fetchDeployments,
+  fetchContent
 }
