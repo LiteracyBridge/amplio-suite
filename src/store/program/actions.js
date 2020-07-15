@@ -121,8 +121,8 @@ const removeDeployment = ({ commit, state }, payload) => {
 
 const setDeploymentDate = ({ commit, state }, payload) => {
   const items = state.deployments.items
-    .map((item, index) => ({ id: item.id, index }))
-    .filter(item => item.id === payload.id)
+    .map((item, index) => ({ deploymentname: item.deploymentname, index }))
+    .filter(item => item.deploymentname === payload.id)
 
   if (items.length > 0) {
     commit('setDirty', { tab: 'deployments', status: true })
