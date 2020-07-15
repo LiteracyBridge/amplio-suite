@@ -76,14 +76,12 @@ const isCompleted = ({ state }, payload) => {
   return result.every(Boolean)
 }
 
-const setCodeName = async ({ commit }, name) => {
+const setCodeName = async ({ commit }, programCode) => {
   commit('resetState')
   commit('wizard/resetState', {}, { root: true })
+  commit('setCodeName', { name: programCode, id: programCode})
 
-  const id = name.replace(/ /g, '-').toLocaleLowerCase()
-  commit('setCodeName', { name, id})
-
-  return id
+  return programCode
 }
 
 const setProgramName = ({ commit }, payload) => {
