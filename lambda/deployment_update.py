@@ -8,15 +8,16 @@ from models.deployment import Deployment
 session = create_db_session()
 
 @migration
-@validate_keys(['program_code', 'deployment_id'])
+@validate_keys(['program_code', 'items'])
 def lambda_handler(event, context):
     try:
-        session.query(Deployment) \
-            .filter(
-                Deployment.program == event['program_code'],
-                Deployment.deployment_id == event['deployment_id']
-            ) \
-            .update(**event)
+        for deplo in event['items']:
+            session.query(Deployment) \
+                .filter(
+                    Deployment.project == event['program_code'],
+                    Deployment.deployment == deplo['deployment']
+                ) \
+                .update({ 'startdate': deplo['startdate'], 'enddate': deplo['enddate'] })
 
         session.commit()
 
