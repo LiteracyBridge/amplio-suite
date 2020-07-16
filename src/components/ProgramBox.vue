@@ -16,7 +16,7 @@
         :iconLeft="httpStatus[title] === 'loading' ? 'spinner' : ''"
         size="2x"
         :pulse="httpStatus[title] === 'loading'"
-        :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-500'"
+        :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
         text="Discard Changes"
       />
       <v-button
@@ -24,7 +24,7 @@
         :iconLeft="httpStatus[title] === 'updating' ? 'spinner' : ''"
         size="2x"
         :pulse="httpStatus[title] === 'updating'"
-        :color="tabStatus[title] ? 'bg-green' : 'bg-gray-500'"
+        :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
       />
     </footer>
