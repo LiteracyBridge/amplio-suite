@@ -1,5 +1,5 @@
 import { postProgram, getProgram, putProgram } from '@/api/programs.api'
-import { getDeployments } from '@/api/deployment.api'
+import { getDeployments, putDeployments } from '@/api/deployment.api'
 import { getContent } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
 
@@ -186,9 +186,8 @@ const updateProgram = async ({ state, commit }) => {
 
 
 const saveChanges = async ({ commit, dispatch }, tab) => {
-  console.log('DENTRO', tab)
-
   if (tab === 'general') await dispatch('updateProgram')
+  else if (tab === 'deployments') await dispatch('updateDeployments')
   else {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -219,6 +218,17 @@ const fetchDeployments = async ({ state, commit }) => {
     commit('setDeployments', response)
   } catch (error) {
     commit('getDeploymentError')
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const updateDeployments = async ({ state, commit }) => {
+  const { projectCode, items } = state.deployments
+
+  try {
+    await putDeployments({ program_code: projectCode, items })
+    commit('setDirty', { tab: 'deployments', status: false })
+  } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
   }
 }
@@ -264,5 +274,6 @@ export default {
   createProgram,
   updateProgram,
   fetchDeployments,
+  updateDeployments,
   fetchContent
 }

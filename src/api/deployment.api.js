@@ -19,6 +19,9 @@ const getDeployments = async () => {
   }
 }
 
+const putDeployments = async (data) => httpClient.put(END_POINT, data)
+
 export {
-  getDeployments
+  getDeployments,
+  putDeployments
 }
