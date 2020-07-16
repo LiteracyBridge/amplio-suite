@@ -60,6 +60,10 @@ services:
     <<: *base
     command: program_create.lambda_handler
 
+  lambda-program_next_deployment:
+    <<: *base
+    command: program_next_deployment.lambda_handler
+
   lambda-project_retrieve:
     <<: *base
     command: project_retrieve.lambda_handler
