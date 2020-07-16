@@ -16,20 +16,20 @@ const setCodeName = (state, payload) => {
 }
 
 const getProgramRequest = (state) => {
-  state.status = 'loading'
-}
-
-const getProgramSuccess = (state) => {
-  state.status = 'success'
+  state.general.status = 'loading'
 }
 
 const getProgramError = (state) => {
-  state.status = 'error'
+  state.general.status = 'error'
 }
 
-const setProgram = (state, program) => {
+const setProgram = (state, payload) => {
+  state.general.dirty = false
+  state.general.status = 'success'
+  state.general.projectCode = payload.project
+
   // FIXME: set every relevant value
-  state.general.programName = program.name
+  state.general.programName = payload.name
   console.log("FIXME: set every relevant value")
 }
 
@@ -148,7 +148,6 @@ export default {
   setDirty,
   setCodeName,
   getProgramRequest,
-  getProgramSuccess,
   getProgramError,
   setProgram,
   setProgramName,

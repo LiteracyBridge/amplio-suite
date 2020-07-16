@@ -155,18 +155,17 @@ const createProgram = async ({ commit, state }) => {
   }
 }
 
-const fetchProgram = async ({ commit, dispatch }, programCode) => {
+const fetchProgram = async ({ commit }) => {
   commit('getProgramRequest')
+
   try {
-    let program = await getProgram(programCode)
-    commit('getProgramSuccess')
+    const program = await getProgram()
     commit('setProgram', program)
 
     commit('wizard/setIsCompleted', null, { root: true })
-    await dispatch('fetchDeployments')
-    await dispatch('fetchContent')
   } catch (error) {
     commit('getProgramError')
+    commit('notification/alert', error.toString(), { root: true })
   }
 }
 
@@ -184,11 +183,9 @@ const updateProgram = async ({ commit }, payload) => {
 }
 
 const discardChanges = async ({ dispatch }, tab) => {
-  if (tab === 'deployments') {
-    await dispatch('fetchDeployments')
-  } else if (tab === 'content') {
-    await dispatch('fetchContent')
-  }
+  if (tab === 'general')  await dispatch('fetchProgram')
+  else if (tab === 'deployments') await dispatch('fetchDeployments')
+  else if (tab === 'content') await dispatch('fetchContent')
 }
 
 

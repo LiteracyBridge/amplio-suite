@@ -16,10 +16,12 @@ export const getDefaultState = () => ({
 
   general: {
     dirty: false,
+    status: '',
+    projectCode: '',
     programName: '',
+
     languages: [],
     amountOfLang: 1,
-
     feedbackFrequently: '',
     feedbackFrequentlyOther: ''
   },
