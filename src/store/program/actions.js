@@ -155,7 +155,11 @@ const createProgram = async ({ commit, state }) => {
   }
 }
 
-const fetchProgram = async ({ commit }) => {
+const fetchProgram = async ({ state, commit }) => {
+  if (state.general.projectCode === state.codeName && !state.general.dirty) {
+    return
+  }
+
   commit('getProgramRequest')
 
   try {
@@ -189,7 +193,11 @@ const discardChanges = async ({ dispatch }, tab) => {
 }
 
 
-const fetchDeployments = async ({ commit }) => {
+const fetchDeployments = async ({ state, commit }) => {
+  if (state.deployments.projectCode === state.codeName && !state.deployments.dirty) {
+    return
+  }
+
   commit('getDeploymentsRequest')
 
   try {
@@ -201,7 +209,11 @@ const fetchDeployments = async ({ commit }) => {
   }
 }
 
-const fetchContent = async ({ commit }) => {
+const fetchContent = async ({ state, commit }) => {
+  if (state.content.projectCode === state.codeName && !state.content.dirty) {
+    return
+  }
+
   commit('getContentRequest')
 
   try {
