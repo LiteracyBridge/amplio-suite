@@ -42,14 +42,18 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'fetchProgram'
+      'fetchProgram',
+      'fetchDeployments',
+      'fetchContent'
     ]),
   },
   watch: {
     'codeNameId': {
-      handler (newVal) {
+      async handler (newVal) {
         if (newVal) { // check if userid is available
-        this.fetchProgram(newVal)
+        await this.fetchProgram()
+        await this.fetchDeployments()
+        await this.fetchContent()
         }
       },
       immediate: true // make this watch function is called when component created

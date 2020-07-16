@@ -85,11 +85,15 @@ export default {
       isModalOpen: false
     }
   },
+  mounted() {
+    this.fetchProgram()
+  },
   methods: {
     ...mapActions('program', [
       'setProgramName',
       'setLanguages',
-      'addLangInput'
+      'addLangInput',
+      'fetchProgram'
     ]),
     async addInput () {
       await this.addLangInput()
