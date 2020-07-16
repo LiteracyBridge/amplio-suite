@@ -1,9 +1,13 @@
-from datetime import date
+from enum import Enum
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
+
+from models.deployment import Deployment
 
 valid_sdg = [
     'no_poverty', 'zero_hunger', 'good_health_and_well _being',
@@ -22,6 +26,12 @@ time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
 
 Base = declarative_base()
+
+class DeploymentFreq(Enum):
+    one_month = 1
+    one_quarter = 3
+    six_months = 6
+    one_year = 12
 
 class Program(Base, SerializerMixin):
     __tablename__ = "programs"
@@ -71,6 +81,48 @@ class Program(Base, SerializerMixin):
         if feedback_frequency2 not in time_period:
             raise ValueError("Invalid 'feedback_frequency2' argument")
         return feedback_frequency2
+
+    def default_deployments(self):
+        deployments = []
+        increment = DeploymentFreq[self.deployment_length].value
+        initial_date = datetime.strptime(self.first_deployment, '%Y-%m-%d')
+
+        for i in range(1, self.amount_deployment + 1):
+            start_date = initial_date + relativedelta(months=increment * (i - 1))
+            end_date = initial_date + relativedelta(months=increment * i)
+
+            data = {
+                'project': self.project,
+                'deployment': str(i),
+                'deploymentname': str(i),
+                'deploymentnumber': i,
+                'startdate': start_date,
+                'enddate': end_date,
+                'component': ''
+            }
+
+            deployments.append(Deployment(**data))
+
+        return deployments
+
+    def next_deployments(self):
+        increment = DeploymentFreq[self.deployment_length].value
+
+        start_date = self.first_deployment + relativedelta(months=increment * self.amount_deployment)
+        end_date = self.first_deployment + relativedelta(months=increment * (self.amount_deployment + 1))
+
+        data = {
+            'project': self.project,
+            'deployment': str(self.amount_deployment + 1),
+            'deploymentname': str(self.amount_deployment + 1),
+            'deploymentnumber': self.amount_deployment + 1,
+            'startdate': start_date,
+            'enddate': end_date,
+            'component': ''
+        }
+
+        return Deployment(**data)
+
 
 # should validate_list_input belong to a utils package of some sort?
 def validate_list_input(opts, keys, text):
