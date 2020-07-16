@@ -5,7 +5,7 @@ ngx.var.original_request = clear_request
 local original_method = ngx.var.request_method
 
 -- Rewrite the query parameters to body for the post
-if original_method ==  "GET" then
+if original_method == "GET" then
   local body = "{"
   local args, err = ngx.req.get_uri_args()
   ngx.var.args = ""
@@ -22,9 +22,7 @@ if original_method ==  "GET" then
 
   ngx.req.read_body()
   ngx.req.set_body_data(body)
-end
 
--- Update the http method
-if original_method != "POST" then
+  -- Update the http method
   ngx.req.set_method(ngx.HTTP_POST)
 end
