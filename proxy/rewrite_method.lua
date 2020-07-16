@@ -25,4 +25,7 @@ if original_method == "GET" then
 
   -- Update the http method
   ngx.req.set_method(ngx.HTTP_POST)
+elseif original_method == "PUT" then
+  -- Update the http method
+  ngx.req.set_method(ngx.HTTP_POST)
 end
