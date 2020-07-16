@@ -1,6 +1,7 @@
 import { postProgram, getProgram } from '@/api/programs.api'
 import { getDeployments } from '@/api/deployment.api'
 import { getContent } from '@/api/content.api'
+import { postProgramNewDeployment } from '@/api/programs.api'
 
 
 const isCompleted = ({ state }, payload) => {
@@ -86,26 +87,9 @@ const setDeploymentsFirst = async ({ commit }, payload) => {
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
 }
 
-const addEmptyDeployment = ({ commit, state }) => {
-  const { frequency } = state.deploymentsConfig
-  const deployments = state.deployments.items
-  const increment = frequency === 'one_month' ? 1 :
-    frequency === 'one_quarter' ? 3 :
-      frequency === 'six_months' ? 6 :
-        frequency === 'one_year' ? 12 : 0
-
-  const lastId = +deployments[deployments.length - 1].id
-  const newDeplo = {
-    id: lastId + 1,
-    component: ''
-  }
-
-  const lastDate = new Date(deployments[deployments.length - 1].endDate)
-  newDeplo.startDate = lastDate.toISOString().split('T')[0]
-  newDeplo.endDate = new Date(lastDate.setMonth(lastDate.getMonth() + increment)).toISOString().split('T')[0]
-
-  commit('setDirty', { tab: 'deployments', status: true })
-  commit('addDeployment', newDeplo)
+const addDeployment = async ({ state, dispatch }) => {
+  await postProgramNewDeployment({ program_code: state.codeName })
+  await dispatch('fetchDeployments')
 }
 
 const removeDeployment = ({ commit, state }, payload) => {
@@ -242,7 +226,7 @@ export default {
   setDeploymentsFrequency,
   setDeploymentsFirst,
 
-  addEmptyDeployment,
+  addDeployment,
   removeDeployment,
   setDeploymentDate,
 

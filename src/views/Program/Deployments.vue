@@ -52,8 +52,8 @@
       <span
         tabindex="0"
         class="mt-4 p-2u text-green font-bold cursor-pointer"
-        @click="addEmptyDeployment"
-        @keyup.enter="addEmptyDeployment"
+        @click="addDeployment"
+        @keyup.enter="addDeployment"
       >
         + Add deployment
       </span>
@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'addEmptyDeployment',
+      'addDeployment',
       'removeDeployment',
       'setDeploymentDate'
     ]),

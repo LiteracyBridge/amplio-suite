@@ -3,8 +3,6 @@ import store from '@/store'
 
 const END_POINT = '/program'
 
-const postProgram = (program) => httpClient.post(END_POINT, program)
-
 const getPrograms = async () => {
   const { email } = store.state.account.user
 
@@ -19,7 +17,7 @@ const getPrograms = async () => {
 }
 
 const getProgram = async (programCode) => {
-  let response = await httpClient.get('/program', {
+  let response = await httpClient.get(END_POINT, {
     params: {
       project_code: programCode
     }
@@ -29,8 +27,16 @@ const getProgram = async (programCode) => {
   return program
 }
 
+const postProgram = (program) => httpClient.post(END_POINT, program)
+
+const postProgramNewDeployment = (data) => {
+  console.log(data)
+  httpClient.post('program_next_deployment', data)
+}
+
 export {
   postProgram,
   getPrograms,
   getProgram,
+  postProgramNewDeployment
 }
