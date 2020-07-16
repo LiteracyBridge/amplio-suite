@@ -16,22 +16,22 @@ const getPrograms = async () => {
   }
 }
 
-const getProgram = async (programCode) => {
-  let response = await httpClient.get(END_POINT, {
+const getProgram = async () => {
+  const { codeName } = store.state.program
+
+  const response = await httpClient.get(END_POINT, {
     params: {
-      project_code: programCode
+      project_code: codeName
     }
   })
-  let { program } = response.data
 
-  return program
+  return response.data.program
 }
 
 const postProgram = (program) => httpClient.post(END_POINT, program)
 
 const postProgramNewDeployment = (data) => {
-  console.log(data)
-  httpClient.post('program_next_deployment', data)
+  return httpClient.post('program_next_deployment', data)
 }
 
 export {
