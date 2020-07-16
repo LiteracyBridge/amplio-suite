@@ -20,7 +20,7 @@
         text="Discard Changes"
       />
       <v-button
-        @click="() => updateProgram({ tab: title })"
+        @click="() => saveChanges(title)"
         :iconLeft="httpStatus[title] === 'updating' ? 'spinner' : ''"
         size="2x"
         :pulse="httpStatus[title] === 'updating'"
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'updateProgram',
+      'saveChanges',
       'discardChanges'
     ])
   }

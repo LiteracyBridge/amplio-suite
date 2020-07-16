@@ -1,4 +1,4 @@
-import { postProgram, getProgram } from '@/api/programs.api'
+import { postProgram, getProgram, putProgram } from '@/api/programs.api'
 import { getDeployments } from '@/api/deployment.api'
 import { getContent } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
@@ -173,17 +173,31 @@ const fetchProgram = async ({ state, commit }) => {
   }
 }
 
-const updateProgram = async ({ commit }, payload) => {
-  const { tab } = payload
-  commit('getProgramRequest')
+const updateProgram = async ({ state, commit }) => {
+  const { projectCode, programName } = state.general
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      commit('getProgramSuccess')
-      commit('setDirty', { tab, status: false })
-      resolve('ok')
-    }, 3000)
-  })
+  try {
+    await putProgram({ program_code: projectCode, name: programName })
+    commit('setDirty', { tab: 'general', status: false })
+  } catch (error) {
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+
+const saveChanges = async ({ commit, dispatch }, tab) => {
+  console.log('DENTRO', tab)
+
+  if (tab === 'general') await dispatch('updateProgram')
+  else {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        commit('getProgramSuccess')
+        commit('setDirty', { tab, status: false })
+        resolve('ok')
+      }, 3000)
+    })
+  }
 }
 
 const discardChanges = async ({ dispatch }, tab) => {
@@ -243,11 +257,12 @@ export default {
   setFeedbackFrequentlyOther,
   setLanguages,
   addLangInput,
-  createProgram,
-  fetchProgram,
-  updateProgram,
 
+  saveChanges,
   discardChanges,
+  fetchProgram,
+  createProgram,
+  updateProgram,
   fetchDeployments,
   fetchContent
 }

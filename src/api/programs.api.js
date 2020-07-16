@@ -30,13 +30,16 @@ const getProgram = async () => {
 
 const postProgram = (program) => httpClient.post(END_POINT, program)
 
+const putProgram = (program) => httpClient.put(END_POINT, program)
+
 const postProgramNewDeployment = (data) => {
   return httpClient.post('program_next_deployment', data)
 }
 
 export {
-  postProgram,
   getPrograms,
   getProgram,
+  postProgram,
+  putProgram,
   postProgramNewDeployment
 }
