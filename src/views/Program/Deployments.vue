@@ -17,7 +17,7 @@
           iconLeft="calendar-alt"
           :aria-label="`Start of deployment ${item.deploymentname}`"
           :value="item.startdate"
-          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'startDate', date: event.target.value })"
+          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'startdate', date: event.target.value })"
           mx="mx-0"
         />
 
@@ -28,7 +28,7 @@
           :aria-label="`End of deployment ${item.deploymentname}`"
           :value="item.enddate"
           :min="item.startDate"
-          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'endDate', date: event.target.value })"
+          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'enddate', date: event.target.value })"
           mx="mx-0"
         />
 
