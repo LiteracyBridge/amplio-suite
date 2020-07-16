@@ -96,11 +96,15 @@ export default {
       itemId: 0
     }
   },
+  mounted () {
+    this.fetchDeployments()
+  },
   methods: {
     ...mapActions('program', [
       'addDeployment',
       'removeDeployment',
-      'setDeploymentDate'
+      'setDeploymentDate',
+      'fetchDeployments'
     ]),
     handleOpen(id) {
       this.itemId = id

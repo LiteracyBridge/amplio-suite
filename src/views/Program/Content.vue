@@ -63,9 +63,13 @@ export default {
     Box
   },
   mounted () {
+    this.fetchContent()
     this.toggleOpenDeployment(this.deployments[0])
   },
   methods: {
+    ...mapActions('program', [
+      'fetchContent'
+    ]),
     ...mapActions('uiContent', [
       'toggleOpenDeployment'
     ])
