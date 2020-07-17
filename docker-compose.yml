@@ -97,6 +97,22 @@ services:
     <<: *base
     command: content_update.lambda_handler
 
+  lambda-playlist_create:
+    <<: *base
+    command: playlist_create.lambda_handler
+
+  # lambda-playlist_delete:
+  #   <<: *base
+  #   command: playlist_delete.lambda_handler
+
+  lambda-message_create:
+    <<: *base
+    command: message_create.lambda_handler
+
+  # lambda-message_delete:
+  #   <<: *base
+  #   command: message_delete.lambda_handler
+
   lambda-deployment_retrieve:
     <<: *base
     command: deployment_retrieve.lambda_handler
