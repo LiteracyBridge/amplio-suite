@@ -11,12 +11,15 @@ session = create_db_session()
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
     deployments = session.query(Deployment) \
-        .filter(Deployment.project == event['program_code']) \
+        .filter(Deployment.project == event['program_code'])
+
+    deployments = [deplo.to_dict() for deplo in deployments]
+    deployments = sorted(deployments, key=lambda deplo: deplo['deploymentnumber'])
 
     if deployments:
         return {
             'status': 200,
-            'deployments': [deplo.to_dict() for deplo in deployments]
+            'deployments': deployments
         }
 
     return {
