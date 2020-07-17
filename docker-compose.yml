@@ -96,6 +96,10 @@ services:
     <<: *base
     command: deployment_update.lambda_handler
 
+  lambda-deployment_delete:
+    <<: *base
+    command: deployment_delete.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
