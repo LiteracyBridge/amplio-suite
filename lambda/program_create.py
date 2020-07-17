@@ -11,24 +11,6 @@ keys = ['name', 'project', 'amount_deployment',
         'deployment_length', 'first_deployment',
         'feedback_frequency', 'feedback_frequency2']
 
-empty_playlist = [
-    {
-        'title': 'Playlist 1',
-        'audience': '',
-        'messages': [
-            {
-                'title': "Message Title 1",
-                'language': '',
-                'format': '',
-                'default_category': '',
-                'variant': '',
-                'sdg_goal': '',
-                'sdg_target': ''
-            }
-        ]
-    }
-]
-
 session = create_db_session()
 
 @migration
@@ -37,7 +19,7 @@ def lambda_handler(event, context):
     try:
         program = Program(**event)
         deployments = program.default_deployments()
-        contents = [Content(program_code=deplo.project, deployment_id=str(i), content=empty_playlist)
+        contents = [Content(program_code=deplo.project, deployment_id=str(i))
             for i, deplo in enumerate(deployments)]
 
         session.add(program)
