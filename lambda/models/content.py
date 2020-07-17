@@ -19,7 +19,7 @@ def playlist_template(index):
         'title': f'Playlist {index}',
         'audience': '',
         'messages': [
-            message_template(index)
+            message_template(1)
         ]
     }
 
@@ -49,5 +49,9 @@ class Content(Base, SerializerMixin):
 
         return playlist
 
-    def add_empty_message(self):
-        pass
+    def add_empty_message(self, playlist_index):
+        total = len(self.content[playlist_index]['messages'])
+        message = message_template(total + 1)
+        self.content[playlist_index]['messages'].append(message)
+
+        return message
