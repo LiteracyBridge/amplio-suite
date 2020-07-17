@@ -52,8 +52,8 @@
       <span
         tabindex="0"
         class="mt-4 p-2u text-green font-bold cursor-pointer"
-        @click="addDeployment"
-        @keyup.enter="addDeployment"
+        @click="createDeployment"
+        @keyup.enter="createDeployment"
       >
         + Add deployment
       </span>
@@ -63,8 +63,18 @@
       <p>This deployment will be deleted.</p>
 
       <template v-slot:footer>
-        <v-button @click="confirmDelete" text="Confirm" />
-        <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
+        <v-button
+          @click="confirmDelete"
+          color="bg-red-500 border border-red-500"
+          textColor="text-white"
+          text="Confirm"
+        />
+        <v-button
+          @click="isModalOpen = false"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Cancel"
+        />
       </template>
     </v-modal>
   </box>
@@ -101,17 +111,17 @@ export default {
   },
   methods: {
     ...mapActions('program', [
-      'addDeployment',
+      'fetchDeployments',
+      'createDeployment',
       'removeDeployment',
       'setDeploymentDate',
-      'fetchDeployments'
     ]),
     handleOpen(id) {
       this.itemId = id
       this.isModalOpen = true
     },
     confirmDelete() {
-      this.removeDeployment({ id: this.itemId })
+      this.removeDeployment()
       this.isModalOpen = false
     }
   }

@@ -21,7 +21,10 @@ const getDeployments = async () => {
 
 const putDeployments = async (data) => httpClient.put(END_POINT, data)
 
+const deleteDeployment = async (params) => httpClient.delete(END_POINT, { params })
+
 export {
   getDeployments,
-  putDeployments
+  putDeployments,
+  deleteDeployment
 }

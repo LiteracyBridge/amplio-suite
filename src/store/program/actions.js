@@ -1,5 +1,5 @@
 import { postProgram, getProgram, putProgram } from '@/api/programs.api'
-import { getDeployments, putDeployments } from '@/api/deployment.api'
+import { getDeployments, putDeployments, deleteDeployment } from '@/api/deployment.api'
 import { getContent } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
 
@@ -87,21 +87,16 @@ const setDeploymentsFirst = async ({ commit }, payload) => {
   commit('setDirty', { tab: 'deploymentsConfig', status: true })
 }
 
-const addDeployment = async ({ state, dispatch }) => {
-  await postProgramNewDeployment({ program_code: state.codeName })
-  await dispatch('fetchDeployments')
-}
+// const removeDeployment = ({ commit, state }, payload) => {
+//   const items = state.deployments.items
+//     .map((item, index) => ({ id: item.id, index }))
+//     .filter(item => item.id === payload.id)
 
-const removeDeployment = ({ commit, state }, payload) => {
-  const items = state.deployments.items
-    .map((item, index) => ({ id: item.id, index }))
-    .filter(item => item.id === payload.id)
-
-  if (items.length > 0) {
-    commit('setDirty', { tab: 'deployments', status: true })
-    commit('removeDeployment', { index: items[0].index })
-  }
-}
+//   if (items.length > 0) {
+//     commit('setDirty', { tab: 'deployments', status: true })
+//     commit('removeDeployment', { index: items[0].index })
+//   }
+// }
 
 const setDeploymentDate = ({ commit, state }, payload) => {
   const items = state.deployments.items
@@ -222,12 +217,33 @@ const fetchDeployments = async ({ state, commit }) => {
   }
 }
 
+const createDeployment = async ({ state, commit, dispatch }) => {
+  const { projectCode } = state.deployments
+
+  commit('setDirty', { tab: 'deployments', status: true })
+  await postProgramNewDeployment({ program_code: projectCode })
+  await dispatch('fetchDeployments')
+}
+
 const updateDeployments = async ({ state, commit }) => {
   const { projectCode, items } = state.deployments
 
   try {
-    await putDeployments({ program_code: projectCode, items })
     commit('setDirty', { tab: 'deployments', status: false })
+    await putDeployments({ program_code: projectCode, items })
+  } catch (error) {
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const removeDeployment = async ({ state, commit, dispatch }) => {
+  const { projectCode, items } = state.deployments
+  const deployment = items[items.length - 1].deployment
+
+  try {
+    commit('setDirty', { tab: 'deployments', status: true })
+    await deleteDeployment({ program_code: projectCode, deployment })
+    await dispatch('fetchDeployments')
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
   }
@@ -258,9 +274,6 @@ export default {
   setDeploymentsAmount,
   setDeploymentsFrequency,
   setDeploymentsFirst,
-
-  addDeployment,
-  removeDeployment,
   setDeploymentDate,
 
   setFeedbackFrequently,
@@ -274,6 +287,8 @@ export default {
   createProgram,
   updateProgram,
   fetchDeployments,
+  createDeployment,
   updateDeployments,
+  removeDeployment,
   fetchContent
 }
