@@ -5,7 +5,7 @@ ngx.var.original_request = clear_request
 local original_method = ngx.var.request_method
 
 -- Rewrite the query parameters to body for the post
-if original_method == "GET" then
+if original_method == "GET" or original_method == "DELETE" then
   local body = "{"
   local args, err = ngx.req.get_uri_args()
   ngx.var.args = ""
