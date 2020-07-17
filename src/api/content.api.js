@@ -22,6 +22,12 @@ const getContent = async () => {
   }
 }
 
+const contentAddPlaylist = async (body) => httpClient.post('playlist', body)
+
+const contentAddPMessage = async (body) => httpClient.post('message', body)
+
 export {
-  getContent
+  getContent,
+  contentAddPlaylist,
+  contentAddPMessage
 }
