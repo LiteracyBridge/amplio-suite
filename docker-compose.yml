@@ -28,6 +28,15 @@ services:
     volumes:
       - 'postgres-data:/var/lib/postgresql/data'
 
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    # command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+    ports:
+      - "8008:8000"
+    volumes:
+      - dynamodb_data:/home/dynamodblocal/data
+
   python-deps:
     build:
       context: ./lambda
@@ -103,6 +112,7 @@ services:
 volumes:
   node_modules:
   postgres-data:
+  dynamodb_data:
   package:
     driver: local
     driver_opts:
