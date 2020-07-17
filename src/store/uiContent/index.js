@@ -38,7 +38,7 @@ export default {
       if (state.selectedDeployment.deploymentname === payload.deploymentname) commit('clearDeployment')
       else {
         commit('setDeployment', payload)
-        commit('setPlaylist', playlists[0])
+        commit('setPlaylist', { ...playlists[0], index: 0 })
         commit('clearMessage')
       }
     },

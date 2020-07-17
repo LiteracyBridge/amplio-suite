@@ -1,6 +1,6 @@
 import { postProgram, getProgram, putProgram } from '@/api/programs.api'
 import { getDeployments, putDeployments, deleteDeployment } from '@/api/deployment.api'
-import { getContent } from '@/api/content.api'
+import { getContent, contentAddPlaylist, contentAddPMessage } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
 
 
@@ -265,6 +265,31 @@ const fetchContent = async ({ state, commit }) => {
   }
 }
 
+const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
+  const { projectCode } = state.content
+
+  try {
+    commit('setDirty', { tab: 'content', status: true })
+    await contentAddPlaylist({ program_code: projectCode, deployment_id: deploymentId})
+    await dispatch('fetchContent')
+  } catch (error) {
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const addMessage = async ({ state, commit, dispatch }, payload) => {
+  const { projectCode } = state.content
+
+  try {
+    commit('setDirty', { tab: 'content', status: true })
+    await contentAddPMessage({ ...payload, program_code: projectCode })
+    await dispatch('fetchContent')
+  } catch (error) {
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+
 export default {
   isCompleted,
   setCodeName,
@@ -290,5 +315,7 @@ export default {
   createDeployment,
   updateDeployments,
   removeDeployment,
-  fetchContent
+  fetchContent,
+  addPlaylist,
+  addMessage
 }

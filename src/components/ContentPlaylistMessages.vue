@@ -1,7 +1,7 @@
 <template>
   <div>
-    <template v-for="message in selectedPlaylist.messages">
-      <div :key="`${message.title}-a`" class="flex items-center mt-4">
+    <template v-for="(message, index) in selectedPlaylist.messages">
+      <div :key="`${index}-a`" class="flex items-center mt-4">
         <v-input
           type="text"
           name="messageTitle"
@@ -34,6 +34,14 @@
         <playlist-messages-form />
       </div>
     </template>
+
+    <span
+      tabindex="0"
+      @click="addNewMessage"
+      class="block mt-4 p-2 text-green font-bold cursor-pointer"
+    >
+      + Add Message
+    </span>
   </div>
 </template>
 
@@ -47,6 +55,7 @@ import VInput from '@/components/VInput'
 export default {
   computed: {
     ...mapState('uiContent', [
+      'selectedDeployment',
       'selectedPlaylist',
       'selectedMessage'
     ])
@@ -58,7 +67,17 @@ export default {
   methods: {
     ...mapActions('uiContent', [
       'toggleOpenMessage'
-    ])
+    ]),
+    ...mapActions('program', [
+      'addMessage'
+    ]),
+    addNewMessage() {
+      const payload = {
+        deployment_id: this.selectedDeployment.deployment,
+        playlist_index: this.selectedPlaylist.index
+      }
+      this.addMessage(payload)
+    }
   }
 }
 </script>
