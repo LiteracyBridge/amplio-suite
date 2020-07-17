@@ -11,7 +11,7 @@ session = create_db_session()
 @validate_keys(['project_code'])
 def lambda_handler(event, context):
     program = session.query(Program) \
-        .filter(Program.project == event['project_code']) \
+        .filter(Program.projectcode == event['project_code']) \
         .first()
 
     if program:

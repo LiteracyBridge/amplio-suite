@@ -118,17 +118,18 @@ const addLangInput = async ({ commit }) => {
   await commit('addLangInput')
 }
 
-const createProgram = async ({ commit, state }) => {
+const createProgram = async ({ commit, state }, programCode) => {
   const data = {
+    programCode,
     name: state.general.programName,
-    project: state.codeName,
-    sustainable_development_goal: state.programData.data.goals,
-    listening_model: state.programData.data.listeningModels,
-    amount_deployment: +state.deploymentsConfig.amount,
-    deployment_length: state.deploymentsConfig.length,
-    first_deployment: state.deploymentsConfig.first,
+    sdg_goals: state.programData.data.goals,
+    listening_models: state.programData.data.listeningModels,
+    deployments_length: state.deploymentsConfig.length,
+    deployments_amount: +state.deploymentsConfig.amount,
+    deployments_first: state.deploymentsConfig.first,
     feedback_frequency: state.general.feedbackFrequently,
-    feedback_frequency2: state.general.feedbackFrequentlyOther
+    feedback_frequency_other: state.general.feedbackFrequentlyOther,
+    languages: state.general.languages,
   }
 
   commit('setDirty', { tab: 'general', status: false })

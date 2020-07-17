@@ -12,14 +12,14 @@ session = create_db_session()
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
     program = session.query(Program) \
-        .filter(Program.project == event['program_code']) \
+        .filter(Program.projectcode == event['program_code']) \
         .first()
     deployment = program.next_deployments()
 
     #
     session.query(Program) \
-        .filter(Program.project == event['program_code']) \
-        .update({'amount_deployment': program.amount_deployment + 1})
+        .filter(Program.projectcode == event['program_code']) \
+        .update({'deployments_amount': program.deployments_amount + 1})
 
     session.add(deployment)
     session.commit()

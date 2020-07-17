@@ -2,14 +2,14 @@ from enum import Enum
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
-from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 
 from models.deployment import Deployment
 from models.base import Base
 
-valid_sdg = [
+valid_sdgs = [
     'no_poverty', 'zero_hunger', 'good_health_and_well _being',
     'quality_education', 'gender_equality', 'clean_water_and_sanitation',
     'affordable_and_clean_energy', 'decent_work_and_economic_growth',
@@ -20,7 +20,7 @@ valid_sdg = [
     'peace, justice_and_strong_institutions',
     'parternship_for_the_goals'
 ]
-valid_listening_model = ['households', 'groups', 'community_workers', 'place_based']
+valid_listening_models = ['households', 'groups', 'community_workers', 'place_based']
 time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
 time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
@@ -34,39 +34,39 @@ class DeploymentFreq(Enum):
 class Program(Base, SerializerMixin):
     __tablename__ = "programs"
     __table_args__ = (
-        UniqueConstraint('project', name='programs_uniqueness_key'),
+        UniqueConstraint('projectcode', name='programs_uniqueness_key'),
     )
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), nullable=False)
-    project = Column(String(255), nullable=False)
-    sustainable_development_goal = Column(JSON, nullable=False)
-    listening_model = Column(JSON, nullable=False)
-    amount_deployment = Column(Integer, nullable=False)
-    deployment_length = Column(String(50), nullable=False)
-    first_deployment = Column(Date, nullable=False)
+    projectcode = Column(ForeignKey('projects.projectcode'), index=True, nullable=False)
+    sustainable_development_goals = Column(JSON, nullable=False)
+    listening_models = Column(JSON, nullable=False)
+    deployments_amount = Column(Integer, nullable=False)
+    deployments_length = Column(String(50), nullable=False)
+    deployments_first = Column(Date, nullable=False)
     feedback_frequency = Column(String(50), nullable=False)
-    feedback_frequency2 = Column(String(50), nullable=False)
+    feedback_frequency_other = Column(String(50), nullable=False)
+    languages = Column(JSON, nullable=False)
 
-    @validates('sustainable_development_goal')
-    def validate_sustainable_development_goal(self, key, goals):
-        validate_list_input(goals, valid_sdg, 'goals')
+    @validates('sustainable_development_goals')
+    def validate_sustainable_development_goals(self, key, goals):
+        validate_list_input(goals, valid_sdgs, 'goals')
         return goals
 
-    @validates('listening_model')
-    def validate_listening_model(self, key, models):
-        validate_list_input(models, valid_listening_model, 'listening_model')
+    @validates('listening_models')
+    def validate_listening_models(self, key, models):
+        validate_list_input(models, valid_listening_models, 'listening_models')
         return models
 
-    @validates('deployment_length')
-    def validate_deployment_length(self, key, deployment_length):
-        if deployment_length not in time_length:
-            raise ValueError("Invalid 'deployment_length' argument")
-        return deployment_length
+    @validates('deployments_length')
+    def validate_deployments_length(self, key, deployments_length):
+        if deployments_length not in time_length:
+            raise ValueError("Invalid 'deployments_length' argument")
+        return deployments_length
 
-    @validates('first_deployment')
-    def validate_first_deployment(self, key, first_deployment):
-        assert date.fromisoformat(first_deployment)
-        return first_deployment
+    @validates('deployments_first')
+    def validate_deployments_first(self, key, deployments_first):
+        assert date.fromisoformat(deployments_first)
+        return deployments_first
 
     @validates('feedback_frequency')
     def validate_feedback_frequency(self, key, feedback_frequency):
@@ -74,23 +74,23 @@ class Program(Base, SerializerMixin):
             raise ValueError("Invalid 'feedback_frequency' argument")
         return feedback_frequency
 
-    @validates('feedback_frequency2')
-    def validate_feedback_frequency2(self, key, feedback_frequency2):
-        if feedback_frequency2 not in time_period:
-            raise ValueError("Invalid 'feedback_frequency2' argument")
-        return feedback_frequency2
+    @validates('feedback_frequency_other')
+    def validate_feedback_frequency_other(self, key, feedback_frequency_other):
+        if feedback_frequency_other not in time_period:
+            raise ValueError("Invalid 'feedback_frequency_other' argument")
+        return feedback_frequency_other
 
     def default_deployments(self):
         deployments = []
-        increment = DeploymentFreq[self.deployment_length].value
-        initial_date = datetime.strptime(self.first_deployment, '%Y-%m-%d')
+        increment = DeploymentFreq[self.deployments_length].value
+        initial_date = datetime.strptime(self.deployments_first, '%Y-%m-%d')
 
-        for i in range(1, self.amount_deployment + 1):
+        for i in range(1, self.deployments_amount + 1):
             start_date = initial_date + relativedelta(months=increment * (i - 1))
             end_date = initial_date + relativedelta(months=increment * i)
 
             data = {
-                'project': self.project,
+                'project': self.projectcode,
                 'deployment': str(i),
                 'deploymentname': str(i),
                 'deploymentnumber': i,
@@ -104,16 +104,16 @@ class Program(Base, SerializerMixin):
         return deployments
 
     def next_deployments(self):
-        increment = DeploymentFreq[self.deployment_length].value
+        increment = DeploymentFreq[self.deployments_length].value
 
-        start_date = self.first_deployment + relativedelta(months=increment * self.amount_deployment)
-        end_date = self.first_deployment + relativedelta(months=increment * (self.amount_deployment + 1))
+        start_date = self.deployments_first + relativedelta(months=increment * self.deployments_amount)
+        end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_amount + 1))
 
         data = {
-            'project': self.project,
-            'deployment': str(self.amount_deployment + 1),
-            'deploymentname': str(self.amount_deployment + 1),
-            'deploymentnumber': self.amount_deployment + 1,
+            'project': self.projectcode,
+            'deployment': str(self.deployments_amount + 1),
+            'deploymentname': str(self.deployments_amount + 1),
+            'deploymentnumber': self.deployments_amount + 1,
             'startdate': start_date,
             'enddate': end_date,
             'component': ''

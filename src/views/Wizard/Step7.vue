@@ -37,7 +37,7 @@ export default {
     if (!this.wizarsIsComplete) {
       this.addCompletedStep(7)
       this.setIsCompleted()
-      this.createProgram()
+      this.createProgram(this.programCode)
     }
     this.$refs.box.$el.querySelector('button').focus()
   }
