@@ -1,4 +1,4 @@
-import { postProgram, getProgram, putProgram } from '@/api/programs.api'
+import { postProgram, putProgram } from '@/api/programs.api'
 import { getDeployments, putDeployments, deleteDeployment } from '@/api/deployment.api'
 import { getContent, contentAddPlaylist, contentAddPMessage } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
@@ -143,24 +143,6 @@ const createProgram = async ({ commit, state }, programCode) => {
   }
 }
 
-const fetchProgram = async ({ state, commit }) => {
-  if (state.general.projectCode === state.codeName && !state.general.dirty) {
-    return
-  }
-
-  commit('getProgramRequest')
-
-  try {
-    const program = await getProgram()
-    commit('setProgram', program)
-
-    commit('wizard/setIsCompleted', null, { root: true })
-  } catch (error) {
-    commit('getProgramError')
-    commit('notification/alert', error.toString(), { root: true })
-  }
-}
-
 const updateProgram = async ({ state, commit }) => {
   const { projectCode, programName } = state.general
 
@@ -300,7 +282,6 @@ export default {
 
   saveChanges,
   discardChanges,
-  fetchProgram,
   createProgram,
   updateProgram,
   fetchDeployments,
