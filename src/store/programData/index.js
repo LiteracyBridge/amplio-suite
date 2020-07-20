@@ -6,8 +6,8 @@ import getters from './getters'
 export const getDefaultState = () => ({
   programData: {
     dirty: false,
-    status: 'success',
-    programCode: 'my-test-project-1',
+    status: '',
+    programCode: '',
     data: {
       goals: [],
       listeningModels: []
@@ -18,12 +18,10 @@ export const getDefaultState = () => ({
     dirty: false,
     status: '',
     projectCode: '',
-    programName: '',
 
+    programName: '',
     languages: [],
     amountOfLang: 1,
-    feedbackFrequently: '',
-    feedbackFrequentlyOther: ''
   },
 
   deploymentsConfig: {
@@ -49,15 +47,10 @@ export const getDefaultState = () => ({
   }
 })
 
-const baseState = {
-  status: '',
-  codeName: '',
-}
-
 export default {
   namespaced: true,
 
-  state: Object.assign(baseState, getDefaultState()),
+  state: getDefaultState(),
   mutations,
   actions,
   getters
