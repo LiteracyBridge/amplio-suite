@@ -21,7 +21,7 @@ const getProgramError = (state) => {
 const setProgram = (state, payload) => {
   state.general.dirty = false
   state.general.status = 'success'
-  state.general.projectCode = payload.projectcode
+  state.general.programCode = payload.projectcode
 
   // FIXME: set every relevant value
   state.general.name = payload.name
@@ -115,7 +115,7 @@ const getDeploymentsError = (state) => {
 const setDeployments = (state, payload) => {
   state.deployments.dirty = false
   state.deployments.status = 'success'
-  state.deployments.projectCode = payload.projectCode
+  state.deployments.programCode = payload.programCode
   state.deployments.items = payload.items
 }
 
@@ -134,7 +134,7 @@ const getContentError = (state) => {
 const setContent = (state, payload) => {
   state.deployments.dirty = false
   state.content.status = 'success'
-  state.content.projectCode = payload.projectCode
+  state.content.programCode = payload.programCode
   state.content.deploymentName = payload.deploymentName
   state.content.playlists = payload.playlists
 }

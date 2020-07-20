@@ -2,14 +2,14 @@ import httpClient from './httpClient'
 
 const END_POINT = '/content'
 
-const getContent = async (projectCode, deploymentName) => {
+const getContent = async (programCode, deploymentName) => {
   try {
     const response = await httpClient.get(END_POINT, {
-      params: { program_code: projectCode, deployment_id: deploymentName }
+      params: { program_code: programCode, deployment_id: deploymentName }
     })
 
     return {
-      projectCode,
+      programCode,
       deploymentName,
       playlists: response.data.content
     }

@@ -17,7 +17,7 @@ export const getDefaultState = () => ({
   general: {
     dirty: false,
     status: '',
-    projectCode: '',
+    programCode: '',
 
     programName: '',
     languages: [],
@@ -34,14 +34,14 @@ export const getDefaultState = () => ({
   deployments: {
     dirty: false,
     status: "",
-    projectCode: "",
+    programCode: "",
     items: []
   },
 
   content: {
     dirty: false,
     status: "",
-    projectCode: "",
+    programCode: "",
     deploymentName: "",
     playlists: []
   }

@@ -2,13 +2,13 @@ import httpClient from './httpClient'
 
 const END_POINT = '/deployment'
 
-const getDeployments = async (projectCode) => {
+const getDeployments = async (programCode) => {
   try {
     const response = await httpClient.get(END_POINT, {
-      params: { program_code: projectCode }
+      params: { program_code: programCode }
     })
     return {
-      projectCode,
+      programCode,
       items: response.data.deployments
     }
   } catch (e) {

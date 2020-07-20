@@ -144,10 +144,10 @@ const createProgram = async ({ commit, state }, programCode) => {
 }
 
 const updateProgram = async ({ state, commit }) => {
-  const { projectCode, programName } = state.general
+  const { programCode, programName } = state.general
 
   try {
-    await putProgram({ program_code: projectCode, name: programName })
+    await putProgram({ program_code: programCode, name: programName })
     commit('setDirty', { tab: 'general', status: false })
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
@@ -177,16 +177,16 @@ const discardChanges = async ({ dispatch }, tab) => {
 
 
 const fetchDeployments = async ({ state, commit }) => {
-  const projectCode = state.general.projectCode
+  const programCode = state.general.programCode
 
-  if (state.deployments.projectCode === projectCode && !state.deployments.dirty) {
+  if (state.deployments.programCode === programCode && !state.deployments.dirty) {
     return
   }
 
   commit('getDeploymentsRequest')
 
   try {
-    const response = await getDeployments(projectCode)
+    const response = await getDeployments(programCode)
     commit('setDeployments', response)
   } catch (error) {
     commit('getDeploymentError')
@@ -195,31 +195,31 @@ const fetchDeployments = async ({ state, commit }) => {
 }
 
 const createDeployment = async ({ state, commit, dispatch }) => {
-  const { projectCode } = state.deployments
+  const { programCode } = state.deployments
 
   commit('setDirty', { tab: 'deployments', status: true })
-  await postProgramNewDeployment({ program_code: projectCode })
+  await postProgramNewDeployment({ program_code: programCode })
   await dispatch('fetchDeployments')
 }
 
 const updateDeployments = async ({ state, commit }) => {
-  const { projectCode, items } = state.deployments
+  const { programCode, items } = state.deployments
 
   try {
     commit('setDirty', { tab: 'deployments', status: false })
-    await putDeployments({ program_code: projectCode, items })
+    await putDeployments({ program_code: programCode, items })
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
   }
 }
 
 const removeDeployment = async ({ state, commit, dispatch }) => {
-  const { projectCode, items } = state.deployments
+  const { programCode, items } = state.deployments
   const deployment = items[items.length - 1].deployment
 
   try {
     commit('setDirty', { tab: 'deployments', status: true })
-    await deleteDeployment({ program_code: projectCode, deployment })
+    await deleteDeployment({ program_code: programCode, deployment })
     await dispatch('fetchDeployments')
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
@@ -227,17 +227,17 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
 }
 
 const fetchContent = async ({ state, commit }) => {
-  const projectCode = state.general.projectCode
+  const programCode = state.general.programCode
   const deploymentName = state.deployments.items[0].deploymentname
 
-  if (state.content.projectCode === projectCode && !state.content.dirty) {
+  if (state.content.programCode === programCode && !state.content.dirty) {
     return
   }
 
   commit('getContentRequest')
 
   try {
-    const response = await getContent(projectCode, deploymentName)
+    const response = await getContent(programCode, deploymentName)
     commit('setContent', response)
   } catch (error) {
     commit('getContentError')
@@ -246,11 +246,11 @@ const fetchContent = async ({ state, commit }) => {
 }
 
 const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
-  const { projectCode } = state.content
+  const { programCode } = state.content
 
   try {
     commit('setDirty', { tab: 'content', status: true })
-    await contentAddPlaylist({ program_code: projectCode, deployment_id: deploymentId})
+    await contentAddPlaylist({ program_code: programCode, deployment_id: deploymentId})
     await dispatch('fetchContent')
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
@@ -258,11 +258,11 @@ const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
 }
 
 const addMessage = async ({ state, commit, dispatch }, payload) => {
-  const { projectCode } = state.content
+  const { programCode } = state.content
 
   try {
     commit('setDirty', { tab: 'content', status: true })
-    await contentAddPMessage({ ...payload, program_code: projectCode })
+    await contentAddPMessage({ ...payload, program_code: programCode })
     await dispatch('fetchContent')
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
