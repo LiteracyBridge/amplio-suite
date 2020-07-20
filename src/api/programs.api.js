@@ -23,6 +23,10 @@ const getProgram = async (programCode) => {
     }
   })
 
+  if (response.data.status !== 200) {
+    throw response.data.error
+  }
+
   return response.data.program
 }
 
