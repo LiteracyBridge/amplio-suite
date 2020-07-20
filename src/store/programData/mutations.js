@@ -21,10 +21,12 @@ const getProgramError = (state) => {
 const setProgram = (state, payload) => {
   state.general.dirty = false
   state.general.status = 'success'
-  state.general.projectCode = payload.project
+  state.general.projectCode = payload.projectcode
 
   // FIXME: set every relevant value
-  state.general.programName = payload.name
+  state.general.name = payload.name
+  state.general.languages = payload.languages
+  state.general.amountOfLang = payload.languages.length
   console.log("FIXME: set every relevant value")
 }
 
