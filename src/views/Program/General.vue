@@ -87,25 +87,11 @@ export default {
       isModalOpen: false
     }
   },
-  watch: {
-    'programCode': {
-      async handler (newVal) {
-        if (newVal) {
-          await this.fetchProgram(newVal)
-        }
-      },
-      immediate: true
-    }
-  },
-  props: ['programCode'],
   methods: {
     ...mapActions('programData', [
       'setProgramName',
       'setLanguages',
       'addLangInput',
-    ]),
-    ...mapState('program', [
-      'fetchProgram',
     ]),
     async addInput () {
       await this.addLangInput()

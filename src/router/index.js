@@ -44,15 +44,15 @@ const routes = [
   },
   {
     path: '/programs/:programCode',
-    component: Home,
     props: true,
-    beforeEnter: requireAuth
+    component: Home,
+    beforeEnter: multiguard([requireAuth, fetchProgramData])
   },
   {
-    path: '/programs/:id/wizard',
+    path: '/programs/:programCode/wizard',
     redirect: { name: 'Step-1' },
     component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
-    beforeEnter: multiguard([requireAuth, fetchAllPrograms, stepIsCompleted]),
+    beforeEnter: multiguard([requireAuth, fetchProgramData, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
@@ -92,10 +92,10 @@ const routes = [
     ]
   },
   {
-    path: '/programs/:id/settings',
-    redirect: { path: '/programs/:id/settings/general' },
+    path: '/programs/:programCode/settings',
+    redirect: { path: '/programs/:programCode/settings/general' },
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
-    beforeEnter: multiguard([requireAuth, fetchAllPrograms]),
+    beforeEnter: multiguard([requireAuth, fetchProgramData]),
     children: [
       {
         path: 'general',
@@ -124,11 +124,12 @@ const router = new VueRouter({
   routes
 })
 
-function fetchAllPrograms (to, from, next) {
-  const { programs } = store.state.programs
+async function fetchProgramData (to, from, next) {
+  await store.dispatch('program/fetchProgram', to.params.programCode)
+  await store.dispatch('programData/fetchDeployments')
+  await store.dispatch('programData/fetchContent')
 
-  if (programs.length === 0) next('/programs')
-  else next()
+  next()
 }
 
 function stepIsCompleted (to, from, next) {

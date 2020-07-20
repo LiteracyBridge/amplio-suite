@@ -106,12 +106,8 @@ export default {
       itemId: 0
     }
   },
-  mounted () {
-    this.fetchDeployments()
-  },
   methods: {
     ...mapActions('programData', [
-      'fetchDeployments',
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',
