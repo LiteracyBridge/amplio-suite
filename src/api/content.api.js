@@ -1,12 +1,8 @@
 import httpClient from './httpClient'
-import store from '@/store'
 
 const END_POINT = '/content'
 
-const getContent = async () => {
-  const projectCode = store.state.programData.codeName
-  const deploymentName = store.state.programData.deployments.items[0].deploymentname
-
+const getContent = async (projectCode, deploymentName) => {
   try {
     const response = await httpClient.get(END_POINT, {
       params: { program_code: projectCode, deployment_id: deploymentName }
