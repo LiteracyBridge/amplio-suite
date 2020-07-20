@@ -69,7 +69,7 @@ import VModal from '@/components/VModal'
 export default {
   computed: {
     ...mapState('programData', {
-      programName: state => state.general.programName,
+      programName: state => state.general.name,
       languages: state => state.general.languages,
       amountOfLang: state => state.general.amountOfLang
     })

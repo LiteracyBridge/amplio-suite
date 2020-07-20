@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     ...mapState('program', {
-      programName: state => state.general.programName,
+      programName: state => state.program.name,
       programCode: 'programCode'
     })
   },
