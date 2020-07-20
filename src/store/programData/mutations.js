@@ -24,7 +24,6 @@ const setProgram = (state, payload) => {
   state.general.programCode = payload.projectcode
 
   // FIXME: set every relevant value
-  state.general.name = payload.name
   state.general.languages = payload.languages
   state.general.amountOfLang = payload.languages.length
   console.log("FIXME: set every relevant value")

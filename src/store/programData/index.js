@@ -19,7 +19,6 @@ export const getDefaultState = () => ({
     status: '',
     programCode: '',
 
-    programName: '',
     languages: [],
     amountOfLang: 1,
   },

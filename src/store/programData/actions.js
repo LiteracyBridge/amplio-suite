@@ -228,13 +228,13 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
 
 const fetchContent = async ({ state, commit }) => {
   const programCode = state.general.programCode
-  const deploymentName = state.deployments.items[0].deploymentname
 
   if (state.content.programCode === programCode && !state.content.dirty) {
     return
   }
 
   commit('getContentRequest')
+  const deploymentName = state.deployments.items[0].deploymentname
 
   try {
     const response = await getContent(programCode, deploymentName)

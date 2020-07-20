@@ -67,13 +67,13 @@ export default {
       'program'
     ]),
     programLoaded() {
-      return this.$store.state.program.status === 'success'
+      return !['loading', ''].includes(this.$store.state.program.status)
     },
     ...mapState('account', [
       'user'
     ]),
     linkTo() {
-      if (this.program) {
+      if (this.program.name) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`
