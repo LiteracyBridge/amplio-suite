@@ -177,14 +177,16 @@ const discardChanges = async ({ dispatch }, tab) => {
 
 
 const fetchDeployments = async ({ state, commit }) => {
-  if (state.deployments.projectCode === state.codeName && !state.deployments.dirty) {
+  const projectCode = state.general.projectCode
+
+  if (state.deployments.projectCode === projectCode && !state.deployments.dirty) {
     return
   }
 
   commit('getDeploymentsRequest')
 
   try {
-    const response = await getDeployments()
+    const response = await getDeployments(projectCode)
     commit('setDeployments', response)
   } catch (error) {
     commit('getDeploymentError')
@@ -225,14 +227,17 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
 }
 
 const fetchContent = async ({ state, commit }) => {
-  if (state.content.projectCode === state.codeName && !state.content.dirty) {
+  const projectCode = state.general.projectCode
+  const deploymentName = state.deployments.items[0].deploymentname
+
+  if (state.content.projectCode === projectCode && !state.content.dirty) {
     return
   }
 
   commit('getContentRequest')
 
   try {
-    const response = await getContent()
+    const response = await getContent(projectCode, deploymentName)
     commit('setContent', response)
   } catch (error) {
     commit('getContentError')
