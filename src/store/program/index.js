@@ -1,17 +1,19 @@
 import actions from './actions'
 import mutations from './mutations'
 
+export const getDefaultState = () => ({
+  status: '',
+  programCode: '',
+  program: {
+    name: '',
+    active: false,
+  }
+})
+
 export default {
   namespaced: true,
 
-  state: {
-    status: '',
-    programCode: '',
-    program: {
-      name: '',
-      active: false,
-    }
-  },
+  state: getDefaultState(),
   mutations,
   actions
 }

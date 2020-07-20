@@ -1,6 +1,9 @@
 import { getProgram } from '@/api/programs.api'
 
 const fetchProgram = async ({ commit }, programCode) => {
+  commit('resetState')
+  commit('programData/resetState', null, { root: true })
+
   commit('getProgramRequest', programCode)
   try {
     let program = await getProgram(programCode)
