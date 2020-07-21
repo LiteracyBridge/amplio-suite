@@ -49,7 +49,7 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('uiContent', [
+    ...mapState('programData', [
       'selectedMessage'
     ])
   },
