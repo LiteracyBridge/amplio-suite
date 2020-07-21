@@ -100,7 +100,21 @@ const removeListeningModel = (state, index) => {
   state.programData.data.listeningModels.splice(index, 1)
 }
 
+const setPlaylistName = (state, payload) => {
+  state.content.playlists[payload.index].title = payload.title
+}
 
+const setMessageName = (state, payload) => {
+  state.content.playlists[payload.index].messages[payload.index2].title = payload.title
+}
+
+const removePlaylist = (state, index) => {
+  state.content.playlists.splice(index, 1)
+}
+
+const removeMessage = (state, payload) => {
+  state.content.playlists[payload.playlistIndex].messages.splice(payload.index, 1)
+}
 
 const getDeploymentsRequest = (state) => {
   state.deployments.status = 'loading'
@@ -161,6 +175,11 @@ export default {
   removeListeningModel,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
+
+  setPlaylistName,
+  setMessageName,
+  removePlaylist,
+  removeMessage,
 
   getDeploymentsRequest,
   getDeploymentsError,

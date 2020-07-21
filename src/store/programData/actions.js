@@ -1,6 +1,6 @@
 import { postProgram, putProgram } from '@/api/programs.api'
 import { getDeployments, putDeployments, deleteDeployment } from '@/api/deployment.api'
-import { getContent, contentAddPlaylist, contentAddPMessage } from '@/api/content.api'
+import { getContent, putContent, contentAddPlaylist, contentAddPMessage } from '@/api/content.api'
 import { postProgramNewDeployment } from '@/api/programs.api'
 
 
@@ -118,6 +118,16 @@ const addLangInput = async ({ commit }) => {
   await commit('addLangInput')
 }
 
+const setPlaylistName = ({ commit }, payload) => {
+  commit('setPlaylistName', payload)
+  commit('setDirty', { tab: 'content', status: true })
+}
+
+const setMessageName = ({ commit }, payload) => {
+  commit('setMessageName', payload)
+  commit('setDirty', { tab: 'content', status: true })
+}
+
 const createProgram = async ({ commit, state }, programCode) => {
   const data = {
     programCode,
@@ -155,18 +165,10 @@ const updateProgram = async ({ state, commit }) => {
 }
 
 
-const saveChanges = async ({ commit, dispatch }, tab) => {
+const saveChanges = async ({ dispatch }, tab) => {
   if (tab === 'general') await dispatch('updateProgram')
   else if (tab === 'deployments') await dispatch('updateDeployments')
-  else {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        commit('getProgramSuccess')
-        commit('setDirty', { tab, status: false })
-        resolve('ok')
-      }, 3000)
-    })
-  }
+  else if (tab === 'content') await dispatch('updateContent')
 }
 
 const discardChanges = async ({ dispatch }, tab) => {
@@ -226,21 +228,35 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
   }
 }
 
-const fetchContent = async ({ state, commit }) => {
+const fetchContent = async ({ state, commit }, deploymentName=null) => {
   const programCode = state.general.programCode
 
-  if (state.content.programCode === programCode && !state.content.dirty) {
+  if (!deploymentName && state.content.programCode === programCode && !state.content.dirty) {
     return
   }
 
   commit('getContentRequest')
-  const deploymentName = state.deployments.items[0].deploymentname
+
+  if (!deploymentName) deploymentName = state.deployments.items[0].deploymentname
 
   try {
     const response = await getContent(programCode, deploymentName)
     commit('setContent', response)
   } catch (error) {
     commit('getContentError')
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const updateContent = async ({ state, rootState, commit }) => {
+  const { programCode, playlists } = state.content
+  const { selectedDeploymentIndex } = rootState.uiContent
+  const deploymentId = (selectedDeploymentIndex + 1).toString()
+
+  try {
+    await putContent({ program_code: programCode, deployment_id: deploymentId, content: playlists })
+    commit('setDirty', { tab: 'content', status: false })
+  } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
   }
 }
@@ -257,6 +273,11 @@ const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
   }
 }
 
+const removePlaylist = async ({ commit }, index) => {
+  commit('removePlaylist', index)
+  commit('setDirty', { tab: 'content', status: true })
+}
+
 const addMessage = async ({ state, commit, dispatch }, payload) => {
   const { programCode } = state.content
 
@@ -267,6 +288,11 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
   }
+}
+
+const removeMessage = async ({ commit }, payload) => {
+  commit('removePlaylist', payload)
+  commit('setDirty', { tab: 'content', status: true })
 }
 
 
@@ -285,6 +311,9 @@ export default {
   setLanguages,
   addLangInput,
 
+  setPlaylistName,
+  setMessageName,
+
   saveChanges,
   discardChanges,
   createProgram,
@@ -294,6 +323,9 @@ export default {
   updateDeployments,
   removeDeployment,
   fetchContent,
+  updateContent,
   addPlaylist,
-  addMessage
+  removePlaylist,
+  addMessage,
+  removeMessage
 }
