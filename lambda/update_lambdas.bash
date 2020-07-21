@@ -23,9 +23,10 @@ export AWS_DEFAULT_REGION=us-west-2
 functions_to_deploy=(
 	cognito_pre_sign_up cognito_custom_message migrations programs_index
 	project_retrieve project_create
-	program_retrieve program_create
-	deployment_retrieve deployment_update
+	program_retrieve program_create program_update program_next_deployment
+	deployment_retrieve deployment_update deployment_delete
 	content_retrieve content_create content_update
+	playlist_create message_create
 )
 
 # Lambda role
