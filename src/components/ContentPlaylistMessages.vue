@@ -8,7 +8,7 @@
           label="Message title"
           mx="w-full px-4 mx-0"
           :value="message.title"
-          @input="(event) => setMessageName({index: selectedPlaylistIndex, index2: index, title: event.target.value })"
+          @input="(event) => setMessageName({ playlistIndex: selectedPlaylistIndex, index, title: event.target.value })"
         />
 
         <span
@@ -60,6 +60,7 @@ export default {
       'selectedMessageIndex'
     ]),
     ...mapGetters('programData', [
+      'selectedDeployment',
       'selectedPlaylist',
       'selectedMessage'
     ])

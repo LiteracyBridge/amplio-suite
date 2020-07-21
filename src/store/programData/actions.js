@@ -228,7 +228,7 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
   }
 }
 
-const fetchContent = async ({ state, commit }, deploymentName=null) => {
+const fetchContent = async ({ state, rootState, commit }, deploymentName=null) => {
   const programCode = state.general.programCode
 
   if (!deploymentName && state.content.programCode === programCode && !state.content.dirty) {
@@ -237,11 +237,15 @@ const fetchContent = async ({ state, commit }, deploymentName=null) => {
 
   commit('getContentRequest')
 
-  if (!deploymentName) deploymentName = state.deployments.items[0].deploymentname
+  if (!deploymentName) {
+    const index = rootState.uiContent.selectedDeploymentIndex
+    deploymentName = state.deployments.items[index].deploymentname
+  }
 
   try {
     const response = await getContent(programCode, deploymentName)
     commit('setContent', response)
+    commit('setDirty', { tab: 'content', status: false })
   } catch (error) {
     commit('getContentError')
     commit('notification/alert', error.toString(), { root: true })
@@ -283,7 +287,7 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
 
   try {
     commit('setDirty', { tab: 'content', status: true })
-    await contentAddPMessage({ ...payload, program_code: programCode })
+    await contentAddPMessage({ program_code: programCode, ...payload })
     await dispatch('fetchContent')
   } catch (error) {
     commit('notification/alert', error.toString(), { root: true })
@@ -291,7 +295,7 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
 }
 
 const removeMessage = async ({ commit }, payload) => {
-  commit('removePlaylist', payload)
+  commit('removeMessage', payload)
   commit('setDirty', { tab: 'content', status: true })
 }
 

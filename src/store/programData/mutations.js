@@ -105,7 +105,7 @@ const setPlaylistName = (state, payload) => {
 }
 
 const setMessageName = (state, payload) => {
-  state.content.playlists[payload.index].messages[payload.index2].title = payload.title
+  state.content.playlists[payload.playlistIndex].messages[payload.index].title = payload.title
 }
 
 const removePlaylist = (state, index) => {
@@ -134,10 +134,6 @@ const setDeployments = (state, payload) => {
 const getContentRequest = (state) => {
   state.content.status = 'loading'
 }
-
-// const updateContentRequest = (state) => {
-//   state.content.status = 'updating'
-// }
 
 const getContentError = (state) => {
   state.content.status = 'error'
