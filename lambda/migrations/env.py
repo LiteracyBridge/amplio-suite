@@ -34,6 +34,7 @@ from models import program
 from models import project
 from models import deployment
 from models import content
+from models import language
 
 target_metadata = Base.metadata
 
