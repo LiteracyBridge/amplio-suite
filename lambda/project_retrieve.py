@@ -1,47 +1,17 @@
-import os
 import sys
 import json
 sys.path.append('/var/task/package')
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from utils import get_db_url
+from utils import create_db_session
+from decorators import migration, validate_keys
 from models.project import Project
 from models.deployment import Deployment
 
-from alembic.config import Config
-from alembic import command
+session = create_db_session()
 
-from dotenv import load_dotenv
-# Load .env file
-load_dotenv()
-alembic_cfg = Config(os.getenv('ALEMBIC_INI'))
-
-DATABASE_URL = get_db_url()
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
-
+@migration
+@validate_keys(['project_id'])
 def lambda_handler(event, context):
-    try:
-        command.upgrade(alembic_cfg, 'head')
-    except BaseException as err:
-        return {
-            'status': 503,
-            'headers': {'Retry-After': 5},
-            'error': str(err)
-        }
-
-    valid_keys = ['project_id']
-
-    for key in valid_keys:
-        if key not in event:
-            return {
-                'status': 422,
-                'error': f'{key} must be specified'
-            }
-
     try:
         project = session.query(Project).get(event['project_id'])
         deployments = session.query(Deployment).filter(Deployment.project == event['project_id'])
@@ -52,6 +22,6 @@ def lambda_handler(event, context):
         }
     return {
         'status': 200,
-        'project': json.dumps(project.to_dict()),
-        'deployments': json.dumps([deployment.to_dict() for deployment in deployments])
+        'project': project.to_dict(),
+        'deployments': [deployment.to_dict() for deployment in deployments]
     }

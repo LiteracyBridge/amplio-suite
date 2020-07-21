@@ -12,11 +12,10 @@ services:
       - '8080:8080'
 
   proxy:
-    image: nginx
+    image: openresty/openresty
     restart: always
     volumes:
-      - ./lambda/default.conf:/etc/nginx/conf.d/default.conf
-      - ./lambda/api_proxy.conf:/etc/nginx/api_proxy.conf
+      - ./proxy/:/etc/nginx/
     ports:
       - '9000:80'
 
@@ -28,6 +27,15 @@ services:
       POSTGRES_DB: ampliosuite
     volumes:
       - 'postgres-data:/var/lib/postgresql/data'
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    # command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+    ports:
+      - "8008:8000"
+    volumes:
+      - dynamodb_data:/home/dynamodblocal/data
 
   python-deps:
     build:
@@ -49,17 +57,25 @@ services:
     depends_on:
       - db
 
-  lambda-program_create:
+  lambda-programs_index:
     <<: *base
-    command: program_create.lambda_handler
+    command: programs_index.lambda_handler
 
   lambda-program_retrieve:
     <<: *base
     command: program_retrieve.lambda_handler
 
-  lambda-programs_index:
+  lambda-program_create:
     <<: *base
-    command: programs_index.lambda_handler
+    command: program_create.lambda_handler
+
+  lambda-program_update:
+    <<: *base
+    command: program_update.lambda_handler
+
+  lambda-program_next_deployment:
+    <<: *base
+    command: program_next_deployment.lambda_handler
 
   lambda-project_retrieve:
     <<: *base
@@ -69,9 +85,50 @@ services:
     <<: *base
     command: project_create.lambda_handler
 
+  lambda-content_retrieve:
+    <<: *base
+    command: content_retrieve.lambda_handler
+
+  lambda-content_create:
+    <<: *base
+    command: content_create.lambda_handler
+
+  lambda-content_update:
+    <<: *base
+    command: content_update.lambda_handler
+
+  lambda-playlist_create:
+    <<: *base
+    command: playlist_create.lambda_handler
+
+  # lambda-playlist_delete:
+  #   <<: *base
+  #   command: playlist_delete.lambda_handler
+
+  lambda-message_create:
+    <<: *base
+    command: message_create.lambda_handler
+
+  # lambda-message_delete:
+  #   <<: *base
+  #   command: message_delete.lambda_handler
+
+  lambda-deployment_retrieve:
+    <<: *base
+    command: deployment_retrieve.lambda_handler
+
+  lambda-deployment_update:
+    <<: *base
+    command: deployment_update.lambda_handler
+
+  lambda-deployment_delete:
+    <<: *base
+    command: deployment_delete.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
+  dynamodb_data:
   package:
     driver: local
     driver_opts:

@@ -42,7 +42,7 @@ export default {
     VInput
   },
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       languages: state => state.general.languages,
       amountOfLang: state => state.general.amountOfLang
     })
@@ -54,7 +54,7 @@ export default {
     ...mapActions('wizard', [
       'setLanguages'
     ]),
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'addLangInput'
     ]),
     async addInput () {

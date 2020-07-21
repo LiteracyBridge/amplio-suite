@@ -28,8 +28,8 @@
       <select
         aria-labelledby="deploymentLength"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        :value="frequency"
-        @change="(event) => setDeploymentsFrequency(event.target.value)"
+        :value="length"
+        @change="(event) => setDeploymentsLength(event.target.value)"
       >
         <option value="">Select</option>
         <option value="one_month">1 Month</option>
@@ -64,10 +64,10 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       amount: state => state.deploymentsConfig.amount,
       first: state => state.deploymentsConfig.first,
-      frequency: state => state.deploymentsConfig.frequency
+      length: state => state.deploymentsConfig.length
     })
   },
   data () {
@@ -91,7 +91,7 @@ export default {
   methods: {
     ...mapActions('wizard', [
       'setDeploymentsAmount',
-      'setDeploymentsFrequency',
+      'setDeploymentsLength',
       'setDeploymentsFirst'
     ])
   }

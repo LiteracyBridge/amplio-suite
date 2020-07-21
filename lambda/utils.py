@@ -3,6 +3,8 @@ import json
 import base64
 
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 if os.getenv('ENV') == 'AWS':
     import boto3
@@ -77,3 +79,10 @@ def get_db_url():
         DATABASE_URL = os.getenv('DATABASE_URL')
 
     return DATABASE_URL
+
+def create_db_session():
+    DATABASE_URL = get_db_url()
+    engine = create_engine(DATABASE_URL)
+    session = sessionmaker(bind=engine)()
+
+    return session

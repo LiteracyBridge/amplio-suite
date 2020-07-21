@@ -1,8 +1,8 @@
 <template>
   <component
     :is="tag"
-    :class="color"
-    class="inline-flex items-center justify-center px-5 py-2 text-white rounded"
+    :class="[color, textColor]"
+    class="inline-flex items-center justify-center px-5 py-2 rounded"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -39,6 +39,10 @@ export default {
     color: {
       type: String,
       default: 'bg-green'
+    },
+    textColor: {
+      type: String,
+      default: 'text-white'
     },
     text: {
       type: String,

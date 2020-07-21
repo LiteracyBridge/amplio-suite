@@ -1,7 +1,7 @@
 <template>
   <Box
     ref="box"
-    :next="`/programs/${codeNameId}/settings`"
+    :next="`/programs/${programCode}/settings`"
     title="Thank you! We automatically updated the Program Specification based
     on your responses. Please complete the remaining details."
   />
@@ -21,11 +21,11 @@ export default {
       wizarsIsComplete: 'isComplete'
     }),
     ...mapState('program', [
-      'codeNameId'
+      'programCode'
     ])
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'createProgram'
     ]),
     ...mapActions('wizard', [
@@ -37,7 +37,7 @@ export default {
     if (!this.wizarsIsComplete) {
       this.addCompletedStep(7)
       this.setIsCompleted()
-      this.createProgram()
+      this.createProgram(this.programCode)
     }
     this.$refs.box.$el.querySelector('button').focus()
   }

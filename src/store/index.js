@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import wizard from './wizard'
-import programIndex from './programIndex'
 import program from './program'
+import programs from './programs'
+import programData from './programData'
 import account from './account'
 import notification from './notification'
 
@@ -16,8 +17,9 @@ export default new Vuex.Store({
 
   modules: {
     wizard,
-    programIndex,
     program,
+    programs,
+    programData,
     account,
     notification,
     uiContent

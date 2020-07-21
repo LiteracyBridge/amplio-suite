@@ -20,7 +20,14 @@ function die() {
 [ -n "$AWS_SECRET_ACCESS_KEY" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
 export AWS_DEFAULT_REGION=us-west-2
 
-functions_to_deploy=( cognito_pre_sign_up cognito_custom_message migrations program_create program_retrieve programs_index project_create project_retrieve )
+functions_to_deploy=(
+	cognito_pre_sign_up cognito_custom_message migrations programs_index
+	project_retrieve project_create
+	program_retrieve program_create program_update program_next_deployment
+	deployment_retrieve deployment_update deployment_delete
+	content_retrieve content_create content_update
+	playlist_create message_create
+)
 
 # Lambda role
 role_arn="arn:aws:iam::261167734304:role/AmplioSuiteLambda"
@@ -33,6 +40,7 @@ sec_group_id=$(aws ec2 describe-security-groups --group-name 'default' | jq -r '
 echo -n "Zip the python libs: ..."
 zip -r9 -q partial.zip ./package
 zip -g -q partial.zip utils.py
+zip -g -q partial.zip decorators.py
 zip -g -q partial.zip .env
 zip -r9 -g -q partial.zip migrations
 zip -g -q partial.zip alembic.ini

@@ -11,13 +11,20 @@
     </div>
 
     <footer class="flex justify-between">
-      <v-button text="Discard Changes" color="bg-gray-400" />
       <v-button
-        @click="() => updateProgram({ tab: title.toLowerCase() })"
-        :iconLeft="status === 'loading' ? 'spinner' : ''"
+        @click="() => discardChanges(title)"
+        :iconLeft="httpStatus[title] === 'loading' ? 'spinner' : ''"
         size="2x"
-        :pulse="status === 'loading'"
-        :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
+        :pulse="httpStatus[title] === 'loading'"
+        :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
+        text="Discard Changes"
+      />
+      <v-button
+        @click="() => saveChanges(title)"
+        :iconLeft="httpStatus[title] === 'updating' ? 'spinner' : ''"
+        size="2x"
+        :pulse="httpStatus[title] === 'updating'"
+        :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
       />
     </footer>
@@ -25,7 +32,7 @@
 </template>
 
 <script>
-import { mapState , mapActions} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import VButton from '@/components/Button'
 
@@ -44,13 +51,15 @@ export default {
     VButton
   },
   computed: {
-    ...mapState('program', {
-      status: state => state.status
-    })
+    ...mapGetters('programData', [
+      'httpStatus',
+      'tabStatus'
+    ])
   },
   methods: {
-    ...mapActions('program', [
-      'updateProgram'
+    ...mapActions('programData', [
+      'saveChanges',
+      'discardChanges'
     ])
   }
 }

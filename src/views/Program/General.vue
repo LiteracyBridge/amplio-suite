@@ -1,6 +1,6 @@
 <template>
   <box
-    title="General"
+    title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
     <div class="grid grid-cols-program items-center gap-2 text-left">
@@ -69,7 +69,9 @@ import VModal from '@/components/VModal'
 export default {
   computed: {
     ...mapState('program', {
-      programName: state => state.general.programName,
+      programName: state => state.program.name,
+    }),
+    ...mapState('programData', {
       languages: state => state.general.languages,
       amountOfLang: state => state.general.amountOfLang
     })
@@ -86,10 +88,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('program', [
+    ...mapActions('programData', [
       'setProgramName',
       'setLanguages',
-      'addLangInput'
+      'addLangInput',
     ]),
     async addInput () {
       await this.addLangInput()

@@ -1,55 +1,31 @@
-import os
 import sys
 sys.path.append('/var/task/package')
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from utils import get_db_url
+from utils import create_db_session
+from decorators import migration, validate_keys
+from models.project import Project
 from models.program import Program
 
-from alembic.config import Config
-from alembic import command
+session = create_db_session()
 
-from dotenv import load_dotenv
-# Load .env file
-load_dotenv()
-alembic_cfg = Config(os.getenv('ALEMBIC_INI'))
-
-DATABASE_URL = get_db_url()
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
-
+@migration
+@validate_keys(['project_code'])
 def lambda_handler(event, context):
-    try:
-        command.upgrade(alembic_cfg, 'head')
-    except BaseException as err:
+    project = session.query(Project) \
+        .filter(Project.projectcode == event['project_code']) \
+        .first()
+
+    program = session.query(Program) \
+        .filter(Program.projectcode == event['project_code']) \
+        .first()
+
+    if program:
         return {
-            'status': 503,
-            'headers': {'Retry-After': 5},
-            'error': str(err)
+            'status': 200,
+            'program': { **program.to_dict(), 'name': project.project }
         }
 
-    try:
-        project_code = event['project_code']
-    except KeyError as err:
-        print(f'Error retrieving project_code: {err}')
-        return {
-            'status': 422,
-            'error': 'project_code must be specified'
-        }
-
-    try:
-        program = session.query(Program).filter(Program.project == project_code).first()
-        if program is not None:
-            program = program.to_dict()
-    except ValueError as err:
-        return {
-            'status': 404,
-            'error': str(err)
-        }
     return {
-        'status': 200,
-        'program': program
+        'status': 401,
+        'error': 'Content not found'
     }

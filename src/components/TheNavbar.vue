@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link :to="`/programs/${codeNameId}`" class="text-white">
+        <router-link :to="`/programs/${programCode}`" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -60,15 +60,15 @@
 
         <div class="inline-flex">
           <select
-            v-if="allPrograms.length > 1"
+            v-if="programs.length > 1"
             aria-label="Select a program"
             class="px-4 py-1 rounded"
-            :value="codeName"
+            :value="programCode"
             @change="changeProgram"
           >
             <option value="">Select a program</option>
             <option
-              v-for="(name, index) in allPrograms"
+              v-for="(name, index) in programs"
               :key="index"
               :value="name"
             >
@@ -99,14 +99,16 @@ import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
 export default {
+  async mounted () {
+    await this.getAllPrograms()
+  },
   computed: {
-    ...mapState('programIndex', [
-      'allPrograms'
-    ]),
     ...mapState('program', [
-      'codeName',
-      'codeNameId'
-    ])
+      'programCode'
+    ]),
+    ...mapState('programs', [
+      'programs'
+    ]),
   },
   data () {
     return {
@@ -125,15 +127,15 @@ export default {
     DropDown
   },
   methods: {
-    ...mapActions('program', [
-      'setCodeName'
+    ...mapActions('programs', [
+      'getAllPrograms'
     ]),
     ...mapActions('account', [
       'logout'
     ]),
     async changeProgram (event) {
-      const id = await this.setCodeName(event.target.value)
-      this.$router.push(`/programs/${id}`)
+      let programCode = event.target.value
+      this.$router.push(`/programs/${programCode}`)
     },
     handleLogout () {
       this.logout()

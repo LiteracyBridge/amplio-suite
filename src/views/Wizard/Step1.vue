@@ -29,7 +29,7 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('program', {
+    ...mapState('programData', {
       programName: state => state.general.programName
     })
   },

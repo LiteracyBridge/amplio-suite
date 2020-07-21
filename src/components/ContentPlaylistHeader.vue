@@ -9,6 +9,7 @@
       mx="mx-0 w-full"
       aria-labelledby="title"
       :value="selectedPlaylist.title"
+      @input="(event) => setPlaylistName({ index: selectedPlaylistIndex, title: event.target.value })"
     />
 
     <span id="audience" class="pl-4">
@@ -25,18 +26,26 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 
 export default {
   computed: {
     ...mapState('uiContent', [
+      'selectedPlaylistIndex'
+    ]),
+    ...mapGetters('programData', [
       'selectedPlaylist'
     ])
   },
   components: {
     VInput
+  },
+  methods: {
+    ...mapActions('programData', [
+      'setPlaylistName'
+    ])
   }
 }
 </script>
