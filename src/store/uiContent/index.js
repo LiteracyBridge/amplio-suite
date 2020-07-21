@@ -2,55 +2,21 @@ export default {
   namespaced: true,
 
   state: () => ({
-    selectedDeployment: {},
-    selectedPlaylist: {},
-    selectedMessage: {}
+    selectedDeploymentIndex: 0,
+    selectedPlaylistIndex: 0,
+    selectedMessageIndex: 0
   }),
 
   mutations: {
-    setDeployment (state, payload) {
-      state.selectedDeployment = payload
+    setDeploymentIndex (state, index) {
+      state.selectedDeploymentIndex = index
     },
-    clearDeployment (state) {
-      state.selectedMessage = {}
-      state.selectedPlaylist = {}
-      state.selectedDeployment = {}
+    setPlaylistIndex (state, index) {
+      state.selectedPlaylistIndex = index
     },
-    setPlaylist (state, payload) {
-      state.selectedPlaylist = payload
-    },
-    clearPlaylist (state) {
-      state.selectedMessage = {}
-      state.selectedPlaylist = {}
-    },
-    setMessage (state, payload) {
-      state.selectedMessage = payload
-    },
-    clearMessage (state) {
-      state.selectedMessage = {}
+    setMessageIndex (state, index) {
+      if (state.selectedMessageIndex === index) state.selectedMessageIndex = -1
+      else state.selectedMessageIndex = index
     }
-  },
-
-  actions: {
-    toggleOpenDeployment ({ commit, state, rootState }, payload) {
-      const { playlists } = rootState.programData.content
-
-      if (state.selectedDeployment.deploymentname === payload.deploymentname) commit('clearDeployment')
-      else {
-        commit('setDeployment', payload)
-        commit('setPlaylist', { ...playlists[0], index: 0 })
-        commit('clearMessage')
-      }
-    },
-    toggleOpenPlaylist ({ commit, state }, payload) {
-      if (state.selectedPlaylist.title !== payload.title) {
-        commit('setPlaylist', payload)
-        commit('clearMessage')
-      }
-    },
-    toggleOpenMessage ({ commit, state }, payload) {
-      if (state.selectedMessage.title === payload.title) commit('clearMessage')
-      else commit('setMessage', payload)
-    },
   }
 }
