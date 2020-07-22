@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
+import store from '@/store'
 import VButton from '@/components/Button'
 
 export default {
@@ -51,16 +52,25 @@ export default {
     VButton
   },
   computed: {
-    ...mapGetters('programData', [
+    ...mapState('program', [
+      'programCode'
+    ]),
+    ...mapGetters('uiSettings', [
       'httpStatus',
       'tabStatus'
     ])
   },
   methods: {
-    ...mapActions('programData', [
-      'saveChanges',
-      'discardChanges'
-    ])
+    async saveChanges (tab) {
+      if (tab === 'general') await store.dispatch('program/updateProgram')
+      else if (tab === 'deployments') await store.dispatch('deployments/updateDeployment')
+      else if (tab === 'content') await store.dispatch('content/updateContent')
+    },
+    async discardChanges (tab) {
+      if (tab === 'general') await store.dispatch('program/fetchProgram', this.programCode)
+      else if (tab === 'deployments') await store.dispatch('deployments/fetchDeployments')
+      else if (tab === 'content') await store.dispatch('content/fetchContent')
+    }
   }
 }
 </script>

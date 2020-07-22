@@ -90,8 +90,8 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      deployments: state => state.deployments.items
+    ...mapState('deployments', {
+      deployments: state => state.items
     })
   },
   components: {
@@ -107,7 +107,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('programData', [
+    ...mapActions('deployments', [
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',

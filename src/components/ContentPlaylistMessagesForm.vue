@@ -43,13 +43,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('programData', [
+    ...mapGetters('uiSettings', [
       'selectedMessage'
     ])
   },

@@ -8,7 +8,7 @@
           label="Message title"
           mx="w-full px-4 mx-0"
           :value="message.title"
-          @input="(event) => setMessageName({ playlistIndex: selectedPlaylistIndex, index, title: event.target.value })"
+          @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
         />
 
         <span
@@ -48,18 +48,18 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('uiContent', [
-      'selectedPlaylistIndex',
-      'selectedMessageIndex'
-    ]),
-    ...mapGetters('programData', [
+    ...mapState('uiSettings', {
+      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex,
+      selectedMessageIndex: state => state.content.selectedMessageIndex
+    }),
+    ...mapGetters('uiSettings', [
       'selectedDeployment',
       'selectedPlaylist',
       'selectedMessage'
@@ -70,12 +70,12 @@ export default {
     VInput
   },
   methods: {
-    ...mapMutations('uiContent', [
+    ...mapActions('uiSettings', [
       'setMessageIndex'
     ]),
-    ...mapActions('programData', [
+    ...mapActions('content', [
       'addMessage',
-      'setMessageName',
+      'setMessageTitle',
       'removeMessage'
     ]),
     addNewMessage() {

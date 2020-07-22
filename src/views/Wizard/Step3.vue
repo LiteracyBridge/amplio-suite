@@ -72,9 +72,9 @@ import Check from '@/assets/svg/check-circle.svg'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      listeningModels: state => state.programData.data.listeningModels
-    })
+    ...mapState('programData', [
+      'listeningModels'
+    ])
   },
   data () {
     return {

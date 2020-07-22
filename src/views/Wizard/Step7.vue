@@ -20,12 +20,12 @@ export default {
     ...mapState('wizard', {
       wizarsIsComplete: 'isComplete'
     }),
-    ...mapState('program', [
+    ...mapState('programData', [
       'programCode'
     ])
   },
   methods: {
-    ...mapActions('programData', [
+    ...mapActions('program', [
       'createProgram'
     ]),
     ...mapActions('wizard', [
@@ -37,7 +37,7 @@ export default {
     if (!this.wizarsIsComplete) {
       this.addCompletedStep(7)
       this.setIsCompleted()
-      this.createProgram(this.programCode)
+      this.createProgram()
     }
     this.$refs.box.$el.querySelector('button').focus()
   }

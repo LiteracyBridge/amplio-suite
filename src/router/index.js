@@ -126,8 +126,8 @@ const router = new VueRouter({
 
 async function fetchProgramData (to, from, next) {
   await store.dispatch('program/fetchProgram', to.params.programCode)
-  await store.dispatch('programData/fetchDeployments')
-  await store.dispatch('programData/fetchContent')
+  await store.dispatch('deployments/fetchDeployments')
+  await store.dispatch('content/fetchContent')
 
   next()
 }
