@@ -1,20 +1,76 @@
-import { getProgram } from '@/api/programs.api'
+import {
+  getProgram,
+  postProgram,
+  putProgram
+} from '@/api/programs.api'
 
-const fetchProgram = async ({ commit }, programCode) => {
+const fetchProgram = async ({ state, commit }, programCode) => {
+  if (state.status == 'loading') return
+
   commit('resetState')
+  commit('requestInit')
+  commit('setProgramCode', programCode)
   commit('programData/resetState', null, { root: true })
 
-  commit('getProgramRequest', programCode)
   try {
-    let program = await getProgram(programCode)
-    commit('getProgramSuccess', program)
-    commit('programData/setProgram', program, { root: true })
+    const program = await getProgram(programCode)
+    commit('setProgram', program)
+    commit('programData/setProgramData', program, { root: true })
   } catch (error) {
-    commit('getProgramError', error)
+    commit('requestError')
+    commit('programData/setProgramCode', programCode, { root: true })
   }
 }
 
+const createProgram = async ({ state, rootState, commit }) => {
+  const data = {
+    programCode: state.programCode,
+    name: state.programName,
+    sdg_goals: rootState.programData.goals,
+    listening_models: rootState.programData.listeningModels,
+    deployments_length: rootState.programData.deploymentsLength,
+    deployments_amount: +rootState.programData.deploymentsAmount,
+    deployments_first: rootState.programData.deploymentsFirst,
+    feedback_frequency: rootState.programData.feedbackFrequently,
+    feedback_frequency_other: rootState.programData.feedbackFrequentlyOther,
+    languages: rootState.programData.languages,
+  }
+
+  commit('requestInit')
+
+  try {
+    await postProgram(data)
+    commit('setDirty', false)
+    commit('requestSuccess')
+  } catch (error) {
+    commit('requestError')
+    commit('notification/alert', error, { root: true })
+  }
+}
+
+const updateProgram = async ({ state, commit }) => {
+  const { programCode, programName } = state
+
+  commit('requestInit')
+
+  try {
+    await putProgram({ program_code: programCode, name: programName })
+    commit('setDirty', false)
+    commit('requestSuccess')
+  } catch (error) {
+    commit('requestError')
+    commit('notification/alert', error.toString(), { root: true })
+  }
+}
+
+const setProgramName = ({ commit }, payload) => {
+  commit('setProgramName', payload.replace(/\s+/g,' ').trim())
+  commit('setDirty', true)
+}
 
 export default {
-  fetchProgram
+  fetchProgram,
+  createProgram,
+  updateProgram,
+  setProgramName
 }
