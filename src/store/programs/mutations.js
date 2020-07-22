@@ -1,18 +1,18 @@
-const getAllRequest = (state) => {
+const requestInit = (state) => {
   state.status = 'loading'
 }
 
-const getAllSuccess = (state, programs) => {
+const requestError = (state) => {
+  state.status = 'error'
+}
+
+const setAllPrograms = (state, programs) => {
   state.status = 'success'
   state.programs = programs
 }
 
-const getAllError = (state) => {
-  state.status = 'error'
-}
-
 export default {
-  getAllRequest,
-  getAllSuccess,
-  getAllError,
+  requestInit,
+  requestError,
+  setAllPrograms,
 }
