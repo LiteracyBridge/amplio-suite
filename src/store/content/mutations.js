@@ -37,9 +37,44 @@ const removePlaylist = (state, index) => {
   state.playlists.splice(index, 1)
 }
 
+const setPlaylistAudience = (state, payload) => {
+  const { playlistIndex, audience } = payload
+  state.playlists[playlistIndex].audience = audience
+}
+
 const setMessageTitle = (state, payload) => {
   const { playlistIndex, messageIndex, title } = payload
   state.playlists[playlistIndex].messages[messageIndex].title = title
+}
+
+const setMessageLang = (state, payload) => {
+  const { playlistIndex, messageIndex, lang } = payload
+  state.playlists[playlistIndex].messages[messageIndex].language = lang
+}
+
+const setMessageVariant= (state, payload) => {
+  const { playlistIndex, messageIndex, variant } = payload
+  state.playlists[playlistIndex].messages[messageIndex].variant = variant
+}
+
+const setMessageFormat = (state, payload) => {
+  const { playlistIndex, messageIndex, format } = payload
+  state.playlists[playlistIndex].messages[messageIndex].format = format
+}
+
+const setMessageSDGGoal = (state, payload) => {
+  const { playlistIndex, messageIndex, goal } = payload
+  state.playlists[playlistIndex].messages[messageIndex].sdg_goal = goal
+}
+
+const setMessageSDGTarget = (state, payload) => {
+  const { playlistIndex, messageIndex, target } = payload
+  state.playlists[playlistIndex].messages[messageIndex].sdg_target = target
+}
+
+const setMessageKeyPoints = (state, payload) => {
+  const { playlistIndex, messageIndex, text } = payload
+  state.playlists[playlistIndex].messages[messageIndex].key_point = text
 }
 
 const removeMessage = (state, payload) => {
@@ -56,8 +91,15 @@ export default {
   setContent,
 
   setPlaylistTitle,
+  setPlaylistAudience,
   removePlaylist,
 
   setMessageTitle,
+  setMessageLang,
+  setMessageVariant,
+  setMessageFormat,
+  setMessageSDGGoal,
+  setMessageSDGTarget,
+  setMessageKeyPoints,
   removeMessage
 }

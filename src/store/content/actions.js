@@ -68,6 +68,11 @@ const setPlaylistTitle = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setPlaylistAudience = ({ commit }, payload)=> {
+  commit('setPlaylistAudience', payload)
+  commit('setDirty', true)
+}
+
 const addMessage = async ({ state, commit, dispatch }, payload) => {
   const { programCode } = state
 
@@ -93,6 +98,36 @@ const setMessageTitle = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setMessageLang = ({ commit }, payload) => {
+  commit('setMessageLang', payload)
+  commit('setDirty', true)
+}
+
+const setMessageVariant = ({ commit }, payload) => {
+  commit('setMessageVariant', payload)
+  commit('setDirty', true)
+}
+
+const setMessageFormat = ({ commit }, payload) => {
+  commit('setMessageFormat', payload)
+  commit('setDirty', true)
+}
+
+const setMessageSDGGoal = ({ commit }, payload) => {
+  commit('setMessageSDGGoal', payload)
+  commit('setDirty', true)
+}
+
+const setMessageSDGTarget = ({ commit }, payload) => {
+  commit('setMessageSDGTarget', payload)
+  commit('setDirty', true)
+}
+
+const setMessageKeyPoints = ({ commit }, payload) => {
+  commit('setMessageKeyPoints', payload)
+  commit('setDirty', true)
+}
+
 export default {
   fetchContent,
   updateContent,
@@ -100,8 +135,15 @@ export default {
   addPlaylist,
   removePlaylist,
   setPlaylistTitle,
+  setPlaylistAudience,
 
   addMessage,
   removeMessage,
   setMessageTitle,
+  setMessageVariant,
+  setMessageLang,
+  setMessageFormat,
+  setMessageSDGGoal,
+  setMessageSDGTarget,
+  setMessageKeyPoints,
 }

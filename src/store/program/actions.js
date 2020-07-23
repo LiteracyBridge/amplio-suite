@@ -48,14 +48,16 @@ const createProgram = async ({ state, rootState, commit }) => {
   }
 }
 
-const updateProgram = async ({ state, commit }) => {
+const updateProgram = async ({ state, rootState, commit }) => {
   const { programCode, programName } = state
+  const { languages } = rootState.programData
 
   commit('requestInit')
 
   try {
-    await putProgram({ program_code: programCode, name: programName })
+    await putProgram({ program_code: programCode, name: programName, languages })
     commit('setDirty', false)
+    commit('programData/setDirty', false, { root: true })
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
