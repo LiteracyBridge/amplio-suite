@@ -30,7 +30,7 @@
 
       <div
         :key="`${message.title}-a`"
-        :class="index === selectedMessageIndex ? 'h-56' : 'h-0'"
+        :class="index === selectedMessageIndex ? 'h-82' : 'h-0'"
         class="overflow-hidden transition-all duration-700"
       >
         <playlist-messages-form />
