@@ -8,7 +8,7 @@
       <p class="text-sm text-gray-500 text-left">End Date</p>
       <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <template v-for="item in deployments">
+      <template v-for="(item, index) in deployments">
         <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ item.deploymentname }}</p>
 
         <v-input
@@ -41,6 +41,7 @@
         </select>
 
         <button
+          v-if="index === deployments.length - 1"
           :key="`${item.deploymentname}-e`"
           @click="() => handleOpen(item.deploymentname)"
           :aria-label="`Delete deployment ${item.deploymentname}`"
