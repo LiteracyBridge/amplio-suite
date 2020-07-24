@@ -10,7 +10,10 @@
       <div
         v-for="(message, index) in messages"
         :key="index"
+        tabindex="0"
         class="mx-1 cursor-move"
+        data-name="message"
+        :data-index="index"
       >
         <div class="flex items-center mt-4">
           <v-input
@@ -91,6 +94,17 @@ export default {
     PlaylistMessagesForm,
     VInput
   },
+  data () {
+    return {
+      target: {}
+    }
+  },
+  mounted () {
+    window.addEventListener('keydown', this.handleKeyboard)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.handleKeyboard)
+  },
   methods: {
     ...mapActions('uiSettings', [
       'setMessageIndex'
@@ -107,6 +121,45 @@ export default {
         playlist_index: this.selectedPlaylistIndex
       }
       this.addMessage(payload)
+    },
+    handleKeyboard (event) {
+      const { target, code } = event
+      const { name } = target.dataset
+
+      if (Object.keys(this.target).length === 0 && name !== 'message') return
+      event.stopPropagation()
+
+      if (code === 'Space') {
+        this.target = target
+      }
+      else if (['Enter', 'Escape'].includes(code)) {
+        this.target = {}
+        document.querySelectorAll(`[data-name="message"][data-index]`)
+          .forEach(ele => ele.classList.remove('focus-visible'))
+      }
+      else if (['ArrowUp', 'ArrowDown'].includes(code)) {
+        this.move(code)
+      }
+    },
+    move (direction) {
+      const oldIndex = +this.target.dataset.index
+      const newIndex = direction === 'ArrowUp' ? oldIndex - 1 : oldIndex + 1
+      if (newIndex < 0 || newIndex >= this.messages.length) return
+
+      // Swap elements
+      const tmp = [...this.messages]
+      const a = tmp[newIndex]
+      tmp[newIndex] = tmp[oldIndex]
+      tmp[oldIndex] = a
+
+      this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: tmp })
+      this.setMessageIndex(-1)
+
+      // Update dashed element
+      this.target = document.querySelector(`[data-name="message"][data-index="${newIndex}"]`)
+      document.querySelectorAll(`[data-name="message"][data-index]`)
+        .forEach(ele => ele.classList.remove('focus-visible'))
+      this.target.classList.add('focus-visible')
     }
   }
 }

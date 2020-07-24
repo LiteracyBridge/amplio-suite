@@ -11,7 +11,10 @@
       <li
         v-for="(playlist, index) in playlists"
         :key="index"
+        tabindex="0"
         class="flex justify-between pl-1 mr-1 cursor-move"
+        data-name="playlist"
+        :data-index="index"
       >
         <span
           :class="playlist.title === selectedPlaylist.title ? 'text-blue underline font-semibold' : 'text-black'"
@@ -64,6 +67,17 @@ export default {
   components: {
     Draggable
   },
+  data () {
+    return {
+      target: {}
+    }
+  },
+  mounted () {
+    window.addEventListener('keydown', this.handleKeyboard)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.handleKeyboard)
+  },
   methods: {
     ...mapActions('uiSettings', [
       'setPlaylistIndex'
@@ -74,9 +88,57 @@ export default {
       'removePlaylist'
     ]),
     onDraggEnd(event) {
-      if (event.oldIndex === this.selectedPlaylistIndex){
-        this.setPlaylistIndex(event.newIndex)
+      const { newIndex, oldIndex } = event
+
+      if (newIndex === this.selectedPlaylistIndex) {
+        this.setPlaylistIndex(oldIndex)
+      } else if (oldIndex === this.selectedPlaylistIndex) {
+        this.setPlaylistIndex(newIndex)
       }
+    },
+    handleKeyboard (event) {
+      const { target, code } = event
+      const { name } = target.dataset
+
+      if (Object.keys(this.target).length === 0 && name !== 'playlist') return
+      event.stopPropagation()
+
+      if (code === 'Space') {
+        this.target = target
+      }
+      else if (['Enter', 'Escape'].includes(code)) {
+        this.target = {}
+        document.querySelectorAll(`[data-name="playlist"][data-index]`)
+          .forEach(ele => ele.classList.remove('focus-visible'))
+      }
+      else if (['ArrowUp', 'ArrowDown'].includes(code)) {
+        this.move(code)
+      }
+    },
+    move (direction) {
+      const oldIndex = +this.target.dataset.index
+      const newIndex = direction === 'ArrowUp' ? oldIndex - 1 : oldIndex + 1
+      if (newIndex < 0 || newIndex >= this.playlists.length) return
+
+      // Swap elements
+      const tmp = [...this.playlists]
+      const a = tmp[newIndex]
+      tmp[newIndex] = tmp[oldIndex]
+      tmp[oldIndex] = a
+
+      this.setPlaylist(tmp)
+
+      if (newIndex === this.selectedPlaylistIndex) {
+        this.setPlaylistIndex(oldIndex)
+      } else if (oldIndex === this.selectedPlaylistIndex) {
+        this.setPlaylistIndex(newIndex)
+      }
+
+      // Update dashed element
+      this.target = document.querySelector(`[data-name="playlist"][data-index="${newIndex}"]`)
+      document.querySelectorAll(`[data-name="playlist"][data-index]`)
+        .forEach(ele => ele.classList.remove('focus-visible'))
+      this.target.classList.add('focus-visible')
     }
   }
 }
