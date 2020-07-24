@@ -1,41 +1,52 @@
 <template>
   <div>
-    <template v-for="(message, index) in selectedPlaylist.messages">
-      <div :key="`${index}-a`" class="flex items-center mt-4">
-        <v-input
-          type="text"
-          name="messageTitle"
-          label="Message title"
-          mx="w-full px-4 mx-0"
-          :value="message.title"
-          @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
-        />
-
-        <span
-          @click="setMessageIndex(index)"
-          :class="index === selectedMessageIndex ? 'text-blue underline font-semibold' : 'text-black'"
-          class="w-48 py-2 px-4 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
-        >
-          {{ index === selectedMessageIndex ? 'Hide Details' : 'Show Details' }}
-          <font-awesome-icon :icon="index === selectedMessageIndex ? 'chevron-up' : 'chevron-down'" />
-        </span>
-
-        <button
-          :aria-label="`Delete message ${message.title}`"
-          @click="removeMessage({ playlistIndex: selectedPlaylistIndex, index })"
-        >
-          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-        </button>
-      </div>
-
+    <draggable
+      v-model="messages"
+      :animation="200"
+      ghost-class="moving-item"
+      @start="dragging = true"
+      @end="dragging = false"
+    >
       <div
-        :key="`${message.title}-a`"
-        :class="index === selectedMessageIndex ? 'h-82' : 'h-0'"
-        class="overflow-hidden transition-all duration-700"
+        v-for="(message, index) in messages"
+        :key="index"
+        class="mx-1 cursor-move"
       >
-        <playlist-messages-form />
+        <div class="flex items-center mt-4">
+          <v-input
+            type="text"
+            name="messageTitle"
+            label="Message title"
+            mx="w-full px-4 mx-0"
+            :value="message.title"
+            @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
+          />
+
+          <span
+            @click="setMessageIndex(index)"
+            :class="index === selectedMessageIndex ? 'text-blue underline font-semibold' : 'text-black'"
+            class="w-48 py-2 px-4 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+          >
+            {{ index === selectedMessageIndex ? 'Hide Details' : 'Show Details' }}
+            <font-awesome-icon :icon="index === selectedMessageIndex ? 'chevron-up' : 'chevron-down'" />
+          </span>
+
+          <button
+            :aria-label="`Delete message ${message.title}`"
+            @click="removeMessage({ playlistIndex: selectedPlaylistIndex, index })"
+          >
+            <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
+          </button>
+        </div>
+
+        <div
+          :class="index === selectedMessageIndex ? 'h-82' : 'h-0'"
+          class="overflow-hidden transition-all duration-700"
+        >
+          <playlist-messages-form />
+        </div>
       </div>
-    </template>
+    </draggable>
 
     <span
       tabindex="0"
@@ -48,6 +59,7 @@
 </template>
 
 <script>
+import Draggable from 'vuedraggable'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
@@ -63,9 +75,19 @@ export default {
       'selectedDeployment',
       'selectedPlaylist',
       'selectedMessage'
-    ])
+    ]),
+    messages: {
+      get () {
+        return this.selectedPlaylist.messages
+      },
+      set (value) {
+        this.setMessageIndex(-1)
+        this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: value })
+      }
+    }
   },
   components: {
+    Draggable,
     PlaylistMessagesForm,
     VInput
   },
@@ -74,6 +96,7 @@ export default {
       'setMessageIndex'
     ]),
     ...mapActions('content', [
+      'setMessages',
       'addMessage',
       'setMessageTitle',
       'removeMessage'
