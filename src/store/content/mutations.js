@@ -28,6 +28,10 @@ const setContent = (state, payload) => {
   state.playlists = payload.playlists
 }
 
+const setPlaylist = (state, payload) => {
+  state.playlists = payload
+}
+
 const setPlaylistTitle = (state, payload) => {
   const { playlistIndex, title } = payload
   state.playlists[playlistIndex].title = title
@@ -40,6 +44,11 @@ const removePlaylist = (state, index) => {
 const setPlaylistAudience = (state, payload) => {
   const { playlistIndex, audience } = payload
   state.playlists[playlistIndex].audience = audience
+}
+
+const setMessages = (state, payload) => {
+  const { playlistIndex, messages } = payload
+  state.playlists[playlistIndex].messages = messages
 }
 
 const setMessageTitle = (state, payload) => {
@@ -90,10 +99,12 @@ export default {
   requestSuccess,
   setContent,
 
+  setPlaylist,
   setPlaylistTitle,
   setPlaylistAudience,
   removePlaylist,
 
+  setMessages,
   setMessageTitle,
   setMessageLang,
   setMessageVariant,
