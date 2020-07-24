@@ -74,7 +74,9 @@ export default {
     selectedMessage (state, getters, rootState) {
       const playlistIndex = state.content.selectedPlaylistIndex
       const messageIndex = state.content.selectedMessageIndex
-      return rootState.content.playlists[playlistIndex].messages[messageIndex]
+
+      if (messageIndex === -1) return {}
+      else return rootState.content.playlists[playlistIndex].messages[messageIndex]
     }
   }
 }
