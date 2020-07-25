@@ -16,7 +16,7 @@
       pulse
       class="mx-auto w-20 h-20" />
 
-    <div v-else class="grid grid-cols-4 gap-10">
+    <div class="grid grid-cols-4 gap-10">
       <div
         v-for="(codeName, index) in programs"
         :key="index"
@@ -55,8 +55,8 @@ export default {
       immediate: true
     }
   },
-  async mounted () {
-    await this.getAllPrograms()
+  created () {
+    this.getAllPrograms()
   },
   methods: {
     ...mapActions('programs', [
