@@ -68,8 +68,16 @@ export default {
       return rootState.deployments.items[deploymentIndex]
     },
     selectedPlaylist (state, getters, rootState) {
+      const emptyPlaylist = {
+        title: '',
+        audience: '',
+        messages: []
+      }
+
       const playlistIndex = state.content.selectedPlaylistIndex
-      return rootState.content.playlists[playlistIndex]
+
+      if (rootState.content.playlists.length === 0) return emptyPlaylist
+      else return rootState.content.playlists[playlistIndex]
     },
     selectedMessage (state, getters, rootState) {
       const playlistIndex = state.content.selectedPlaylistIndex
