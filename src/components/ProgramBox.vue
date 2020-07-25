@@ -6,24 +6,21 @@
       <p class="pl-2 text-lg text-blue">{{ help }}</p>
     </header>
 
-    <div class="min-h-200-px py-5 text-center">
+    <div class="relative min-h-200-px my-5 text-center">
+      <loading v-if="status !== 'success'" />
       <slot />
     </div>
 
     <footer class="flex justify-between">
       <v-button
         @click="() => discardChanges(title)"
-        :iconLeft="httpStatus[title] === 'loading' ? 'spinner' : ''"
         size="2x"
-        :pulse="httpStatus[title] === 'loading'"
         :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
         text="Discard Changes"
       />
       <v-button
         @click="() => saveChanges(title)"
-        :iconLeft="httpStatus[title] === 'updating' ? 'spinner' : ''"
         size="2x"
-        :pulse="httpStatus[title] === 'updating'"
         :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
       />
@@ -34,11 +31,17 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 
-import store from '@/store'
 import VButton from '@/components/Button'
+import Loading from '@/components/Loading'
+
+import store from '@/store'
 
 export default {
   props: {
+    status: {
+      type: String,
+      required: true
+    },
     title: {
       type: String,
       required: true
@@ -49,14 +52,14 @@ export default {
     }
   },
   components: {
-    VButton
+    VButton,
+    Loading,
   },
   computed: {
     ...mapState('program', [
       'programCode'
     ]),
     ...mapGetters('uiSettings', [
-      'httpStatus',
       'tabStatus'
     ])
   },
