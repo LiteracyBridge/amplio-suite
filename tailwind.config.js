@@ -21,7 +21,8 @@ module.exports = {
         green: '#289b6a',
         blue: '#475caa',
         'semi-transparent': 'hsla(0, 0%, 4%, .2)',
-        'semi-transparent-darken': 'hsla(0, 0%, 4%, .3)' 
+        'semi-transparent-darken': 'hsla(0, 0%, 4%, .3)',
+        loading: 'rgba(0, 0, 0, 0.5)',
       },
       minHeight: {
         '200-px': '200px',
