@@ -43,8 +43,11 @@ import { mapState, mapGetters } from 'vuex'
 import VButton from '@/components/Button'
 import VModal from '@/components/VModal'
 
+import { fetchData } from '@/utils'
+
 export default {
   name: 'Program',
+  props: ['programCode'],
   components: {
     VButton,
     VModal
@@ -52,11 +55,13 @@ export default {
   computed: {
     ...mapState('program', [
       'programName',
-      'programCode'
     ]),
     ...mapGetters('uiSettings', [
       'tabStatus'
     ])
+  },
+  watch: {
+    '$route': 'fetchAllData'
   },
   data () {
     return {
@@ -70,6 +75,9 @@ export default {
       transitionName: 'slide-left',
       isModalOpen: false
     }
+  },
+  created () {
+    this.fetchAllData()
   },
   beforeRouteUpdate (to, from, next) {
     const sTo = to.path.split('/')
@@ -99,6 +107,11 @@ export default {
     } else {
       next()
     }
-  }
+  },
+  methods: {
+    fetchAllData () {
+      fetchData(this.programCode)
+    }
+  },
 }
 </script>

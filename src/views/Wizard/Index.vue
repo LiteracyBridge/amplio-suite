@@ -18,8 +18,11 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { fetchData } from '@/utils'
+
 export default {
   name: 'Setup',
+  props: ['programCode'],
   computed: mapState('wizard', [
     'actualStep'
   ]),
@@ -33,6 +36,9 @@ export default {
     const step = +this.$route.name.split('-')[1]
     this.setStep(step)
   },
+  created () {
+    this.fetchAllData()
+  },
   beforeRouteUpdate (to, from, next) {
     const toStep = to.path.split('-')[1]
     const fromStep = from.path.split('-')[1]
@@ -42,7 +48,10 @@ export default {
   methods: {
     ...mapActions('wizard', [
       'setStep'
-    ])
+    ]),
+    fetchAllData () {
+      fetchData(this.programCode)
+    }
   }
 }
 </script>

@@ -32,37 +32,28 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 import HomeBox from '@/components/HomeBox'
+
+import { fetchData } from '@/utils'
 
 export default {
   components: {
     HomeBox
   },
   methods: {
-    ...mapActions('program', [
-      'fetchProgram'
-    ]),
-    ...mapActions('deployments', [
-      'fetchDeployments',
-    ]),
-    ...mapActions('content', [
-      'fetchContent'
-    ])
-  },
-  watch: {
-    'programCode': {
-      async handler (newVal) {
-        if (newVal) { // check if userid is available
-        await this.fetchProgram(newVal)
-        await this.fetchDeployments()
-        await this.fetchContent()
-        }
-      }
+    fetchAllData () {
+      fetchData(this.programCode)
     }
   },
+  watch: {
+    '$route': 'fetchAllData'
+  },
   props: ['programCode'],
+  created () {
+    this.fetchAllData()
+  },
   computed: {
     ...mapState('account', [
       'user'
