@@ -1,5 +1,6 @@
 <template>
   <box
+    :status="status"
     title="deployments"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
@@ -49,16 +50,16 @@
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
       </template>
-
-      <span
-        tabindex="0"
-        class="mt-4 p-2u text-green font-bold cursor-pointer"
-        @click="createDeployment"
-        @keyup.enter="createDeployment"
-      >
-        + Add deployment
-      </span>
     </div>
+
+    <span
+      tabindex="0"
+      class="block p-2 text-left text-green font-bold cursor-pointer"
+      @click="createDeployment"
+      @keyup.enter="createDeployment"
+    >
+      + Add deployment
+    </span>
 
     <v-modal v-model="isModalOpen" title="Delete Deployment">
       <p>This deployment will be deleted.</p>
@@ -92,6 +93,7 @@ import VModal from '@/components/VModal'
 export default {
   computed: {
     ...mapState('deployments', {
+      status: state => state.status,
       deployments: state => state.items
     })
   },
@@ -99,7 +101,7 @@ export default {
     Box,
     VButton,
     VInput,
-    VModal
+    VModal,
   },
   data () {
     return {

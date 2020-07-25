@@ -1,5 +1,6 @@
 <template>
   <box
+    :status="status"
     title="content"
     help="You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
   >
@@ -40,24 +41,23 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import Box from '@/components/ProgramBox'
 import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
 import PlaylistMessages from '@/components/ContentPlaylistMessages'
 
-import Box from '@/components/ProgramBox'
-
 export default {
   computed: {
     ...mapState('deployments', {
+      status: state => state.status,
       deployments: state => state.items
     })
   },
   components: {
+    Box,
     PlaylistMenu,
     PlaylistHeader,
     PlaylistMessages,
-
-    Box
   },
   methods: {
     ...mapActions('content', [

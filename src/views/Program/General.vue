@@ -1,5 +1,6 @@
 <template>
   <box
+    :status="status"
     title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
@@ -69,6 +70,7 @@ import VModal from '@/components/VModal'
 export default {
   computed: {
     ...mapState('program', [
+      'status',
       'programName'
     ]),
     ...mapState('programData', [
