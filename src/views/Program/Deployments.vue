@@ -44,7 +44,7 @@
         <button
           v-if="index === deployments.length - 1"
           :key="`${item.deploymentname}-e`"
-          @click="() => handleOpen(item.deploymentname)"
+          @click="handleOpenModal"
           :aria-label="`Delete deployment ${item.deploymentname}`"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
@@ -61,24 +61,26 @@
       + Add deployment
     </span>
 
-    <v-modal v-model="isModalOpen" title="Delete Deployment">
+    <portal to="modalBody" v-if="modal.show">
       <p>This deployment will be deleted.</p>
+    </portal>
 
-      <template v-slot:footer>
+    <portal to="modalFooter" v-if="modal.show">
+      <footer class="flex flex-row-reverse justify-between">
         <v-button
-          @click="confirmDelete"
+          @click="confirmDeleteDeployment"
           color="bg-red-500 border border-red-500"
           textColor="text-white"
           text="Confirm"
         />
         <v-button
-          @click="isModalOpen = false"
+          @click="handleCloseModal"
           color="bg-transparent border border-black"
           textColor="text-black"
           text="Cancel"
         />
-      </template>
-    </v-modal>
+      </footer>
+    </portal>
   </box>
 </template>
 
@@ -88,7 +90,6 @@ import { mapState, mapActions } from 'vuex'
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
-import VModal from '@/components/VModal'
 
 export default {
   computed: {
@@ -101,28 +102,34 @@ export default {
     Box,
     VButton,
     VInput,
-    VModal,
   },
-  data () {
-    return {
-      isModalOpen: false,
-      itemId: 0
+  data: () => ({
+    modal: {
+      show: false
     }
-  },
+  }),
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('deployments', [
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',
     ]),
-    handleOpen(id) {
-      this.itemId = id
-      this.isModalOpen = true
+    handleOpenModal () {
+      this.modal.show = true
+      this.setModal('Delet Deployment')
     },
-    confirmDelete() {
+    handleCloseModal () {
+      this.modal.show = false
+      this.closeModal()
+    },
+    confirmDeleteDeployment() {
       this.removeDeployment()
-      this.isModalOpen = false
-    }
+      this.handleCloseModal()
+    },
   }
 }
 </script>

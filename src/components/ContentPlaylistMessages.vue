@@ -36,7 +36,7 @@
 
           <button
             :aria-label="`Delete message ${message.title}`"
-            @click="removeMessage({ playlistIndex: selectedPlaylistIndex, index })"
+            @click="handleOpenModal(index)"
           >
             <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
           </button>
@@ -58,6 +58,28 @@
     >
       + Add Message
     </span>
+
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="modal.show">
+      <p>This message will be deleted.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="modal.show">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="confirmDeleteMessage"
+          color="bg-red-500 border border-red-500"
+          textColor="text-white"
+          text="Confirm"
+        />
+        <v-button
+          @click="handleCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Cancel"
+        />
+      </footer>
+    </portal>
   </div>
 </template>
 
@@ -67,6 +89,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
+import VButton from '@/components/Button'
 
 export default {
   computed: {
@@ -92,13 +115,17 @@ export default {
   components: {
     Draggable,
     PlaylistMessagesForm,
-    VInput
+    VInput,
+    VButton
   },
-  data () {
-    return {
-      target: {}
+  data: () => ({
+    target: {},
+
+    modal: {
+      show: false,
+      eleIndex: -1
     }
-  },
+  }),
   mounted () {
     window.addEventListener('keydown', this.handleKeyboard)
   },
@@ -109,12 +136,30 @@ export default {
     ...mapActions('uiSettings', [
       'setMessageIndex'
     ]),
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('content', [
       'setMessages',
       'addMessage',
       'setMessageTitle',
       'removeMessage'
     ]),
+    handleOpenModal (index) {
+      this.modal.show = true
+      this.modal.eleIndex = index
+      this.setModal('Delet Message')
+    },
+    handleCloseModal () {
+      this.modal.show = false
+      this.modal.eleIndex = -1
+      this.closeModal()
+    },
+    confirmDeleteMessage() {
+      this.removeMessage({ playlistIndex: this.selectedPlaylistIndex, messageIndex: this.modal.eleIndex })
+      this.handleCloseModal()
+    },
     addNewMessage() {
       const payload = {
         deployment_id: this.selectedDeployment.deployment,

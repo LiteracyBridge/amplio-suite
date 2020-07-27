@@ -25,7 +25,7 @@
         </span>
         <button
           :aria-label="`Delete playlist ${playlist.title}`"
-          @click="removePlaylist(index)"
+          @click="handleOpenModal(index)"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
@@ -39,12 +39,36 @@
     >
       + Add playlist
     </span>
+
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="modal.show">
+      <p>This playlist will be deleted.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="modal.show">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="confirmDeletePlaylist"
+          color="bg-red-500 border border-red-500"
+          textColor="text-white"
+          text="Confirm"
+        />
+        <v-button
+          @click="handleCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Cancel"
+        />
+      </footer>
+    </portal>
   </div>
 </template>
 
 <script>
 import Draggable from 'vuedraggable'
 import { mapState, mapGetters, mapActions } from 'vuex'
+
+import VButton from '@/components/Button'
 
 export default {
   computed: {
@@ -65,13 +89,17 @@ export default {
     }
   },
   components: {
-    Draggable
+    Draggable,
+    VButton,
   },
-  data () {
-    return {
-      target: {}
+  data: () => ({
+    target: {},
+
+    modal: {
+      show: false,
+      eleIndex: -1
     }
-  },
+  }),
   mounted () {
     window.addEventListener('keydown', this.handleKeyboard)
   },
@@ -82,11 +110,29 @@ export default {
     ...mapActions('uiSettings', [
       'setPlaylistIndex'
     ]),
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('content', [
       'setPlaylist',
       'addPlaylist',
       'removePlaylist'
     ]),
+    handleOpenModal (index) {
+      this.modal.show = true
+      this.modal.eleIndex = index
+      this.setModal('Delet Playlist')
+    },
+    handleCloseModal () {
+      this.modal.show = false
+      this.modal.eleIndex = -1
+      this.closeModal()
+    },
+    confirmDeletePlaylist() {
+      this.removePlaylist(this.modal.eleIndex)
+      this.handleCloseModal()
+    },
     onDraggEnd(event) {
       const { newIndex, oldIndex } = event
 
