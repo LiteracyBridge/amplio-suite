@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -99,18 +99,17 @@ export default {
     this.$refs.email.$el.children[0].focus()
   },
   methods: {
+    ...mapActions('ui', [
+      'setNotification'
+    ]),
     ...mapActions('account', [
       'forgotPassword',
       'confirmNewPassword'
     ]),
-    ...mapMutations('notification', [
-      'alert',
-      'notice'
-    ]),
     async sendEmail () {
       try {
         await this.forgotPassword({ user: this.user })
-        this.notice('Password reset email sent')
+        this.setNotification({ type: 'notice', text: 'Password reset email sent' })
         this.resetEmailSent = true
       }
       catch {
@@ -120,11 +119,11 @@ export default {
     async resetPassword () {
       try {
         await this.confirmNewPassword({ user: this.user, password: this.password, resetToken: this.resetToken })
-        this.notice('Password reset successful')
+        this.setNotification({ type: 'notice', text: 'Password reset successful' })
         this.$router.push('/login')
       }
       catch {
-        this.alert('Invalid email')
+        this.setNotification({ type: 'alert', text: 'Invalid email' })
       }
     },
     resetForm () {

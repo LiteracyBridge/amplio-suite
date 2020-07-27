@@ -18,7 +18,7 @@ const fetchDeployments = async ({ state, rootState, commit }) => {
     commit('setDeployments', response)
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -33,7 +33,7 @@ const createDeployment = async ({ state, commit, dispatch }) => {
     await dispatch('fetchDeployments')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -48,7 +48,7 @@ const updateDeployment = async ({ state, commit }) => {
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -64,7 +64,7 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
     await dispatch('fetchDeployments')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 

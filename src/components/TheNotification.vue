@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!hidden" :class="bgColor" class="absolute container flex items-center justify-between p-4">
+  <div v-if="isOpen" :class="bgColor" class="absolute container flex items-center justify-between p-4">
     <div>
       <font-awesome-icon v-if="type == 'alert'" class="mr-2" :icon="'exclamation-circle'" />
       {{text}}
@@ -8,7 +8,7 @@
     <button
       aria-label="Close notification"
       class="px-2 pb-1 bg-semi-transparent cursor-pointer rounded-full hover:bg-semi-transparent-darken"
-      @click="close"
+      @click="closeNotification"
     >
       <font-awesome-icon icon="times" class="w-3 h-3 text-white" />
     </button>
@@ -16,16 +16,15 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('notification', [
-      'type',
-      'text',
-      'hidden',
-      'icon',
-    ]),
+    ...mapState('ui', {
+      isOpen: state => state.notification.isOpen,
+      type: state => state.notification.type,
+      text: state => state.notification.text,
+    }),
     bgColor () {
       return this.type === 'alert' ? 'bg-red-200'
         : 'bg-gray-200'
@@ -33,15 +32,15 @@ export default {
   },
   watch: {
     hidden () {
-      if (!this.hidden) {
-        setTimeout(() => this.close(), 10000)
+      if (!this.isOpen) {
+        setTimeout(() => this.closeNotification(), 10000)
       }
     }
   },
   methods: {
-    ...mapMutations('notification', [
-      'close'
-    ]),
+    ...mapActions('ui', [
+      'closeNotification'
+    ])
   }
 }
 </script>

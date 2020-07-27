@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -92,17 +92,16 @@ export default {
     }
   },
   methods: {
+    ...mapActions('ui', [
+      'setNotification'
+    ]),
     ...mapActions('account', [
       'register'
-    ]),
-    ...mapMutations('notification', [
-      'alert',
-      'notice'
     ]),
     async handleRegister () {
       try {
         await this.register({ email: this.email, password: this.password })
-        this.notice('Check your email and copy the validation code')
+        this.setNotification({ type: 'notice', text: 'Check your email and copy the validation code' })
         this.$router.push('/login')
       }
       catch (error) {
@@ -112,13 +111,13 @@ export default {
         this.password = ''
 
         if (error === 'Not fill') {
-          this.alert('All fields are required')
+          this.setNotification({ type: 'alert', text: 'All fields are required' })
         } else if (error.code === 'InvalidPasswordException') {
-          this.alert(error.message)
+          this.setNotification({ type: 'alert', text: error.message })
         } else if (error.code === 'UserLambdaValidationException') {
-          this.alert('The email address provided does not match our records in the system. Please contact support@amplio.org')
+          this.setNotification({ type: 'alert', text: 'The email address provided does not match our records in the system. Please contact support@amplio.org' })
         } else {
-          this.alert(error.message)
+          this.setNotification({ type: 'alert', text: error.message })
         }
 
         this.$refs.name.$el.children[1].focus()

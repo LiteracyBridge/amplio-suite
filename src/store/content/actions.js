@@ -22,7 +22,7 @@ const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymen
     commit('setContent', response)
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -39,7 +39,7 @@ const updateContent = async ({ state, rootState, commit }) => {
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -54,7 +54,7 @@ const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
     await dispatch('fetchContent')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -94,7 +94,7 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
     await dispatch('fetchContent')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
