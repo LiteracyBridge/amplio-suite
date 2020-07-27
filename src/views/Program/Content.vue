@@ -49,9 +49,11 @@ import PlaylistMessages from '@/components/ContentPlaylistMessages'
 export default {
   computed: {
     ...mapState('deployments', {
-      status: state => state.status,
       deployments: state => state.items
-    })
+    }),
+    ...mapState('content', [
+      'status'
+    ])
   },
   components: {
     Box,
