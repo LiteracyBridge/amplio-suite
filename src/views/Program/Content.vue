@@ -21,12 +21,12 @@
         </select>
       </h3>
       <div
-        class="h-96 grid transition-all duration-700 overflow-hidden"
+        class="grid transition-all duration-700"
         style="grid-template-columns: 1.3fr 5fr;"
       >
         <playlist-menu />
 
-        <div class="text-left overflow-y-auto">
+        <div class="text-left">
           <playlist-header />
 
           <div class="p-4 text-xl bg-gray-400">
