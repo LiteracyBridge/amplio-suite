@@ -4,6 +4,19 @@ import {
   putProgram
 } from '@/api/programs.api'
 
+const generateProgramData = (state, rootState) => ({
+  programCode: state.programCode,
+  name: state.programName,
+  sdg_goals: rootState.programData.goals,
+  listening_models: rootState.programData.listeningModels,
+  deployments_length: rootState.programData.deploymentsLength,
+  deployments_amount: +rootState.programData.deploymentsAmount,
+  deployments_first: rootState.programData.deploymentsFirst,
+  feedback_frequency: rootState.programData.feedbackFrequently,
+  feedback_frequency_other: rootState.programData.feedbackFrequentlyOther,
+  languages: rootState.programData.languages,
+})
+
 const fetchProgram = async ({ state, commit }, programCode) => {
   if (state.status == 'loading') return
   if (state.programCode === programCode && !state.dirty) return
@@ -24,23 +37,10 @@ const fetchProgram = async ({ state, commit }, programCode) => {
 }
 
 const createProgram = async ({ state, rootState, commit }) => {
-  const data = {
-    programCode: state.programCode,
-    name: state.programName,
-    sdg_goals: rootState.programData.goals,
-    listening_models: rootState.programData.listeningModels,
-    deployments_length: rootState.programData.deploymentsLength,
-    deployments_amount: +rootState.programData.deploymentsAmount,
-    deployments_first: rootState.programData.deploymentsFirst,
-    feedback_frequency: rootState.programData.feedbackFrequently,
-    feedback_frequency_other: rootState.programData.feedbackFrequentlyOther,
-    languages: rootState.programData.languages,
-  }
-
   commit('requestInit')
 
   try {
-    await postProgram(data)
+    await postProgram(generateProgramData(state, rootState))
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -50,13 +50,10 @@ const createProgram = async ({ state, rootState, commit }) => {
 }
 
 const updateProgram = async ({ state, rootState, commit }) => {
-  const { programCode, programName } = state
-  const { languages } = rootState.programData
-
   commit('requestInit')
 
   try {
-    await putProgram({ program_code: programCode, name: programName, languages })
+    await putProgram(generateProgramData(state, rootState))
     commit('setDirty', false)
     commit('programData/setDirty', false, { root: true })
     commit('requestSuccess')
