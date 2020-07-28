@@ -8,6 +8,7 @@
     <div class="-mx-6">
       <h3 class="px-6 py-4 bg-gray-400 text-xl text-left border-2 border-gray-600">
         <select
+          ref="selectDeplo"
           @change="(event) => changeDeployment(event.target.value)"
         >
           <option
@@ -36,15 +37,27 @@
         </div>
       </div>
     </div>
+
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="isModalOpen">
+      <p>Save or discard the change before continue.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="isModalOpen">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button @click="handleCloseModal" text="Ok" />
+      </footer>
+    </portal>
   </box>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
 import Box from '@/components/ProgramBox'
+import VButton from '@/components/Button'
 import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
 import PlaylistMessages from '@/components/ContentPlaylistMessages'
@@ -57,14 +70,21 @@ export default {
     ...mapState('content', [
       'status',
       'dirty',
+    ]),
+    ...mapGetters('uiSettings', [
+      'selectedDeployment'
     ])
   },
   components: {
     Box,
+    VButton,
     PlaylistMenu,
     PlaylistHeader,
     PlaylistMessages,
   },
+  data: () => ({
+    isModalOpen: false
+  }),
   mounted (){
     eventBus.$on('save-crud-data', () => {
       this.updateContent()
@@ -78,14 +98,32 @@ export default {
     eventBus.$off('discard-crud-data')
   },
   methods: {
-    ...mapActions('content', [
-      'fetchContent',
-      'updateContent',
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
     ]),
     ...mapActions('uiSettings', [
       'setDeploymentIndex'
     ]),
+    ...mapActions('content', [
+      'fetchContent',
+      'updateContent',
+    ]),
+    handleOpenModal () {
+      this.isModalOpen = true
+      this.setModal('Save or discard the change')
+    },
+    handleCloseModal () {
+      this.isModalOpen = false
+      this.closeModal()
+    },
     changeDeployment(deploymentName) {
+      if (this.dirty) {
+        this.handleOpenModal()
+        this.$refs.selectDeplo.value = this.selectedDeployment.deploymentname
+        return
+      }
+
       const index = this.deployments
         .map(item => item.deploymentname)
         .indexOf(deploymentName)
