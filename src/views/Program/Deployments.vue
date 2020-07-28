@@ -1,6 +1,7 @@
 <template>
   <box
-    :status="status"
+    :httpStatus="status"
+    :isDirty="dirty"
     title="deployments"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
@@ -97,6 +98,7 @@ export default {
   computed: {
     ...mapState('deployments', {
       status: state => state.status,
+      dirty: state => state.dirty,
       deployments: state => state.items
     })
   },

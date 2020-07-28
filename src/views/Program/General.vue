@@ -1,6 +1,7 @@
 <template>
   <box
-    :status="status"
+    :httpStatus="status"
+    :isDirty="programDirty || programDataDirty"
     title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
@@ -79,7 +80,13 @@ export default {
     ...mapState('programData', [
       'languages',
       'amountOfLang'
-    ])
+    ]),
+    ...mapState('program', {
+      programDirty: state => state.dirty
+    }),
+    ...mapState('programData', {
+      programDataDirty: state => state.dirty
+    })
   },
   components: {
     Box,

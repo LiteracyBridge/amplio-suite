@@ -1,6 +1,7 @@
 <template>
   <box
-    :status="status"
+    :httpStatus="status"
+    :isDirty="dirty"
     title="content"
     help="You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
   >
@@ -54,7 +55,8 @@ export default {
       deployments: state => state.items
     }),
     ...mapState('content', [
-      'status'
+      'status',
+      'dirty',
     ])
   },
   components: {

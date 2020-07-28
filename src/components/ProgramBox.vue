@@ -7,7 +7,7 @@
     </header>
 
     <div class="relative min-h-200-px my-5 text-center">
-      <loading v-if="status !== 'success'" />
+      <loading v-if="httpStatus !== 'success'" />
       <slot />
     </div>
 
@@ -15,13 +15,13 @@
       <v-button
         @click="discardChanges"
         size="2x"
-        :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
+        :color="isDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
         text="Discard Changes"
       />
       <v-button
         @click="saveChanges"
         size="2x"
-        :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
+        :color="isDirty ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
       />
     </footer>
@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 import { eventBus } from '@/eventBus'
 
 import VButton from '@/components/Button'
@@ -38,8 +36,12 @@ import Loading from '@/components/Loading'
 
 export default {
   props: {
-    status: {
+    httpStatus: {
       type: String,
+      required: true
+    },
+    isDirty: {
+      type: Boolean,
       required: true
     },
     title: {
@@ -54,11 +56,6 @@ export default {
   components: {
     VButton,
     Loading,
-  },
-  computed: {
-    ...mapGetters('uiSettings', [
-      'tabStatus'
-    ])
   },
   methods: {
     saveChanges () {
