@@ -31,8 +31,8 @@ def lambda_handler(event, context):
             languages = event['languages'],
         )
         deployments = program.default_deployments()
-        contents = [Content(program_code=deplo.project, deployment_id=str(i))
-            for i, deplo in enumerate(deployments)]
+        contents = [Content(program_code=deplo.project, deployment_id=deplo.deployment)
+            for deplo in deployments]
 
         session.add(project)
         session.flush()
