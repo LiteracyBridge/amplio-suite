@@ -41,6 +41,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
+
 import Box from '@/components/ProgramBox'
 import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
@@ -61,9 +63,22 @@ export default {
     PlaylistHeader,
     PlaylistMessages,
   },
+  mounted (){
+    eventBus.$on('save-crud-data', () => {
+      this.updateContent()
+    }),
+    eventBus.$on('discard-crud-data', () => {
+      this.fetchContent()
+    })
+  },
+  beforeDestroy () {
+    eventBus.$off('save-crud-data')
+    eventBus.$off('discard-crud-data')
+  },
   methods: {
     ...mapActions('content', [
-      'fetchContent'
+      'fetchContent',
+      'updateContent',
     ]),
     ...mapActions('uiSettings', [
       'setDeploymentIndex'

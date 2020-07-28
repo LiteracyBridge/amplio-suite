@@ -62,6 +62,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
+
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -71,6 +73,7 @@ export default {
   computed: {
     ...mapState('program', [
       'status',
+      'programCode',
       'programName'
     ]),
     ...mapState('programData', [
@@ -89,8 +92,22 @@ export default {
       isModalOpen: false
     }
   },
+  mounted (){
+    eventBus.$on('save-crud-data', () => {
+      this.updateProgram()
+    }),
+    eventBus.$on('discard-crud-data', () => {
+      this.fetchProgram(this.programCode)
+    })
+  },
+  beforeDestroy () {
+    eventBus.$off('save-crud-data')
+    eventBus.$off('discard-crud-data')
+  },
   methods: {
     ...mapActions('program', [
+      'fetchProgram',
+      'updateProgram',
       'setProgramName',
     ]),
     ...mapActions('programData', [

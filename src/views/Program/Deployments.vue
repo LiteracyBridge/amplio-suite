@@ -87,6 +87,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
+
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -108,12 +110,26 @@ export default {
       show: false
     }
   }),
+  mounted (){
+    eventBus.$on('save-crud-data', () => {
+      this.updateDeployment()
+    }),
+    eventBus.$on('discard-crud-data', () => {
+      this.fetchDeployments()
+    })
+  },
+  beforeDestroy () {
+    eventBus.$off('save-crud-data')
+    eventBus.$off('discard-crud-data')
+  },
   methods: {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
     ]),
     ...mapActions('deployments', [
+      'fetchDeployments',
+      'updateDeployment',
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',

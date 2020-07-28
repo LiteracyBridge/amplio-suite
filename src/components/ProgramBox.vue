@@ -13,13 +13,13 @@
 
     <footer class="flex justify-between">
       <v-button
-        @click="() => discardChanges(title)"
+        @click="discardChanges"
         size="2x"
         :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
         text="Discard Changes"
       />
       <v-button
-        @click="() => saveChanges(title)"
+        @click="saveChanges"
         size="2x"
         :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
@@ -29,12 +29,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
+
+import { eventBus } from '@/eventBus'
 
 import VButton from '@/components/Button'
 import Loading from '@/components/Loading'
-
-import store from '@/store'
 
 export default {
   props: {
@@ -56,23 +56,16 @@ export default {
     Loading,
   },
   computed: {
-    ...mapState('program', [
-      'programCode'
-    ]),
     ...mapGetters('uiSettings', [
       'tabStatus'
     ])
   },
   methods: {
-    async saveChanges (tab) {
-      if (tab === 'general') await store.dispatch('program/updateProgram')
-      else if (tab === 'deployments') await store.dispatch('deployments/updateDeployment')
-      else if (tab === 'content') await store.dispatch('content/updateContent')
+    saveChanges () {
+      eventBus.$emit('save-crud-data')
     },
-    async discardChanges (tab) {
-      if (tab === 'general') await store.dispatch('program/fetchProgram', this.programCode)
-      else if (tab === 'deployments') await store.dispatch('deployments/fetchDeployments')
-      else if (tab === 'content') await store.dispatch('content/fetchContent')
+    discardChanges () {
+      eventBus.$emit('discard-crud-data')
     }
   }
 }
