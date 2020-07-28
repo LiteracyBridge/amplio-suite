@@ -112,8 +112,8 @@ export default {
         this.setNotification({ type: 'notice', text: 'Password reset email sent' })
         this.resetEmailSent = true
       }
-      catch {
-        this.alert('Too many attempts')
+      catch (error) {
+        this.setNotification({ type: 'alert', text: error.toString() })
       }
     },
     async resetPassword () {
