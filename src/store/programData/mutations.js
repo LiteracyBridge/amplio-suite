@@ -13,10 +13,15 @@ const setProgramData = (state, payload) => {
   state.status = 'success'
   state.programCode = payload.projectcode
 
-  // FIXME: set every relevant value
+  state.goals = payload.sustainable_development_goals
+  state.listeningModels = payload.listening_models
+  state.deploymentsAmount = payload.deployments_amount
+  state.deploymentsLength = payload.deployments_length
+  state.deploymentsFirst = payload.deployments_first
+  state.feedbackFrequently = payload.feedback_frequency
+  state.feedbackFrequentlyOther = payload.feedback_frequency_other
   state.languages = payload.languages
   state.amountOfLang = payload.languages.length
-  console.log("FIXME: set every relevant value")
 }
 
 const setProgramCode = (state, payload) => {
