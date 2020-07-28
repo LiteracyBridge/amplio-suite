@@ -48,13 +48,6 @@ export default {
   },
 
   getters: {
-    httpStatus (state, getters, rootState) {
-      return {
-        general: rootState.programData.status,
-        deployments: rootState.deployments.status,
-        content: rootState.content.status
-      }
-    },
     tabStatus (state, getters, rootState) {
       return {
         general: rootState.program.dirty || rootState.programData.dirty,
