@@ -33,7 +33,7 @@
             @input="(event) => setLanguages({ lang: event.target.value, index })"
             mx="mx-0"
           />
-          <button @click="isModalOpen = true" aria-label="Delete language">
+          <button @click="handleOpenModal" aria-label="Delete language">
             <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
           </button>
         </div>
@@ -49,14 +49,27 @@
       </div>
     </div>
 
-    <v-modal v-model="isModalOpen" title="Delete Language">
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="showModal">
       <p>This language will be deleted.</p>
+    </portal>
 
-      <template v-slot:footer>
-        <v-button @click="isModalOpen = false" text="Confirm" />
-        <v-button @click="isModalOpen = false" text="Cancel" color="bg-gray-400" class="text-black" />
-      </template>
-    </v-modal>
+    <portal to="modalFooter" v-if="showModal">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="handleCloseModal"
+          color="bg-red-500 border border-red-500"
+          textColor="text-white"
+          text="Confirm"
+        />
+        <v-button
+          @click="handleCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Cancel"
+        />
+      </footer>
+    </portal>
   </box>
 </template>
 
@@ -68,7 +81,6 @@ import { eventBus } from '@/eventBus'
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
-import VModal from '@/components/VModal'
 
 export default {
   computed: {
@@ -92,11 +104,10 @@ export default {
     Box,
     VButton,
     VInput,
-    VModal
   },
   data () {
     return {
-      isModalOpen: false
+      showModal: false
     }
   },
   mounted (){
@@ -112,6 +123,10 @@ export default {
     eventBus.$off('discard-crud-data')
   },
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('program', [
       'fetchProgram',
       'updateProgram',
@@ -121,6 +136,14 @@ export default {
       'setLanguages',
       'addLangInput',
     ]),
+    handleOpenModal () {
+      this.showModal = true
+      this.setModal('Delet Language')
+    },
+    handleCloseModal () {
+      this.showModal = false
+      this.closeModal()
+    },
     async addInput () {
       await this.addLangInput()
       const key = `lang_${this.amountOfLang}`

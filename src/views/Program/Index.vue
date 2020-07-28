@@ -27,21 +27,23 @@
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
 
-    <v-modal v-model="isModalOpen" title="Save the change">
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="isModalOpen">
       <p>Save or discard the change before continue.</p>
+    </portal>
 
-      <template v-slot:footer>
-        <v-button @click="isModalOpen = false" text="Ok" />
-      </template>
-    </v-modal>
+    <portal to="modalFooter" v-if="isModalOpen">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button @click="handleCloseModal" text="Ok" />
+      </footer>
+    </portal>
   </main>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
-import VModal from '@/components/VModal'
 
 import { fetchData } from '@/utils'
 
@@ -50,7 +52,6 @@ export default {
   props: ['programCode'],
   components: {
     VButton,
-    VModal
   },
   computed: {
     ...mapState('program', [
@@ -90,7 +91,7 @@ export default {
 
     // Check if the data is save
     if (this.tabStatus[fromName]) {
-      this.isModalOpen = true
+      this.handleOpenModal()
       next(false)
     } else {
       next()
@@ -102,13 +103,25 @@ export default {
 
     // Check if the data is save
     if (this.tabStatus[fromName]) {
-      this.isModalOpen = true
+      this.handleOpenModal()
       next(false)
     } else {
       next()
     }
   },
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
+    handleOpenModal () {
+      this.isModalOpen = true
+      this.setModal('Save or discard the change')
+    },
+    handleCloseModal () {
+      this.isModalOpen = false
+      this.closeModal()
+    },
     fetchAllData () {
       fetchData(this.programCode)
     }
