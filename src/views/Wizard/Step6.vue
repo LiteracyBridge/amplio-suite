@@ -42,10 +42,10 @@ export default {
     VInput
   },
   computed: {
-    ...mapState('programData', {
-      languages: state => state.general.languages,
-      amountOfLang: state => state.general.amountOfLang
-    })
+    ...mapState('programData', [
+      'languages',
+      'amountOfLang'
+    ])
   },
   mounted () {
     this.$refs['lang_1'][0].$el.children[0].focus()

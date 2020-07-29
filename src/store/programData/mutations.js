@@ -4,183 +4,85 @@ const resetState = (state) => {
   Object.assign(state, getDefaultState())
 }
 
-const setDirty = (state, payload) => {
-  const { tab, status } = payload
-  state[tab].dirty = status
+const setDirty = (state, status) => {
+  state.dirty = status
 }
 
-const getProgramRequest = (state) => {
-  state.general.status = 'loading'
-}
-
-const getProgramError = (state) => {
-  state.general.status = 'error'
-}
-
-const setProgram = (state, payload) => {
-  state.general.dirty = false
-  state.general.status = 'success'
-  state.general.programCode = payload.projectcode
+const setProgramData = (state, payload) => {
+  state.dirty = false
+  state.status = 'success'
+  state.programCode = payload.projectcode
 
   // FIXME: set every relevant value
-  state.general.languages = payload.languages
-  state.general.amountOfLang = payload.languages.length
+  state.languages = payload.languages
+  state.amountOfLang = payload.languages.length
   console.log("FIXME: set every relevant value")
 }
 
-/****************************************
-  General Tab
-****************************************/
-const setProgramName = (state, payload) => {
-  state.general.programName = payload
+const setProgramCode = (state, payload) => {
+  state.programCode = payload
 }
 
-const setLanguages = (state, payload) => {
-  state.general.languages[payload.index] = payload.lang
-}
-
-const addLangInput = (state) => {
-  state.general.amountOfLang++
-}
-
-const setFeedbackFrequently = (state, payload) => {
-  state.general.feedbackFrequently = payload
-}
-
-const setFeedbackFrequentlyOther = (state, payload) => {
-  state.general.feedbackFrequentlyOther = payload
-}
-
-/****************************************
-  Deployments Tab
-****************************************/
-const setDeploymentsAmount = (state, payload) => {
-  state.deploymentsConfig.amount = payload
-}
-
-const setDeploymentsLength = (state, payload) => {
-  state.deploymentsConfig.length = payload
-}
-
-const setDeploymentsFirst = (state, payload) => {
-  state.deploymentsConfig.first = payload
-}
-
-//
-const addDeployment = (state, payload) => {
-  state.deployments.items.push(payload)
-}
-
-const removeDeployment = (state, payload) => {
-  const { index } = payload
-  state.deployments.items.splice(index, 1)
-}
-
-const setDeploymentDate = (state, payload) => {
-  const { index, what, date } = payload
-  state.deployments.items[index][what] = date
-}
-
-/****************************************
-  Content
-****************************************/
 const addGoal = (state, payload) => {
-  state.programData.data.goals.push(payload)
+  state.goals.push(payload)
 }
 
 const removeGoal = (state, index) => {
-  state.programData.data.goals.splice(index, 1)
+  state.goals.splice(index, 1)
 }
 
 const addListeningModel = (state, payload) => {
-  state.programData.data.listeningModels.push(payload)
+  state.listeningModels.push(payload)
 }
 
 const removeListeningModel = (state, index) => {
-  state.programData.data.listeningModels.splice(index, 1)
+  state.listeningModels.splice(index, 1)
 }
 
-const setPlaylistName = (state, payload) => {
-  state.content.playlists[payload.index].title = payload.title
+const setDeploymentsAmount = (state, payload) => {
+  state.deploymentsAmount = payload
 }
 
-const setMessageName = (state, payload) => {
-  state.content.playlists[payload.playlistIndex].messages[payload.index].title = payload.title
+const setDeploymentsLength = (state, payload) => {
+  state.deploymentsLength = payload
 }
 
-const removePlaylist = (state, index) => {
-  state.content.playlists.splice(index, 1)
+const setDeploymentsFirst = (state, payload) => {
+  state.deploymentsFirst = payload
 }
 
-const removeMessage = (state, payload) => {
-  state.content.playlists[payload.playlistIndex].messages.splice(payload.index, 1)
+const setLanguages = (state, payload) => {
+  state.languages[payload.index] = payload.lang
 }
 
-const getDeploymentsRequest = (state) => {
-  state.deployments.status = 'loading'
+const addLangInput = (state) => {
+  state.amountOfLang++
 }
 
-const getDeploymentsError = (state) => {
-  state.deployments.status = 'error'
+const setFeedbackFrequently = (state, payload) => {
+  state.feedbackFrequently = payload
 }
 
-const setDeployments = (state, payload) => {
-  state.deployments.dirty = false
-  state.deployments.status = 'success'
-  state.deployments.programCode = payload.programCode
-  state.deployments.items = payload.items
-}
-
-const getContentRequest = (state) => {
-  state.content.status = 'loading'
-}
-
-const getContentError = (state) => {
-  state.content.status = 'error'
-}
-
-const setContent = (state, payload) => {
-  state.deployments.dirty = false
-  state.content.status = 'success'
-  state.content.programCode = payload.programCode
-  state.content.deploymentName = payload.deploymentName
-  state.content.playlists = payload.playlists
+const setFeedbackFrequentlyOther = (state, payload) => {
+  state.feedbackFrequentlyOther = payload
 }
 
 
 export default {
   resetState,
   setDirty,
-  getProgramRequest,
-  getProgramError,
-  setProgram,
-  setProgramName,
-  setLanguages,
-  addLangInput,
-  setDeploymentsAmount,
-  setDeploymentsLength,
-  setDeploymentsFirst,
+  setProgramData,
 
-  addDeployment,
-  removeDeployment,
-  setDeploymentDate,
-
+  setProgramCode,
   addGoal,
   removeGoal,
   addListeningModel,
   removeListeningModel,
+  setDeploymentsAmount,
+  setDeploymentsLength,
+  setDeploymentsFirst,
+  setLanguages,
+  addLangInput,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
-
-  setPlaylistName,
-  setMessageName,
-  removePlaylist,
-  removeMessage,
-
-  getDeploymentsRequest,
-  getDeploymentsError,
-  setDeployments,
-  getContentRequest,
-  getContentError,
-  setContent
 }

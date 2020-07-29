@@ -9,7 +9,7 @@
       mx="mx-0 w-full"
       aria-labelledby="title"
       :value="selectedPlaylist.title"
-      @input="(event) => setPlaylistName({ index: selectedPlaylistIndex, title: event.target.value })"
+      @input="(event) => setPlaylistTitle({ playlistIndex, title: event.target.value })"
     />
 
     <span id="audience" class="pl-4">
@@ -21,6 +21,8 @@
       mx="mx-0 w-full"
       aria-labelledby="audience"
       placeholder="audience"
+      :value="selectedPlaylist.audience"
+      @input="(event) => setPlaylistAudience({ playlistIndex, audience: event.target.value })"
     />
   </div>
 </template>
@@ -32,10 +34,10 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('uiContent', [
-      'selectedPlaylistIndex'
-    ]),
-    ...mapGetters('programData', [
+    ...mapState('uiSettings', {
+      playlistIndex: state => state.content.selectedPlaylistIndex
+    }),
+    ...mapGetters('uiSettings', [
       'selectedPlaylist'
     ])
   },
@@ -43,8 +45,9 @@ export default {
     VInput
   },
   methods: {
-    ...mapActions('programData', [
-      'setPlaylistName'
+    ...mapActions('content', [
+      'setPlaylistTitle',
+      'setPlaylistAudience',
     ])
   }
 }

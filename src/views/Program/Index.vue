@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import VButton from '@/components/Button'
 import VModal from '@/components/VModal'
@@ -50,10 +50,13 @@ export default {
     VModal
   },
   computed: {
-    ...mapState('program', {
-      programName: state => state.program.name,
-      programCode: 'programCode'
-    })
+    ...mapState('program', [
+      'programName',
+      'programCode'
+    ]),
+    ...mapGetters('uiSettings', [
+      'tabStatus'
+    ])
   },
   data () {
     return {
@@ -76,10 +79,9 @@ export default {
 
     const sections = this.sections.map(section => section.name)
     this.transitionName = sections.indexOf(toName) < sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
-    const dirty = this.$store.state.programData[fromName].dirty
 
     // Check if the data is save
-    if (dirty) {
+    if (this.tabStatus[fromName]) {
       this.isModalOpen = true
       next(false)
     } else {
@@ -89,10 +91,9 @@ export default {
   beforeRouteLeave(to, from, next) {
     const sFrom = from.path.split('/')
     const fromName = sFrom[sFrom.length - 1]
-    const dirty = this.$store.state.programData[fromName].dirty
 
     // Check if the data is save
-    if (dirty) {
+    if (this.tabStatus[fromName]) {
       this.isModalOpen = true
       next(false)
     } else {

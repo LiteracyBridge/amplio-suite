@@ -1,49 +1,24 @@
 import actions from './actions'
 import mutations from './mutations'
-import getters from './getters'
 
 
 export const getDefaultState = () => ({
-  programData: {
-    dirty: false,
-    status: '',
-    programCode: '',
-    data: {
-      goals: [],
-      listeningModels: []
-    }
-  },
+  dirty: false,
+  status: '',
+  programCode: '',
 
-  general: {
-    dirty: false,
-    status: '',
-    programCode: '',
+  goals: [],
+  listeningModels: [],
 
-    languages: [],
-    amountOfLang: 1,
-  },
+  deploymentsAmount: 0,
+  deploymentsLength: '',
+  deploymentsFirst: '',
 
-  deploymentsConfig: {
-    dirty: false,
-    amount: 0,
-    first: '',
-    length: '',
-  },
+  languages: [],
+  amountOfLang: 1,
 
-  deployments: {
-    dirty: false,
-    status: "",
-    programCode: "",
-    items: []
-  },
-
-  content: {
-    dirty: false,
-    status: "",
-    programCode: "",
-    deploymentName: "",
-    playlists: []
-  }
+  feedbackFrequently: '',
+  feedbackFrequentlyOther: ''
 })
 
 export default {
@@ -52,5 +27,4 @@ export default {
   state: getDefaultState(),
   mutations,
   actions,
-  getters
 }

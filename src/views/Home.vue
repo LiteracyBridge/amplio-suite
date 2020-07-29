@@ -41,13 +41,15 @@ export default {
     HomeBox
   },
   methods: {
-    ...mapActions('programData', [
-      'fetchDeployments',
-      'fetchContent'
-    ]),
     ...mapActions('program', [
       'fetchProgram'
     ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
+    ]),
+    ...mapActions('content', [
+      'fetchContent'
+    ])
   },
   watch: {
     'programCode': {
@@ -57,23 +59,23 @@ export default {
         await this.fetchDeployments()
         await this.fetchContent()
         }
-      },
-      immediate: true // make this watch function is called when component created
+      }
     }
   },
   props: ['programCode'],
   computed: {
-    ...mapState('program', [
-      'program'
-    ]),
-    programLoaded() {
-      return !['loading', ''].includes(this.$store.state.program.status)
-    },
     ...mapState('account', [
       'user'
     ]),
+    ...mapState('program', {
+      programName: 'programName',
+      programStatus: state => state.status
+    }),
+    programLoaded() {
+      return !['loading', ''].includes(this.programStatus)
+    },
     linkTo() {
-      if (this.program.name) {
+      if (this.programName) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`

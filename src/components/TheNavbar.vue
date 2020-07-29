@@ -99,8 +99,8 @@ import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
 export default {
-  async mounted () {
-    await this.getAllPrograms()
+  mounted () {
+    this.getAllPrograms()
   },
   computed: {
     ...mapState('program', [

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
@@ -48,8 +48,8 @@ import Box from '@/components/ProgramBox'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      deployments: state => state.deployments.items
+    ...mapState('deployments', {
+      deployments: state => state.items
     })
   },
   components: {
@@ -60,10 +60,10 @@ export default {
     Box
   },
   methods: {
-    ...mapActions('programData', [
+    ...mapActions('content', [
       'fetchContent'
     ]),
-    ...mapMutations('uiContent', [
+    ...mapActions('uiSettings', [
       'setDeploymentIndex'
     ]),
     changeDeployment(deploymentName) {

@@ -33,7 +33,7 @@ const check = async (attrs, step, dispatch) => {
 
 // Step 1
 const setProgramName = async ({ dispatch }, payload) => {
-  await dispatch('programData/setProgramName', payload, { root: true })
+  await dispatch('program/setProgramName', payload, { root: true })
 
   await check('programName', 1, dispatch)
 }

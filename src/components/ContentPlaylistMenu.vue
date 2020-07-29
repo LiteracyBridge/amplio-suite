@@ -31,23 +31,23 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      playlists: state => state.content.playlists
-    }),
-    ...mapGetters('programData', [
+    ...mapState('content', [
+      'playlists'
+    ]),
+    ...mapGetters('uiSettings', [
       'selectedDeployment',
       'selectedPlaylist'
     ])
   },
   methods: {
-    ...mapMutations('uiContent', [
+    ...mapActions('uiSettings', [
       'setPlaylistIndex'
     ]),
-    ...mapActions('programData', [
+    ...mapActions('content', [
       'addPlaylist',
       'removePlaylist'
     ])

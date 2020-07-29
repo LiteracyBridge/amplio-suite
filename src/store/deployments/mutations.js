@@ -20,19 +20,24 @@ const requestSuccess = (state) => {
   state.status = 'success'
 }
 
-const setProgram = (state, payload) => {
+const setDeployments = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.projectcode
-  state.programName = payload.name
+  state.programCode = payload.programCode
+  state.items = payload.items
 }
 
-const setProgramCode = (state, payload) => {
-  state.programCode = payload
+const addDeployment = (state, payload) => {
+  state.items.push(payload)
 }
 
-const setProgramName = (state, payload) => {
-  state.programName = payload
+const removeDeployment = (state, payload) => {
+  state.items.splice(payload.index, 1)
+}
+
+const setDeploymentDate = (state, payload) => {
+  const { index, what, date } = payload
+  state.items[index][what] = date
 }
 
 export default {
@@ -41,8 +46,9 @@ export default {
   requestInit,
   requestError,
   requestSuccess,
-  setProgram,
+  setDeployments,
 
-  setProgramCode,
-  setProgramName,
+  addDeployment,
+  removeDeployment,
+  setDeploymentDate
 }

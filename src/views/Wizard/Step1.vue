@@ -29,9 +29,9 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      programName: state => state.general.programName
-    })
+    ...mapState('program', [
+      'programName'
+    ])
   },
   components: {
     Box,

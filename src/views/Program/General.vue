@@ -68,13 +68,13 @@ import VModal from '@/components/VModal'
 
 export default {
   computed: {
-    ...mapState('program', {
-      programName: state => state.program.name,
-    }),
-    ...mapState('programData', {
-      languages: state => state.general.languages,
-      amountOfLang: state => state.general.amountOfLang
-    })
+    ...mapState('program', [
+      'programName'
+    ]),
+    ...mapState('programData', [
+      'languages',
+      'amountOfLang'
+    ])
   },
   components: {
     Box,
@@ -88,8 +88,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('programData', [
+    ...mapActions('program', [
       'setProgramName',
+    ]),
+    ...mapActions('programData', [
       'setLanguages',
       'addLangInput',
     ]),
