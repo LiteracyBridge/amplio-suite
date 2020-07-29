@@ -7,7 +7,7 @@
 
       <v-tooltip
         v-if="selectedPlaylist.title.length > 15"
-        text="The name of the playlist is very long"
+        text="We recommend to keep titles short"
         class="ml-2"
       >
         <font-awesome-icon
