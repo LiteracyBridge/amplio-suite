@@ -1,5 +1,7 @@
 <template>
   <box
+    :httpStatus="status"
+    :isDirty="dirty"
     title="deployments"
     help="You can modify your deployment details here. Enter component details after filling component tab."
   >
@@ -8,7 +10,7 @@
       <p class="text-sm text-gray-500 text-left">End Date</p>
       <p class="text-sm text-gray-500 text-left">Component</p>
 
-      <template v-for="item in deployments">
+      <template v-for="(item, index) in deployments">
         <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ item.deploymentname }}</p>
 
         <v-input
@@ -41,56 +43,62 @@
         </select>
 
         <button
+          v-if="index === deployments.length - 1"
           :key="`${item.deploymentname}-e`"
-          @click="() => handleOpen(item.deploymentname)"
+          @click="handleOpenModal"
           :aria-label="`Delete deployment ${item.deploymentname}`"
         >
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
       </template>
-
-      <span
-        tabindex="0"
-        class="mt-4 p-2u text-green font-bold cursor-pointer"
-        @click="createDeployment"
-        @keyup.enter="createDeployment"
-      >
-        + Add deployment
-      </span>
     </div>
 
-    <v-modal v-model="isModalOpen" title="Delete Deployment">
-      <p>This deployment will be deleted.</p>
+    <span
+      tabindex="0"
+      class="block p-2 text-left text-green font-bold cursor-pointer"
+      @click="createDeployment"
+      @keyup.enter="createDeployment"
+    >
+      + Add deployment
+    </span>
 
-      <template v-slot:footer>
+    <portal to="modalBody" v-if="modal.show">
+      <p>This deployment will be deleted.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="modal.show">
+      <footer class="flex flex-row-reverse justify-between">
         <v-button
-          @click="confirmDelete"
+          @click="confirmDeleteDeployment"
           color="bg-red-500 border border-red-500"
           textColor="text-white"
           text="Confirm"
         />
         <v-button
-          @click="isModalOpen = false"
+          @click="handleCloseModal"
           color="bg-transparent border border-black"
           textColor="text-black"
           text="Cancel"
         />
-      </template>
-    </v-modal>
+      </footer>
+    </portal>
   </box>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
+
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
-import VModal from '@/components/VModal'
 
 export default {
   computed: {
     ...mapState('deployments', {
+      status: state => state.status,
+      dirty: state => state.dirty,
       deployments: state => state.items
     })
   },
@@ -98,28 +106,48 @@ export default {
     Box,
     VButton,
     VInput,
-    VModal
   },
-  data () {
-    return {
-      isModalOpen: false,
-      itemId: 0
+  data: () => ({
+    modal: {
+      show: false
     }
+  }),
+  mounted (){
+    eventBus.$on('save-crud-data', () => {
+      this.updateDeployment()
+    }),
+    eventBus.$on('discard-crud-data', () => {
+      this.fetchDeployments()
+    })
+  },
+  beforeDestroy () {
+    eventBus.$off('save-crud-data')
+    eventBus.$off('discard-crud-data')
   },
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('deployments', [
+      'fetchDeployments',
+      'updateDeployment',
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',
     ]),
-    handleOpen(id) {
-      this.itemId = id
-      this.isModalOpen = true
+    handleOpenModal () {
+      this.modal.show = true
+      this.setModal('Delet Deployment')
     },
-    confirmDelete() {
+    handleCloseModal () {
+      this.modal.show = false
+      this.closeModal()
+    },
+    confirmDeleteDeployment() {
       this.removeDeployment()
-      this.isModalOpen = false
-    }
+      this.handleCloseModal()
+    },
   }
 }
 </script>

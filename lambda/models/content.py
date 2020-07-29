@@ -14,9 +14,9 @@ def message_template(index):
         'sdg_target': ''
     }
 
-def playlist_template(index):
+def playlist_template(title):
     return {
-        'title': f'Playlist {index}',
+        'title': f'{title}',
         'audience': '',
         'messages': [
             message_template(1)
@@ -42,14 +42,31 @@ class Content(Base, SerializerMixin):
 
     def add_empty_playlist(self):
         total = len(self.content)
-        playlist = playlist_template(total + 1)
-        self.content.append(playlist)
+        titles = [playlist['title'] for playlist in self.content]
 
-        return playlist
+        while True:
+            total += 1
+            title = f'Playlist {total}'
+            if title not in titles:
+                break
+
+        new_playlist = playlist_template(title)
+        self.content.append(new_playlist)
+
+        return new_playlist
 
     def add_empty_message(self, playlist_index):
         total = len(self.content[playlist_index]['messages'])
-        message = message_template(total + 1)
-        self.content[playlist_index]['messages'].append(message)
+        titles = [message['title'] for message in self.content[playlist_index]['messages']]
 
-        return message
+        while True:
+            total += 1
+            title = f'Message Title {total}'
+            if title not in titles:
+                break
+
+        new_message = self.content[playlist_index]['messages'][-1].copy()
+        new_message['title'] = title
+        self.content[playlist_index]['messages'].append(new_message)
+
+        return new_message

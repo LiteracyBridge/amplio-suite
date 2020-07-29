@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="value ? 'block' : 'hidden'"
+    :class="isOpen ? 'block' : 'hidden'"
     class="fixed top-0 left-0 bottom-0 right-0 bg-semi-transparent-darken overflow-y-auto z-1000"
   >
     <div tabindex="0" />
@@ -16,7 +16,7 @@
     </div>
 
     <div
-      class="absolute p-6 bg-white shadow-modal rounded-md"
+      class="absolute p-6 bg-white text-center shadow-modal rounded-md"
       style="top: 10rem; left: 50vw; transform: translateX(-50%); min-width: calc(640px - (1.5rem * 2));"
       role="dialog"
       aria-modal="true"
@@ -27,12 +27,10 @@
         </header>
 
         <div class="pt-6 pb-20 text-xl">
-          <slot />
+          <portal-target name="modalBody" slim />
         </div>
 
-        <footer class="flex flex-row-reverse justify-between">
-          <slot name="footer"></slot>
-        </footer>
+        <portal-target name="modalFooter" slim />
       </section>
     </div>
     <div tabindex="0" />
@@ -40,16 +38,14 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  props: {
-    value: {
-      type: Boolean,
-      required: true
-    },
-    title: {
-      type: String,
-      default: ''
-    }
+  computed: {
+    ...mapState('ui', {
+      isOpen: state => state.modal.isOpen,
+      title: state => state.modal.title
+    })
   },
   mounted () {
     document.addEventListener('keydown', this.handlerKeyDown)
@@ -58,17 +54,17 @@ export default {
     document.removeEventListener('keydown', this.handlerKeyDown)
   },
   watch: {
-    value() {
-      if (this.value) document.body.classList.add('has-dialog')
+    isOpen() {
+      if (this.isOpen) document.body.classList.add('has-dialog')
       else document.body.classList.remove('has-dialog')
     }
   },
   methods: {
-    closeModal () {
-      this.$emit('input', false)
-    },
+    ...mapActions('ui', [
+      'closeModal'
+    ]),
     handlerKeyDown (e) {
-      if (e.key === 'Escape' && this.value) {
+      if (e.key === 'Escape' && this.isOpen) {
         this.closeModal()
       }
     }

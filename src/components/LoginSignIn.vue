@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import Button from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -65,11 +65,11 @@ export default {
     this.$refs.user.$el.children[1].focus()
   },
   methods: {
+    ...mapActions('ui', [
+      'setNotification'
+    ]),
     ...mapActions('account', [
       'login'
-    ]),
-    ...mapMutations('notification', [
-      'alert'
     ]),
     async handleLogin () {
       try {
@@ -79,7 +79,7 @@ export default {
       catch {
         this.email = ''
         this.password = ''
-        this.alert('Invalid Login or password')
+        this.setNotification({ type: 'alert', 'Invalid Login or password' })
 
         this.$refs.user.$el.children[1].focus()
       }

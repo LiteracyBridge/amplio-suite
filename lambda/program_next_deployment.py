@@ -3,6 +3,7 @@ sys.path.append('/var/task/package')
 
 from utils import create_db_session
 from models.program import Program
+from models.content import Content
 from decorators import migration, validate_keys
 
 
@@ -14,14 +15,19 @@ def lambda_handler(event, context):
     program = session.query(Program) \
         .filter(Program.projectcode == event['program_code']) \
         .first()
+
     deployment = program.next_deployments()
+    content = Content(program_code=deployment.project, deployment_id=deployment.deployment)
 
     #
     session.query(Program) \
         .filter(Program.projectcode == event['program_code']) \
         .update({'deployments_amount': program.deployments_amount + 1})
 
+    session.flush()
     session.add(deployment)
+    session.flush()
+    session.add(content)
     session.commit()
 
     return {

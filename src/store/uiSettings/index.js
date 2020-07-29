@@ -48,13 +48,6 @@ export default {
   },
 
   getters: {
-    httpStatus (state, getters, rootState) {
-      return {
-        general: rootState.programData.status,
-        deployments: rootState.deployments.status,
-        content: rootState.content.status
-      }
-    },
     tabStatus (state, getters, rootState) {
       return {
         general: rootState.program.dirty || rootState.programData.dirty,
@@ -68,13 +61,23 @@ export default {
       return rootState.deployments.items[deploymentIndex]
     },
     selectedPlaylist (state, getters, rootState) {
+      const emptyPlaylist = {
+        title: '',
+        audience: '',
+        messages: []
+      }
+
       const playlistIndex = state.content.selectedPlaylistIndex
-      return rootState.content.playlists[playlistIndex]
+
+      if (rootState.content.playlists.length === 0) return emptyPlaylist
+      else return rootState.content.playlists[playlistIndex]
     },
     selectedMessage (state, getters, rootState) {
       const playlistIndex = state.content.selectedPlaylistIndex
       const messageIndex = state.content.selectedMessageIndex
-      return rootState.content.playlists[playlistIndex].messages[messageIndex]
+
+      if (messageIndex === -1) return {}
+      else return rootState.content.playlists[playlistIndex].messages[messageIndex]
     }
   }
 }

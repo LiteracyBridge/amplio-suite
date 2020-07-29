@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import PortalVue from 'portal-vue'
+
 import App from './App.vue'
 import cognitoAuth from './cognito'
 import router from './router'
@@ -17,6 +19,7 @@ import '@/assets/css/tailwind.scss'
 import Default from '@/layouts/Default'
 import Login from '@/layouts/Login'
 
+Vue.use(PortalVue)
 Vue.component('default-layout', Default)
 Vue.component('login-layout', Login)
 

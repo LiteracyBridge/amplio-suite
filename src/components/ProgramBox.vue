@@ -6,25 +6,22 @@
       <p class="pl-2 text-lg text-blue">{{ help }}</p>
     </header>
 
-    <div class="min-h-200-px py-5 text-center">
+    <div class="relative min-h-200-px my-5 text-center">
+      <loading v-if="httpStatus !== 'success'" />
       <slot />
     </div>
 
     <footer class="flex justify-between">
       <v-button
-        @click="() => discardChanges(title)"
-        :iconLeft="httpStatus[title] === 'loading' ? 'spinner' : ''"
+        @click="discardChanges"
         size="2x"
-        :pulse="httpStatus[title] === 'loading'"
-        :color="tabStatus[title] ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
+        :color="isDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
         text="Discard Changes"
       />
       <v-button
-        @click="() => saveChanges(title)"
-        :iconLeft="httpStatus[title] === 'updating' ? 'spinner' : ''"
+        @click="saveChanges"
         size="2x"
-        :pulse="httpStatus[title] === 'updating'"
-        :color="tabStatus[title] ? 'bg-green' : 'bg-gray-400'"
+        :color="isDirty ? 'bg-green' : 'bg-gray-400'"
         text="Save Change"
       />
     </footer>
@@ -32,13 +29,21 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { eventBus } from '@/eventBus'
 
-import store from '@/store'
 import VButton from '@/components/Button'
+import Loading from '@/components/Loading'
 
 export default {
   props: {
+    httpStatus: {
+      type: String,
+      required: true
+    },
+    isDirty: {
+      type: Boolean,
+      required: true
+    },
     title: {
       type: String,
       required: true
@@ -49,27 +54,15 @@ export default {
     }
   },
   components: {
-    VButton
-  },
-  computed: {
-    ...mapState('program', [
-      'programCode'
-    ]),
-    ...mapGetters('uiSettings', [
-      'httpStatus',
-      'tabStatus'
-    ])
+    VButton,
+    Loading,
   },
   methods: {
-    async saveChanges (tab) {
-      if (tab === 'general') await store.dispatch('program/updateProgram')
-      else if (tab === 'deployments') await store.dispatch('deployments/updateDeployment')
-      else if (tab === 'content') await store.dispatch('content/updateContent')
+    saveChanges () {
+      eventBus.$emit('save-crud-data')
     },
-    async discardChanges (tab) {
-      if (tab === 'general') await store.dispatch('program/fetchProgram', this.programCode)
-      else if (tab === 'deployments') await store.dispatch('deployments/fetchDeployments')
-      else if (tab === 'content') await store.dispatch('content/fetchContent')
+    discardChanges () {
+      eventBus.$emit('discard-crud-data')
     }
   }
 }

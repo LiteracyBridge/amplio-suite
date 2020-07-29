@@ -22,7 +22,7 @@ const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymen
     commit('setContent', response)
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -39,7 +39,7 @@ const updateContent = async ({ state, rootState, commit }) => {
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -54,12 +54,17 @@ const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
     await dispatch('fetchContent')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
 const removePlaylist = async ({ commit }, index) => {
   commit('removePlaylist', index)
+  commit('setDirty', true)
+}
+
+const setPlaylist = async ({ commit }, payload) => {
+  commit('setPlaylist', payload)
   commit('setDirty', true)
 }
 
@@ -70,6 +75,11 @@ const setPlaylistTitle = ({ commit }, payload) => {
 
 const setPlaylistAudience = ({ commit }, payload)=> {
   commit('setPlaylistAudience', payload)
+  commit('setDirty', true)
+}
+
+const setMessages = ({ commit }, payload) => {
+  commit('setMessages', payload)
   commit('setDirty', true)
 }
 
@@ -84,7 +94,7 @@ const addMessage = async ({ state, commit, dispatch }, payload) => {
     await dispatch('fetchContent')
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
@@ -132,11 +142,13 @@ export default {
   fetchContent,
   updateContent,
 
+  setPlaylist,
   addPlaylist,
   removePlaylist,
   setPlaylistTitle,
   setPlaylistAudience,
 
+  setMessages,
   addMessage,
   removeMessage,
   setMessageTitle,

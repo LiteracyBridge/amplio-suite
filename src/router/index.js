@@ -46,13 +46,14 @@ const routes = [
     path: '/programs/:programCode',
     props: true,
     component: Home,
-    beforeEnter: multiguard([requireAuth, fetchProgramData])
+    beforeEnter: requireAuth
   },
   {
     path: '/programs/:programCode/wizard',
     redirect: { name: 'Step-1' },
+    props: true,
     component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
-    beforeEnter: multiguard([requireAuth, fetchProgramData, stepIsCompleted]),
+    beforeEnter: multiguard([requireAuth, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
@@ -94,8 +95,9 @@ const routes = [
   {
     path: '/programs/:programCode/settings',
     redirect: { path: '/programs/:programCode/settings/general' },
+    props: true,
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
-    beforeEnter: multiguard([requireAuth, fetchProgramData]),
+    beforeEnter: requireAuth,
     children: [
       {
         path: 'general',
@@ -123,14 +125,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
-async function fetchProgramData (to, from, next) {
-  await store.dispatch('program/fetchProgram', to.params.programCode)
-  await store.dispatch('deployments/fetchDeployments')
-  await store.dispatch('content/fetchContent')
-
-  next()
-}
 
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed

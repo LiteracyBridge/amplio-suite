@@ -76,12 +76,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions('ui', [
+      'setNotification'
+    ]),
     ...mapActions('account', [
       'register'
-    ]),
-    ...mapMutations('notification', [
-      'alert',
-      'notice'
     ]),
     async handleRegister () {
       const isFill = [
@@ -90,13 +89,13 @@ export default {
       ].every(Boolean)
 
       if (!isFill) {
-        this.alert('All the field are required')
+        this.setNotification({ type: 'alert', text: 'All the field are required' })
         return
       }
 
       try {
         await this.register({ email: this.email, password: this.password })
-        this.notice('Check your email to validate the registration')
+        this.setNotification({ type: 'notice', text: 'Check your email to validate the registration' })
         this.$emit('change-tab')
       }
       catch (error) {
@@ -106,11 +105,11 @@ export default {
         this.password = ''
 
         if (error.code === 'InvalidPasswordException') {
-          this.alert(error.message)
+          this.setNotification({ type: 'alert', text: error.message })
         } else if (error.code === 'UserLambdaValidationException') {
-          this.alert('The email address provided does not match our records in the system. Please contact support@amplio.org')
+          this.setNotification({ type: 'alert', text: 'The email address provided does not match our records in the system. Please contact support@amplio.org' })
         } else {
-          this.alert(error.message)
+          this.setNotification({ type: 'alert', text: error.message })
         }
 
         this.$refs.name.$el.children[1].focus()

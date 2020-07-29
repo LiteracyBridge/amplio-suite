@@ -10,7 +10,7 @@ const getAllPrograms = async ({ commit, state }) => {
     await commit('setAllPrograms', allPrograms)
   } catch (error) {
     commit('requestError')
-    commit('notification/alert', error.toString(), { root: true })
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
