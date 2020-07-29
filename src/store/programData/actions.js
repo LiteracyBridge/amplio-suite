@@ -87,10 +87,10 @@ const setLanguages = async ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const addLangInput = async ({ commit }) => {
-  await commit('addLangInput')
+const deleteLanguage = async ({ commit }, language) => {
+  await commit('deleteLanguage', language)
+  commit('setDirty', true)
 }
-
 
 export default {
   isCompleted,
@@ -102,5 +102,5 @@ export default {
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
   setLanguages,
-  addLangInput,
+  deleteLanguage,
 }
