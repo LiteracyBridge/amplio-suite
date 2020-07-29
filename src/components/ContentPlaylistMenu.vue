@@ -34,7 +34,7 @@
 
     <span
       tabindex="0"
-      @click="() => addPlaylist(selectedDeployment.deploymentname)"
+      @click="handleAddPlaylist"
       class="block mt-4 p-2u text-green font-bold cursor-pointer"
     >
       + Add playlist
@@ -132,6 +132,10 @@ export default {
     confirmDeletePlaylist() {
       this.removePlaylist(this.modal.eleIndex)
       this.handleCloseModal()
+    },
+    async handleAddPlaylist () {
+      await this.addPlaylist(this.selectedDeployment.deploymentname)
+      this.setPlaylistIndex(this.selectedPlaylistIndex + 1)
     },
     onDraggEnd(event) {
       const { newIndex, oldIndex } = event
