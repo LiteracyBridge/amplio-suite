@@ -155,6 +155,10 @@ services:
     <<: *base
     command: roadmap_update.lambda_handler
 
+  lambda-generate_csv:
+    <<: *base
+    command: generate_csv.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
