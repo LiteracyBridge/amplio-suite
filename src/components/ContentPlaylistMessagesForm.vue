@@ -62,6 +62,7 @@
 
     <span>SDG Target</span>
     <select
+      ref="sdg_target"
       class="py-2 col-start-2 col-end-5"
       :value="selectedMessage.sdg_target"
       @change="(event) => setMessageSDGTarget({ playlistIndex, messageIndex, target: event.target.value })"
@@ -282,9 +283,15 @@ export default {
   watch: {
     selectedMessage () {
       const filter = this.sdgGoals
-      .filter(ele => ele.text === this.selectedMessage.sdg_goal)
+        .filter(ele => ele.text === this.selectedMessage.sdg_goal)
 
-      if (filter.length > 0) this.selectedGoalSection = filter[0].section
+      if (filter.length > 0) {
+        this.selectedGoalSection = filter[0].section
+
+        setTimeout(() => {
+          this.$refs.sdg_target.value = this.selectedMessage.sdg_target
+        }, 50)
+      }
     }
   },
   methods: {
