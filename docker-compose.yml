@@ -125,6 +125,10 @@ services:
     <<: *base
     command: deployment_delete.lambda_handler
 
+  lambda-categories_index:
+    <<: *base
+    command: categories_index.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
