@@ -40,8 +40,19 @@
     </select>
 
     <span class="pl-4">Default Category</span>
-    <select class="py-2">
+    <select
+      class="py-2"
+      :value="selectedMessage.default_category"
+      @change="setMessageCategory({ playlistIndex, messageIndex, category: $event.target.value })"
+    >
       <option value="">Select</option>
+      <option
+        v-for="cat in categories"
+        :key="cat.code"
+        :value="cat.code"
+      >
+        {{ cat.name }} - {{ cat.full_name }}
+      </option>
     </select>
 
     <span>SDG Goals</span>
@@ -248,6 +259,9 @@ export default {
     ...mapState('programData', [
       'languages'
     ]),
+    ...mapState('categories', [
+      'categories'
+    ]),
     ...mapGetters('uiSettings', [
       'selectedMessage'
     ]),
@@ -299,6 +313,7 @@ export default {
       'setMessageVariant',
       'setMessageFormat',
       'setMessageLang',
+      'setMessageCategory',
       'setMessageSDGGoal',
       'setMessageSDGTarget',
       'setMessageKeyPoints'

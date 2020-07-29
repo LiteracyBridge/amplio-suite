@@ -86,6 +86,8 @@ export default {
     isModalOpen: false
   }),
   mounted (){
+    this.fetchCategories()
+
     eventBus.$on('save-crud-data', () => {
       this.updateContent()
     }),
@@ -108,6 +110,9 @@ export default {
     ...mapActions('content', [
       'fetchContent',
       'updateContent',
+    ]),
+    ...mapActions('categories', [
+      'fetchCategories'
     ]),
     handleOpenModal () {
       this.isModalOpen = true
