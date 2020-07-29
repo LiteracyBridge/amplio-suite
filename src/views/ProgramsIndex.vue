@@ -56,9 +56,13 @@ export default {
     }
   },
   created () {
+    this.closeNotification()
     this.getAllPrograms()
   },
   methods: {
+    ...mapActions('ui', [
+      'closeNotification'
+    ]),
     ...mapActions('programs', [
       'getAllPrograms'
     ]),
