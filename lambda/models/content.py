@@ -11,7 +11,8 @@ def message_template(index):
         'default_category': '',
         'variant': '',
         'sdg_goal': '',
-        'sdg_target': ''
+        'sdg_target': '',
+        'key_point': ''
     }
 
 def playlist_template(title):
