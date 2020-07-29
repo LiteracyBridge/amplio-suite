@@ -13,6 +13,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.13.0",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/vue-fontawesome": "^0.1.9",
+    "@trevoreyre/autocomplete-vue": "^2.2.0",
     "amazon-cognito-identity-js": "^4.3.0",
     "aws-sdk": "^2.686.0",
     "axios": "^0.19.2",
