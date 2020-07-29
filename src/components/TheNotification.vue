@@ -31,8 +31,8 @@ export default {
     }
   },
   watch: {
-    hidden () {
-      if (!this.isOpen) {
+    isOpen () {
+      if (this.isOpen) {
         setTimeout(() => this.closeNotification(), 10000)
       }
     }
