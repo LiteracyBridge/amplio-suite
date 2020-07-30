@@ -67,6 +67,7 @@ class Content(Base, SerializerMixin):
 
         new_message = self.content[playlist_index]['messages'][-1].copy()
         new_message['title'] = title
+        new_message['key_point'] = ''
         self.content[playlist_index]['messages'].append(new_message)
 
         return new_message
