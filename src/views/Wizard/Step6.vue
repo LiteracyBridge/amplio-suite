@@ -8,11 +8,13 @@
       What languages will you develop your content in?
     </p>
 
-    <LanguagesSelector
-      :languages="this.languages"
-      :onLanguageSelected="this.onLanguageSelected"
-      :onLanguageDeleted="this.onLanguageDeleted"
-    />
+    <div class="flex justify-center">
+      <LanguagesSelector
+        :languages="this.languages"
+        :onLanguageSelected="this.onLanguageSelected"
+        :onLanguageDeleted="this.onLanguageDeleted"
+      />
+    </div>
   </Box>
 </template>
 

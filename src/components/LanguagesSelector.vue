@@ -3,12 +3,14 @@
     <div
       v-for="language in this.languages"
       :key="language"
-      class="flex"
+      class="flex my-2 text-left"
     >
-      <span>{{languageName(languageFromCode(language))}}</span>
       <button @click="deleteLanguage(language)" aria-label="Delete language">
         <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
       </button>
+      <span class="w-48 block py-2 px-5 rounded">
+        {{languageName(languageFromCode(language))}}
+      </span>
     </div>
 
     <autocomplete
@@ -22,6 +24,26 @@
     />
   </div>
 </template>
+<style>
+.autocomplete {
+  @apply w-64;
+}
+.autocomplete-input {
+  @apply block w-64 py-2 px-5 rounded border border-solid border-gray-500;
+}
+.autocomplete-input:focus {
+  @apply outline-none shadow-outline
+}
+.autocomplete-result-list {
+  @apply bg-gray-300 rounded mt-1
+}
+.autocomplete-result {
+  @apply p-2
+}
+.autocomplete-result:hover {
+  @apply bg-gray-500 cursor-pointer
+}
+</style>
 
 <script>
 import { mapState, mapActions } from 'vuex'
