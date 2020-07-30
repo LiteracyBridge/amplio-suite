@@ -1,14 +1,11 @@
 import { getDefaultState } from './index'
 
-const resetState = (state) => {
-  Object.assign(state, getDefaultState())
-}
-
 const setDirty = (state, status) => {
   state.dirty = status
 }
 
 const requestInit = (state) => {
+  Object.assign(state, getDefaultState())
   state.status = 'loading'
 }
 
@@ -59,6 +56,14 @@ const setMessages = (state, payload) => {
   state.playlists[playlistIndex].messages = messages
 }
 
+const addDuplicateMessage = (state, messageIndex) => {
+  state.duplicateMessage.add(messageIndex)
+}
+
+const removeDuplicateMessage = (state, messageIndex) => {
+  state.duplicateMessage.delete(messageIndex)
+}
+
 const setMessageTitle = (state, payload) => {
   const { playlistIndex, messageIndex, title } = payload
   state.playlists[playlistIndex].messages[messageIndex].title = title
@@ -100,7 +105,6 @@ const removeMessage = (state, payload) => {
 }
 
 export default {
-  resetState,
   setDirty,
   requestInit,
   requestError,
@@ -115,6 +119,8 @@ export default {
   removePlaylist,
 
   setMessages,
+  addDuplicateMessage,
+  removeDuplicateMessage,
   setMessageTitle,
   setMessageLang,
   setMessageVariant,

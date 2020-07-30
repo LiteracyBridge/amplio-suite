@@ -10,6 +10,7 @@ export const getDefaultState = () => ({
   playlists: [],
 
   duplicatePlaylists: new Set(),
+  duplicateMessage: new Set(),
 })
 
 export default {

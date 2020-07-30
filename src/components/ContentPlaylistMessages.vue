@@ -25,6 +25,17 @@
             @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
           />
 
+          <v-tooltip
+            v-if="duplicateMessage.has(index)"
+            text="Duplicate message title in this playlist"
+            class="my-auto"
+          >
+            <font-awesome-icon
+              class="text-orange-600"
+              icon="exclamation-circle"
+            />
+          </v-tooltip>
+
           <span
             @click="setMessageIndex(index)"
             :class="index === selectedMessageIndex ? 'text-blue underline font-semibold' : 'text-black'"
@@ -90,6 +101,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 
 export default {
   computed: {
@@ -101,6 +113,9 @@ export default {
       'selectedDeployment',
       'selectedPlaylist',
       'selectedMessage'
+    ]),
+    ...mapState('content', [
+      'duplicateMessage',
     ]),
     messages: {
       get () {
@@ -116,7 +131,8 @@ export default {
     Draggable,
     PlaylistMessagesForm,
     VInput,
-    VButton
+    VButton,
+    VTooltip,
   },
   data: () => ({
     target: {},

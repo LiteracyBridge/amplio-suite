@@ -110,7 +110,16 @@ const removeMessage = async ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setMessageTitle = ({ commit }, payload) => {
+const setMessageTitle = ({ commit, state }, payload) => {
+  const { playlistIndex, messageIndex, title } = payload
+  const titles = state.playlists[playlistIndex].messages.map(ele => ele.title)
+
+  if (titles.includes(title)) {
+    commit('addDuplicateMessage', messageIndex)
+  } else {
+    commit('removeDuplicateMessage', messageIndex)
+  }
+
   commit('setMessageTitle', payload)
   commit('setDirty', true)
 }
