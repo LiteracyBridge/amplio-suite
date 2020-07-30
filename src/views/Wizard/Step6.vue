@@ -13,6 +13,7 @@
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
+        autofocus="true"
       />
     </div>
   </Box>
@@ -34,9 +35,6 @@ export default {
       'languages',
     ])
   },
-  // mounted () {
-  //   this.$refs['lang_1'][0].$el.children[0].focus()
-  // },
   methods: {
     ...mapActions('wizard', [
       'setLanguages',

@@ -74,6 +74,10 @@ export default {
     onLanguageDeleted: {
       required: true,
       type: Function,
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     }
   },
   computed: {
@@ -83,6 +87,15 @@ export default {
   },
   mounted() {
     this.fetchLanguages()
+  },
+  watch: {
+    supportedLanguages() {
+      if (this.autofocus && this.supportedLanguages.length > 0) {
+        this.$nextTick(() => {
+          this.$refs.language_autocomplete.$refs.input.focus()
+        });
+      }
+    }
   },
   methods: {
     ...mapActions('languages', [
