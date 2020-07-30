@@ -68,7 +68,14 @@ const setPlaylist = async ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setPlaylistTitle = ({ commit }, payload) => {
+const setPlaylistTitle = ({ commit, state }, payload) => {
+  const titles = state.playlists.map(ele => ele.title)
+  if (titles.includes(payload.title)) {
+    commit('addDuplicatePlaylists', payload.playlistIndex)
+  } else {
+    commit('removeDuplicatePlaylists', payload.playlistIndex)
+  }
+
   commit('setPlaylistTitle', payload)
   commit('setDirty', true)
 }

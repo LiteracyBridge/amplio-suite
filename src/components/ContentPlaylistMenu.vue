@@ -17,12 +17,24 @@
         :data-index="index"
       >
         <span
-          :class="playlist.title === selectedPlaylist.title ? 'text-blue underline font-semibold' : 'text-black'"
+          :class="duplicatePlaylists.has(index) ? 'text-red-500 underline font-semibold' : playlist.title === selectedPlaylist.title ? 'text-blue underline font-semibold' : 'text-black'"
           class="py-2 text-left cursor-pointer hover:text-blue hover:underline hover:font-semibold"
           @click="setPlaylistIndex(index)"
         >
           {{ playlist.title }}
         </span>
+
+        <v-tooltip
+          v-if="duplicatePlaylists.has(index)"
+          text="Duplicate playlist title"
+          class="my-auto"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
+
         <button
           :aria-label="`Delete playlist ${playlist.title}`"
           @click="handleOpenModal(index)"
@@ -69,6 +81,7 @@ import Draggable from 'vuedraggable'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 
 export default {
   computed: {
@@ -78,6 +91,9 @@ export default {
     ...mapGetters('uiSettings', [
       'selectedDeployment',
       'selectedPlaylist'
+    ]),
+    ...mapState('content', [
+      'duplicatePlaylists',
     ]),
     playlists: {
       get () {
@@ -91,6 +107,7 @@ export default {
   components: {
     Draggable,
     VButton,
+    VTooltip,
   },
   data: () => ({
     target: {},

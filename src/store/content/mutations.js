@@ -32,6 +32,14 @@ const setPlaylist = (state, payload) => {
   state.playlists = payload
 }
 
+const addDuplicatePlaylists = (state, playlistIndex) => {
+  state.duplicatePlaylists.add(playlistIndex)
+}
+
+const removeDuplicatePlaylists = (state, playlistIndex) => {
+  state.duplicatePlaylists.delete(playlistIndex)
+}
+
 const setPlaylistTitle = (state, payload) => {
   const { playlistIndex, title } = payload
   state.playlists[playlistIndex].title = title
@@ -100,6 +108,8 @@ export default {
   setContent,
 
   setPlaylist,
+  addDuplicatePlaylists,
+  removeDuplicatePlaylists,
   setPlaylistTitle,
   setPlaylistAudience,
   removePlaylist,
