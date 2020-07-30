@@ -1,27 +1,35 @@
 <template>
-  <div v-if="supportedLanguages.length > 0">
-    <div
-      v-for="language in this.languages"
-      :key="language"
-      class="flex my-2 text-left"
-    >
-      <button @click="deleteLanguage(language)" aria-label="Delete language">
-        <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-      </button>
-      <span class="w-48 block py-2 px-5 rounded">
-        {{languageName(languageFromCode(language))}}
-      </span>
-    </div>
+  <div>
+    <div v-if="supportedLanguages.length > 0">
+      <div
+        v-for="language in this.languages"
+        :key="language"
+        class="flex my-2 text-left"
+      >
+        <button @click="deleteLanguage(language)" aria-label="Delete language">
+          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
+        </button>
+        <span class="w-48 block py-2 px-5 rounded">
+          {{languageName(languageFromCode(language))}}
+        </span>
+      </div>
 
-    <autocomplete
-      ref="language_autocomplete"
-      :search="searchLanguage"
-      placeholder="Type a language to add"
-      aria-label="Type a language to add"
-      :get-result-value="languageName"
-      autofocus="true"
-      @submit="this.languageSelected"
-    />
+      <autocomplete
+        ref="language_autocomplete"
+        :search="searchLanguage"
+        placeholder="Type a language to add"
+        aria-label="Type a language to add"
+        :get-result-value="languageName"
+        autofocus="true"
+        @submit="this.languageSelected"
+      />
+    </div>
+    <font-awesome-icon
+        v-else
+        icon="spinner"
+        size="4x"
+        pulse
+        class="mx-auto w-20 h-20" />
   </div>
 </template>
 <style>
