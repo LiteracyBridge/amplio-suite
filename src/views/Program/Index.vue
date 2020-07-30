@@ -1,7 +1,27 @@
 <template>
   <main class="container mx-auto text-center">
-    <div class="py-6 px-4 flex justify-start">
+    <div class="py-6 px-4 flex justify-between">
       <h1 class="text-2xl text-blue">{{ programName }} Program</h1>
+
+      <div>
+        <v-button
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
+          text="Submit"
+        />
+        <v-button
+          size="2x"
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
+          text="Discard Changes"
+        />
+        <v-button
+          size="2x"
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-green' : 'bg-gray-400'"
+          text="Save Change"
+        />
+      </div>
     </div>
 
     <nav aria-label="Program sections" class="flex">
@@ -52,6 +72,9 @@ export default {
   computed: {
     ...mapState('program', [
       'programName',
+    ]),
+    ...mapGetters('ui', [
+      'settingIsDirty',
     ]),
     ...mapGetters('uiSettings', [
       'tabStatus'
