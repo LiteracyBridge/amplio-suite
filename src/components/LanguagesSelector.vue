@@ -6,7 +6,7 @@
         :key="language"
         class="flex my-2 text-left"
       >
-        <button @click="deleteLanguage(language)" aria-label="Delete language">
+        <button @click="deleteLanguage(language)" :aria-label="`Delete ${languageName(languageFromCode(language))} language`">
           <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
         </button>
         <span class="w-48 block py-2 px-5 rounded">
