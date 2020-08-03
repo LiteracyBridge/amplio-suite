@@ -3,6 +3,7 @@ import {
   postProgram,
   putProgram
 } from '@/api/programs.api'
+import { postDeploy } from '@/api/deploy.api'
 
 const generateProgramData = (state, rootState) => ({
   programCode: state.programCode,
@@ -69,9 +70,20 @@ const setProgramName = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const deployProgram = async ({ state, dispatch }) => {
+  try {
+    postDeploy(state.programCode)
+    dispatch('ui/setNotification', { type: 'notice', message: 'Programs successfully deployed' }, { root: true })
+  } catch (error) {
+    dispatch('ui/setNotification', { type: 'alert', message: error.toString() }, { root: true })
+  }
+}
+
 export default {
   fetchProgram,
   createProgram,
   updateProgram,
-  setProgramName
+  setProgramName,
+
+  deployProgram
 }

@@ -8,6 +8,7 @@
           class="mx-2"
           :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
           text="Submit"
+          @click="deployProgram"
         />
         <v-button
           size="2x"
@@ -127,6 +128,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('program', [
+      'deployProgram',
     ]),
     handleOpenModal () {
       this.isModalOpen = true
