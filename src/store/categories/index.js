@@ -29,7 +29,6 @@ export default {
 
       try {
         let categories = await getCategories()
-        categories = categories.filter(cat => !cat.is_leaf)
         await commit('getCategoriesSuccess', categories)
       } catch {
         commit('getCategoriesError')

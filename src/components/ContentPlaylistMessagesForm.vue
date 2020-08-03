@@ -259,9 +259,6 @@ export default {
     ...mapState('programData', [
       'languages'
     ]),
-    ...mapState('categories', [
-      'categories'
-    ]),
     ...mapGetters('uiSettings', [
       'selectedMessage'
     ]),
@@ -269,6 +266,10 @@ export default {
       playlistIndex: state => state.content.selectedPlaylistIndex,
       messageIndex: state => state.content.selectedMessageIndex
     }),
+    categories () {
+      return this.$store.state.categories.categories
+        .filter(cat => !cat.is_leaf)
+    },
     filterTargets () {
       return this.sdgTarget
         .filter(target => target.section === this.selectedGoalSection)
