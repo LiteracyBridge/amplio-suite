@@ -1,9 +1,7 @@
 import io
 import csv
-import sys
-sys.path.append('/var/task/package')
 
-from utils import create_db_session
+from utils import create_db_session, save_file_s3
 from decorators import migration, validate_keys
 from models.content import Content
 
@@ -33,6 +31,8 @@ def lambda_handler(event, context):
             } for message in playlist['messages']]
 
             writer.writerows(rows)
+
+    save_file_s3(output, 'content.csv')
 
     return {
         'status': 200,
