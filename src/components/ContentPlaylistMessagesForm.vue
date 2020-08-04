@@ -40,8 +40,19 @@
     </select>
 
     <span class="pl-4">Default Category</span>
-    <select class="py-2">
+    <select
+      class="py-2"
+      :value="selectedMessage.default_category"
+      @change="setMessageCategory({ playlistIndex, messageIndex, category: $event.target.value })"
+    >
       <option value="">Select</option>
+      <option
+        v-for="cat in categories"
+        :key="cat.code"
+        :value="cat.code"
+      >
+        {{ cat.name }} - {{ cat.full_name }}
+      </option>
     </select>
 
     <span>SDG Goals</span>
@@ -255,6 +266,10 @@ export default {
       playlistIndex: state => state.content.selectedPlaylistIndex,
       messageIndex: state => state.content.selectedMessageIndex
     }),
+    categories () {
+      return this.$store.state.categories.categories
+        .filter(cat => !cat.is_leaf)
+    },
     filterTargets () {
       return this.sdgTarget
         .filter(target => target.section === this.selectedGoalSection)
@@ -299,6 +314,7 @@ export default {
       'setMessageVariant',
       'setMessageFormat',
       'setMessageLang',
+      'setMessageCategory',
       'setMessageSDGGoal',
       'setMessageSDGTarget',
       'setMessageKeyPoints'

@@ -12,6 +12,7 @@ import programData from './programData'
 import deployments from './deployments'
 import content from './content'
 import languages from './languages'
+import categories from './categories'
 
 Vue.use(Vuex)
 
@@ -30,5 +31,6 @@ export default new Vuex.Store({
     deployments,
     content,
     languages,
+    categories,
   }
 })
