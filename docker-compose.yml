@@ -155,9 +155,9 @@ services:
     <<: *base
     command: roadmap_update.lambda_handler
 
-  lambda-generate_csv:
+  lambda-deploy:
     <<: *base
-    command: generate_csv.lambda_handler
+    command: deploy.lambda_handler
 
 volumes:
   node_modules:

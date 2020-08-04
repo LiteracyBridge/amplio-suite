@@ -1,13 +1,17 @@
 import io
 import csv
+import json
 
-from utils import create_db_session, save_file_s3
+from utils import create_db_session, save_to_csv
 from decorators import migration, validate_keys
+from amplio.rolemanager import manager
 from models.content import Content
+
 
 header = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
     'languagecode',	'variant', 'default_category', 'sdg_goals',	'sdg_targets']
 
+manager.open_tables()
 session = create_db_session()
 
 @migration
@@ -24,6 +28,7 @@ def lambda_handler(event, context):
     for content in contents:
         for playlist in content.content:
             rows = [{
+                'deployment_num': content.deployment_id,
                 'playlist_title': playlist['title'], 'message_title': message['title'],
                 'key_points': message['key_point'], 'languagecode': message['language'],
                 'variant': message['variant'], 'default_category': message['default_category'],
@@ -32,9 +37,10 @@ def lambda_handler(event, context):
 
             writer.writerows(rows)
 
-    save_file_s3(output, 'content.csv')
+    organizations = manager.get_organizations_for_program(event['program_code'])
+    save_to_csv(output.getvalue(), f'{organizations[0]}/content.csv')
 
     return {
         'status': 200,
-        'csv': output.getvalue()
+        'message': 'Success'
     }
