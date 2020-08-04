@@ -70,12 +70,12 @@ const setProgramName = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const deployProgram = async ({ state, dispatch }) => {
+const deployProgram = async ({ state }) => {
   try {
-    postDeploy(state.programCode)
-    dispatch('ui/setNotification', { type: 'notice', message: 'Programs successfully deployed' }, { root: true })
+    await postDeploy(state.programCode)
+    return 'success'
   } catch (error) {
-    dispatch('ui/setNotification', { type: 'alert', message: error.toString() }, { root: true })
+    console.log(error)
   }
 }
 

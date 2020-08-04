@@ -8,7 +8,7 @@
           class="mx-2"
           :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
           text="Submit"
-          @click="deployProgram"
+          @click="onSubmit"
         />
         <v-button
           size="2x"
@@ -44,6 +44,8 @@
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
 
+    <v-snackbars :show.sync="showSnackbar" label="The program was successfully deployed" />
+
     <!-- For modal components -->
     <portal to="modalBody" v-if="isModalOpen">
       <p>Save or discard the change before continue.</p>
@@ -61,6 +63,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
+import VSnackbars from '@/components/VSnackbars'
 
 import { fetchData } from '@/utils'
 
@@ -69,6 +72,7 @@ export default {
   props: ['programCode'],
   components: {
     VButton,
+    VSnackbars,
   },
   computed: {
     ...mapState('program', [
@@ -89,7 +93,8 @@ export default {
       sections: ['general', 'deployments', 'content', 'recipients'],
 
       transitionName: 'slide-left',
-      isModalOpen: false
+      isModalOpen: false,
+      showSnackbar: false,
     }
   },
   created () {
@@ -132,6 +137,10 @@ export default {
     ...mapActions('program', [
       'deployProgram',
     ]),
+    async onSubmit () {
+      const result = await this.deployProgram()
+      if (result === 'success') this.showSnackbar = true
+    },
     handleOpenModal () {
       this.isModalOpen = true
       this.setModal('Save or discard the change')
