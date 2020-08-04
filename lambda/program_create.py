@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/var/task/package')
-
 from utils import create_db_session
 from models.project import Project
 from models.program import Program

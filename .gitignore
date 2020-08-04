@@ -31,3 +31,5 @@ __pycache__
 package
 lambda/output
 lambda/env.local.bash
+lambda/partial.zip
+lambda/python/

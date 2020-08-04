@@ -1,7 +1,4 @@
 import os
-import sys
-sys.path.append('/var/task/package')
-
 from utils import get_db_url
 from decorators import migration, validate_keys
 from amplio.rolemanager import manager
