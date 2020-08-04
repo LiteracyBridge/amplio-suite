@@ -1,7 +1,7 @@
 """Create category table
 
 Revision ID: 0a4e5bc1d211
-Revises: 8331cd65623e
+Revises: 0eb04d934e76
 Create Date: 2020-08-03 12:04:32.025690
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '0a4e5bc1d211'
-down_revision = '8331cd65623e'
+down_revision = '0eb04d934e76'
 branch_labels = None
 depends_on = None
 
