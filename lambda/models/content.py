@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, JSON, UniqueConstraint
+from sqlalchemy import Column, String, JSON, UniqueConstraint, ForeignKey
 from sqlalchemy_serializer import SerializerMixin
 
 from models.base import Base
@@ -30,7 +30,7 @@ class Content(Base, SerializerMixin):
         UniqueConstraint('program_code', 'deployment_id', name='content_uniqueness_key'),
     )
     program_code = Column(String(255), primary_key=True)
-    deployment_id = Column(String(255), primary_key=True)
+    deployment_id = Column(String(255), ForeignKey('deployments.deployment'), primary_key=True)
     content = Column(JSON, nullable=False)
 
     def __init__(self, program_code, deployment_id, content=[]):
