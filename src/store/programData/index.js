@@ -15,7 +15,6 @@ export const getDefaultState = () => ({
   deploymentsFirst: '',
 
   languages: [],
-  amountOfLang: 1,
 
   feedbackFrequently: '',
   feedbackFrequentlyOther: ''

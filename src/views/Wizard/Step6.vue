@@ -8,25 +8,14 @@
       What languages will you develop your content in?
     </p>
 
-    <v-input
-      v-for="index in amountOfLang"
-      :key="index"
-      :ref="`lang_${index}`"
-      :value="languages[index]"
-      type="text"
-      aria-labelledby="lang"
-      placeholder="Choose language"
-      @input="(event) => setLanguages({ lang: event.target.value, index })"
-    />
-
-    <span
-      tabindex="0"
-      class="mt-4 p-1 text-green font-bold cursor-pointer"
-      @click="addInput"
-      @keyup.enter="addInput"
-    >
-      + Add language
-    </span>
+    <div class="flex justify-center">
+      <LanguagesSelector
+        :languages="this.languages"
+        :onLanguageSelected="this.onLanguageSelected"
+        :onLanguageDeleted="this.onLanguageDeleted"
+        autofocus="true"
+      />
+    </div>
   </Box>
 </template>
 
@@ -34,33 +23,29 @@
 import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
-import VInput from '@/components/VInput'
+import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   components: {
     Box,
-    VInput
+    LanguagesSelector,
   },
   computed: {
     ...mapState('programData', [
       'languages',
-      'amountOfLang'
     ])
-  },
-  mounted () {
-    this.$refs['lang_1'][0].$el.children[0].focus()
   },
   methods: {
     ...mapActions('wizard', [
-      'setLanguages'
+      'setLanguages',
+      'deleteLanguage',
     ]),
-    ...mapActions('programData', [
-      'addLangInput'
-    ]),
-    async addInput () {
-      await this.addLangInput()
-      const key = `lang_${this.amountOfLang}`
-      this.$refs[key][0].$el.children[0].focus()
+    onLanguageSelected(language) {
+      let index = this.languages.length
+      this.setLanguages({ lang: language, index })
+    },
+    onLanguageDeleted(language) {
+      this.deleteLanguage(language)
     }
   }
 }

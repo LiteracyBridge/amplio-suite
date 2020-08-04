@@ -96,6 +96,11 @@ const setLanguages = async ({ dispatch }, payload) => {
   await check('languages', 6, dispatch)
 }
 
+const deleteLanguage = async ({ dispatch }, languageCode) => {
+  await dispatch('programData/deleteLanguage', languageCode, { root: true })
+  await check('languages', 6, dispatch)
+}
+
 export default {
   setStep,
   nextStep,
@@ -112,5 +117,6 @@ export default {
   setDeploymentsFirst,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
-  setLanguages
+  setLanguages,
+  deleteLanguage,
 }

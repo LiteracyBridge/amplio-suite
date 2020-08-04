@@ -21,7 +21,6 @@ const setProgramData = (state, payload) => {
   state.feedbackFrequently = payload.feedback_frequency
   state.feedbackFrequentlyOther = payload.feedback_frequency_other
   state.languages = payload.languages
-  state.amountOfLang = payload.languages.length
 }
 
 const setProgramCode = (state, payload) => {
@@ -57,11 +56,13 @@ const setDeploymentsFirst = (state, payload) => {
 }
 
 const setLanguages = (state, payload) => {
-  state.languages[payload.index] = payload.lang
+  const languages = [...state.languages]
+  languages[payload.index] = payload.lang
+  state.languages = languages
 }
 
-const addLangInput = (state) => {
-  state.amountOfLang++
+const deleteLanguage = (state, language) => {
+  state.languages = state.languages.filter(lang => lang != language)
 }
 
 const setFeedbackFrequently = (state, payload) => {
@@ -87,7 +88,7 @@ export default {
   setDeploymentsLength,
   setDeploymentsFirst,
   setLanguages,
-  addLangInput,
+  deleteLanguage,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
 }
