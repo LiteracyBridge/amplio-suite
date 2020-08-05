@@ -13,6 +13,7 @@ import deployments from './deployments'
 import content from './content'
 import languages from './languages'
 import categories from './categories'
+import sustainableDevelopments from './sustainableDevelopments'
 
 Vue.use(Vuex)
 
@@ -32,5 +33,6 @@ export default new Vuex.Store({
     content,
     languages,
     categories,
+    sustainableDevelopments,
   }
 })
