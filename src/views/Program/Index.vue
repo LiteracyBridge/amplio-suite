@@ -15,12 +15,14 @@
           class="mx-2"
           :color="settingIsDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
           text="Discard Changes"
+          @click="onDiscardChanges"
         />
         <v-button
           size="2x"
           class="mx-2"
           :color="settingIsDirty ? 'bg-green' : 'bg-gray-400'"
           text="Save Change"
+          @click="onSaveChanges"
         />
       </div>
     </div>
@@ -62,6 +64,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
 import VButton from '@/components/Button'
 import VSnackbars from '@/components/VSnackbars'
 
@@ -140,6 +143,12 @@ export default {
     async onSubmit () {
       const result = await this.deployProgram()
       if (result === 'success') this.showSnackbar = true
+    },
+    onSaveChanges () {
+      eventBus.$emit('save-crud-data')
+    },
+    onDiscardChanges () {
+      eventBus.$emit('discard-crud-data')
     },
     handleOpenModal () {
       this.isModalOpen = true
