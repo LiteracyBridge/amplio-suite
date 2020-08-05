@@ -4,11 +4,13 @@ import json
 
 from utils import create_db_session, save_to_csv
 from decorators import migration, validate_keys
+from models.deployment import Deployment
 from models.content import Content
 
 
-header = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
+header_content = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
     'languagecode',	'variant', 'default_category', 'sdg_goals',	'sdg_targets']
+header_deplo = ['project', 'deployment_num', 'startdate', 'enddate', 'component', 'name']
 
 session = create_db_session()
 
@@ -17,7 +19,7 @@ session = create_db_session()
 def lambda_handler(event, context):
     # Generate the content.csv file
     output =  io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=header)
+    writer = csv.DictWriter(output, fieldnames=header_content)
     writer.writeheader()
 
     contents = session.query(Content) \
@@ -37,6 +39,29 @@ def lambda_handler(event, context):
             writer.writerows(rows)
 
     save_to_csv(output.getvalue(), f"{event['program_code']}/content.csv")
+
+    # Generate the deployment_spec.csv file
+    output =  io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=header_deplo)
+    writer.writeheader()
+
+    deployments = session.query(Deployment) \
+        .filter(Deployment.project == event['program_code']) \
+        .all()
+
+    for deployment in deployments:
+        rows = [{
+            'project': event['program_code'],
+            'deployment_num': deployment.deploymentnumber,
+            'startdate': deployment.startdate.isoformat(),
+            'enddate': deployment.enddate.isoformat(),
+            'component': deployment.component,
+            'name': f"{event['program_code']}-{str(deployment.startdate.year)[2:]}-{deployment.startdate.month}"
+        } for message in playlist['messages']]
+
+        writer.writerows(rows)
+
+    save_to_csv(output.getvalue(), f"{event['program_code']}/deployment_spec.csv")
 
     return {
         'status': 200,
