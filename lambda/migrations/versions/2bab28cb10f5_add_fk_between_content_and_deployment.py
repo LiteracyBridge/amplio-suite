@@ -1,7 +1,7 @@
 """add FK between content and deployment
 
 Revision ID: 2bab28cb10f5
-Revises: 0eb04d934e76
+Revises: c0b39e045fba
 Create Date: 2020-08-03 20:46:10.323437
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '2bab28cb10f5'
-down_revision = '0eb04d934e76'
+down_revision = 'c0b39e045fba'
 branch_labels = None
 depends_on = None
 
