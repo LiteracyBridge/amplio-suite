@@ -6,6 +6,7 @@ from utils import create_db_session, save_to_csv
 from decorators import migration, validate_keys
 from models.deployment import Deployment
 from models.content import Content
+from models.sustainable_development import SustainableDevelopmentGoals, SustainableDevelopmentTargets
 
 
 header_content = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
@@ -28,15 +29,30 @@ def lambda_handler(event, context):
 
     for content in contents:
         for playlist in content.content:
-            rows = [{
-                'deployment_num': content.deployment_id,
-                'playlist_title': playlist['title'], 'message_title': message['title'],
-                'key_points': message['key_point'], 'languagecode': message['language'],
-                'variant': message['variant'], 'default_category': message['default_category'],
-                'sdg_goals': message['sdg_goal'], 'sdg_targets': message['sdg_target']
-            } for message in playlist['messages']]
+            for message in playlist['messages']:
+                if message['sdg_goal']:
+                    goal = session.query(SustainableDevelopmentGoals) \
+                        .filter(SustainableDevelopmentGoals.id == message['sdg_goal']) \
+                        .first() \
+                        .label
 
-            writer.writerows(rows)
+                    target = session.query(SustainableDevelopmentTargets) \
+                        .filter(SustainableDevelopmentTargets.id == message['sdg_target']) \
+                        .first() \
+                        .label
+                else:
+                    goal = ''
+                    target = ''
+
+                row = {
+                    'deployment_num': content.deployment_id,
+                    'playlist_title': playlist['title'], 'message_title': message['title'],
+                    'key_points': message['key_point'], 'languagecode': message['language'],
+                    'variant': message['variant'], 'default_category': message['default_category'],
+                    'sdg_goals': goal, 'sdg_targets': target
+                }
+
+                writer.writerow(row)
 
     save_to_csv(output.getvalue(), f"{event['program_code']}/content.csv")
 
@@ -56,7 +72,7 @@ def lambda_handler(event, context):
             'startdate': deployment.startdate.isoformat(),
             'enddate': deployment.enddate.isoformat(),
             'component': deployment.component,
-            'name': f"{event['program_code']}-{str(deployment.startdate.year)[2:]}-{deployment.startdate.month}"
+            'name': f"{event['program_code']}-{str(deployment.startdate.year)[2:]}-{deployment.deploymentnumber}"
         } for message in playlist['messages']]
 
         writer.writerows(rows)
