@@ -1,20 +1,29 @@
 <template>
   <div v-if="selectedMessage" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
-    <select
-      class="py-2"
+    <multiselect
+      v-if="supportedLanguages.length > 0"
       :value="selectedMessage.language"
-      @change="(event) => setMessageLang({ playlistIndex, messageIndex, lang: event.target.value })"
+      :options="languages"
+      :multiple="true"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :preserve-search="true"
+      @input="(lang) => setMessageLang({ playlistIndex, messageIndex, lang})"
+      placeholder="Select the languages"
     >
-      <option value="">All</option>
-      <option
-        v-for="lang in languages"
-        :key="lang"
-        :value="lang"
-      >
-        {{ lang }}
-      </option>
-    </select>
+      <template slot="option" slot-scope="props">
+        <div class="option__desc">
+          <span class="option__title">{{ languageFromCode(props.option) }}</span>
+        </div>
+      </template>
+    </multiselect>
+    <font-awesome-icon
+      v-else
+      icon="spinner"
+      size="2x"
+      pulse
+      class="mx-auto w-20 h-20" />
 
     <span class="pl-4">Variant</span>
     <v-input
@@ -101,6 +110,8 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
+
 const sdgGoals = [
   { section: 1, text: 'No Poverty' },
   { section: 2, text: 'Zero Hunger' },
@@ -256,6 +267,9 @@ import VInput from '@/components/VInput'
 
 export default {
   computed: {
+    ...mapState('languages', {
+      supportedLanguages: state => state.languages,
+    }),
     ...mapState('programData', [
       'languages'
     ]),
@@ -276,7 +290,8 @@ export default {
     }
   },
   components: {
-    VInput
+    VInput,
+    Multiselect,
   },
   data () {
     return {
@@ -292,8 +307,13 @@ export default {
       sdgGoals,
       sdgTarget,
 
-      selectedGoalSection: -1
+      selectedGoalSection: -1,
+
+      value: null,
     }
+  },
+  mounted() {
+    this.fetchLanguages()
   },
   watch: {
     selectedMessage () {
@@ -310,6 +330,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('languages', [
+      'fetchLanguages',
+    ]),
     ...mapActions('content', [
       'setMessageVariant',
       'setMessageFormat',
@@ -319,6 +342,11 @@ export default {
       'setMessageSDGTarget',
       'setMessageKeyPoints'
     ]),
+    languageFromCode (code) {
+      return this.supportedLanguages
+        .find(language => language.code == code)
+        .name
+    },
     selectGoal (event) {
       const goal = event.target.value
 
