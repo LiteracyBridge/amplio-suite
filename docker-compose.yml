@@ -52,8 +52,8 @@ services:
       DOCKER_LAMBDA_STAY_OPEN: 1
       DOCKER_LAMBDA_WATCH: 1
     volumes:
-      - './lambda:/var/task:ro,delegated'
-      - package:/var/task/package
+      - './lambda/site.py:/var/lang/lib/python3.8/site.py'
+      - './lambda:/opt/python:ro,delegated'
     depends_on:
       - db
 
