@@ -37,7 +37,6 @@ import { eventBus } from '@/eventBus'
 import Box from '@/components/ProgramBox'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramSelectDeploymet from '@/components/ProgramSelectDeploymet'
-// import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
 import PlaylistMessages from '@/components/ContentPlaylistMessages'
 
@@ -64,7 +63,6 @@ export default {
     Box,
     ProgramSideMenu,
     ProgramSelectDeploymet,
-    // PlaylistMenu,
     PlaylistHeader,
     PlaylistMessages,
   },
