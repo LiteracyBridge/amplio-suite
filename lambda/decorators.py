@@ -1,7 +1,5 @@
 import os
-import sys
 import functools
-sys.path.append('/var/task/package')
 
 from utils import get_db_url
 from dotenv import load_dotenv

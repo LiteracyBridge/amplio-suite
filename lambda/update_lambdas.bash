@@ -37,31 +37,29 @@ functions=$(aws lambda list-functions | jq '[.Functions[].FunctionName] | join("
 subnet_ids=$(aws ec2 describe-subnets | jq -r '[.Subnets[].SubnetId] | join(",")')
 sec_group_id=$(aws ec2 describe-security-groups --group-name 'default' | jq -r '.SecurityGroups[].GroupId')
 
-echo -n "Zip the python libs: ..."
-zip -r9 -q partial.zip ./package
-zip -g -q partial.zip utils.py
-zip -g -q partial.zip decorators.py
-zip -g -q partial.zip .env
-zip -r9 -g -q partial.zip migrations
-zip -g -q partial.zip alembic.ini
-zip -r9 -g -q partial.zip models
-zip -r9 -g -q partial.zip amplio
-echo -e "\rZip the python libs: Done"
+echo "Zip the python libs: ..."
+mkdir -p python && rm -rf ./python/ && mkdir ./python/
+cp -r ./package/ utils.py decorators.py .env ./migrations alembic.ini ./models ./amplio python/
+zip -r9 -q partial.zip ./python
+echo "Zip the python libs: Done. Uploading layer..."
 
+layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
+echo "The layer ARN is: ${layer_arn}"
+rm -rf partial.zip ./python/
 set +e
 
 for fun in "${functions_to_deploy[@]}"
 do
   echo -e "\nProcessing function ${fun}"
 	echo -e "\tMaking the zip"
-	cp partial.zip ${fun}.zip
-	zip -g -q ${fun}.zip ${fun}.py
+	zip -q ${fun}.zip ${fun}.py
 
   if [[ "$functions" == *"$fun"* ]]; then
     echo -e "\tUpdating function ${fun}"
   	aws lambda update-function-configuration \
 			--timeout 30 \
 			--function-name ${fun} \
+			--layers ${layer_arn} \
 			--environment "Variables={ENV=AWS}" >> output
   	aws lambda update-function-code \
 			--function-name ${fun} \
@@ -72,6 +70,7 @@ do
 			--timeout 30 \
 			--role ${role_arn} \
 			--function-name ${fun} \
+			--layers ${layer_arn} \
 			--runtime python3.8 \
 			--zip-file fileb://${fun}.zip \
 			--handler ${fun}.lambda_handler \
@@ -82,5 +81,3 @@ do
   # Remove zip
 	rm ${fun}.zip
 done
-
-rm partial.zip
