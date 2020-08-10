@@ -1,6 +1,7 @@
 // FIXME Write the real api functions
 const recipientTemplate = (index) => ({
   title: `Recipient ${index}`,
+  deployments: [],
   country: '',
   region: '',
   district: '',
