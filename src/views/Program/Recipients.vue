@@ -28,6 +28,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
+
 import Box from '@/components/ProgramBox'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
@@ -48,11 +50,21 @@ export default {
   data: () => ({
     selectedRecipientIndex: 0
   }),
-  mounted () {
-    this.fetchRecipients()
+  mounted (){
+    eventBus.$on('save-crud-data', () => {
+      this.updateRecipients()
+    }),
+    eventBus.$on('discard-crud-data', () => {
+      this.fetchRecipients()
+    })
+  },
+  beforeDestroy () {
+    eventBus.$off('save-crud-data')
+    eventBus.$off('discard-crud-data')
   },
   methods: {
     ...mapActions('recipients', [
+      'updateRecipients',
       'fetchRecipients',
       'addRecipient',
       'removeRecipient',
