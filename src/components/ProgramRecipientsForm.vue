@@ -39,9 +39,9 @@
     />
 
     <span class="pl-4">Language</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
+    <language-multi-selector
+      :values="recipient.language"
+      v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
     />
 
     <span>District</span>
@@ -165,6 +165,7 @@
 import { mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
+import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
 export default {
   props: {
@@ -179,6 +180,7 @@ export default {
   },
   components: {
     VInput,
+    LanguageMultiSelector,
   },
   data: () => ({
     agentIsOpen: false,
@@ -192,9 +194,10 @@ export default {
       'setRecipientDistrict',
       'setRecipientCommunity',
       'setRecipientGroupName',
+      'setRecipientLang',
       'setRecipientNumberTalkingBooks',
       'setRecipientDBFields',
-    ])
+    ]),
   }
 }
 </script>
