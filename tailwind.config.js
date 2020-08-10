@@ -43,5 +43,8 @@ module.exports = {
         'content-message': '0.5fr 1fr 0.5fr 1fr'
       }
     }
+  },
+  variants: {
+    fontSize: ['responsive', 'hover', 'focus'],
   }
 }
