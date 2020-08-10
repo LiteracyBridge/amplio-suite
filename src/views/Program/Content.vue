@@ -5,10 +5,16 @@
     title="content"
     help="You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
   >
-    <select-deploymet :dirty="dirty" :on-change="(deployment) => fetchContent(deployment)" />
+    <program-select-deploymet :dirty="dirty" :on-change="(deployment) => fetchContent(deployment)" />
 
-    <div class="grid" style="grid-template-columns: 1.3fr 5fr;">
-      <playlist-menu />
+    <div class="grid" style="grid-template-columns: 1fr 4fr;">
+      <program-side-menu
+        name="playlist"
+        v-model="playlists"
+        :on-select="setPlaylistIndex"
+        :on-add="onAddPlaylist"
+        :on-remove="removePlaylist"
+      />
 
       <div class="text-left">
         <playlist-header />
@@ -24,13 +30,14 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
 import Box from '@/components/ProgramBox'
-import SelectDeploymet from '@/components/ProgramSelectDeploymet'
-import PlaylistMenu from '@/components/ContentPlaylistMenu'
+import ProgramSideMenu from '@/components/ProgramSideMenu'
+import ProgramSelectDeploymet from '@/components/ProgramSelectDeploymet'
+// import PlaylistMenu from '@/components/ContentPlaylistMenu'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
 import PlaylistMessages from '@/components/ContentPlaylistMessages'
 
@@ -40,11 +47,24 @@ export default {
       'status',
       'dirty',
     ]),
+    ...mapGetters('uiSettings', [
+      'selectedDeployment',
+      'selectedPlaylist'
+    ]),
+    playlists: {
+      get () {
+        return this.$store.state.content.playlists
+      },
+      set (value) {
+        this.setPlaylist(value)
+      }
+    },
   },
   components: {
     Box,
-    SelectDeploymet,
-    PlaylistMenu,
+    ProgramSideMenu,
+    ProgramSelectDeploymet,
+    // PlaylistMenu,
     PlaylistHeader,
     PlaylistMessages,
   },
@@ -66,10 +86,20 @@ export default {
     ...mapActions('content', [
       'fetchContent',
       'updateContent',
+      'setPlaylist',
+      'addPlaylist',
+      'removePlaylist',
     ]),
     ...mapActions('categories', [
       'fetchCategories'
     ]),
+    ...mapActions('uiSettings', [
+      'setPlaylistIndex'
+    ]),
+    async onAddPlaylist () {
+      await this.addPlaylist(this.selectedDeployment.deploymentname)
+      this.setPlaylistIndex(this.selectedPlaylistIndex + 1)
+    },
   }
 }
 </script>
