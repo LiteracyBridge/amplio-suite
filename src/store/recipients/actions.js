@@ -104,6 +104,11 @@ const setRecipientLang = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientAgentGender = ({ commit }, payload) => {
+  commit('setRecipientAgentGender', payload)
+  commit('setDirty', true)
+}
+
 const setRecipientNumberTalkingBooks = ({ commit }, payload) => {
   commit('setRecipientNumberTalkingBooks', payload)
   commit('setDirty', true)
@@ -134,5 +139,6 @@ export default {
   setRecipientGroupName,
   setRecipientNumberTalkingBooks,
   setRecipientLang,
+  setRecipientAgentGender,
   setRecipientDBFields,
 }

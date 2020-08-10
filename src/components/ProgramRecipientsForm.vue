@@ -80,7 +80,7 @@
 
     <span class="pl-4">Number of Talking Books</span>
     <v-input
-      type="text"
+      type="number"
       mx="mx-0 w-full"
       :value="recipient.numberTalkingBooks"
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
@@ -109,11 +109,11 @@
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
       <span>Agent Gender</span>
-      <v-input
-        type="text"
-        mx="mx-0 w-full"
-        :value="recipient.community"
-        @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+      <multiselect
+        :options="['male', 'female', 'other']"
+        :value="recipient.agentGender"
+        placeholder="Select the agenr gender"
+        @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
       />
 
       <span class="pl-4">Suport Entity</span>
@@ -156,7 +156,7 @@
         </span>
         <v-input
           :key="`${field.label}-value`"
-          type="text"
+          type="number"
           mx="mx-0 w-full"
           :value="field.value"
           @input="setRecipientDBFields({ recipientIndex, fieldIndex: index, value: $event.target.value })"
@@ -216,6 +216,7 @@ export default {
       'setRecipientCommunity',
       'setRecipientGroupName',
       'setRecipientLang',
+      'setRecipientAgentGender',
       'setRecipientNumberTalkingBooks',
       'setRecipientDBFields',
     ]),
