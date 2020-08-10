@@ -53,6 +53,11 @@ const setRecipientGroupName = (state, payload) => {
   state.recipients[recipientIndex].groupName = groupName
 }
 
+const setRecipientLang = (state, payload) => {
+  const { recipientIndex, langs } = payload
+  state.recipients[recipientIndex].language = langs
+}
+
 const setRecipientNumberTalkingBooks = (state, payload) => {
   const { recipientIndex, numberTalkingBooks } = payload
   state.recipients[recipientIndex].numberTalkingBooks = numberTalkingBooks
@@ -76,6 +81,7 @@ export default {
   setRecipientDistrict,
   setRecipientCommunity,
   setRecipientGroupName,
+  setRecipientLang,
   setRecipientNumberTalkingBooks,
   setRecipientDBFields,
 }

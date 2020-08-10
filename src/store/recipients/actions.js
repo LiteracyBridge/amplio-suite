@@ -93,6 +93,11 @@ const setRecipientGroupName = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientLang = ({ commit }, payload) => {
+  commit('setRecipientLang', payload)
+  commit('setDirty', true)
+}
+
 const setRecipientNumberTalkingBooks = ({ commit }, payload) => {
   commit('setRecipientNumberTalkingBooks', payload)
   commit('setDirty', true)
@@ -121,5 +126,6 @@ export default {
   setRecipientCommunity,
   setRecipientGroupName,
   setRecipientNumberTalkingBooks,
+  setRecipientLang,
   setRecipientDBFields,
 }
