@@ -14,6 +14,7 @@ import './plugins/fontawesome'
 
 // Style
 import '@/assets/css/tailwind.scss'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 // Layouts
 import Default from '@/layouts/Default'

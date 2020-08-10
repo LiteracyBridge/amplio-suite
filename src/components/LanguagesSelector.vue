@@ -40,16 +40,16 @@
   @apply block w-64 py-2 px-5 rounded border border-solid border-gray-500;
 }
 .autocomplete-input:focus {
-  @apply outline-none shadow-outline
+  @apply outline-none shadow-outline;
 }
 .autocomplete-result-list {
-  @apply bg-gray-300 rounded mt-1
+  @apply bg-gray-300 rounded mt-1;
 }
 .autocomplete-result {
-  @apply p-2
+  @apply p-2;
 }
 .autocomplete-result:hover {
-  @apply bg-gray-500 cursor-pointer
+  @apply bg-gray-500 cursor-pointer;
 }
 </style>
 
