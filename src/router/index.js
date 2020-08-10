@@ -110,7 +110,11 @@ const routes = [
       {
         path: 'content',
         component: () => import(/* webpackChunkName: "content" */ '../views/Program/Content.vue')
-      }
+      },
+      {
+        path: 'recipients',
+        component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/Recipients.vue')
+      },
     ]
   },
   {

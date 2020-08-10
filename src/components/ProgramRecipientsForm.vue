@@ -1,0 +1,200 @@
+<template>
+  <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
+    <span>Title</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.title"
+      @input="setRecipientTitle({ recipientIndex, title: $event.target.value })"
+    />
+
+    <span class="pl-4">Deployments</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+    />
+
+    <span>Country</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.country"
+      @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
+    />
+
+    <span class="pl-4">Group Name</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.groupName"
+      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+    />
+
+    <span>Region</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.region"
+      @input="setRecipientRegion({ recipientIndex, region: $event.target.value })"
+    />
+
+    <span class="pl-4">Language</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+    />
+
+    <span>District</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.district"
+      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
+    />
+
+    <span class="pl-4">Listening Model</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+    />
+
+    <span>Community</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.community"
+      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+    />
+
+    <span class="pl-4">Number of Talking Books</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.numberTalkingBooks"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+    />
+
+    <span>Agent</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.agent"
+    />
+
+    <span
+      tabindex="0"
+      :class="agentIsOpen ? 'underline font-semibold' : ''"
+      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+      @click="agentIsOpen = !agentIsOpen"
+    >
+      {{ agentIsOpen ? 'Hide Details' : 'Show Details' }}
+      <font-awesome-icon :icon="agentIsOpen ? 'chevron-up' : 'chevron-down'" />
+    </span>
+    <span></span>
+
+    <div
+      :class="agentIsOpen ? 'visible' : 'hidden'"
+      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
+    >
+      <span>Agent Gender</span>
+      <v-input
+        type="text"
+        mx="mx-0 w-full"
+        :value="recipient.community"
+        @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+      />
+
+      <span class="pl-4">Suport Entity</span>
+      <v-input
+        type="text"
+        mx="mx-0 w-full"
+        :value="recipient.numberTalkingBooks"
+        @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+      />
+    </div>
+
+    <span>Direct Beneficiaries</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.directBeneficiaries"
+    />
+
+    <span
+      tabindex="0"
+      :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
+      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+      @click="beneficiariesIsOpen = !beneficiariesIsOpen"
+    >
+      {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
+      <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
+    </span>
+    <span></span>
+
+    <div
+      :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
+      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
+    >
+      <template v-for="(field, index) in recipient.directBeneficiariesFields">
+        <span
+          :key="`${field.label}-label`"
+          :class="index % 2 === 0 ? '' : 'pl-4'"
+        >
+          {{ field.label }}
+        </span>
+        <v-input
+          :key="`${field.label}-value`"
+          type="text"
+          mx="mx-0 w-full"
+          :value="field.value"
+          @input="setRecipientDBFields({ recipientIndex, fieldIndex: index, value: $event.target.value })"
+        />
+      </template>
+    </div>
+
+    <span>Indirect beneficiaries</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.indirectBeneficiaries"
+    />
+  </div>
+</template>
+
+<script>
+import { mapActions } from 'vuex'
+
+import VInput from '@/components/VInput'
+
+export default {
+  props: {
+    recipientIndex: {
+      type: Number,
+      required: true
+    },
+    recipient: {
+      type: Object,
+      required: true
+    }
+  },
+  components: {
+    VInput,
+  },
+  data: () => ({
+    agentIsOpen: false,
+    beneficiariesIsOpen: false
+  }),
+  methods: {
+    ...mapActions('recipients', [
+      'setRecipientTitle',
+      'setRecipientCountry',
+      'setRecipientRegion',
+      'setRecipientDistrict',
+      'setRecipientCommunity',
+      'setRecipientGroupName',
+      'setRecipientNumberTalkingBooks',
+      'setRecipientDBFields',
+    ])
+  }
+}
+</script>
