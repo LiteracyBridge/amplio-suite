@@ -9,10 +9,22 @@
     />
 
     <span class="pl-4">Deployments</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-    />
+    <multiselect
+      :options="deployments"
+      :value="recipient.deployments"
+      :multiple="true"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :preserve-search="true"
+      @input="(deployments) => setRecipientDeployments({ recipientIndex, deployments })"
+      placeholder="Select the deployments"
+    >
+      <template slot="option" slot-scope="props">
+        <div class="option__desc">
+          <span class="option__title">Deployment {{ props.option }}</span>
+        </div>
+      </template>
+    </multiselect>
 
     <span>Country</span>
     <v-input
@@ -165,6 +177,7 @@
 import { mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
+import Multiselect from 'vue-multiselect'
 import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
 export default {
@@ -178,8 +191,15 @@ export default {
       required: true
     }
   },
+  computed: {
+    deployments () {
+      return this.$store.state.deployments.items
+        .map(item => item.deploymentnumber)
+    }
+  },
   components: {
     VInput,
+    Multiselect,
     LanguageMultiSelector,
   },
   data: () => ({
@@ -189,6 +209,7 @@ export default {
   methods: {
     ...mapActions('recipients', [
       'setRecipientTitle',
+      'setRecipientDeployments',
       'setRecipientCountry',
       'setRecipientRegion',
       'setRecipientDistrict',

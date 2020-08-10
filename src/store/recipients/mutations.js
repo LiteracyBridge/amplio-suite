@@ -28,6 +28,11 @@ const setRecipientTitle = (state, payload) => {
   state.recipients[recipientIndex].title = title
 }
 
+const setRecipientDeployments = (state, payload) => {
+  const { recipientIndex, deployments } = payload
+  state.recipients[recipientIndex].deployments = deployments
+}
+
 const setRecipientCountry = (state, payload) => {
   const { recipientIndex, country } = payload
   state.recipients[recipientIndex].country = country
@@ -76,6 +81,7 @@ export default {
   setRecipients,
 
   setRecipientTitle,
+  setRecipientDeployments,
   setRecipientCountry,
   setRecipientRegion,
   setRecipientDistrict,
