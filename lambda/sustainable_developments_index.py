@@ -9,8 +9,14 @@ session = create_db_session()
 
 @migration
 def lambda_handler(event, context):
+    goals = session.query(SustainableDevelopmentGoals).all()
+    data = [{
+        'goal': goal.label,
+        'section': goal.section,
+        'targets': [{ 'label': target.label, 'subsection': target.subsection } for target in goal.targets]
+    } for goal in goals]
+
     return {
         'statusCode': 200,
-        'goals': [goal.to_dict() for goal in session.query(SustainableDevelopmentGoals).all()],
-        'targets': [target.to_dict() for target in session.query(SustainableDevelopmentTargets).all()]
+        'data': data
     }
