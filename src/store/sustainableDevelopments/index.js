@@ -5,18 +5,16 @@ export default {
 
   state: () => ({
     status: '',
-    goals: [],
-    targets: []
+    goals: []
   }),
 
   mutations: {
     getSustainableDevelopmentsRequest (state) {
       state.status = 'loading'
     },
-    getSustainableDevelopmentsSuccess (state, payload) {
+    getSustainableDevelopmentsSuccess (state, goals) {
       state.status = 'success'
-      state.goals = payload.goals
-      state.targets = payload.targets
+      state.goals = goals
     },
     getSustainableDevelopmentsError (state) {
       state.status = 'error'
@@ -31,7 +29,7 @@ export default {
 
       try {
         const response = await getSustainableDevelopments()
-        await commit('getSustainableDevelopmentsSuccess', response)
+        await commit('getSustainableDevelopmentsSuccess', response.data)
       } catch {
         commit('getSustainableDevelopmentsError')
       }

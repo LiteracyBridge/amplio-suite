@@ -15,25 +15,25 @@
       class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
         v-for="goal in options"
-        :key="goal.id"
+        :key="goal.section"
         role="checkbox"
         tabindex="0"
-        :aria-checked="goals.includes(goal.id) ? 'true': 'false'"
-        :aria-describedby="`goal-${goal.id}`"
+        :aria-checked="goals.includes(goal.section) ? 'true': 'false'"
+        :aria-describedby="`goal-${goal.section}`"
         class="relative s"
-        @click="toggleGoal(goal.id)"
-        @keyup.space="toggleGoal(goal.id)"
+        @click="toggleGoal(goal.section)"
+        @keyup.space="toggleGoal(goal.section)"
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="`/img/goals/Goal-${goal.id}.png`"
+          :src="`/img/goals/Goal-${goal.section}.png`"
           :alt="goal.label"
-          :class="goals.includes(goal.id) ? 'opacity-25' : ''"
+          :class="goals.includes(goal.section) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
         >
-        <p :id="`goal-${goal.id}`" class="visually_hidden">{{ goal.label }}</p>
+        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.label }}</p>
         <Check
-          v-if="goals.includes(goal.id)"
+          v-if="goals.includes(goal.section)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>

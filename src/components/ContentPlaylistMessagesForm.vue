@@ -64,10 +64,10 @@
       <option value="">Select</option>
       <option
         v-for="goal in goals"
-        :key="goal.id"
-        :value="goal.id"
+        :key="goal.section"
+        :value="goal.section"
       >
-        {{ `${goal.id}. ${goal.label}` }}
+        {{ `${goal.section}. ${goal.goal}` }}
       </option>
     </select>
 
@@ -80,11 +80,11 @@
     >
       <option value="">Select</option>
       <option
-        v-for="target in filterTargets"
-        :key="target.id"
-        :value="target.id"
+        v-for="target in targets"
+        :key="target.subsection"
+        :value="target.subsection"
       >
-        {{ `${target.parent}.${target.subsection} ${target.label}` }}
+        {{ `${selectedMessage.sdg_goal}.${target.subsection} ${target.label}` }}
       </option>
     </select>
 
@@ -111,8 +111,7 @@ export default {
       'languages'
     ]),
     ...mapState('sustainableDevelopments', [
-      'goals',
-      'targets'
+      'goals'
     ]),
     ...mapGetters('uiSettings', [
       'selectedMessage'
@@ -125,9 +124,12 @@ export default {
       return this.$store.state.categories.categories
         .filter(cat => !cat.is_leaf)
     },
-    filterTargets () {
-      return this.targets
-        .filter(target => target.parent === this.selectedMessage.sdg_goal)
+    targets () {
+      const goal = this.goals
+        .filter(goal => goal.section === this.selectedMessage.sdg_goal)
+
+      if (goal.length > 0 ) return goal[0].targets
+      else return []
     }
   },
   components: {
