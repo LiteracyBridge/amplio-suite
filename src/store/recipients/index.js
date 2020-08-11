@@ -5,7 +5,14 @@ export const getDefaultState = () => ({
   dirty: false,
   status: "",
   programCode: "",
+
   recipients: [],
+  labelMap: {
+    households:'Number of Households',
+    male: 'Number Male',
+    female: 'Number Famale',
+    youth: 'Number Youth'
+  }
 })
 
 export default {

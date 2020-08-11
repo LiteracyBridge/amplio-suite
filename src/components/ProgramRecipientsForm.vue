@@ -149,10 +149,10 @@
     >
       <template v-for="(field, index) in recipient.directBeneficiariesFields">
         <span
-          :key="`${field.label}-label`"
+          :key="`${field.key}-label`"
           :class="index % 2 === 0 ? '' : 'pl-4'"
         >
-          {{ field.label }}
+          {{ labelMap[field.key] }}
         </span>
         <v-input
           :key="`${field.label}-value`"
@@ -174,7 +174,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import Multiselect from 'vue-multiselect'
@@ -192,6 +192,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('recipients', [
+      'labelMap'
+    ]),
     deployments () {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)

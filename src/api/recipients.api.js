@@ -15,25 +15,21 @@ const recipientTemplate = (index) => ({
   directBeneficiaries: '',
   directBeneficiariesFields: [
     {
-      label: 'Group Size',
+      key: 'households',
       value: ''
     },
     {
-      label: 'Number of Households',
+      key: 'male',
       value: ''
     },
     {
-      label: 'Number Male',
+      key: 'female',
       value: ''
     },
     {
-      label: 'Number Female',
+      key: 'youth',
       value: ''
     },
-    {
-      label: 'Number Youth',
-      value: ''
-    }
   ],
   indirectBeneficiaries: ''
 })

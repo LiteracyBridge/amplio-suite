@@ -25,6 +25,19 @@
       />
     </div>
 
+    <div class="grid grid-cols-content-message row-gap-2 items-center">
+      <template v-for="(opt, index) in recipientsLabels">
+        <span :key="`${opt.key}-label`">Field {{ index + 1 }}</span>
+        <v-input
+          :key="`${opt.key}-input`"
+          type="text"
+          :value="opt.value"
+          @input="setRecipientsLabelMap({ key: opt.key, value: $event.target.value })"
+          mx="mx-0"
+        />
+      </template>
+    </div>
+
     <!-- For modal components -->
     <portal to="modalBody" v-if="languageToDelete">
       <p>This language will be deleted.</p>
@@ -50,7 +63,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
@@ -69,6 +82,10 @@ export default {
     ...mapState('programData', [
       'languages',
     ]),
+    ...mapState('recipients', {
+      recipientsLabels: state => Object.keys(state.labelMap)
+        .map(key => ({ key, value: state.labelMap[key] }))
+    }),
     ...mapState('program', {
       programDirty: state => state.dirty
     }),
@@ -112,6 +129,9 @@ export default {
     ...mapActions('programData', [
       'setLanguages',
       'deleteLanguage',
+    ]),
+    ...mapMutations('recipients', [
+      'setRecipientsLabelMap'
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length

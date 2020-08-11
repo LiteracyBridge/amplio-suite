@@ -1,11 +1,12 @@
-import { getDefaultState } from './index'
+// FIXME When save the data on the DB, uncomment the follow line
+// import { getDefaultState } from './index'
 
 const setDirty = (state, status) => {
   state.dirty = status
 }
 
 const requestInit = (state) => {
-  Object.assign(state, getDefaultState())
+  // Object.assign(state, getDefaultState())
   state.status = 'loading'
 }
 
@@ -21,6 +22,11 @@ const setRecipients = (state, payload) => {
   state.dirty = false
   state.status = 'success'
   state.recipients = payload
+}
+
+const setRecipientsLabelMap = (state, payload) => {
+  const { key, value } = payload
+  state.labelMap[key] = value
 }
 
 const setRecipientTitle = (state, payload) => {
@@ -85,6 +91,7 @@ export default {
   requestSuccess,
   setRecipients,
 
+  setRecipientsLabelMap,
   setRecipientTitle,
   setRecipientDeployments,
   setRecipientCountry,
