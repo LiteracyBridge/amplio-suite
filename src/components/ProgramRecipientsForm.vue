@@ -65,9 +65,15 @@
     />
 
     <span class="pl-4">Listening Model</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
+    <multiselect
+      :options="listeningModels"
+      :value="recipient.listeningModel"
+      :multiple="true"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :preserve-search="true"
+      @input="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel })"
+      placeholder="Select the listening model"
     />
 
     <span>Community</span>
@@ -155,7 +161,7 @@
           {{ labelMap[field.key] }}
         </span>
         <v-input
-          :key="`${field.label}-value`"
+          :key="`${field.key}-value`"
           type="number"
           mx="mx-0 w-full"
           :value="field.value"
@@ -195,6 +201,9 @@ export default {
     ...mapState('recipients', [
       'labelMap'
     ]),
+    ...mapState('programData', [
+      'listeningModels'
+    ]),
     deployments () {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
@@ -219,6 +228,7 @@ export default {
       'setRecipientCommunity',
       'setRecipientGroupName',
       'setRecipientLang',
+      'setRecipientListeningModel',
       'setRecipientAgentGender',
       'setRecipientNumberTalkingBooks',
       'setRecipientDBFields',

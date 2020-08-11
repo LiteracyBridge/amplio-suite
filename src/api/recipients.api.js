@@ -8,6 +8,7 @@ const recipientTemplate = (index) => ({
   community: '',
   groupName: '',
   language: [],
+  listeningModel: '',
   numberTalkingBooks: '',
   agent: '',
   agentGender: '',
