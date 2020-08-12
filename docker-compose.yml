@@ -40,8 +40,14 @@ services:
   python-deps:
     build:
       context: ./lambda
+    env_file: ./lambda/.env
+    environment: 
+      PYTHONPATH: "/opt/python/:/usr/src/app/package"
+    working_dir: /opt/python
+    depends_on:
+      - db
     volumes:
-      - './lambda:/usr/src/app'
+      - './lambda:/opt/python'
       - package:/usr/src/app/package
 
   lambda-migration: &base
