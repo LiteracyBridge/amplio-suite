@@ -157,7 +157,7 @@
         <span :key="`${opt.key}-label`">{{ opt.value }}</span>
         <v-input
           :key="`${opt.key}-input`"
-          type="text"
+          type="number"
           :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
           @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
           mx="mx-0"
@@ -168,7 +168,7 @@
         <span :key="`${opt.key}-label`">{{ opt.value }}</span>
         <v-input
           :key="`${opt.key}-input`"
-          type="text"
+          type="number"
           :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
           @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
           mx="mx-0"
