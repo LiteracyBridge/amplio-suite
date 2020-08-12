@@ -21,12 +21,25 @@ function die() {
 export AWS_DEFAULT_REGION=us-west-2
 
 functions_to_deploy=(
-	cognito_pre_sign_up cognito_custom_message migrations programs_index
-	project_retrieve project_create
-	program_retrieve program_create program_update program_next_deployment
-	deployment_retrieve deployment_update deployment_delete
-	content_retrieve content_create content_update
-	playlist_create message_create languages_index
+	cognito_custom_message
+	cognito_pre_sign_up
+	content_create
+	content_retrieve
+	content_update
+	deployment_delete
+	deployment_retrieve
+	deployment_update
+	languages_index
+	message_create
+	migrations
+	playlist_create
+	program_create
+	program_next_deployment
+	program_retrieve
+	program_update
+	programs_index
+	project_create
+	project_retrieve
 )
 
 # Lambda role
