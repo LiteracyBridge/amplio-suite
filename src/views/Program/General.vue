@@ -5,7 +5,7 @@
     title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
-    <div class="grid grid-cols-program items-center gap-2 text-left">
+    <div class="grid grid-cols-content-message row-gap-2 items-center">
       <p id="programName" class="px-4">Program</p>
       <v-input
         type="text"
@@ -17,12 +17,31 @@
         mx="mx-0"
       />
 
+      <span class="pl-4">Listening Model</span>
+      <multiselect
+        :options="listeningModelsOptions"
+        :value="listeningModelsSelected"
+        :multiple="true"
+        label="label"
+        trackBy="label"
+        :close-on-select="false"
+        :clear-on-select="false"
+        :preserve-search="true"
+        @select="(model) => toggleListening(model.value)"
+        @remove="(model) => toggleListening(model.value)"
+        placeholder="Select the listening model"
+      />
+
       <p id="langs" class="h-full px-4 pt-4">Languages</p>
       <LanguagesSelector
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
       />
+    </div>
+
+    <div class="my-2 p-4 text-left text-xl bg-gray-400">
+      <p>Direct Beneficiaries Fields</p>
     </div>
 
     <div class="grid grid-cols-content-message row-gap-2 items-center">
@@ -67,6 +86,7 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
+import Multiselect from 'vue-multiselect'
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
@@ -81,6 +101,7 @@ export default {
     ]),
     ...mapState('programData', [
       'languages',
+      'listeningModels',
     ]),
     ...mapState('recipients', {
       recipientsLabels: state => Object.keys(state.labelMap)
@@ -92,16 +113,30 @@ export default {
     ...mapState('programData', {
       programDataDirty: state => state.dirty
     }),
+    listeningModelsSelected () {
+      return this.listeningModels
+        .map(key => this.listeningModelsOptions.find(opt => opt.value === key))
+    }
   },
   components: {
     Box,
     VButton,
     VInput,
+    Multiselect,
     LanguagesSelector,
   },
   data () {
     return {
-      languageToDelete: null
+      languageToDelete: null,
+
+      // FIXME The listening models options is use here and in the wizard
+      // Move the options to a lambda function
+      listeningModelsOptions: [
+        { label: 'Households', value: 'households' },
+        { label: 'Groups', value: 'groups' },
+        { label: 'Community Workers', value: 'community_workers' },
+        { label: 'Place-based', value: 'place_based' }
+      ]
     }
   },
   mounted (){
@@ -129,6 +164,7 @@ export default {
     ...mapActions('programData', [
       'setLanguages',
       'deleteLanguage',
+      'toggleListening',
     ]),
     ...mapMutations('recipients', [
       'setRecipientsLabelMap'
