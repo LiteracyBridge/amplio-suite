@@ -84,6 +84,11 @@ const setRecipientAgentGender = (state, payload) => {
   state.recipients[recipientIndex].agentGender = gender
 }
 
+const setRecipientSuportEntity = (state, payload) => {
+  const { recipientIndex, suportEntity } = payload
+  state.recipients[recipientIndex].suportEntity = suportEntity
+}
+
 const setRecipientDirectBeneficiaries = (state, payload) => {
   const { recipientIndex, directBeneficiaries } = payload
   state.recipients[recipientIndex].directBeneficiaries = directBeneficiaries
@@ -132,6 +137,7 @@ export default {
   setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientSuportEntity,
   setRecipientDirectBeneficiaries,
   setRecipientNumberTalkingBooks,
   setRecipientsAdditionalFields,

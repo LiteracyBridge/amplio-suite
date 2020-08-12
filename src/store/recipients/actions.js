@@ -121,6 +121,11 @@ const setRecipientAgentGender = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientSuportEntity = ({ commit }, payload) => {
+  commit('setRecipientSuportEntity', payload)
+  commit('setDirty', true)
+}
+
 const setRecipientDirectBeneficiaries = ({ commit }, payload) => {
   commit('setRecipientDirectBeneficiaries', payload)
   commit('setDirty', true)
@@ -192,6 +197,7 @@ export default {
   setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientSuportEntity,
   setRecipientDirectBeneficiaries,
   setRecipientsAdditionalFields,
   addAdditionalLabel,

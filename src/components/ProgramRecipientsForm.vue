@@ -127,8 +127,8 @@
       <v-input
         type="text"
         mx="mx-0 w-full"
-        :value="recipient.numberTalkingBooks"
-        @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+        :value="recipient.suportEntity"
+        @input="setRecipientSuportEntity({ recipientIndex, suportEntity: $event.target.value })"
       />
     </div>
 
@@ -243,6 +243,7 @@ export default {
       'setRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
+      'setRecipientSuportEntity',
       'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
       'setRecipientsAdditionalFields',
