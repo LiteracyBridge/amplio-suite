@@ -66,13 +66,16 @@
 
     <span class="pl-4">Listening Model</span>
     <multiselect
-      :options="listeningModels"
-      :value="recipient.listeningModel"
+      :options="listeningModelsOptions"
+      :value="listeningModelsSelected"
       :multiple="true"
+      label="label"
+      trackBy="label"
       :close-on-select="false"
       :clear-on-select="false"
       :preserve-search="true"
-      @input="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel })"
+      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
+      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
       placeholder="Select the listening model"
     />
 
@@ -219,6 +222,10 @@ export default {
     deployments () {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
+    },
+    listeningModelsSelected () {
+      return this.recipient.listeningModels
+        .map(key => this.listeningModelsOptions.find(opt => opt.value === key))
     }
   },
   components: {
@@ -228,7 +235,16 @@ export default {
   },
   data: () => ({
     agentIsOpen: false,
-    beneficiariesIsOpen: false
+    beneficiariesIsOpen: false,
+
+    // FIXME The listening models options is use here and in the wizard
+    // Move the options to a lambda function
+    listeningModelsOptions: [
+      { label: 'Households', value: 'households' },
+      { label: 'Groups', value: 'groups' },
+      { label: 'Community Workers', value: 'community_workers' },
+      { label: 'Place-based', value: 'place_based' }
+    ]
   }),
   methods: {
     ...mapActions('recipients', [
@@ -240,7 +256,7 @@ export default {
       'setRecipientCommunity',
       'setRecipientGroupName',
       'setRecipientLang',
-      'setRecipientListeningModel',
+      'toggleRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
       'setRecipientSuportEntity',

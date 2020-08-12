@@ -69,9 +69,14 @@ const setRecipientLang = (state, payload) => {
   state.recipients[recipientIndex].language = langs
 }
 
-const setRecipientListeningModel = (state, payload) => {
+const addRecipientListeningModel = (state, payload) => {
   const { recipientIndex, listeningModel } = payload
-  state.recipients[recipientIndex].listeningModel = listeningModel
+  state.recipients[recipientIndex].listeningModels.push(listeningModel)
+}
+
+const removeRecipientListeningModel = (state, payload) => {
+  const { recipientIndex, modelIndex } = payload
+  state.recipients[recipientIndex].listeningModels.splice(modelIndex, 1)
 }
 
 const setRecipientAgent = (state, payload) => {
@@ -134,7 +139,8 @@ export default {
   setRecipientCommunity,
   setRecipientGroupName,
   setRecipientLang,
-  setRecipientListeningModel,
+  addRecipientListeningModel,
+  removeRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
   setRecipientSuportEntity,

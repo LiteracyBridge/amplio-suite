@@ -106,8 +106,13 @@ const setRecipientLang = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setRecipientListeningModel = ({ commit }, payload) => {
-  commit('setRecipientListeningModel', payload)
+const toggleRecipientListeningModel = ({ commit, state }, payload) => {
+  const { recipientIndex, listeningModel } = payload
+  const modelIndex = state.recipients[recipientIndex].listeningModels.indexOf(listeningModel)
+
+  if (modelIndex > -1) commit('removeRecipientListeningModel', { recipientIndex, modelIndex })
+  else commit('addRecipientListeningModel', { recipientIndex, listeningModel })
+
   commit('setDirty', true)
 }
 
@@ -194,7 +199,7 @@ export default {
   setRecipientGroupName,
   setRecipientNumberTalkingBooks,
   setRecipientLang,
-  setRecipientListeningModel,
+  toggleRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
   setRecipientSuportEntity,
