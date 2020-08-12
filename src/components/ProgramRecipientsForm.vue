@@ -153,19 +153,25 @@
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
-      <template v-for="(field, index) in recipient.directBeneficiariesFields">
-        <span
-          :key="`${field.key}-label`"
-          :class="index % 2 === 0 ? '' : 'pl-4'"
-        >
-          {{ labelMap[field.key] }}
-        </span>
+      <template v-for="opt in directBeneficiariesLabels">
+        <span :key="`${opt.key}-label`">{{ opt.value }}</span>
         <v-input
-          :key="`${field.key}-value`"
-          type="number"
-          mx="mx-0 w-full"
-          :value="field.value"
-          @input="setRecipientDBFields({ recipientIndex, fieldIndex: index, value: $event.target.value })"
+          :key="`${opt.key}-input`"
+          type="text"
+          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
+          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
+          mx="mx-0"
+        />
+      </template>
+
+      <template v-for="opt in additionalLabels">
+        <span :key="`${opt.key}-label`">{{ opt.value }}</span>
+        <v-input
+          :key="`${opt.key}-input`"
+          type="text"
+          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
+          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
+          mx="mx-0"
         />
       </template>
     </div>
@@ -198,9 +204,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('recipients', [
-      'labelMap'
-    ]),
+    ...mapState('recipients', {
+      additionalLabels: state => Object.keys(state.additionalLabelsMap)
+        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
+      directBeneficiariesLabels: state => Object.keys(state.labelMap)
+        .map(key => ({ key, value: state.labelMap[key] }))
+    }),
     ...mapState('programData', [
       'listeningModels'
     ]),
@@ -231,7 +240,7 @@ export default {
       'setRecipientListeningModel',
       'setRecipientAgentGender',
       'setRecipientNumberTalkingBooks',
-      'setRecipientDBFields',
+      'setRecipientsAdditionalFields',
     ]),
   }
 }

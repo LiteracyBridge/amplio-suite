@@ -45,7 +45,7 @@
     </div>
 
     <div class="grid grid-cols-content-message row-gap-2 items-center">
-      <template v-for="(opt, index) in recipientsLabels">
+      <template v-for="(opt, index) in directBeneficiariesLabels">
         <span :key="`${opt.key}-label`">Field {{ index + 1 }}</span>
         <v-input
           :key="`${opt.key}-input`"
@@ -55,6 +55,46 @@
           mx="mx-0"
         />
       </template>
+
+      <template v-for="(opt, index) in additionalLabels">
+        <span :key="`${opt.key}-label`">Additional Field {{ index + 1 }}</span>
+        <div :key="`${opt.key}-input`" class="flex items-center">
+          <v-input
+            type="text"
+            :value="opt.value"
+            @input="setAdditionalLabel({ key: opt.key, value: $event.target.value })"
+            mx="mx-0"
+          />
+
+          <button
+            :aria-label="`Delete option field ${opt.value}`"
+            :class="labelUsed[opt.key].used ? 'text-grey-500' : 'text-red-500'"
+            class="w-6 h-6 ml-2 icon-zoom"
+            @click="deleteAdditionalLabel(opt.key)"
+          >
+            <font-awesome-icon icon="trash-alt" />
+          </button>
+
+          <v-tooltip
+            v-if="labelUsed[opt.key].used"
+            :text="`Field used in ${labelUsed[opt.key].recipients.join(' - ')}`"
+            class="my-auto"
+          >
+            <font-awesome-icon
+              class="text-orange-600"
+              icon="exclamation-circle"
+            />
+          </v-tooltip>
+        </div>
+      </template>
+
+      <span
+        tabindex="0"
+        class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
+        @click="addAdditionalLabel"
+      >
+        + Add Optional Field
+      </span>
     </div>
 
     <!-- For modal components -->
@@ -82,7 +122,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
@@ -90,6 +130,7 @@ import Multiselect from 'vue-multiselect'
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
+import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
@@ -103,8 +144,13 @@ export default {
       'languages',
       'listeningModels',
     ]),
+    ...mapGetters('recipients', [
+      'labelUsed'
+    ]),
     ...mapState('recipients', {
-      recipientsLabels: state => Object.keys(state.labelMap)
+      additionalLabels: state => Object.keys(state.additionalLabelsMap)
+        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
+      directBeneficiariesLabels: state => Object.keys(state.labelMap)
         .map(key => ({ key, value: state.labelMap[key] }))
     }),
     ...mapState('program', {
@@ -122,6 +168,7 @@ export default {
     Box,
     VButton,
     VInput,
+    VTooltip,
     Multiselect,
     LanguagesSelector,
   },
@@ -168,6 +215,11 @@ export default {
     ]),
     ...mapMutations('recipients', [
       'setRecipientsLabelMap'
+    ]),
+    ...mapActions('recipients', [
+      'addAdditionalLabel',
+      'setAdditionalLabel',
+      'deleteAdditionalLabel'
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length

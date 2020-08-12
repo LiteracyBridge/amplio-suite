@@ -5,8 +5,10 @@ import {
 } from '@/api/recipients.api'
 
 
-const fetchRecipients = async ({ commit, rootState }) => {
+const fetchRecipients = async ({ commit, state, rootState }) => {
   const { programCode } = rootState.program
+
+  if (state.recipients.length > 0) return
 
   commit('requestInit')
 
@@ -119,12 +121,40 @@ const setRecipientNumberTalkingBooks = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setRecipientDBFields = ({ commit, state }, payload) => {
-  const { recipientIndex, fieldIndex, value } = payload
-  let fields = state.recipients[recipientIndex].directBeneficiariesFields.map(ele => ({ ...ele }))
-  fields[fieldIndex].value = value
+const setRecipientsAdditionalFields = ({ commit, state }, payload) => {
+    const { recipientIndex, key, value } = payload
+    const fields = { ...state.recipients[recipientIndex].directBeneficiariesAdditionalFields }
+    fields[key] = value
 
-  commit('setRecipientDBFields', { recipientIndex, fields })
+  commit('setRecipientsAdditionalFields', { recipientIndex, fields })
+  commit('setDirty', true)
+}
+
+const addAdditionalLabel = ({ commit, state }) => {
+  const total = Object.keys(state.additionalLabelsMap).length
+  const value = `New field ${total}`
+  const key = `field_${total}`
+
+  const labels = { ...state.additionalLabelsMap }
+  labels[key] = value
+
+  commit('setAdditionalLabels', labels)
+  commit('setDirty', true)
+}
+
+const deleteAdditionalLabel = ({ commit, state, getters }, key) => {
+  const { labelUsed } = getters
+  if (labelUsed[key].used) return
+
+  const labels = { ...state.additionalLabelsMap }
+  delete labels[key]
+
+  commit('setAdditionalLabels', labels)
+  commit('setDirty', true)
+}
+
+const setAdditionalLabel = ({ commit }, payload) => {
+  commit('setAdditionalLabel', payload)
   commit('setDirty', true)
 }
 
@@ -146,5 +176,8 @@ export default {
   setRecipientLang,
   setRecipientListeningModel,
   setRecipientAgentGender,
-  setRecipientDBFields,
+  setRecipientsAdditionalFields,
+  addAdditionalLabel,
+  deleteAdditionalLabel,
+  setAdditionalLabel,
 }

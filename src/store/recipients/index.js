@@ -12,7 +12,8 @@ export const getDefaultState = () => ({
     male: 'Number Male',
     female: 'Number Famale',
     youth: 'Number Youth'
-  }
+  },
+  additionalLabelsMap: {}
 })
 
 export default {
@@ -20,5 +21,24 @@ export default {
 
   state: getDefaultState(),
   mutations,
-  actions
+  actions,
+
+  getters: {
+    labelUsed: (state) => {
+      const result = {}
+      const labels = Object.keys({ ...state.additionalLabelsMap })
+
+      labels.forEach(label => {
+        const recipientsFilter = state.recipients
+          .filter(recipient => Object.keys(recipient.directBeneficiariesAdditionalFields).includes(label))
+
+        result[label] = {
+          used: recipientsFilter.length > 0 ? true : false,
+          recipients: recipientsFilter.map(recipient => recipient.title)
+        }
+      })
+
+      return result
+    },
+  }
 }

@@ -84,9 +84,18 @@ const setRecipientNumberTalkingBooks = (state, payload) => {
   state.recipients[recipientIndex].numberTalkingBooks = numberTalkingBooks
 }
 
-const setRecipientDBFields = (state, payload) => {
+const setRecipientsAdditionalFields = (state, payload) => {
   const { recipientIndex, fields } = payload
-  state.recipients[recipientIndex].directBeneficiariesFields = fields
+  state.recipients[recipientIndex].directBeneficiariesAdditionalFields = fields
+}
+
+const setAdditionalLabels = (state, labels) => {
+  state.additionalLabelsMap = labels
+}
+
+const setAdditionalLabel = (state, payload) => {
+  const { key, value } = payload
+  state.additionalLabelsMap[key] = value
 }
 
 export default {
@@ -108,5 +117,7 @@ export default {
   setRecipientListeningModel,
   setRecipientAgentGender,
   setRecipientNumberTalkingBooks,
-  setRecipientDBFields,
+  setRecipientsAdditionalFields,
+  setAdditionalLabels,
+  setAdditionalLabel,
 }

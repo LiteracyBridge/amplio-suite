@@ -14,24 +14,7 @@ const recipientTemplate = (index) => ({
   agentGender: '',
   supportEntity: '',
   directBeneficiaries: '',
-  directBeneficiariesFields: [
-    {
-      key: 'households',
-      value: ''
-    },
-    {
-      key: 'male',
-      value: ''
-    },
-    {
-      key: 'female',
-      value: ''
-    },
-    {
-      key: 'youth',
-      value: ''
-    },
-  ],
+  directBeneficiariesAdditionalFields: {},
   indirectBeneficiaries: ''
 })
 
