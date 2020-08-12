@@ -21,6 +21,7 @@ function die() {
 export AWS_DEFAULT_REGION=us-west-2
 
 functions_to_deploy=(
+	categories_index
 	cognito_custom_message
 	cognito_pre_sign_up
 	content_create
