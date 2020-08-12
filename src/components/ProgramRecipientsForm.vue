@@ -117,9 +117,9 @@
     >
       <span>Agent Gender</span>
       <multiselect
-        :options="['male', 'female', 'other']"
+        :options="['Male', 'Female', 'Other']"
         :value="recipient.agentGender"
-        placeholder="Select the agenr gender"
+        placeholder="Select the agent gender"
         @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
       />
 

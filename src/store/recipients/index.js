@@ -10,7 +10,7 @@ export const getDefaultState = () => ({
   labelMap: {
     households:'Number of Households',
     male: 'Number Male',
-    female: 'Number Famale',
+    female: 'Number Female',
     youth: 'Number Youth'
   },
   additionalLabelsMap: {}
