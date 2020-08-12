@@ -74,9 +74,19 @@ const setRecipientListeningModel = (state, payload) => {
   state.recipients[recipientIndex].listeningModel = listeningModel
 }
 
+const setRecipientAgent = (state, payload) => {
+  const { recipientIndex, agent } = payload
+  state.recipients[recipientIndex].agent = agent
+}
+
 const setRecipientAgentGender = (state, payload) => {
   const { recipientIndex, gender } = payload
   state.recipients[recipientIndex].agentGender = gender
+}
+
+const setRecipientDirectBeneficiaries = (state, payload) => {
+  const { recipientIndex, directBeneficiaries } = payload
+  state.recipients[recipientIndex].directBeneficiaries = directBeneficiaries
 }
 
 const setRecipientNumberTalkingBooks = (state, payload) => {
@@ -98,6 +108,11 @@ const setAdditionalLabel = (state, payload) => {
   state.additionalLabelsMap[key] = value
 }
 
+const setRecipientsIndirectBeneficiaries = (state, payload) => {
+  const { recipientIndex, indirectBeneficiaries } = payload
+  state.recipients[recipientIndex].indirectBeneficiaries = indirectBeneficiaries
+}
+
 export default {
   setDirty,
   requestInit,
@@ -115,9 +130,12 @@ export default {
   setRecipientGroupName,
   setRecipientLang,
   setRecipientListeningModel,
+  setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientDirectBeneficiaries,
   setRecipientNumberTalkingBooks,
   setRecipientsAdditionalFields,
   setAdditionalLabels,
   setAdditionalLabel,
+  setRecipientsIndirectBeneficiaries,
 }

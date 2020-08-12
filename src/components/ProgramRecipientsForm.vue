@@ -97,6 +97,7 @@
       type="text"
       mx="mx-0 w-full"
       :value="recipient.agent"
+      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
     <span
@@ -136,6 +137,7 @@
       type="text"
       mx="mx-0 w-full"
       :value="recipient.directBeneficiaries"
+      @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
     />
 
     <span
@@ -181,6 +183,7 @@
       type="text"
       mx="mx-0 w-full"
       :value="recipient.indirectBeneficiaries"
+      @input="setRecipientsIndirectBeneficiaries({ recipientIndex, indirectBeneficiaries: $event.target.value })"
     />
   </div>
 </template>
@@ -238,9 +241,12 @@ export default {
       'setRecipientGroupName',
       'setRecipientLang',
       'setRecipientListeningModel',
+      'setRecipientAgent',
       'setRecipientAgentGender',
+      'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
       'setRecipientsAdditionalFields',
+      'setRecipientsIndirectBeneficiaries',
     ]),
   }
 }

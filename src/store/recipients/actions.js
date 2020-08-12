@@ -111,8 +111,18 @@ const setRecipientListeningModel = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientAgent = ({ commit }, payload) => {
+  commit('setRecipientAgent', payload)
+  commit('setDirty', true)
+}
+
 const setRecipientAgentGender = ({ commit }, payload) => {
   commit('setRecipientAgentGender', payload)
+  commit('setDirty', true)
+}
+
+const setRecipientDirectBeneficiaries = ({ commit }, payload) => {
+  commit('setRecipientDirectBeneficiaries', payload)
   commit('setDirty', true)
 }
 
@@ -158,6 +168,11 @@ const setAdditionalLabel = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
+  commit('setRecipientsIndirectBeneficiaries', payload)
+  commit('setDirty', true)
+}
+
 export default {
   fetchRecipients,
   updateRecipients,
@@ -175,9 +190,12 @@ export default {
   setRecipientNumberTalkingBooks,
   setRecipientLang,
   setRecipientListeningModel,
+  setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientDirectBeneficiaries,
   setRecipientsAdditionalFields,
   addAdditionalLabel,
   deleteAdditionalLabel,
   setAdditionalLabel,
+  setRecipientsIndirectBeneficiaries,
 }
