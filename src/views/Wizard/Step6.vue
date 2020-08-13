@@ -13,7 +13,7 @@
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
-        autofocus="true"
+        :autofocus="true"
       />
     </div>
   </Box>
