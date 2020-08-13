@@ -13,6 +13,7 @@ def lambda_handler(event, context):
     data = [{
         'goal': goal.label,
         'section': goal.section,
+        'imgUrl': goal.img_url,
         'targets': [{ 'label': target.label, 'subsection': target.subsection } for target in goal.targets]
     } for goal in goals]
 

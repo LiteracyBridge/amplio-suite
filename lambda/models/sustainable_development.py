@@ -9,6 +9,7 @@ class SustainableDevelopmentGoals(Base, SerializerMixin):
     id = Column(Integer, primary_key=True)
     section = Column(Integer, nullable=False, unique=True)
     label = Column(String(250), nullable=False)
+    img_url = Column(String(250), nullable=False)
 
     targets = relationship('SustainableDevelopmentTargets')
 

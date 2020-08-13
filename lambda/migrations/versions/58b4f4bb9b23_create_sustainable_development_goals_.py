@@ -21,6 +21,7 @@ def upgrade():
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('section', sa.Integer(), nullable=False),
         sa.Column('label', sa.String(length=250), nullable=False),
+        sa.Column('img_url', sa.String(length=250), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('section')
     )
@@ -35,23 +36,23 @@ def upgrade():
     )
 
     op.bulk_insert(sd_goals, [
-        { 'section': 1, 'label': 'No Poverty' },
-        { 'section': 2, 'label': 'Zero Hunger' },
-        { 'section': 3, 'label': 'Good Health and Well-being' },
-        { 'section': 4, 'label': 'Quality Education' },
-        { 'section': 5, 'label': 'Gender Equality' },
-        { 'section': 6, 'label': 'Clean Water and Sanitation' },
-        { 'section': 7, 'label': 'Affordable and Clean Energy' },
-        { 'section': 8, 'label': 'Decent Work and Economic Growth' },
-        { 'section': 9, 'label': 'Industry, Innovation and Infrastructure' },
-        { 'section': 10, 'label': 'Reduced Inequality' },
-        { 'section': 11, 'label': 'Sustainable Cities and Communities' },
-        { 'section': 12, 'label': 'Responsible Consumption and Production' },
-        { 'section': 13, 'label': 'Climate Action' },
-        { 'section': 14, 'label': 'Life Below Water' },
-        { 'section': 15, 'label': 'Life on Land' },
-        { 'section': 16, 'label': 'Peace and Justice Strong Institutions' },
-        { 'section': 17, 'label': 'Partnerships to achieve the Goal' }
+        { 'id': 1, 'section': 1, 'label': 'No Poverty', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-1.png'},
+        { 'id': 2, 'section': 2, 'label': 'Zero Hunger', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-2.png'},
+        { 'id': 3, 'section': 3, 'label': 'Good Health and Well-being', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-3.png'},
+        { 'id': 4, 'section': 4, 'label': 'Quality Education', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-4.png'},
+        { 'id': 5, 'section': 5, 'label': 'Gender Equality', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-5.png'},
+        { 'id': 6, 'section': 6, 'label': 'Clean Water and Sanitation', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-6.png'},
+        { 'id': 7, 'section': 7, 'label': 'Affordable and Clean Energy', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-7.png'},
+        { 'id': 8, 'section': 8, 'label': 'Decent Work and Economic Growth', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-8.png'},
+        { 'id': 9, 'section': 9, 'label': 'Industry, Innovation and Infrastructure', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-9.png'},
+        { 'id': 10, 'section': 10, 'label': 'Reduced Inequality', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-10.png'},
+        { 'id': 11, 'section': 11, 'label': 'Sustainable Cities and Communities', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-11.png'},
+        { 'id': 12, 'section': 12, 'label': 'Responsible Consumption and Production', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-12.png'},
+        { 'id': 13, 'section': 13, 'label': 'Climate Action', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-13.png'},
+        { 'id': 14, 'section': 14, 'label': 'Life Below Water', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-14.png'},
+        { 'id': 15, 'section': 15, 'label': 'Life on Land', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-15.png'},
+        { 'id': 16, 'section': 16, 'label': 'Peace and Justice Strong Institutions', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-16.png'},
+        { 'id': 17, 'section': 17, 'label': 'Partnerships to achieve the Goal', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-17.png'},
     ])
 
     op.bulk_insert(sd_target, [

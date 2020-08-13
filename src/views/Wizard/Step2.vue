@@ -26,7 +26,7 @@
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="`/img/goals/Goal-${goal.section}.png`"
+          :src="goal.imgUrl"
           :alt="goal.label"
           :class="goals.includes(goal.section) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
