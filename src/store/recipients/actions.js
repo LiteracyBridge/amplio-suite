@@ -15,6 +15,8 @@ const fetchRecipients = async ({ commit, state, rootState }) => {
   try {
     const response = await getRecipients({ program_code: programCode })
     commit('setRecipients', response)
+    commit('setDirty', false)
+    commit('requestSuccess')
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
@@ -55,6 +57,11 @@ const addRecipient = async ({ commit, state }) => {
   let recipients = [...state.recipients]
   recipients.push(newRecipient)
   commit('setRecipients', recipients)
+}
+
+const setRecipients = ({ commit }, recipients) => {
+  commit('setRecipients', recipients)
+  commit('setDirty', true)
 }
 
 const removeRecipient = ({ commit, state }, index) => {
@@ -186,6 +193,7 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 export default {
   fetchRecipients,
   updateRecipients,
+  setRecipients,
 
   addRecipient,
   removeRecipient,

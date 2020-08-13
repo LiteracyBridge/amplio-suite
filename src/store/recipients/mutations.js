@@ -19,8 +19,6 @@ const requestSuccess = (state) => {
 }
 
 const setRecipients = (state, payload) => {
-  state.dirty = false
-  state.status = 'success'
   state.recipients = payload
 }
 
