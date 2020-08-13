@@ -27,7 +27,7 @@ def upgrade():
     )
     sd_target = op.create_table('sustainable_development_targets',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('goal_id', sa.Integer(), nullable=True),
+        sa.Column('goal_id', sa.Integer(), nullable=False),
         sa.Column('subsection', sa.Integer(), nullable=False),
         sa.Column('label', sa.String(length=250), nullable=True),
         sa.PrimaryKeyConstraint('id'),
