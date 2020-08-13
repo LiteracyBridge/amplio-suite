@@ -17,7 +17,7 @@
         @change="(event) => setFeedbackFrequently(event.target.value)"
       >
         <option value="">Select</option>
-        <option value="Monthly">Monthly</option>
+        <option value="monthly">Monthly</option>
         <option value="quarterly">Quarterly</option>
         <option value="semi_annually">Semi-Annually</option>
         <option value="annually">Annually</option>
