@@ -74,6 +74,11 @@ const setMessageLang = (state, payload) => {
   state.playlists[playlistIndex].messages[messageIndex].language = lang
 }
 
+const setMessageCategory = (state, payload) => {
+  const { playlistIndex, messageIndex, category } = payload
+  state.playlists[playlistIndex].messages[messageIndex].default_category = category
+}
+
 const setMessageVariant= (state, payload) => {
   const { playlistIndex, messageIndex, variant } = payload
   state.playlists[playlistIndex].messages[messageIndex].variant = variant
@@ -123,6 +128,7 @@ export default {
   removeDuplicateMessage,
   setMessageTitle,
   setMessageLang,
+  setMessageCategory,
   setMessageVariant,
   setMessageFormat,
   setMessageSDGGoal,
