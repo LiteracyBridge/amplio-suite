@@ -141,7 +141,7 @@ const setMessageFormat = ({ commit }, payload) => {
 
 const setMessageSDGGoal = ({ commit }, payload) => {
   commit('setMessageSDGGoal', payload)
-  commit('setMessageSDGTarget', { ...payload, target: -1 })
+  commit('setMessageSDGTarget', { ...payload, target: null })
   commit('setDirty', true)
 }
 
