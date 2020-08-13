@@ -2,9 +2,10 @@
   <div class="pt-2 border-r-2">
     <draggable
       tag="ul"
-      v-model="value"
-      :animation="200"
       ghost-class="moving-item"
+      :animation="200"
+      :value="value"
+      @input="emitter"
       @start="dragging = true"
       @end="onDraggEnd"
     >
@@ -18,7 +19,8 @@
       >
         <font-awesome-icon icon="sort" class="text-black" />
         <span
-          class="py-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+          :class="selectedIndex === index ? 'font-semibold text-blue underline' : ''"
+          class="py-2 cursor-pointer hover:text-blue hover:font-semibold hover:underline"
           @click="onSelect(index)"
         >
           {{ item.title }}
@@ -69,7 +71,7 @@
 
 <script>
 import Draggable from 'vuedraggable'
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
 // import VTooltip from '@/components/VTooltip'
@@ -96,11 +98,10 @@ export default {
       type: Function,
       required: true
     },
-  },
-  computed: {
-    ...mapState('uiSettings', {
-      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex
-    }),
+    selectedIndex: {
+      type: Number,
+      required: true
+    },
   },
   components: {
     Draggable,
@@ -126,10 +127,14 @@ export default {
       'setModal',
       'closeModal'
     ]),
+    emitter (value) {
+      // Update the menu list
+      this.$emit('input', value)
+    },
     handleOpenModal (index) {
       this.modal.show = true
       this.modal.eleIndex = index
-      this.setModal('Delet Playlist')
+      this.setModal(`Delet ${name}`)
     },
     handleCloseModal () {
       this.modal.show = false
@@ -140,20 +145,20 @@ export default {
       this.onRemove(this.modal.eleIndex)
       this.handleCloseModal()
     },
-    onDraggEnd(event) {
+    onDraggEnd (event) {
       const { newIndex, oldIndex } = event
 
-      if (newIndex === this.selectedPlaylistIndex) {
-        this.setPlaylistIndex(oldIndex)
-      } else if (oldIndex === this.selectedPlaylistIndex) {
-        this.setPlaylistIndex(newIndex)
+      if (newIndex === this.selectedIndex) {
+        this.onSelect(oldIndex)
+      } else if (oldIndex === this.selectedIndex) {
+        this.onSelect(newIndex)
       }
     },
     handleKeyboard (event) {
       const { target, code } = event
       const { name } = target.dataset
 
-      if (Object.keys(this.target).length === 0 && name !== 'playlist') return
+      if (Object.keys(this.target).length === 0 && name !== this.name) return
       event.stopPropagation()
 
       if (code === 'Space') {
@@ -161,7 +166,7 @@ export default {
       }
       else if (['Enter', 'Escape'].includes(code)) {
         this.target = {}
-        document.querySelectorAll(`[data-name="playlist"][data-index]`)
+        document.querySelectorAll(`[data-name="${name}"][data-index]`)
           .forEach(ele => ele.classList.remove('focus-visible'))
       }
       else if (['ArrowUp', 'ArrowDown'].includes(code)) {
@@ -171,25 +176,20 @@ export default {
     move (direction) {
       const oldIndex = +this.target.dataset.index
       const newIndex = direction === 'ArrowUp' ? oldIndex - 1 : oldIndex + 1
-      if (newIndex < 0 || newIndex >= this.playlists.length) return
+      if (newIndex < 0 || newIndex >= this.value.length) return
 
       // Swap elements
-      const tmp = [...this.playlists]
+      const tmp = [...this.value]
       const a = tmp[newIndex]
       tmp[newIndex] = tmp[oldIndex]
       tmp[oldIndex] = a
 
-      this.setPlaylist(tmp)
-
-      if (newIndex === this.selectedPlaylistIndex) {
-        this.setPlaylistIndex(oldIndex)
-      } else if (oldIndex === this.selectedPlaylistIndex) {
-        this.setPlaylistIndex(newIndex)
-      }
+      this.emitter(tmp)
+      this.onDraggEnd({ newIndex, oldIndex })
 
       // Update dashed element
-      this.target = document.querySelector(`[data-name="playlist"][data-index="${newIndex}"]`)
-      document.querySelectorAll(`[data-name="playlist"][data-index]`)
+      this.target = document.querySelector(`[data-name="${this.name}"][data-index="${newIndex}"]`)
+      document.querySelectorAll(`[data-name="${this.name}"][data-index]`)
         .forEach(ele => ele.classList.remove('focus-visible'))
       this.target.classList.add('focus-visible')
     }

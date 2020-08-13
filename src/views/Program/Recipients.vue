@@ -12,6 +12,7 @@
         :on-select="(index) => { this.selectedRecipientIndex = index }"
         :on-add="addRecipient"
         :on-remove="removeRecipient"
+        :selected-index="selectedRecipientIndex"
       />
 
       <div class="text-left">
@@ -39,8 +40,15 @@ export default {
     ...mapState('recipients', [
       'status',
       'dirty',
-      'recipients',
     ]),
+    recipients: {
+      get () {
+        return this.$store.state.recipients.recipients
+      },
+      set (value) {
+        this.setRecipients(value)
+      }
+    },
   },
   components: {
     Box,
@@ -66,6 +74,7 @@ export default {
     ...mapActions('recipients', [
       'updateRecipients',
       'fetchRecipients',
+      'setRecipients',
       'addRecipient',
       'removeRecipient',
     ]),

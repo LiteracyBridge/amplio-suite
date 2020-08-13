@@ -14,6 +14,7 @@
         :on-select="setPlaylistIndex"
         :on-add="onAddPlaylist"
         :on-remove="removePlaylist"
+        :selected-index="selectedPlaylistIndex"
       />
 
       <div class="text-left">
@@ -50,6 +51,9 @@ export default {
       'selectedDeployment',
       'selectedPlaylist'
     ]),
+    ...mapState('uiSettings', {
+      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex
+    }),
     playlists: {
       get () {
         return this.$store.state.content.playlists
