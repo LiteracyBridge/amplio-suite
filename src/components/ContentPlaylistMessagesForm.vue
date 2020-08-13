@@ -151,13 +151,6 @@ export default {
   mounted () {
     this.fetchSustainableDevelopments()
   },
-  watch: {
-    selectedMessage () {
-      this.$nextTick(() => {
-        this.$refs.sdg_target.value = this.selectedMessage.sdg_target
-      })
-    }
-  },
   methods: {
     ...mapActions('content', [
       'setMessageVariant',
