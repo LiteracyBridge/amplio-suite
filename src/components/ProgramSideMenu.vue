@@ -28,7 +28,7 @@
 
         <button
           :aria-label="`Delete ${name} ${item.title}`"
-          class="w-6 h-6 mx-4 text-red-500 icon-zoom"
+          class="w-6 h-6 mx-4 text-red-500 icon-zoom-xl"
           @click="handleOpenModal(index)"
         >
           <font-awesome-icon icon="trash-alt" />
@@ -38,7 +38,7 @@
 
     <span
       tabindex="0"
-      class="block mt-4 pr-4 text-green font-bold cursor-pointer hover:underline hover:text-lg"
+      class="block mt-4 pr-4 font-semibold text-green cursor-pointer hover:underline"
       @click="onAdd"
     >
       + Add {{ name }}
@@ -74,7 +74,6 @@ import Draggable from 'vuedraggable'
 import { mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
-// import VTooltip from '@/components/VTooltip'
 
 export default {
   props: {
@@ -106,7 +105,6 @@ export default {
   components: {
     Draggable,
     VButton,
-    // VTooltip,
   },
   data: () => ({
     target: {},
@@ -196,9 +194,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.icon-zoom:hover svg {
-  @apply text-xl;
-}
-</style>
