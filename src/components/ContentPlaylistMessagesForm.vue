@@ -126,9 +126,9 @@ export default {
     },
     targets () {
       const goal = this.goals
-        .filter(goal => goal.section === this.selectedMessage.sdg_goal)
+        .find(goal => goal.section === this.selectedMessage.sdg_goal)
 
-      if (goal.length > 0 ) return goal[0].targets
+      if (goal) return goal.targets
       else return []
     }
   },
