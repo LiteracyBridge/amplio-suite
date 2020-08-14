@@ -20,7 +20,6 @@
         placeholder="Type a language to add"
         aria-label="Type a language to add"
         :get-result-value="languageName"
-        autofocus="true"
         @submit="this.languageSelected"
       />
     </div>

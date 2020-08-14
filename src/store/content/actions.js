@@ -129,6 +129,11 @@ const setMessageLang = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setMessageCategory = ({ commit }, payload) => {
+  commit('setMessageCategory', payload)
+  commit('setDirty', true)
+}
+
 const setMessageVariant = ({ commit }, payload) => {
   commit('setMessageVariant', payload)
   commit('setDirty', true)
@@ -171,6 +176,7 @@ export default {
   setMessageTitle,
   setMessageVariant,
   setMessageLang,
+  setMessageCategory,
   setMessageFormat,
   setMessageSDGGoal,
   setMessageSDGTarget,
