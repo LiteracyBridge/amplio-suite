@@ -1,14 +1,6 @@
 <template>
   <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
-    <span>Title</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.title"
-      @input="setRecipientTitle({ recipientIndex, title: $event.target.value })"
-    />
-
-    <span class="pl-4">Deployments</span>
+    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Deployments</p>
     <multiselect
       :options="deployments"
       :value="recipient.deployments"
@@ -248,7 +240,6 @@ export default {
   }),
   methods: {
     ...mapActions('recipients', [
-      'setRecipientTitle',
       'setRecipientDeployments',
       'setRecipientCountry',
       'setRecipientRegion',

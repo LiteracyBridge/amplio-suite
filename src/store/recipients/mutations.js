@@ -27,11 +27,6 @@ const setRecipientsLabelMap = (state, payload) => {
   state.labelMap[key] = value
 }
 
-const setRecipientTitle = (state, payload) => {
-  const { recipientIndex, title } = payload
-  state.recipients[recipientIndex].title = title
-}
-
 const setRecipientDeployments = (state, payload) => {
   const { recipientIndex, deployments } = payload
   state.recipients[recipientIndex].deployments = deployments
@@ -129,7 +124,6 @@ export default {
   setRecipients,
 
   setRecipientsLabelMap,
-  setRecipientTitle,
   setRecipientDeployments,
   setRecipientCountry,
   setRecipientRegion,

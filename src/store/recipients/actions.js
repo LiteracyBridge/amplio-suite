@@ -72,11 +72,6 @@ const removeRecipient = ({ commit, state }, index) => {
   commit('setDirty', true)
 }
 
-const setRecipientTitle = ({ commit }, payload) => {
-  commit('setRecipientTitle', payload)
-  commit('setDirty', true)
-}
-
 const setRecipientDeployments = ({ commit }, payload) => {
   payload.deployments.sort()
   commit('setRecipientDeployments', payload)
@@ -198,7 +193,6 @@ export default {
   addRecipient,
   removeRecipient,
 
-  setRecipientTitle,
   setRecipientDeployments,
   setRecipientCountry,
   setRecipientRegion,
