@@ -41,6 +41,7 @@ functions_to_deploy=(
 	programs_index
 	project_create
 	project_retrieve
+	sustainable_developments_index
 )
 
 # Lambda role
