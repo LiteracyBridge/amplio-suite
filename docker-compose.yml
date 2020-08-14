@@ -136,8 +136,12 @@ services:
     command: categories_index.lambda_handler
 
   lambda-languages_index:
-      <<: *base
-      command: languages_index.lambda_handler
+    <<: *base
+    command: languages_index.lambda_handler
+
+  lambda-sustainable_developments_index:
+    <<: *base
+    command: sustainable_developments_index.lambda_handler
 
 volumes:
   node_modules:

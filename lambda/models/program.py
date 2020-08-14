@@ -9,17 +9,7 @@ from sqlalchemy_serializer import SerializerMixin
 from models.deployment import Deployment
 from models.base import Base
 
-valid_sdgs = [
-    'no_poverty', 'zero_hunger', 'good_health_and_well _being',
-    'quality_education', 'gender_equality', 'clean_water_and_sanitation',
-    'affordable_and_clean_energy', 'decent_work_and_economic_growth',
-    'industry, innovation_and_infrastructure', 'reduced_inequalities',
-    'sustainable_cities_and_communities',
-    'responsible_consumption_and_production',
-    'climate_action', 'life_below_water', 'life_on_land',
-    'peace, justice_and_strong_institutions',
-    'parternship_for_the_goals'
-]
+
 valid_listening_models = ['households', 'groups', 'community_workers', 'place_based']
 time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
 time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
@@ -46,11 +36,6 @@ class Program(Base, SerializerMixin):
     feedback_frequency = Column(String(50), nullable=False)
     feedback_frequency_other = Column(String(50), nullable=False)
     languages = Column(JSON, nullable=False)
-
-    @validates('sustainable_development_goals')
-    def validate_sustainable_development_goals(self, key, goals):
-        validate_list_input(goals, valid_sdgs, 'goals')
-        return goals
 
     @validates('listening_models')
     def validate_listening_models(self, key, models):
