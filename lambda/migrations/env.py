@@ -31,6 +31,7 @@ from models import deployment
 from models import content
 from models import language
 from models import category
+from models import sustainable_development
 
 target_metadata = Base.metadata
 

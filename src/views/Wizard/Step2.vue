@@ -10,33 +10,40 @@
     </p>
 
     <div
+       v-if="options.length > 0"
       aria-labelledby="sdg"
       class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
-        v-for="(opt, index) in options"
-        :key="index"
+        v-for="goal in options"
+        :key="goal.section"
         role="checkbox"
         tabindex="0"
-        :aria-checked="goals.includes(opt) ? 'true': 'false'"
-        :aria-describedby="`goal-${index + 1}`"
+        :aria-checked="goals.includes(goal.section) ? 'true': 'false'"
+        :aria-describedby="`goal-${goal.section}`"
         class="relative s"
-        @click="toggleGoal(opt)"
-        @keyup.space="toggleGoal(opt)"
+        @click="toggleGoal(goal.section)"
+        @keyup.space="toggleGoal(goal.section)"
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="`/img/goals/Goal-${index + 1}.png`"
-          :alt="opt.replace(/ /g, ' ')"
-          :class="goals.includes(opt) ? 'opacity-25' : ''"
+          :src="goal.imgUrl"
+          :alt="goal.label"
+          :class="goals.includes(goal.section) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
         >
-        <p :id="`goal-${index + 1}`" class="visually_hidden">{{ opt.replace(/ /g, ' ') }}</p>
+        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.label }}</p>
         <Check
-          v-if="goals.includes(opt)"
+          v-if="goals.includes(goal.section)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
     </div>
+    <font-awesome-icon
+      v-else
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20" />
   </Box>
 </template>
 
@@ -50,28 +57,22 @@ export default {
   computed: {
     ...mapState('programData', [
       'goals'
-    ])
+    ]),
+    ...mapState('sustainableDevelopments', {
+      options: state => state.goals
+    }),
   },
-  data () {
-    return {
-      options: [
-        'no_poverty', 'zero_hunger', 'good_health_and_well _being',
-        'quality_education', 'gender_equality', 'clean_water_and_sanitation',
-        'affordable_and_clean_energy', 'decent_work_and_economic_growth',
-        'industry, innovation_and_infrastructure', 'reduced_inequalities',
-        'sustainable_cities_and_communities',
-        'responsible_consumption_and_production',
-        'climate_action', 'life_below_water', 'life_on_land',
-        'peace, justice_and_strong_institutions',
-        'parternship_for_the_goals'
-      ]
-    }
+  mounted () {
+    this.fetchSustainableDevelopments()
   },
   components: {
     Box,
     Check
   },
   methods: {
+    ...mapActions('sustainableDevelopments', [
+      'fetchSustainableDevelopments'
+    ]),
     ...mapActions('wizard', [
       'toggleGoal'
     ]),
