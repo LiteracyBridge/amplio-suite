@@ -18,11 +18,28 @@
       <div class="text-left">
         <program-recipients-form
           v-if="recipients.length > 0"
+          v-model="isFormFill"
           :recipientIndex="selectedRecipientIndex"
           :recipient="recipients[selectedRecipientIndex]"
         />
       </div>
     </div>
+
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="showModal">
+      <p>Please complete all of the mandatory fields.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="showModal">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="onCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Close"
+        />
+      </footer>
+    </portal>
   </box>
 </template>
 
@@ -31,6 +48,7 @@ import { mapState, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
+import VButton from '@/components/Button'
 import Box from '@/components/ProgramBox'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
@@ -51,16 +69,21 @@ export default {
     },
   },
   components: {
+    VButton,
     Box,
     ProgramSideMenu,
     ProgramRecipientsForm,
   },
   data: () => ({
-    selectedRecipientIndex: 0
+    isFormFill: Boolean,
+    selectedRecipientIndex: 0,
+
+    showModal: false
   }),
   mounted (){
     eventBus.$on('save-crud-data', () => {
-      this.updateRecipients()
+      if (this.isFormFill) this.updateRecipients()
+      else this.onOpenModal()
     }),
     eventBus.$on('discard-crud-data', () => {
       this.fetchRecipients()
@@ -71,6 +94,10 @@ export default {
     eventBus.$off('discard-crud-data')
   },
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('recipients', [
       'updateRecipients',
       'fetchRecipients',
@@ -78,6 +105,14 @@ export default {
       'addRecipient',
       'removeRecipient',
     ]),
+    onOpenModal () {
+      this.showModal = true
+      this.setModal('Required Fields')
+    },
+    onCloseModal () {
+      this.showModal = false
+      this.closeModal()
+    },
   }
 }
 </script>

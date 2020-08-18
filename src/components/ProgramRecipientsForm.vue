@@ -1,6 +1,75 @@
 <template>
   <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
-    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Deployments</p>
+    <p><span class="text-2xl font-bold text-red-500">*</span>Country</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.country"
+      @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
+    />
+
+    <p class="pl-4">Group Name</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.groupName"
+      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+    />
+
+    <p><span class="text-2xl font-bold text-red-500">*</span>Region</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.region"
+      @input="setRecipientRegion({ recipientIndex, region: $event.target.value })"
+    />
+
+    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Language</p>
+    <language-multi-selector
+      :values="recipient.language"
+      v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
+    />
+
+    <p><span class="text-2xl font-bold text-red-500">*</span>District</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.district"
+      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
+    />
+
+    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Listening Model</p>
+    <multiselect
+      :options="listeningModelsOptions"
+      :value="listeningModelsSelected"
+      :multiple="true"
+      label="label"
+      trackBy="label"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :preserve-search="true"
+      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
+      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
+      placeholder="Select the listening model"
+    />
+
+    <p><span class="text-2xl font-bold text-red-500">*</span>Community</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.community"
+      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+    />
+
+    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Number of Talking Books</p>
+    <v-input
+      type="number"
+      mx="mx-0 w-full"
+      :value="recipient.numberTalkingBooks"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+    />
+
+    <p><span class="text-2xl font-bold text-red-500">*</span>Deployments</p>
     <multiselect
       :options="deployments"
       :value="recipient.deployments"
@@ -17,77 +86,10 @@
         </div>
       </template>
     </multiselect>
+    <span></span>
+    <span></span>
 
-    <span>Country</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.country"
-      @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
-    />
-
-    <span class="pl-4">Group Name</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.groupName"
-      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
-    />
-
-    <span>Region</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.region"
-      @input="setRecipientRegion({ recipientIndex, region: $event.target.value })"
-    />
-
-    <span class="pl-4">Language</span>
-    <language-multi-selector
-      :values="recipient.language"
-      v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
-    />
-
-    <span>District</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.district"
-      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
-    />
-
-    <span class="pl-4">Listening Model</span>
-    <multiselect
-      :options="listeningModelsOptions"
-      :value="listeningModelsSelected"
-      :multiple="true"
-      label="label"
-      trackBy="label"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
-      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
-      placeholder="Select the listening model"
-    />
-
-    <span>Community</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.community"
-      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
-    />
-
-    <span class="pl-4">Number of Talking Books</span>
-    <v-input
-      type="number"
-      mx="mx-0 w-full"
-      :value="recipient.numberTalkingBooks"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
-    />
-
-    <span>Agent</span>
+    <p>Agent</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -95,7 +97,7 @@
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <span
+    <p
       tabindex="0"
       :class="agentIsOpen ? 'underline font-semibold' : ''"
       class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
@@ -103,14 +105,14 @@
     >
       {{ agentIsOpen ? 'Hide Details' : 'Show Details' }}
       <font-awesome-icon :icon="agentIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </span>
+    </p>
     <span></span>
 
     <div
       :class="agentIsOpen ? 'visible' : 'hidden'"
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
-      <span>Agent Gender</span>
+      <p>Agent Gender</p>
       <multiselect
         :options="['Male', 'Female', 'Other']"
         :value="recipient.agentGender"
@@ -118,7 +120,7 @@
         @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
       />
 
-      <span class="pl-4">Suport Entity</span>
+      <p class="pl-4">Suport Entity</p>
       <v-input
         type="text"
         mx="mx-0 w-full"
@@ -127,7 +129,7 @@
       />
     </div>
 
-    <span>Direct Beneficiaries</span>
+    <p><span class="text-2xl font-bold text-red-500">*</span>Direct Beneficiaries</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -135,7 +137,7 @@
       @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
     />
 
-    <span
+    <p
       tabindex="0"
       :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
       class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
@@ -143,7 +145,7 @@
     >
       {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
       <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </span>
+    </p>
     <span></span>
 
     <div
@@ -151,7 +153,7 @@
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
       <template v-for="opt in directBeneficiariesLabels">
-        <span :key="`${opt.key}-label`">{{ opt.value }}</span>
+        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
         <v-input
           :key="`${opt.key}-input`"
           type="number"
@@ -162,7 +164,7 @@
       </template>
 
       <template v-for="opt in additionalLabels">
-        <span :key="`${opt.key}-label`">{{ opt.value }}</span>
+        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
         <v-input
           :key="`${opt.key}-input`"
           type="number"
@@ -173,7 +175,7 @@
       </template>
     </div>
 
-    <span>Indirect beneficiaries</span>
+    <p>Indirect beneficiaries</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -192,6 +194,10 @@ import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
 export default {
   props: {
+    value: {
+      type: Boolean,
+      required: true
+    },
     recipientIndex: {
       type: Number,
       required: true
@@ -236,8 +242,29 @@ export default {
       { label: 'Groups', value: 'groups' },
       { label: 'Community Workers', value: 'community_workers' },
       { label: 'Place-based', value: 'place_based' }
+    ],
+
+    requiredFields: [
+      'country', 'region', 'district', 'community',
+      'language', 'listeningModels', 'numberTalkingBooks',
+      'deployments', 'directBeneficiaries'
     ]
   }),
+  watch: {
+    recipient: {
+      handler () {
+        // Check if all the required field are fill or not
+        const partial = this.requiredFields.map(key => {
+          const value = this.recipient[key]
+          if (typeof value === 'string' || value instanceof String) return value !== ''
+          else if (Array.isArray(value)) return value.length > 0
+        })
+
+        this.$emit('input', partial.every(Boolean))
+      },
+      deep: true
+    }
+  },
   methods: {
     ...mapActions('recipients', [
       'setRecipientDeployments',
