@@ -143,6 +143,10 @@ services:
     <<: *base
     command: sustainable_developments_index.lambda_handler
 
+  lambda-listening_model_index:
+    <<: *base
+    command: listening_model_index.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
