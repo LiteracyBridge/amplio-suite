@@ -147,6 +147,14 @@ services:
     <<: *base
     command: listening_model_index.lambda_handler
 
+  lambda-roadmap_index:
+    <<: *base
+    command: roadmap_index.lambda_handler
+
+  lambda-roadmap_update:
+    <<: *base
+    command: roadmap_update.lambda_handler
+
 volumes:
   node_modules:
   postgres-data:
