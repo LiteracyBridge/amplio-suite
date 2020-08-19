@@ -49,6 +49,13 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: '/programs/:programCode/roadmap',
+    name: 'roadmap',
+    props: true,
+    component: () => import(/* webpackChunkName: "roadmap" */ '../views/Roadmap.vue'),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/programs/:programCode/wizard',
     redirect: { name: 'Step-1' },
     props: true,
