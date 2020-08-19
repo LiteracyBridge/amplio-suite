@@ -17,9 +17,9 @@ const generateProgramData = (state, rootState) => ({
   languages: rootState.programData.languages,
 })
 
-const fetchProgram = async ({ state, commit }, programCode) => {
+const fetchProgram = async ({ commit, state, rootState }, programCode) => {
   if (state.status == 'loading') return
-  if (state.programCode === programCode && !state.dirty) return
+  if (state.programCode === programCode && !state.dirty && !rootState.programData.dirty) return
 
   commit('resetState')
   commit('requestInit')
