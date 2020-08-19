@@ -1,11 +1,14 @@
 import { getDefaultState } from './index'
 
+const resetState = (state) => {
+  Object.assign(state, getDefaultState())
+}
+
 const setDirty = (state, status) => {
   state.dirty = status
 }
 
 const requestInit = (state) => {
-  Object.assign(state, getDefaultState())
   state.status = 'loading'
 }
 
@@ -110,6 +113,7 @@ const removeMessage = (state, payload) => {
 }
 
 export default {
+  resetState,
   setDirty,
   requestInit,
   requestError,

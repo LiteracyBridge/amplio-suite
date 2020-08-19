@@ -11,6 +11,7 @@ const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymen
   if (!programName) return
   if (!deploymentName && state.programCode === programCode && !state.dirty) return
 
+  commit('resetState')
   commit('requestInit')
 
   if (!deploymentName) {
