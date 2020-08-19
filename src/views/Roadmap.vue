@@ -36,7 +36,7 @@ import Steps from '@/components/RoadmapSteps'
 const generalOptions = [
   {
     title: 'Plan',
-    img: 'Goal-1.png',
+    img: 'plan.png',
     steps: [
       {
         id: 1,
@@ -54,7 +54,7 @@ const generalOptions = [
   },
   {
     title: 'Prepare',
-    img: 'Goal-2.png',
+    img: 'prepare.png',
     steps: [
       {
         id: 3,
@@ -84,7 +84,7 @@ const generalOptions = [
   },
   {
     title: 'Learn',
-    img: 'Goal-3.png',
+    img: 'learn.png',
     steps: [
       {
         id: 7,
@@ -102,7 +102,7 @@ const generalOptions = [
   },
   {
     title: 'Create',
-    img: 'Goal-4.png',
+    img: 'create.png',
     steps: [
       {
         id: 9,
@@ -120,7 +120,7 @@ const generalOptions = [
   },
   {
     title: 'Deploy',
-    img: 'Goal-5.png',
+    img: 'deploy.png',
     steps: [
       {
         id: 11,
@@ -153,7 +153,7 @@ const generalOptions = [
 const launchOptions = [
   {
     title: 'Collect',
-    img: 'Goal-6.png',
+    img: 'collect.png',
     steps: [
       {
         id: 15,
@@ -177,7 +177,7 @@ const launchOptions = [
   },
   {
     title: 'Analyze',
-    img: 'Goal-7.png',
+    img: 'analyze.png',
     steps: [
       {
         id: 18,

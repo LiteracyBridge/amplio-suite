@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="opt in options" :key="opt.title" class="step">
-      <img class="my-auto" :src="`/img/goals/${opt.img}`" alt="">
+      <img class="my-auto" :src="`/img/roadmap/${opt.img}`" alt="">
       <h3 class="text-xl font-bold">{{ opt.title }}</h3>
       <div>
         <div v-for="step in opt.steps" :key="step.label" class="flex justify-between my-1">
