@@ -5,18 +5,14 @@
     </div>
 
     <nav aria-label="Program sections" class="flex">
-      <component
+      <router-link
         v-for="section in sections"
-        :key="section.name"
-        :is="section.disabled ? 'span' : 'router-link'"
-        :to="section.disabled ? '' : `/programs/${programCode}/settings/${section.name}`"
-        :class="[
-          $route.path.endsWith(section.name) ? 'bg-green text-white' : 'text-black',
-          section.disabled ? 'opacity-50 cursor-not-allowed' : ''
-        ]"
+        :key="section"
+        :to="`/programs/${programCode}/settings/${section}`"
+        :class="$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black'"
         class="py-2 px-4 uppercase text-lg">
-        {{ section.name }}
-      </component>
+        {{ section }}
+      </router-link>
     </nav>
 
      <transition :name="transitionName" mode="out-in">
@@ -66,12 +62,7 @@ export default {
   },
   data () {
     return {
-      sections: [
-        { name: 'general' },
-        { name: 'deployments' },
-        { name: 'content' },
-        { name: 'recipients', disabled: true }
-      ],
+      sections: ['general', 'deployments', 'content', 'recipients'],
 
       transitionName: 'slide-left',
       isModalOpen: false

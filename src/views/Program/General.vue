@@ -5,7 +5,7 @@
     title="general"
     help="You can modify your program name, total number of deployments and languages here"
   >
-    <div class="grid grid-cols-program items-center gap-2 text-left">
+    <div class="grid grid-cols-content-message row-gap-2 items-center">
       <p id="programName" class="px-4">Program</p>
       <v-input
         type="text"
@@ -17,12 +17,84 @@
         mx="mx-0"
       />
 
+      <span class="pl-4">Listening Model</span>
+      <multiselect
+        :options="listeningModelsOptions"
+        :value="listeningModelsSelected"
+        :multiple="true"
+        label="label"
+        trackBy="label"
+        :close-on-select="false"
+        :clear-on-select="false"
+        :preserve-search="true"
+        @select="(model) => toggleListening(model.value)"
+        @remove="(model) => toggleListening(model.value)"
+        placeholder="Select the listening model"
+      />
+
       <p id="langs" class="h-full px-4 pt-4">Languages</p>
       <LanguagesSelector
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
       />
+    </div>
+
+    <div class="my-2 p-4 text-left text-xl bg-gray-400">
+      <p>Direct Beneficiaries Fields</p>
+    </div>
+
+    <div class="grid grid-cols-content-message row-gap-2 items-center">
+      <template v-for="(opt, index) in directBeneficiariesLabels">
+        <span :key="`${opt.key}-label`">Field {{ index + 1 }}</span>
+        <v-input
+          :key="`${opt.key}-input`"
+          type="text"
+          :value="opt.value"
+          @input="setRecipientsLabelMap({ key: opt.key, value: $event.target.value })"
+          mx="mx-0"
+        />
+      </template>
+
+      <template v-for="(opt, index) in additionalLabels">
+        <span :key="`${opt.key}-label`">Additional Field {{ index + 1 }}</span>
+        <div :key="`${opt.key}-input`" class="flex items-center">
+          <v-input
+            type="text"
+            :value="opt.value"
+            @input="setAdditionalLabel({ key: opt.key, value: $event.target.value })"
+            mx="mx-0"
+          />
+
+          <button
+            :aria-label="`Delete option field ${opt.value}`"
+            :class="labelUsed[opt.key].used ? 'text-grey-500' : 'text-red-500'"
+            class="w-6 h-6 ml-2 icon-zoom"
+            @click="deleteAdditionalLabel(opt.key)"
+          >
+            <font-awesome-icon icon="trash-alt" />
+          </button>
+
+          <v-tooltip
+            v-if="labelUsed[opt.key].used"
+            :text="`Field used in ${labelUsed[opt.key].recipients.join(' - ')}`"
+            class="my-auto"
+          >
+            <font-awesome-icon
+              class="text-orange-600"
+              icon="exclamation-circle"
+            />
+          </v-tooltip>
+        </div>
+      </template>
+
+      <span
+        tabindex="0"
+        class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
+        @click="addAdditionalLabel"
+      >
+        + Add Optional Field
+      </span>
     </div>
 
     <!-- For modal components -->
@@ -50,13 +122,15 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
+import Multiselect from 'vue-multiselect'
 import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
+import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
@@ -68,23 +142,48 @@ export default {
     ]),
     ...mapState('programData', [
       'languages',
+      'listeningModels',
     ]),
+    ...mapGetters('recipients', [
+      'labelUsed'
+    ]),
+    ...mapState('recipients', {
+      additionalLabels: state => Object.keys(state.additionalLabelsMap)
+        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
+      directBeneficiariesLabels: state => Object.keys(state.labelMap)
+        .map(key => ({ key, value: state.labelMap[key] }))
+    }),
     ...mapState('program', {
       programDirty: state => state.dirty
     }),
     ...mapState('programData', {
       programDataDirty: state => state.dirty
     }),
+    listeningModelsSelected () {
+      return this.listeningModels
+        .map(key => this.listeningModelsOptions.find(opt => opt.value === key))
+    }
   },
   components: {
     Box,
     VButton,
     VInput,
+    VTooltip,
+    Multiselect,
     LanguagesSelector,
   },
   data () {
     return {
-      languageToDelete: null
+      languageToDelete: null,
+
+      // FIXME The listening models options is use here and in the wizard
+      // Move the options to a lambda function
+      listeningModelsOptions: [
+        { label: 'Households', value: 'households' },
+        { label: 'Groups', value: 'groups' },
+        { label: 'Community Workers', value: 'community_workers' },
+        { label: 'Place-based', value: 'place_based' }
+      ]
     }
   },
   mounted (){
@@ -112,6 +211,15 @@ export default {
     ...mapActions('programData', [
       'setLanguages',
       'deleteLanguage',
+      'toggleListening',
+    ]),
+    ...mapMutations('recipients', [
+      'setRecipientsLabelMap'
+    ]),
+    ...mapActions('recipients', [
+      'addAdditionalLabel',
+      'setAdditionalLabel',
+      'deleteAdditionalLabel'
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length

@@ -1,29 +1,10 @@
 <template>
   <div v-if="selectedMessage" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
-    <multiselect
-      v-if="supportedLanguages.length > 0"
-      :value="selectedMessage.language"
-      :options="languages"
-      :multiple="true"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      @input="(lang) => setMessageLang({ playlistIndex, messageIndex, lang})"
-      placeholder="Select the languages"
-    >
-      <template slot="option" slot-scope="props">
-        <div class="option__desc">
-          <span class="option__title">{{ languageFromCode(props.option) }}</span>
-        </div>
-      </template>
-    </multiselect>
-    <font-awesome-icon
-      v-else
-      icon="spinner"
-      size="2x"
-      pulse
-      class="mx-auto w-20 h-20" />
+    <language-multi-selector
+      :values="selectedMessage.language"
+      v-on:on-select="(lang) => setMessageLang({ playlistIndex, messageIndex, lang})"
+    />
 
     <span class="pl-4">Variant</span>
     <v-input
@@ -112,17 +93,11 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
-import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput'
+import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
 export default {
   computed: {
-    ...mapState('languages', {
-      supportedLanguages: state => state.languages,
-    }),
-    ...mapState('programData', [
-      'languages'
-    ]),
     ...mapState('sustainableDevelopments', [
       'goals'
     ]),
@@ -146,8 +121,8 @@ export default {
     }
   },
   components: {
-    Multiselect,
     VInput,
+    LanguageMultiSelector,
   },
   data () {
     return {
@@ -163,13 +138,9 @@ export default {
     }
   },
   mounted() {
-    this.fetchLanguages()
     this.fetchSustainableDevelopments()
   },
   methods: {
-    ...mapActions('languages', [
-      'fetchLanguages',
-    ]),
     ...mapActions('sustainableDevelopments', [
       'fetchSustainableDevelopments'
     ]),
@@ -182,11 +153,6 @@ export default {
       'setMessageSDGTarget',
       'setMessageKeyPoints'
     ]),
-    languageFromCode (code) {
-      return this.supportedLanguages
-        .find(language => language.code == code)
-        .name
-    },
   }
 }
 </script>

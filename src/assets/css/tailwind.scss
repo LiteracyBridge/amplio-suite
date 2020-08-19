@@ -8,4 +8,8 @@
   @apply opacity-50 bg-gray-400 rounded border border-2 border-blue;
 }
 
+.icon-zoom-xl:hover svg {
+  @apply text-xl;
+}
+
 @import 'tailwindcss/utilities';
