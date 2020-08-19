@@ -8,34 +8,40 @@
       Choose your listening model. More information about types of listening models is provided below.
     </p>
 
-    <div class="grid grid-cols-4 gap-4 max-w-screen-md mx-auto mt-4">
+    <div v-if="options.length > 0" class="grid grid-cols-5 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
-        v-for="(opt, index) in options"
-        :key="index"
+        v-for="opt in options"
+        :key="opt.id"
         role="checkbox"
         tabindex="0"
-        :aria-checked="listeningModels.includes(opt.value) ? 'true': 'false'"
-        :aria-describedby="`listeningModels-${index + 1}`"
+        :aria-checked="listeningModels.includes(opt.id) ? 'true': 'false'"
+        :aria-describedby="`listeningModels-${opt.id}`"
         class="relative cursor-pointer rounded border border-gray-500 s"
-        @click="toggleListening(opt.value)"
-        @keyup.space="toggleListening(opt.value)"
+        @click="toggleListening(opt.id)"
+        @keyup.space="toggleListening(opt.id)"
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="`/img/listening/${opt.label}.png`"
+          :src="opt.img_url"
           :alt="opt.label"
-          :class="listeningModels.includes(opt.value) ? 'opacity-25' : ''"
+          :class="listeningModels.includes(opt.id) ? 'opacity-25' : ''"
           class="block w-full"
         >
-        <p :id="`listeningModels-${index + 1}`" class="text-blue">
+        <p :id="`listeningModels-${opt.id}`" class="text-blue">
           {{ opt.label }}
         </p>
         <Check
-          v-if="listeningModels.includes(opt.value)"
+          v-if="listeningModels.includes(opt.id)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
     </div>
+    <font-awesome-icon
+      v-else
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20" />
 
     <div class="mt-4 p-6 text-left rounded border border-gray-500">
       <p>
@@ -74,23 +80,22 @@ export default {
   computed: {
     ...mapState('programData', [
       'listeningModels'
-    ])
-  },
-  data () {
-    return {
-      options: [
-        { label: 'Households', value: 'households' },
-        { label: 'Groups', value: 'groups' },
-        { label: 'Community Workers', value: 'community_workers' },
-        { label: 'Place-based', value: 'place_based' }
-      ]
-    }
+    ]),
+    ...mapState('listeningModels', {
+      options: state => state.listeningModels
+    }),
   },
   components: {
     Box,
     Check
   },
+  mounted () {
+    this.fetchListeningModels()
+  },
   methods: {
+    ...mapActions('listeningModels', [
+      'fetchListeningModels'
+    ]),
     ...mapActions('wizard', [
       'toggleListening'
     ]),

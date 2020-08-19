@@ -27,8 +27,8 @@
         :close-on-select="false"
         :clear-on-select="false"
         :preserve-search="true"
-        @select="(model) => toggleListening(model.value)"
-        @remove="(model) => toggleListening(model.value)"
+        @select="(model) => toggleListening(model.id)"
+        @remove="(model) => toggleListening(model.id)"
         placeholder="Select the listening model"
       />
 
@@ -153,6 +153,9 @@ export default {
       directBeneficiariesLabels: state => Object.keys(state.labelMap)
         .map(key => ({ key, value: state.labelMap[key] }))
     }),
+    ...mapState('listeningModels', {
+      listeningModelsOptions: state => state.listeningModels
+    }),
     ...mapState('program', {
       programDirty: state => state.dirty
     }),
@@ -161,7 +164,7 @@ export default {
     }),
     listeningModelsSelected () {
       return this.listeningModels
-        .map(key => this.listeningModelsOptions.find(opt => opt.value === key))
+        .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     }
   },
   components: {
@@ -175,18 +178,11 @@ export default {
   data () {
     return {
       languageToDelete: null,
-
-      // FIXME The listening models options is use here and in the wizard
-      // Move the options to a lambda function
-      listeningModelsOptions: [
-        { label: 'Households', value: 'households' },
-        { label: 'Groups', value: 'groups' },
-        { label: 'Community Workers', value: 'community_workers' },
-        { label: 'Place-based', value: 'place_based' }
-      ]
     }
   },
   mounted (){
+    this.fetchListeningModels()
+
     eventBus.$on('save-crud-data', () => {
       this.updateProgram()
     })
@@ -202,6 +198,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('listeningModels', [
+      'fetchListeningModels'
     ]),
     ...mapActions('program', [
       'fetchProgram',

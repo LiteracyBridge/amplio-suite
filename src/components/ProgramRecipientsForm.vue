@@ -48,8 +48,8 @@
       :close-on-select="false"
       :clear-on-select="false"
       :preserve-search="true"
-      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
-      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.value })"
+      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
       placeholder="Select the listening model"
     />
 
@@ -217,13 +217,16 @@ export default {
     ...mapState('programData', [
       'listeningModels'
     ]),
+    ...mapState('listeningModels', {
+      listeningModelsOptions: state => state.listeningModels
+    }),
     deployments () {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
     },
     listeningModelsSelected () {
       return this.recipient.listeningModels
-        .map(key => this.listeningModelsOptions.find(opt => opt.value === key))
+        .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     }
   },
   components: {
@@ -235,21 +238,15 @@ export default {
     agentIsOpen: false,
     beneficiariesIsOpen: false,
 
-    // FIXME The listening models options is use here and in the wizard
-    // Move the options to a lambda function
-    listeningModelsOptions: [
-      { label: 'Households', value: 'households' },
-      { label: 'Groups', value: 'groups' },
-      { label: 'Community Workers', value: 'community_workers' },
-      { label: 'Place-based', value: 'place_based' }
-    ],
-
     requiredFields: [
       'country', 'region', 'district', 'community',
       'language', 'listeningModels', 'numberTalkingBooks',
       'deployments', 'directBeneficiaries'
     ]
   }),
+  mounted () {
+    this.fetchListeningModels()
+  },
   watch: {
     recipient: {
       handler () {
@@ -266,6 +263,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('listeningModels', [
+      'fetchListeningModels'
+    ]),
     ...mapActions('recipients', [
       'setRecipientDeployments',
       'setRecipientCountry',

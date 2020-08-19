@@ -10,7 +10,6 @@ from models.deployment import Deployment
 from models.base import Base
 
 
-valid_listening_models = ['households', 'groups', 'community_workers', 'place_based']
 time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
 time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
@@ -36,11 +35,6 @@ class Program(Base, SerializerMixin):
     feedback_frequency = Column(String(50), nullable=False)
     feedback_frequency_other = Column(String(50), nullable=False)
     languages = Column(JSON, nullable=False)
-
-    @validates('listening_models')
-    def validate_listening_models(self, key, models):
-        validate_list_input(models, valid_listening_models, 'listening_models')
-        return models
 
     @validates('deployments_length')
     def validate_deployments_length(self, key, deployments_length):
