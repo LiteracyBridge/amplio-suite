@@ -29,7 +29,7 @@ def upgrade():
         { 'id': 2, 'label': 'Groups', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Groups.png' },
         { 'id': 3, 'label': 'Community Workers', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Community Workers.png' },
         { 'id': 4, 'label': 'Place-based', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Place-based.png' },
-        { 'id': 5, 'label': 'Other', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Place-based.png' },
+        { 'id': 5, 'label': 'Other', 'img_url': 'https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png' },
     ])
 
 
