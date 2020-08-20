@@ -18,9 +18,8 @@
       <div class="text-left">
         <program-recipients-form
           v-if="recipients.length > 0"
-          v-model="isFormFill"
           :recipientIndex="selectedRecipientIndex"
-          :recipient="recipients[selectedRecipientIndex]"
+          :recipient="recipient"
         />
       </div>
     </div>
@@ -67,6 +66,24 @@ export default {
         this.setRecipients(value)
       }
     },
+    recipient () {
+      return this.recipients[this.selectedRecipientIndex]
+    },
+    isFormFill () {
+      const requiredFields = [
+        'country', 'region', 'district', 'community',
+        'language', 'listeningModels', 'numberTalkingBooks',
+        'deployments', 'directBeneficiaries'
+      ]
+
+      const partial = requiredFields.map(key => {
+        const value = this.recipient[key]
+        if (typeof value === 'string' || value instanceof String) return value !== ''
+        else if (Array.isArray(value)) return value.length > 0
+      })
+
+      return partial.every(Boolean)
+    },
   },
   components: {
     VButton,
@@ -75,7 +92,6 @@ export default {
     ProgramRecipientsForm,
   },
   data: () => ({
-    isFormFill: Boolean,
     selectedRecipientIndex: 0,
 
     showModal: false
