@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
+  <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
     <p><span class="text-2xl font-bold text-red-500">*</span>Country</p>
     <v-input
       type="text"

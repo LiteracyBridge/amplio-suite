@@ -25,11 +25,11 @@
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="isModalOpen">
-      <p>Save or discard the change before continue.</p>
+      <p class="text-xl">Save or discard the change before continue.</p>
     </portal>
 
     <portal to="modalFooter" v-if="isModalOpen">
-      <footer class="flex flex-row-reverse justify-between">
+      <footer class="flex flex-row-reverse justify-between pt-20">
         <v-button @click="handleCloseModal" text="Ok" />
       </footer>
     </portal>

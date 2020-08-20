@@ -58,11 +58,11 @@
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="showModal">
-      <p>Please complete all of the mandatory fields.</p>
+      <p class="text-xl">Please complete all of the mandatory fields.</p>
     </portal>
 
     <portal to="modalFooter" v-if="showModal.mandatory">
-      <footer class="flex flex-row-reverse justify-between">
+      <footer class="flex flex-row-reverse justify-between pt-20">
         <v-button
           @click="onCloseModal"
           color="bg-transparent border border-black"
