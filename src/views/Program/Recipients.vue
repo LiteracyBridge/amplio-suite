@@ -3,7 +3,7 @@
     :httpStatus="status"
     :isDirty="dirty"
     title="recipients"
-    help="You can modify your recipients details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
+    help="You can view the list of recipients on this page. You can select the pencil icon to view or edit details for that recipient. All fields with an asterisk are required. The optional fields are recommended for reporting."
   >
     <table class="w-full table-auto">
       <thead>
@@ -27,11 +27,11 @@
           <td
             v-for="col in cols"
             :key="`${recipient.title}-${col.key}`"
-            class="px-4 py-2 border-b"
+            class="p-4 border-b"
           >
             {{ recipient[col.key] }}
           </td>
-          <td class="px-4 py-2 border-b">
+          <td class="px-4 border-b">
             <button
               class="mr-3 icon-zoom-xl"
               @click="onClickEdit(index)"
@@ -40,14 +40,16 @@
             </button>
             <button
               class="text-red-500 icon-zoom-xl"
+              @click="onClickDelete(index)"
             >
-              <font-awesome-icon icon="times" />
+              <font-awesome-icon icon="trash-alt" />
             </button>
           </td>
         </tr>
       </tbody>
     </table>
 
+    <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
         v-if="recipients.length > 0"
@@ -56,7 +58,29 @@
       />
     </portal>
 
-    <!-- For modal components -->
+    <!-- Delete modal -->
+    <portal to="modalBody" v-if="showModal.delete">
+      <p class="text-xl">This recipient will be deleted.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="showModal.delete">
+      <footer class="flex flex-row-reverse justify-between pt-20">
+        <v-button
+          @click="confirmDeleteRecipient"
+          color="bg-red-500 border border-red-500"
+          textColor="text-white"
+          text="Confirm"
+        />
+        <v-button
+          @click="onCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Cancel"
+        />
+      </footer>
+    </portal>
+
+    <!-- Mandatory fields modal -->
     <portal to="modalBody" v-if="showModal">
       <p class="text-xl">Please complete all of the mandatory fields.</p>
     </portal>
@@ -157,6 +181,7 @@ export default {
     cols,
     showModal: {
       edit: false,
+      delete: false,
       mandatory: false
     },
   }),
@@ -189,15 +214,24 @@ export default {
       this.selectedRecipientIndex = index
       this.onOpenModal('edit', 'Recipient Details')
     },
+    onClickDelete (index) {
+      this.selectedRecipientIndex = index
+      this.onOpenModal('delete', 'Delete Recipient')
+    },
     onOpenModal (modal, title) {
       this.showModal[modal] = true
       this.setModal(title)
     },
     onCloseModal () {
       this.showModal.edit = false
+      this.showModal.delete = false
       this.showModal.mandatory = false
       this.closeModal()
     },
+    confirmDeleteRecipient () {
+      this.removeRecipient(this.selectedRecipientIndex)
+      this.onCloseModal()
+    }
   }
 }
 </script>
