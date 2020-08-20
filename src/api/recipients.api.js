@@ -3,14 +3,14 @@ const recipientTemplate = (index) => ({
   title: `Recipient ${index}`,
   deployments: [],
   country: '',
-  region: '',
-  district: '',
-  community: '',
-  groupName: '',
-  language: [],
+  region: 'Turkana',
+  district: 'South',
+  community: 'Lokapel',
+  groupName: 'Naro',
+  language: 'Turkana (tuv)',
   listeningModels: [],
-  numberTalkingBooks: '',
-  agent: '',
+  numberTalkingBooks: 10,
+  agent: 'Some more long text',
   agentGender: '',
   supportEntity: '',
   directBeneficiaries: '',
@@ -18,7 +18,7 @@ const recipientTemplate = (index) => ({
   indirectBeneficiaries: ''
 })
 
-const getRecipients = () => [recipientTemplate(1), recipientTemplate(2), recipientTemplate(2)]
+const getRecipients = () => [recipientTemplate(1), recipientTemplate(2), recipientTemplate(3)]
 
 const postRecipients = (data) => recipientTemplate(data.total + 1)
 
