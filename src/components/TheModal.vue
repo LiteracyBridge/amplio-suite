@@ -26,7 +26,7 @@
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 
-        <div class="pt-6 pb-20 text-xl">
+        <div class="pt-6">
           <portal-target name="modalBody" slim />
         </div>
 
