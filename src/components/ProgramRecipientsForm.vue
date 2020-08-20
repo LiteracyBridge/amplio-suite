@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
-    <p><span class="text-2xl font-bold text-red-500">*</span>Country</p>
+    <p mandatory-field>Country</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -16,7 +16,7 @@
       @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
-    <p><span class="text-2xl font-bold text-red-500">*</span>Region</p>
+    <p class="mandatory-field">Region</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -24,13 +24,13 @@
       @input="setRecipientRegion({ recipientIndex, region: $event.target.value })"
     />
 
-    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Language</p>
+    <p class="pl-4 mandatory-field">Language</p>
     <language-multi-selector
       :values="recipient.language"
       v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
     />
 
-    <p><span class="text-2xl font-bold text-red-500">*</span>District</p>
+    <p class="mandatory-field">District</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -38,7 +38,7 @@
       @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
 
-    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Listening Model</p>
+    <p class="pl-4 mandatory-field">Listening Model</p>
     <multiselect
       :options="listeningModelsOptions"
       :value="listeningModelsSelected"
@@ -53,7 +53,7 @@
       placeholder="Select the listening model"
     />
 
-    <p><span class="text-2xl font-bold text-red-500">*</span>Community</p>
+    <p class="mandatory-field">Community</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -61,7 +61,7 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4"><span class="text-2xl font-bold text-red-500">*</span>Number of Talking Books</p>
+    <p class="pl-4 mandatory-field">Number of Talking Books</p>
     <v-input
       type="number"
       mx="mx-0 w-full"
@@ -69,7 +69,7 @@
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
-    <p><span class="text-2xl font-bold text-red-500">*</span>Deployments</p>
+    <p class="mandatory-field">Deployments</p>
     <multiselect
       :options="deployments"
       :value="recipient.deployments"
@@ -129,7 +129,7 @@
       />
     </div>
 
-    <p><span class="text-2xl font-bold text-red-500">*</span>Direct Beneficiaries</p>
+    <p class="mandatory-field">Direct Beneficiaries</p>
     <v-input
       type="text"
       mx="mx-0 w-full"

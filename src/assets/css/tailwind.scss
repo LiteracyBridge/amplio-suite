@@ -12,4 +12,9 @@
   @apply text-xl;
 }
 
+.mandatory-field::before {
+  @apply text-2xl font-bold text-red-500;
+  content: '*';
+}
+
 @import 'tailwindcss/utilities';

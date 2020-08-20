@@ -19,7 +19,7 @@
           <v-input
             type="text"
             name="messageTitle"
-            label="Message title"
+            label="*Message title"
             mx="w-full px-4 mx-0"
             :value="message.title"
             @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"

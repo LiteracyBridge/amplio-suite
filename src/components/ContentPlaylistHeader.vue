@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-content-message items-center p-4 pt-6">
     <div class="flex items-center">
-      <span id="title">
+      <span class="mandatory-field" id="title">
         Playlist Title
       </span>
 
