@@ -194,10 +194,6 @@ import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
 export default {
   props: {
-    value: {
-      type: Boolean,
-      required: true
-    },
     recipientIndex: {
       type: Number,
       required: true
@@ -237,30 +233,9 @@ export default {
   data: () => ({
     agentIsOpen: false,
     beneficiariesIsOpen: false,
-
-    requiredFields: [
-      'country', 'region', 'district', 'community',
-      'language', 'listeningModels', 'numberTalkingBooks',
-      'deployments', 'directBeneficiaries'
-    ]
   }),
   mounted () {
     this.fetchListeningModels()
-  },
-  watch: {
-    recipient: {
-      handler () {
-        // Check if all the required field are fill or not
-        const partial = this.requiredFields.map(key => {
-          const value = this.recipient[key]
-          if (typeof value === 'string' || value instanceof String) return value !== ''
-          else if (Array.isArray(value)) return value.length > 0
-        })
-
-        this.$emit('input', partial.every(Boolean))
-      },
-      deep: true
-    }
   },
   methods: {
     ...mapActions('listeningModels', [

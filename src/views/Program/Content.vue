@@ -27,6 +27,22 @@
         <playlist-messages />
       </div>
     </div>
+
+    <!-- For modal components -->
+    <portal to="modalBody" v-if="showModal">
+      <p>Please complete all of the mandatory fields.</p>
+    </portal>
+
+    <portal to="modalFooter" v-if="showModal">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="onCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Close"
+        />
+      </footer>
+    </portal>
   </box>
 </template>
 
@@ -35,6 +51,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { eventBus } from '@/eventBus'
 
+import VButton from '@/components/Button'
 import Box from '@/components/ProgramBox'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramSelectDeploymet from '@/components/ProgramSelectDeploymet'
@@ -62,19 +79,43 @@ export default {
         this.setPlaylist(value)
       }
     },
+    isFormFill () {
+      const requiredFields = [
+        'title'
+      ]
+
+      const partial = this.selectedPlaylist.messages.map(message => {
+        return requiredFields.map(key => {
+          const value = message[key]
+          if (typeof value === 'string' || value instanceof String) return value !== ''
+          else if (Array.isArray(value)) return value.length > 0
+        })
+      })
+
+      partial.push(this.selectedPlaylist.title !== '')
+
+      return partial.flat().every(Boolean)
+    },
   },
   components: {
+    VButton,
     Box,
     ProgramSideMenu,
     ProgramSelectDeploymet,
     PlaylistHeader,
     PlaylistMessages,
   },
+  data () {
+    return {
+      showModal: false
+    }
+  },
   mounted (){
     this.fetchCategories()
 
     eventBus.$on('save-crud-data', () => {
-      this.updateContent()
+      if (this.isFormFill) this.updateContent()
+      else this.onOpenModal()
     }),
     eventBus.$on('discard-crud-data', () => {
       this.fetchContent()
@@ -85,6 +126,10 @@ export default {
     eventBus.$off('discard-crud-data')
   },
   methods: {
+    ...mapActions('ui', [
+      'setModal',
+      'closeModal'
+    ]),
     ...mapActions('content', [
       'fetchContent',
       'updateContent',
@@ -98,6 +143,14 @@ export default {
     ...mapActions('uiSettings', [
       'setPlaylistIndex'
     ]),
+    onOpenModal () {
+      this.showModal = true
+      this.setModal('Required Fields')
+    },
+    onCloseModal () {
+      this.showModal = false
+      this.closeModal()
+    },
     async onAddPlaylist () {
       await this.addPlaylist(this.selectedDeployment.deploymentname)
       this.setPlaylistIndex(this.selectedPlaylistIndex + 1)
