@@ -31,13 +31,23 @@ export default {
     ...mapActions('wizard', [
       'addCompletedStep',
       'setIsCompleted'
-    ])
+    ]),
+    ...mapActions('roadmap', [
+      'fetchRoadmap',
+      'updateRoadmap',
+      'toggleStep'
+    ]),
   },
-  mounted () {
+  async mounted () {
+    await this.fetchRoadmap()
+
     if (!this.wizarsIsComplete) {
       this.addCompletedStep(7)
       this.setIsCompleted()
       this.createProgram()
+
+      this.toggleStep(1)
+      this.updateRoadmap()
     }
     this.$refs.box.$el.querySelector('button').focus()
   }

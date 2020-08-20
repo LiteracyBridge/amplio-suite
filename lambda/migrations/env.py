@@ -33,6 +33,7 @@ from models import language
 from models import category
 from models import sustainable_development
 from models import listening_model
+from models import roadmap
 
 target_metadata = Base.metadata
 

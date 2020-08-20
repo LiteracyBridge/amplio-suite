@@ -43,9 +43,14 @@
             </div>
           </div>
 
-          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+          <router-link
+            :to="{ name: 'roadmap', params: { programCode } }"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500"
+          >
             Roadmap
-          </a>
+          </router-link>
+
+
           <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
             Content Library
           </a>
