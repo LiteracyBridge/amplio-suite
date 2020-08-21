@@ -5,16 +5,15 @@ import {
 } from '@/api/recipients.api'
 
 
-const fetchRecipients = async ({ commit, state, rootState }) => {
-  const { programCode } = rootState.program
-
-  if (state.recipients.length > 0) return
+const fetchRecipients = async ({ commit, state }, programCode) => {
+  if (state.status === 'loading') return
 
   commit('requestInit')
 
   try {
-    const response = await getRecipients({ program_code: programCode })
-    commit('setRecipients', response)
+    const response = await getRecipients(programCode, state.recipients.length)
+    const recipients = [ ...state.recipients, ...response]
+    commit('setRecipients', recipients)
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {

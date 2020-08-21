@@ -21,12 +21,12 @@
       <tbody>
         <tr
           v-for="(recipient, index) in recipients"
-          :key="recipient.title"
+          :key="index"
           :class="index % 2 === 0 ? 'hover:bg-gray-200' : 'bg-gray-200 hover:bg-gray-300'"
         >
           <td
             v-for="col in cols"
-            :key="`${recipient.title}-${col.key}`"
+            :key="`${index}-${col.key}`"
             class="p-4 border-b"
           >
             {{ recipient[col.key] }}
@@ -139,6 +139,7 @@ const cols = [
 ]
 
 export default {
+  props: ['programCode'],
   computed: {
     ...mapState('recipients', [
       'status',
@@ -193,6 +194,8 @@ export default {
     eventBus.$on('discard-crud-data', () => {
       this.fetchRecipients()
     })
+
+    this.scroll()
   },
   beforeDestroy () {
     eventBus.$off('save-crud-data')
@@ -210,6 +213,12 @@ export default {
       'addRecipient',
       'removeRecipient',
     ]),
+    scroll () {
+      window.onscroll = () => {
+        const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
+        if (bottomOfWindow) this.fetchRecipients(this.programCode)
+      }
+    },
     onClickEdit (index) {
       this.selectedRecipientIndex = index
       this.onOpenModal('edit', 'Recipient Details')
