@@ -1,6 +1,6 @@
 <template>
   <box
-    :httpStatus="status"
+    httpStatus="success"
     :isDirty="dirty"
     title="recipients"
     help="You can view the list of recipients on this page. You can select the pencil icon to view or edit details for that recipient. All fields with an asterisk are required. The optional fields are recommended for reporting."
@@ -48,6 +48,14 @@
         </tr>
       </tbody>
     </table>
+
+    <font-awesome-icon
+      v-if="status === 'loading'"
+      icon="spinner"
+      size="3x"
+      pulse
+      class="mx-auto w-20 h-20"
+    />
 
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
