@@ -56,6 +56,14 @@
       </tbody>
     </table>
 
+    <font-awesome-icon
+      v-if="status === 'loading'"
+      icon="spinner"
+      size="3x"
+      pulse
+      class="mx-auto w-20 h-20"
+    />
+
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
