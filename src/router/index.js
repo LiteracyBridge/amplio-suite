@@ -101,18 +101,22 @@ const routes = [
     children: [
       {
         path: 'general',
+        props: true,
         component: () => import(/* webpackChunkName: "general" */ '../views/Program/General.vue')
       },
       {
         path: 'deployments',
+        props: true,
         component: () => import(/* webpackChunkName: "deployments" */ '../views/Program/Deployments.vue')
       },
       {
         path: 'content',
+        props: true,
         component: () => import(/* webpackChunkName: "content" */ '../views/Program/Content.vue')
       },
       {
         path: 'recipients',
+        props: true,
         component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/Recipients.vue')
       },
     ]
