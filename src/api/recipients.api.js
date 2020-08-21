@@ -9,7 +9,7 @@ const recipientTemplate = (index) => ({
   groupName: 'Naro',
   language: 'Turkana (tuv)',
   listeningModels: [],
-  numberTalkingBooks: 10,
+  numberTalkingBooks: index,
   agent: 'Some more long text',
   agentGender: '',
   supportEntity: '',
@@ -18,7 +18,14 @@ const recipientTemplate = (index) => ({
   indirectBeneficiaries: ''
 })
 
-const getRecipients = () => [recipientTemplate(1), recipientTemplate(2), recipientTemplate(3)]
+const getRecipients = async (programCode, from=0) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const response = Array(10).fill().map((_, i) => recipientTemplate(from + i))
+      resolve(response)
+    }, 2000)
+  })
+}
 
 const postRecipients = (data) => recipientTemplate(data.total + 1)
 
