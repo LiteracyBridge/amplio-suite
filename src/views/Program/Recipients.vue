@@ -66,6 +66,17 @@
       />
     </portal>
 
+    <portal to="modalFooter" v-if="showModal.edit">
+      <footer class="flex flex-row-reverse justify-between">
+        <v-button
+          @click="onCloseModal"
+          color="bg-transparent border border-black"
+          textColor="text-black"
+          text="Close"
+        />
+      </footer>
+    </portal>
+
     <!-- Delete modal -->
     <portal to="modalBody" v-if="showModal.delete">
       <p class="text-xl">This recipient will be deleted.</p>
