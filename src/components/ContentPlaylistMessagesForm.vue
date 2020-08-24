@@ -99,6 +99,12 @@ import VInput from '@/components/VInput'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
+  props: {
+    playlistIndex: {
+      type: Number,
+      required: true
+    },
+  },
   computed: {
     ...mapState('sustainableDevelopments', [
       'goals'
@@ -107,7 +113,6 @@ export default {
       'selectedMessage'
     ]),
     ...mapState('uiSettings', {
-      playlistIndex: state => state.content.selectedPlaylistIndex,
       messageIndex: state => state.content.selectedMessageIndex
     }),
     categories () {

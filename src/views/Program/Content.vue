@@ -17,20 +17,26 @@
       <program-side-menu
         name="playlist"
         v-model="playlists"
-        :on-select="setPlaylistIndex"
+        :on-select="(index) => { this.selectedPlaylistIndex = index }"
         :on-add="onAddPlaylist"
         :on-remove="removePlaylist"
         :selected-index="selectedPlaylistIndex"
       />
 
       <div class="text-left">
-        <playlist-header />
+        <playlist-header
+          :playlist="playlist"
+          :playlistIndex="selectedPlaylistIndex"
+        />
 
         <div class="p-4 text-xl bg-gray-400">
           <p>Messages</p>
         </div>
 
-        <playlist-messages />
+        <playlist-messages
+          :playlist="playlist"
+          :playlistIndex="selectedPlaylistIndex"
+         />
       </div>
     </div>
 
@@ -71,11 +77,7 @@ export default {
     ]),
     ...mapGetters('uiSettings', [
       'selectedDeployment',
-      'selectedPlaylist'
     ]),
-    ...mapState('uiSettings', {
-      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex
-    }),
     playlists: {
       get () {
         return this.$store.state.content.playlists
@@ -83,6 +85,9 @@ export default {
       set (value) {
         this.setPlaylist(value)
       }
+    },
+    playlist () {
+      return this.playlists[this.selectedPlaylistIndex]
     },
     isFormFill () {
       const requiredFields = [
@@ -114,6 +119,7 @@ export default {
   data () {
     return {
       description: "You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting.",
+      selectedPlaylistIndex: 0,
       showModal: false
     }
   },
@@ -135,9 +141,6 @@ export default {
     ...mapActions('categories', [
       'fetchCategories'
     ]),
-    ...mapActions('uiSettings', [
-      'setPlaylistIndex'
-    ]),
     onSaveChanges () {
       if (this.isFormFill) this.updateContent()
       else this.onOpenModal()
@@ -155,7 +158,7 @@ export default {
     },
     async onAddPlaylist () {
       await this.addPlaylist(this.selectedDeployment.deploymentname)
-      this.setPlaylistIndex(this.selectedPlaylistIndex + 1)
+      this.selectedPlaylistIndex ++
     },
   }
 }

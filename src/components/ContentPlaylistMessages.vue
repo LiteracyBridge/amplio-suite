@@ -22,7 +22,7 @@
             label="*Message title"
             mx="w-full px-4 mx-0"
             :value="message.title"
-            @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
+            @input="setMessageTitle({ playlistIndex, messageIndex: index, title: $event.target.value })"
           />
 
           <v-tooltip
@@ -62,6 +62,7 @@
         >
           <playlist-messages-form
             :class="index === selectedMessageIndex ? 'visible' : 'invisible'"
+            :playlistIndex="playlistIndex"
           />
         </div>
       </div>
@@ -109,14 +110,19 @@ import VButton from '@/components/Button'
 import VTooltip from '@/components/VTooltip'
 
 export default {
+  props: {
+    playlist: {
+      type: Object,
+      required: true
+    },
+    playlistIndex: {
+      type: Number,
+      required: true
+    },
+  },
   computed: {
-    ...mapState('uiSettings', {
-      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex,
-      selectedMessageIndex: state => state.content.selectedMessageIndex
-    }),
     ...mapGetters('uiSettings', [
       'selectedDeployment',
-      'selectedPlaylist',
       'selectedMessage'
     ]),
     ...mapState('content', [
@@ -124,11 +130,11 @@ export default {
     ]),
     messages: {
       get () {
-        return this.selectedPlaylist.messages
+        return this.playlist.messages
       },
       set (value) {
         this.setMessageIndex(-1)
-        this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: value })
+        this.setMessages({ playlistIndex: this.playlistIndex, messages: value })
       }
     }
   },
@@ -178,13 +184,13 @@ export default {
       this.closeModal()
     },
     confirmDeleteMessage() {
-      this.removeMessage({ playlistIndex: this.selectedPlaylistIndex, messageIndex: this.modal.eleIndex })
+      this.removeMessage({ playlistIndex: this.playlistIndex, messageIndex: this.modal.eleIndex })
       this.handleCloseModal()
     },
     addNewMessage() {
       const payload = {
         deployment_id: this.selectedDeployment.deployment,
-        playlist_index: this.selectedPlaylistIndex
+        playlist_index: this.playlistIndex
       }
       this.addMessage(payload)
     },
@@ -218,7 +224,7 @@ export default {
       tmp[newIndex] = tmp[oldIndex]
       tmp[oldIndex] = a
 
-      this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: tmp })
+      this.setMessages({ playlistIndex: this.playlistIndex, messages: tmp })
       this.setMessageIndex(-1)
 
       // Update dashed element

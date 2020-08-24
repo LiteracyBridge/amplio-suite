@@ -6,7 +6,7 @@
       </span>
 
       <v-tooltip
-        v-if="selectedPlaylist.title.length > 15"
+        v-if="playlist.title.length > 15"
         text="We recommend to keep titles short"
         class="ml-2"
       >
@@ -21,8 +21,8 @@
       type="text"
       mx="mx-0 w-full"
       aria-labelledby="title"
-      :value="selectedPlaylist.title"
-      @input="(event) => setPlaylistTitle({ playlistIndex, title: event.target.value })"
+      :value="playlist.title"
+      @input="setPlaylistTitle({ playlistIndex, title: $event.target.value })"
     />
 
     <span id="audience" class="pl-4">
@@ -34,26 +34,28 @@
       mx="mx-0 w-full"
       aria-labelledby="audience"
       placeholder="audience"
-      :value="selectedPlaylist.audience"
-      @input="(event) => setPlaylistAudience({ playlistIndex, audience: event.target.value })"
+      :value="playlist.audience"
+      @input="setPlaylistAudience({ playlistIndex, audience: $event.target.value })"
     />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 
 export default {
-  computed: {
-    ...mapState('uiSettings', {
-      playlistIndex: state => state.content.selectedPlaylistIndex
-    }),
-    ...mapGetters('uiSettings', [
-      'selectedPlaylist'
-    ])
+  props: {
+    playlist: {
+      type: Object,
+      required: true
+    },
+    playlistIndex: {
+      type: Number,
+      required: true
+    },
   },
   components: {
     VInput,
