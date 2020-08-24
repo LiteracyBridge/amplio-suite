@@ -33,13 +33,14 @@ def lambda_handler(event, context):
                 if message['sdg_goal']:
                     goal = session.query(SustainableDevelopmentGoals) \
                         .filter(SustainableDevelopmentGoals.id == message['sdg_goal']) \
-                        .first() \
-                        .label
+                        .first()
 
-                    target = session.query(SustainableDevelopmentTargets) \
-                        .filter(SustainableDevelopmentTargets.id == message['sdg_target']) \
-                        .first() \
-                        .label
+                    target = [target for target in goal.targets
+                        if target.subsection == message['sdg_target']][0]
+
+                    goal = goal.label
+                    target = target.label
+
                 else:
                     goal = ''
                     target = ''
