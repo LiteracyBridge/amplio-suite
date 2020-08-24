@@ -8,7 +8,14 @@ session = create_db_session()
 @validate_keys(['program_code', 'completed'])
 def lambda_handler(event, context):
     try:
-        session.merge(Roadmap(**event))
+        roadmap = session.query(Roadmap) \
+        .filter(
+            Roadmap.program_code == event['program_code']
+        ).one_or_none()
+        if not roadmap:
+            roadmap = Roadmap(**event)
+        roadmap.completed = event['completed']
+        session.merge(roadmap)
         session.commit()
 
         return {
