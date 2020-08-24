@@ -35,7 +35,7 @@ const postProgram = (program) => httpClient.post(END_POINT, program)
 const putProgram = (program) => httpClient.put(END_POINT, program)
 
 const postProgramNewDeployment = (data) => {
-  return httpClient.post('program-next-deployment ', data)
+  return httpClient.post('program-next-deployment', data)
 }
 
 export {
