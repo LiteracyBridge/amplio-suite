@@ -39,8 +39,14 @@
         :onLanguageDeleted="this.onLanguageDeleted"
       />
 
-      <span></span>
-      <span></span>
+      <span class="pl-4">Region</span>
+      <v-input
+        type="text"
+        placeholder="Enter region name"
+        :value="region.join(',')"
+        mx="mx-0"
+        @input="setRegion($event.target.value)"
+      />
 
       <span>Direct Beneficiaries</span>
       <span
@@ -167,6 +173,7 @@ export default {
       'programName'
     ]),
     ...mapState('programData', [
+      'region',
       'languages',
       'listeningModels',
     ]),
@@ -236,6 +243,7 @@ export default {
       'setProgramName',
     ]),
     ...mapActions('programData', [
+      'setRegion',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
