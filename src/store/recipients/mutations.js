@@ -58,8 +58,8 @@ const setRecipientGroupName = (state, payload) => {
 }
 
 const setRecipientLang = (state, payload) => {
-  const { recipientIndex, langs } = payload
-  state.recipients[recipientIndex].language = langs
+  const { recipientIndex, lang } = payload
+  state.recipients[recipientIndex].language = lang
 }
 
 const addRecipientListeningModel = (state, payload) => {
@@ -82,9 +82,9 @@ const setRecipientAgentGender = (state, payload) => {
   state.recipients[recipientIndex].agentGender = gender
 }
 
-const setRecipientSuportEntity = (state, payload) => {
-  const { recipientIndex, suportEntity } = payload
-  state.recipients[recipientIndex].suportEntity = suportEntity
+const setRecipientSupportEntity = (state, payload) => {
+  const { recipientIndex, supportEntity } = payload
+  state.recipients[recipientIndex].supportEntity = supportEntity
 }
 
 const setRecipientDirectBeneficiaries = (state, payload) => {
@@ -135,7 +135,7 @@ export default {
   removeRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
-  setRecipientSuportEntity,
+  setRecipientSupportEntity,
   setRecipientDirectBeneficiaries,
   setRecipientNumberTalkingBooks,
   setRecipientsAdditionalFields,

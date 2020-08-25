@@ -29,6 +29,9 @@ module.exports = {
         banner: 'calc(100vh - 104px)', // rest the footer
         'banner-header': 'calc(100vh - 104px - 56px)' // rest the footer and the header
       },
+      zIndex: {
+        1000: '1000',
+      },
       inset: {
         41: '41%'
       },

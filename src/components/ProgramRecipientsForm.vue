@@ -8,12 +8,12 @@
       @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
     />
 
-    <p class="pl-4">Group Name</p>
+    <p class="pl-4 mandatory-field">Number of Talking Books</p>
     <v-input
-      type="text"
+      type="number"
       mx="mx-0 w-full"
-      :value="recipient.groupName"
-      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+      :value="recipient.numberTalkingBooks"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
     <p class="mandatory-field">Region</p>
@@ -25,9 +25,11 @@
     />
 
     <p class="pl-4 mandatory-field">Language</p>
-    <language-multi-selector
-      :values="recipient.language"
-      v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
+    <languages-selector
+      :languages="recipient.language"
+      :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :multiple="false"
     />
 
     <p class="mandatory-field">District</p>
@@ -61,12 +63,12 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4 mandatory-field">Number of Talking Books</p>
+    <p class="pl-4">Group Name</p>
     <v-input
-      type="number"
+      type="text"
       mx="mx-0 w-full"
-      :value="recipient.numberTalkingBooks"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+      :value="recipient.groupName"
+      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
     <p class="mandatory-field">Deployments</p>
@@ -86,8 +88,14 @@
         </div>
       </template>
     </multiselect>
-    <span></span>
-    <span></span>
+
+    <p class="pl-4">Support Entity</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.supportEntity"
+      @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
+    />
 
     <p>Agent</p>
     <v-input
@@ -97,39 +105,26 @@
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <p
-      tabindex="0"
-      :class="agentIsOpen ? 'underline font-semibold' : ''"
-      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
-      @click="agentIsOpen = !agentIsOpen"
-    >
-      {{ agentIsOpen ? 'Hide Details' : 'Show Details' }}
-      <font-awesome-icon :icon="agentIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </p>
-    <span></span>
+    <p class="pl-4">Agent Gender</p>
+    <multiselect
+      :options="['Male', 'Female', 'Other']"
+      :value="recipient.agentGender"
+      placeholder="Select the agent gender"
+      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
+    />
 
-    <div
-      :class="agentIsOpen ? 'visible' : 'hidden'"
-      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
-    >
-      <p>Agent Gender</p>
-      <multiselect
-        :options="['Male', 'Female', 'Other']"
-        :value="recipient.agentGender"
-        placeholder="Select the agent gender"
-        @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
-      />
-
-      <p class="pl-4">Suport Entity</p>
-      <v-input
-        type="text"
-        mx="mx-0 w-full"
-        :value="recipient.suportEntity"
-        @input="setRecipientSuportEntity({ recipientIndex, suportEntity: $event.target.value })"
-      />
+    <div>
+      <span class="mandatory-field">Direct Beneficiaries</span>
+      <v-tooltip
+        text="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
+        class="ml-2"
+      >
+        <font-awesome-icon
+          class="text-orange-600"
+          icon="question-circle"
+        />
+      </v-tooltip>
     </div>
-
-    <p class="mandatory-field">Direct Beneficiaries</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -188,9 +183,11 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VInput from '@/components/VInput'
 import Multiselect from 'vue-multiselect'
-import LanguageMultiSelector from '@/components/LanguageMultiSelector'
+
+import VInput from '@/components/VInput'
+import VTooltip from '@/components/VTooltip'
+import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   props: {
@@ -227,11 +224,12 @@ export default {
   },
   components: {
     VInput,
+    VTooltip,
     Multiselect,
-    LanguageMultiSelector,
+    LanguagesSelector,
+    // LanguageMultiSelector,
   },
   data: () => ({
-    agentIsOpen: false,
     beneficiariesIsOpen: false,
   }),
   mounted () {
@@ -252,7 +250,7 @@ export default {
       'toggleRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
-      'setRecipientSuportEntity',
+      'setRecipientSupportEntity',
       'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
       'setRecipientsAdditionalFields',

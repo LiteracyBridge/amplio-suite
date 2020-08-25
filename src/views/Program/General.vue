@@ -3,10 +3,10 @@
     :httpStatus="status"
     :isDirty="programDirty || programDataDirty"
     title="general"
-    help="You can modify your program name, total number of deployments and languages here"
+    :help="help"
   >
-    <div class="grid grid-cols-content-message row-gap-2 items-center">
-      <p id="programName" class="px-4">Program</p>
+    <div class="grid grid-cols-content-message row-gap-2 items-center text-left">
+      <p id="programName">Program</p>
       <v-input
         type="text"
         ref="programName"
@@ -32,21 +32,42 @@
         placeholder="Select the listening model"
       />
 
-      <p id="langs" class="h-full px-4 pt-4">Languages</p>
+      <p id="langs">Languages</p>
       <LanguagesSelector
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
       />
+
+      <span></span>
+      <span></span>
+
+      <span>Direct Beneficiaries</span>
+      <span
+        tabindex="0"
+        :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
+        class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+        @click="beneficiariesIsOpen = !beneficiariesIsOpen"
+      >
+        {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
+        <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
+      </span>
     </div>
 
-    <div class="my-2 p-4 text-left text-xl bg-gray-400">
-      <p>Direct Beneficiaries Fields</p>
-    </div>
-
-    <div class="grid grid-cols-content-message row-gap-2 items-center">
+    <div
+      :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
+      class="grid grid-cols-content-message row-gap-2 items-center text-left"
+    >
+      <p class="px-4 col-span-4 text-sm">
+        The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
+      </p>
       <template v-for="(opt, index) in directBeneficiariesLabels">
-        <span :key="`${opt.key}-label`">Field {{ index + 1 }}</span>
+        <span
+          :key="`${opt.key}-label`"
+          :class="index % 2 === 1 ? 'pl-4' : ''"
+        >
+          Field {{ index + 1 }}
+        </span>
         <v-input
           :key="`${opt.key}-input`"
           type="text"
@@ -57,7 +78,12 @@
       </template>
 
       <template v-for="(opt, index) in additionalLabels">
-        <span :key="`${opt.key}-label`">Additional Field {{ index + 1 }}</span>
+        <span
+          :key="`${opt.key}-label`"
+          :class="index % 2 === 1 ? 'pl-4' : ''"
+        >
+          Additional Field {{ index + 1 }}
+        </span>
         <div :key="`${opt.key}-input`" class="flex items-center">
           <v-input
             type="text"
@@ -177,7 +203,9 @@ export default {
   },
   data () {
     return {
+      help: "ou can modify your program name and languages here. You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
       languageToDelete: null,
+      beneficiariesIsOpen: false
     }
   },
   mounted (){
@@ -222,9 +250,9 @@ export default {
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length
-      this.setLanguages({ lang: language, index })
+      this.setLanguages({ lang: language.code, index })
     },
-    onLanguageDeleted(_languageCode, language) {
+    onLanguageDeleted(language) {
       this.languageToDelete = language
       this.setModal(`Delete Language ${language.name}`)
     },
