@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, UniqueConstraint
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from sqlalchemy_serializer import SerializerMixin
 
 from models.base import Base
@@ -18,3 +18,5 @@ class Deployment(Base, SerializerMixin):
     distribution = Column(String(255))
     comment = Column(String)
     component = Column(String, nullable=False)
+
+    content = relationship('Content', cascade='all, delete')

@@ -86,3 +86,10 @@ def create_db_session():
     session = sessionmaker(bind=engine)()
 
     return session
+
+def save_to_csv(text, file_path):
+    # FIXME this must be a env var
+    bucket = 'stg-amplio-progspecs'
+
+    client = boto3.client('s3')
+    client.put_object(Body=text, Bucket=bucket, Key=file_path)

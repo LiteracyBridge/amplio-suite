@@ -8,13 +8,14 @@ session = create_db_session()
 @validate_keys(['program_code', 'deployment'])
 def lambda_handler(event, context):
     try:
-        session.query(Deployment) \
+        deployment = session.query(Deployment) \
             .filter(
                 Deployment.project == event['program_code'],
                 Deployment.deployment == event['deployment']
             ) \
-            .delete()
+            .first()
 
+        session.delete(deployment)
         session.commit()
 
         return {

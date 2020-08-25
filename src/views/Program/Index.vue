@@ -1,7 +1,30 @@
 <template>
   <main class="container mx-auto text-center">
-    <div class="py-6 px-4 flex justify-start">
+    <div class="py-6 px-4 flex justify-between">
       <h1 class="text-2xl text-blue">{{ programName }} Program</h1>
+
+      <div>
+        <v-button
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
+          text="Submit"
+          @click="onSubmit"
+        />
+        <v-button
+          size="2x"
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
+          text="Discard Changes"
+          @click="onDiscardChanges"
+        />
+        <v-button
+          size="2x"
+          class="mx-2"
+          :color="settingIsDirty ? 'bg-green' : 'bg-gray-400'"
+          text="Save Change"
+          @click="onSaveChanges"
+        />
+      </div>
     </div>
 
     <nav aria-label="Program sections" class="flex">
@@ -23,6 +46,8 @@
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
 
+    <v-snackbars :show.sync="showSnackbar" label="The program was successfully deployed" />
+
     <!-- For modal components -->
     <portal to="modalBody" v-if="isModalOpen">
       <p>Save or discard the change before continue.</p>
@@ -39,7 +64,9 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
+import { eventBus } from '@/eventBus'
 import VButton from '@/components/Button'
+import VSnackbars from '@/components/VSnackbars'
 
 import { fetchData } from '@/utils'
 
@@ -48,10 +75,14 @@ export default {
   props: ['programCode'],
   components: {
     VButton,
+    VSnackbars,
   },
   computed: {
     ...mapState('program', [
       'programName',
+    ]),
+    ...mapGetters('ui', [
+      'settingIsDirty',
     ]),
     ...mapGetters('uiSettings', [
       'tabStatus'
@@ -65,7 +96,8 @@ export default {
       sections: ['general', 'deployments', 'content', 'recipients'],
 
       transitionName: 'slide-left',
-      isModalOpen: false
+      isModalOpen: false,
+      showSnackbar: false,
     }
   },
   created () {
@@ -105,6 +137,19 @@ export default {
       'setModal',
       'closeModal'
     ]),
+    ...mapActions('program', [
+      'deployProgram',
+    ]),
+    async onSubmit () {
+      const result = await this.deployProgram()
+      if (result === 'success') this.showSnackbar = true
+    },
+    onSaveChanges () {
+      eventBus.$emit('save-crud-data')
+    },
+    onDiscardChanges () {
+      eventBus.$emit('discard-crud-data')
+    },
     handleOpenModal () {
       this.isModalOpen = true
       this.setModal('Save or discard the change')

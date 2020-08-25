@@ -10,38 +10,16 @@
       <loading v-if="httpStatus !== 'success'" />
       <slot />
     </div>
-
-    <footer class="flex justify-between">
-      <v-button
-        @click="discardChanges"
-        size="2x"
-        :color="isDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
-        text="Discard Changes"
-      />
-      <v-button
-        @click="saveChanges"
-        size="2x"
-        :color="isDirty ? 'bg-green' : 'bg-gray-400'"
-        text="Save Change"
-      />
-    </footer>
   </section>
 </template>
 
 <script>
-import { eventBus } from '@/eventBus'
-
-import VButton from '@/components/Button'
 import Loading from '@/components/Loading'
 
 export default {
   props: {
     httpStatus: {
       type: String,
-      required: true
-    },
-    isDirty: {
-      type: Boolean,
       required: true
     },
     title: {
@@ -54,16 +32,7 @@ export default {
     }
   },
   components: {
-    VButton,
     Loading,
   },
-  methods: {
-    saveChanges () {
-      eventBus.$emit('save-crud-data')
-    },
-    discardChanges () {
-      eventBus.$emit('discard-crud-data')
-    }
-  }
 }
 </script>
