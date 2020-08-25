@@ -2,98 +2,106 @@
   <Box
     :prev="{ name: 'Step-3' }"
     :next="{ name: 'Step-5' }"
-    title="A deployment is a collection of play lists that will be put
-    in the field for a period of time, usually one quarter."
+    title="Excellent! How will participants listen to TalkingBooks?"
   >
-    <div>
-      <p id="deployments" class="text-2xl font-semibold">
-        How many deployments will you conduct for this program?
-      </p>
+    <p class="text-2xl font-semibold">
+      Choose your listening model. More information about types of listening models is provided below.
+    </p>
 
-      <v-input
-        ref="deployments"
-        type="number"
-        min="0"
-        aria-labelledby="deployments"
-        :value="amount"
-        @change="(event) => setDeploymentsAmount(event.target.value)"
-      />
-    </div>
-
-    <div v-if="amount > 0" class="mt-10">
-      <p id="deploymentLength" class="text-2xl font-semibold">
-        What is the length of each deployment?
-      </p>
-
-      <select
-        aria-labelledby="deploymentLength"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        :value="length"
-        @change="(event) => setDeploymentsLength(event.target.value)"
+    <div v-if="options.length > 0" class="grid grid-cols-5 gap-4 max-w-screen-lg mx-auto mt-4">
+      <div
+        v-for="opt in options"
+        :key="opt.id"
+        role="checkbox"
+        tabindex="0"
+        :aria-checked="listeningModels.includes(opt.id) ? 'true': 'false'"
+        :aria-describedby="`listeningModels-${opt.id}`"
+        class="relative cursor-pointer rounded border border-gray-500 s"
+        @click="toggleListening(opt.id)"
+        @keyup.space="toggleListening(opt.id)"
+        @keyup.enter="clickOnButton"
       >
-        <option value="">Select</option>
-        <option value="one_month">1 Month</option>
-        <option value="one_quarter">1 Quarter</option>
-        <option value="six_months">Six months</option>
-        <option value="one_year">One year</option>
-      </select>
+        <img
+          :src="opt.img_url"
+          :alt="opt.label"
+          :class="listeningModels.includes(opt.id) ? 'opacity-25' : ''"
+          class="block w-full"
+        >
+        <p :id="`listeningModels-${opt.id}`" class="text-blue">
+          {{ opt.label }}
+        </p>
+        <Check
+          v-if="listeningModels.includes(opt.id)"
+          class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
+        />
+      </div>
     </div>
+    <font-awesome-icon
+      v-else
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20" />
 
-    <div v-if="amount > 0" class="mt-10">
-      <p id="firstDeployment" class="text-2xl font-semibold">
-        Choose your first deployment start date
+    <div class="mt-4 p-6 text-left rounded border border-gray-500">
+      <p>
+        <strong>Households:</strong> Talking Books are rotated between
+        families/households within a community.
       </p>
 
-      <v-input
-        type="date"
-        iconLeft="calendar-alt"
-        aria-labelledby="firstDeployment"
-        :min="date"
-        :value="first"
-        @change="(event) => setDeploymentsFirst(event.target.value)"
-      />
+      <p class="pt-4">
+        <strong>Groups:</strong> Talking Books are played at meetings of
+        community groups such as Village Savings and Loan Associations (VSLAs),
+        mothers groups, youth groups etc.
+      </p>
+
+      <p class="pt-4">
+        <strong>Community workers:</strong> Talking Books are distributed
+        to nurses/health volunteers and other community workers to
+        support their work.
+      </p>
+
+      <p class="pt-4">
+        <strong>Place-based:</strong> Talking Books remain in a location
+        accessible to the community such as a classroom or a health
+        center waiting room.
+      </p>
     </div>
   </Box>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 import Box from '@/components/SetupBox'
-import VInput from '@/components/VInput'
+import Check from '@/assets/svg/check-circle.svg'
 
 export default {
   computed: {
-    ...mapState('programData', {
-      amount: state => state.deploymentsAmount,
-      first: state => state.deploymentsFirst,
-      length: state => state.deploymentsLength
-    })
-  },
-  data () {
-    return {
-      date: null
-    }
-  },
-  mounted () {
-    const date = new Date()
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const dateNumber = (date.getDate()).toString().padStart(2, '0')
-    this.date = `${date.getFullYear()}-${month}-${dateNumber}`
-
-    // Auto focus
-    this.$refs.deployments.$el.children[0].focus()
+    ...mapState('programData', [
+      'listeningModels'
+    ]),
+    ...mapState('listeningModels', {
+      options: state => state.listeningModels
+    }),
   },
   components: {
     Box,
-    VInput
+    Check
+  },
+  mounted () {
+    this.fetchListeningModels()
   },
   methods: {
+    ...mapActions('listeningModels', [
+      'fetchListeningModels'
+    ]),
     ...mapActions('wizard', [
-      'setDeploymentsAmount',
-      'setDeploymentsLength',
-      'setDeploymentsFirst'
-    ])
+      'toggleListening'
+    ]),
+    clickOnButton () {
+      document.getElementById('nextStep').click()
+    }
   }
 }
 </script>

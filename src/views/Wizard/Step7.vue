@@ -1,55 +1,52 @@
 <template>
   <Box
-    ref="box"
-    :next="`/programs/${programCode}/settings`"
-    title="Thank you! We automatically updated the Program Specification based
-    on your responses. Please complete the remaining details."
-  />
+    :prev="{ name: 'Step-6' }"
+    :next="{ name: 'Step-8' }"
+    title="You are doing great!"
+  >
+    <p id="lang" class="text-2xl font-semibold">
+      What languages will you develop your content in?
+    </p>
+
+    <div class="flex justify-center">
+      <LanguagesSelector
+        :languages="this.languages"
+        :onLanguageSelected="this.onLanguageSelected"
+        :onLanguageDeleted="this.onLanguageDeleted"
+        :autofocus="true"
+      />
+    </div>
+  </Box>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
+import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   components: {
-    Box
+    Box,
+    LanguagesSelector,
   },
   computed: {
-    ...mapState('wizard', {
-      wizarsIsComplete: 'isComplete'
-    }),
     ...mapState('programData', [
-      'programCode'
+      'languages',
     ])
   },
   methods: {
-    ...mapActions('program', [
-      'createProgram'
-    ]),
     ...mapActions('wizard', [
-      'addCompletedStep',
-      'setIsCompleted'
+      'setLanguages',
+      'deleteLanguage',
     ]),
-    ...mapActions('roadmap', [
-      'fetchRoadmap',
-      'updateRoadmap',
-      'toggleStep'
-    ]),
-  },
-  async mounted () {
-    await this.fetchRoadmap()
-
-    if (!this.wizarsIsComplete) {
-      this.addCompletedStep(7)
-      this.setIsCompleted()
-      this.createProgram()
-
-      this.toggleStep(1)
-      this.updateRoadmap()
+    onLanguageSelected(language) {
+      let index = this.languages.length
+      this.setLanguages({ lang: language.code, index })
+    },
+    onLanguageDeleted(language) {
+      this.deleteLanguage(language)
     }
-    this.$refs.box.$el.querySelector('button').focus()
   }
 }
 </script>

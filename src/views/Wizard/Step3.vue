@@ -2,36 +2,38 @@
   <Box
     :prev="{ name: 'Step-2' }"
     :next="{ name: 'Step-4' }"
-    title="Excellent! How will participants listen to TalkingBooks?"
+    title="Help us understand more about your program."
   >
-    <p class="text-2xl font-semibold">
-      Choose your listening model. More information about types of listening models is provided below.
+    <p id="sdg" class="text-2xl font-semibold">
+      Which Sustainable Development Goals (SDGs) does your program
+      work towards? Select/Deselect all that apply.
     </p>
 
-    <div v-if="options.length > 0" class="grid grid-cols-5 gap-4 max-w-screen-lg mx-auto mt-4">
+    <div
+       v-if="options.length > 0"
+      aria-labelledby="sdg"
+      class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
-        v-for="opt in options"
-        :key="opt.id"
+        v-for="goal in options"
+        :key="goal.section"
         role="checkbox"
         tabindex="0"
-        :aria-checked="listeningModels.includes(opt.id) ? 'true': 'false'"
-        :aria-describedby="`listeningModels-${opt.id}`"
-        class="relative cursor-pointer rounded border border-gray-500 s"
-        @click="toggleListening(opt.id)"
-        @keyup.space="toggleListening(opt.id)"
+        :aria-checked="goals.includes(goal.section) ? 'true': 'false'"
+        :aria-describedby="`goal-${goal.section}`"
+        class="relative s"
+        @click="toggleGoal(goal.section)"
+        @keyup.space="toggleGoal(goal.section)"
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="opt.img_url"
-          :alt="opt.label"
-          :class="listeningModels.includes(opt.id) ? 'opacity-25' : ''"
-          class="block w-full"
+          :src="goal.imgUrl"
+          :alt="goal.label"
+          :class="goals.includes(goal.section) ? 'opacity-25' : ''"
+          class="block w-full cursor-pointer"
         >
-        <p :id="`listeningModels-${opt.id}`" class="text-blue">
-          {{ opt.label }}
-        </p>
+        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.label }}</p>
         <Check
-          v-if="listeningModels.includes(opt.id)"
+          v-if="goals.includes(goal.section)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
@@ -42,31 +44,6 @@
       size="4x"
       pulse
       class="mx-auto w-20 h-20" />
-
-    <div class="mt-4 p-6 text-left rounded border border-gray-500">
-      <p>
-        <strong>Households:</strong> Talking Books are rotated between
-        families/households within a community.
-      </p>
-
-      <p class="pt-4">
-        <strong>Groups:</strong> Talking Books are played at meetings of
-        community groups such as Village Savings and Loan Associations (VSLAs),
-        mothers groups, youth groups etc.
-      </p>
-
-      <p class="pt-4">
-        <strong>Community workers:</strong> Talking Books are distributed
-        to nurses/health volunteers and other community workers to
-        support their work.
-      </p>
-
-      <p class="pt-4">
-        <strong>Place-based:</strong> Talking Books remain in a location
-        accessible to the community such as a classroom or a health
-        center waiting room.
-      </p>
-    </div>
   </Box>
 </template>
 
@@ -79,25 +56,25 @@ import Check from '@/assets/svg/check-circle.svg'
 export default {
   computed: {
     ...mapState('programData', [
-      'listeningModels'
+      'goals'
     ]),
-    ...mapState('listeningModels', {
-      options: state => state.listeningModels
+    ...mapState('sustainableDevelopments', {
+      options: state => state.goals
     }),
+  },
+  mounted () {
+    this.fetchSustainableDevelopments()
   },
   components: {
     Box,
     Check
   },
-  mounted () {
-    this.fetchListeningModels()
-  },
   methods: {
-    ...mapActions('listeningModels', [
-      'fetchListeningModels'
+    ...mapActions('sustainableDevelopments', [
+      'fetchSustainableDevelopments'
     ]),
     ...mapActions('wizard', [
-      'toggleListening'
+      'toggleGoal'
     ]),
     clickOnButton () {
       document.getElementById('nextStep').click()
