@@ -192,6 +192,8 @@
 import { mapState, mapActions } from 'vuex'
 import Multiselect from 'vue-multiselect'
 
+import Multiselect from 'vue-multiselect'
+
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
