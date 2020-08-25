@@ -1,9 +1,11 @@
 <template>
   <div v-if="selectedMessage" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
-    <language-multi-selector
-      :values="selectedMessage.language"
-      v-on:on-select="(lang) => setMessageLang({ playlistIndex, messageIndex, lang})"
+    <languages-selector
+      :languages="selectedMessage.language"
+      :onLanguageSelected="({ name, code }) => addMessageLang({ playlistIndex, messageIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => removeMessageLang({ playlistIndex, messageIndex, lang: code })"
+      :multiple="false"
     />
 
     <span class="pl-4">Variant</span>
@@ -94,7 +96,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
-import LanguageMultiSelector from '@/components/LanguageMultiSelector'
+import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   computed: {
@@ -122,7 +124,7 @@ export default {
   },
   components: {
     VInput,
-    LanguageMultiSelector,
+    LanguagesSelector,
   },
   data () {
     return {
