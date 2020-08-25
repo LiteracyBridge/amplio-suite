@@ -3,7 +3,7 @@
     :httpStatus="status"
     :isDirty="programDirty || programDataDirty"
     title="general"
-    help="You can modify your program name, total number of deployments and languages here"
+    :help="help"
   >
     <div class="grid grid-cols-content-message row-gap-2 items-center">
       <p id="programName" class="px-4">Program</p>
@@ -178,6 +178,7 @@ export default {
   data () {
     return {
       languageToDelete: null,
+      help: "ou can modify your program name and languages here. You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“"
     }
   },
   mounted (){
