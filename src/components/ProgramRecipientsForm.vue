@@ -8,12 +8,12 @@
       @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
     />
 
-    <p class="pl-4">Group Name</p>
+    <p class="pl-4 mandatory-field">Number of Talking Books</p>
     <v-input
-      type="text"
+      type="number"
       mx="mx-0 w-full"
-      :value="recipient.groupName"
-      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+      :value="recipient.numberTalkingBooks"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
     <p class="mandatory-field">Region</p>
@@ -63,12 +63,12 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4 mandatory-field">Number of Talking Books</p>
+    <p class="pl-4">Group Name</p>
     <v-input
-      type="number"
+      type="text"
       mx="mx-0 w-full"
-      :value="recipient.numberTalkingBooks"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+      :value="recipient.groupName"
+      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
     <p class="mandatory-field">Deployments</p>
