@@ -222,9 +222,9 @@ export default {
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length
-      this.setLanguages({ lang: language, index })
+      this.setLanguages({ lang: language.code, index })
     },
-    onLanguageDeleted(_languageCode, language) {
+    onLanguageDeleted(language) {
       this.languageToDelete = language
       this.setModal(`Delete Language ${language.name}`)
     },
