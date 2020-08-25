@@ -122,12 +122,12 @@
         @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
       />
 
-      <p class="pl-4">Suport Entity</p>
+      <p class="pl-4">Support Entity</p>
       <v-input
         type="text"
         mx="mx-0 w-full"
-        :value="recipient.suportEntity"
-        @input="setRecipientSuportEntity({ recipientIndex, suportEntity: $event.target.value })"
+        :value="recipient.supportEntity"
+        @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
       />
     </div>
 
@@ -269,7 +269,7 @@ export default {
       'toggleRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
-      'setRecipientSuportEntity',
+      'setRecipientSupportEntity',
       'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
       'setRecipientsAdditionalFields',
