@@ -38,6 +38,21 @@ const setProgramName = async ({ dispatch }, payload) => {
   await check('programName', 1, dispatch)
 }
 
+// Step 2
+const setCountry = async ({ dispatch }, payload) => {
+  await dispatch('programData/setCountry', payload, { root: true })
+
+  const attrs = ['country', 'region']
+  await check(attrs, 2, dispatch)
+}
+
+const setRegion = async ({ dispatch }, payload) => {
+  await dispatch('programData/setRegion', payload, { root: true })
+
+  const attrs = ['country', 'region']
+  await check(attrs, 2, dispatch)
+}
+
 // Step 3
 const toggleGoal = async ({ dispatch }, goal) => {
   await dispatch('programData/toggleGoal', goal, { root: true })
@@ -110,6 +125,8 @@ export default {
   setIsCompleted,
 
   setProgramName,
+  setCountry,
+  setRegion,
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,

@@ -13,6 +13,8 @@ const setProgramData = (state, payload) => {
   state.status = 'success'
   state.programCode = payload.projectcode
 
+  state.country = payload.country
+  state.region = payload.region
   state.goals = payload.sustainable_development_goals
   state.listeningModels = payload.listening_models
   state.deploymentsAmount = payload.deployments_amount
@@ -25,6 +27,14 @@ const setProgramData = (state, payload) => {
 
 const setProgramCode = (state, payload) => {
   state.programCode = payload
+}
+
+const setCountry = (state, payload) => {
+  state.country = payload
+}
+
+const setRegion = (state, payload) => {
+  state.region = payload.split(',')
 }
 
 const addGoal = (state, payload) => {
@@ -80,6 +90,8 @@ export default {
   setProgramData,
 
   setProgramCode,
+  setRegion,
+  setCountry,
   addGoal,
   removeGoal,
   addListeningModel,
