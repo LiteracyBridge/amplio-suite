@@ -58,6 +58,9 @@
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
       class="grid grid-cols-content-message row-gap-2 items-center text-left"
     >
+      <p class="px-4 col-span-4 text-sm">
+        The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
+      </p>
       <template v-for="(opt, index) in directBeneficiariesLabels">
         <span
           :key="`${opt.key}-label`"

@@ -131,7 +131,18 @@
       />
     </div>
 
-    <p class="mandatory-field">Direct Beneficiaries</p>
+    <div>
+      <span class="mandatory-field">Direct Beneficiaries</span>
+      <v-tooltip
+        text="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
+        class="ml-2"
+      >
+        <font-awesome-icon
+          class="text-orange-600"
+          icon="question-circle"
+        />
+      </v-tooltip>
+    </div>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -190,8 +201,10 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VInput from '@/components/VInput'
 import Multiselect from 'vue-multiselect'
+
+import VInput from '@/components/VInput'
+import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
@@ -229,6 +242,7 @@ export default {
   },
   components: {
     VInput,
+    VTooltip,
     Multiselect,
     LanguagesSelector,
     // LanguageMultiSelector,
