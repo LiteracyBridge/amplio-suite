@@ -88,8 +88,14 @@
         </div>
       </template>
     </multiselect>
-    <span></span>
-    <span></span>
+
+    <p class="pl-4">Support Entity</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.supportEntity"
+      @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
+    />
 
     <p>Agent</p>
     <v-input
@@ -99,37 +105,13 @@
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <p
-      tabindex="0"
-      :class="agentIsOpen ? 'underline font-semibold' : ''"
-      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
-      @click="agentIsOpen = !agentIsOpen"
-    >
-      {{ agentIsOpen ? 'Hide Details' : 'Show Details' }}
-      <font-awesome-icon :icon="agentIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </p>
-    <span></span>
-
-    <div
-      :class="agentIsOpen ? 'visible' : 'hidden'"
-      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
-    >
-      <p>Agent Gender</p>
-      <multiselect
-        :options="['Male', 'Female', 'Other']"
-        :value="recipient.agentGender"
-        placeholder="Select the agent gender"
-        @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
-      />
-
-      <p class="pl-4">Support Entity</p>
-      <v-input
-        type="text"
-        mx="mx-0 w-full"
-        :value="recipient.supportEntity"
-        @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
-      />
-    </div>
+    <p class="pl-4">Agent Gender</p>
+    <multiselect
+      :options="['Male', 'Female', 'Other']"
+      :value="recipient.agentGender"
+      placeholder="Select the agent gender"
+      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
+    />
 
     <div>
       <span class="mandatory-field">Direct Beneficiaries</span>
@@ -248,7 +230,6 @@ export default {
     // LanguageMultiSelector,
   },
   data: () => ({
-    agentIsOpen: false,
     beneficiariesIsOpen: false,
   }),
   mounted () {
