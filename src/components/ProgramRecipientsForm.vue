@@ -25,9 +25,11 @@
     />
 
     <p class="pl-4 mandatory-field">Language</p>
-    <language-multi-selector
-      :values="recipient.language"
-      v-on:on-select="(langs) => setRecipientLang({ recipientIndex, langs })"
+    <languages-selector
+      :languages="recipient.language"
+      :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :multiple="false"
     />
 
     <p class="mandatory-field">District</p>
@@ -190,7 +192,7 @@ import { mapState, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import Multiselect from 'vue-multiselect'
-import LanguageMultiSelector from '@/components/LanguageMultiSelector'
+import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   props: {
@@ -228,7 +230,8 @@ export default {
   components: {
     VInput,
     Multiselect,
-    LanguageMultiSelector,
+    LanguagesSelector,
+    // LanguageMultiSelector,
   },
   data: () => ({
     agentIsOpen: false,

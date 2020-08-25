@@ -58,8 +58,8 @@ const setRecipientGroupName = (state, payload) => {
 }
 
 const setRecipientLang = (state, payload) => {
-  const { recipientIndex, langs } = payload
-  state.recipients[recipientIndex].language = langs
+  const { recipientIndex, lang } = payload
+  state.recipients[recipientIndex].language = lang
 }
 
 const addRecipientListeningModel = (state, payload) => {
