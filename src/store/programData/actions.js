@@ -8,12 +8,12 @@ const isCompleted = ({ state, rootState }, payload) => {
         partial = rootState.programName !== ''
         break
       case 'country':
-      case 'region':
       case 'deploymentsLength':
       case 'feedbackFrequently':
       case 'feedbackFrequentlyOther':
         partial = state[attr] !== ''
         break
+      case 'region':
       case 'goals':
       case 'listeningModels':
         partial = state[attr].length > 0
@@ -45,8 +45,13 @@ const setCountry = async ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setRegion = async ({ commit }, payload) => {
-  await commit('setRegion', payload)
+const addRegion = async ({ commit }, payload) => {
+  await commit('addRegion', payload)
+  commit('setDirty', true)
+}
+
+const removeRegion = async ({ commit }, payload) => {
+  await commit('removeRegion', payload)
   commit('setDirty', true)
 }
 
@@ -106,7 +111,8 @@ const deleteLanguage = async ({ commit }, language) => {
 export default {
   isCompleted,
   setCountry,
-  setRegion,
+  addRegion,
+  removeRegion,
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,

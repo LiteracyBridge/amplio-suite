@@ -46,8 +46,15 @@ const setCountry = async ({ dispatch }, payload) => {
   await check(attrs, 2, dispatch)
 }
 
-const setRegion = async ({ dispatch }, payload) => {
-  await dispatch('programData/setRegion', payload, { root: true })
+const addRegion = async ({ dispatch }, payload) => {
+  await dispatch('programData/addRegion', payload, { root: true })
+
+  const attrs = ['country', 'region']
+  await check(attrs, 2, dispatch)
+}
+
+const removeRegion = async ({ dispatch }, payload) => {
+  await dispatch('programData/removeRegion', payload, { root: true })
 
   const attrs = ['country', 'region']
   await check(attrs, 2, dispatch)
@@ -126,7 +133,8 @@ export default {
 
   setProgramName,
   setCountry,
-  setRegion,
+  addRegion,
+  removeRegion,
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,

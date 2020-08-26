@@ -19,14 +19,17 @@
     <p class="text-2xl font-semibold">
       Region
     </p>
-
-    <v-input
-      type="text"
-      name="region"
-      label="Enter region name"
-      :value="region.join(',')"
-      mx="mx-auto my-4"
-      @input="setRegion($event.target.value)"
+    <multiselect
+      class="multi"
+      tag-placeholder="Add this as new region"
+      placeholder="Search or add a region"
+      :value="region"
+      :options="options"
+      :multiple="true"
+      :taggable="true"
+      @tag="addTag"
+      @select="addRegion"
+      @remove="removeRegion"
     />
   </Box>
 </template>
@@ -35,9 +38,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
-
 import Box from '@/components/SetupBox'
-import VInput from '@/components/VInput'
 
 import countries from '@/data/countries.json'
 
@@ -50,12 +51,12 @@ export default {
   },
   components: {
     Box,
-    VInput,
     Multiselect,
   },
   data () {
     return {
-      countries
+      countries,
+      options: [],
     }
   },
   mounted () {
@@ -64,8 +65,13 @@ export default {
   methods: {
     ...mapActions('wizard', [
       'setCountry',
-      'setRegion',
-    ])
+      'addRegion',
+      'removeRegion',
+    ]),
+    addTag (newTag) {
+      this.options.push(newTag)
+      this.addRegion(newTag)
+    }
   }
 }
 </script>
