@@ -15,6 +15,7 @@
         :value="programName"
         @input="(event) => setProgramName(event.target.value)"
         mx="mx-0"
+        class="w-full"
       />
 
       <span class="pl-4">Listening Model</span>
@@ -38,11 +39,10 @@
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
       />
+    </div>
 
-      <span></span>
-      <span></span>
-
-      <span>Direct Beneficiaries</span>
+    <div class="w-full inline-flex items-center mt-10 text-left">
+      <span class="font-bold">Direct Beneficiaries</span>
       <span
         tabindex="0"
         :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
@@ -56,9 +56,9 @@
 
     <div
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-      class="grid grid-cols-content-message row-gap-2 items-center text-left"
+      class="grid grid-cols-content-message row-gap-2 items-center text-left px-6"
     >
-      <p class="px-4 col-span-4 text-sm">
+      <p class="col-span-4 text-sm text-blue">
         The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
       </p>
       <template v-for="(opt, index) in directBeneficiariesLabels">
@@ -74,6 +74,7 @@
           :value="opt.value"
           @input="setRecipientsLabelMap({ key: opt.key, value: $event.target.value })"
           mx="mx-0"
+          class="w-full"
         />
       </template>
 
@@ -90,6 +91,7 @@
             :value="opt.value"
             @input="setAdditionalLabel({ key: opt.key, value: $event.target.value })"
             mx="mx-0"
+            class="w-full"
           />
 
           <button
@@ -114,13 +116,15 @@
         </div>
       </template>
 
-      <span
-        tabindex="0"
-        class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
-        @click="addAdditionalLabel"
-      >
-        + Add Optional Field
-      </span>
+      <div class="col-span-4">
+        <span
+          tabindex="0"
+          class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
+          @click="addAdditionalLabel"
+        >
+          + Add Optional Field
+        </span>
+      </div>
     </div>
 
     <!-- For modal components -->
@@ -203,7 +207,7 @@ export default {
   },
   data () {
     return {
-      help: "ou can modify your program name and languages here. You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
+      help: "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
       languageToDelete: null,
       beneficiariesIsOpen: false
     }

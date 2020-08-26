@@ -5,54 +5,45 @@
     title="A deployment is a collection of play lists that will be put
     in the field for a period of time, usually one quarter."
   >
-    <div>
-      <p id="deployments" class="text-2xl font-semibold">
-        How many deployments will you conduct for this program?
-      </p>
+    <p id="deployments" class="text-2xl font-semibold">
+      How many deployments will you conduct for this program?
+    </p>
+    <v-input
+      ref="deployments"
+      type="number"
+      min="0"
+      aria-labelledby="deployments"
+      :value="amount"
+      @change="(event) => setDeploymentsAmount(event.target.value)"
+    />
 
-      <v-input
-        ref="deployments"
-        type="number"
-        min="0"
-        aria-labelledby="deployments"
-        :value="amount"
-        @change="(event) => setDeploymentsAmount(event.target.value)"
-      />
-    </div>
+    <p id="deploymentLength" class="mt-10 text-2xl font-semibold">
+      What is the length of each deployment?
+    </p>
+    <select
+      aria-labelledby="deploymentLength"
+      class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+      :value="length"
+      @change="(event) => setDeploymentsLength(event.target.value)"
+    >
+      <option value="">Select</option>
+      <option value="one_month">1 Month</option>
+      <option value="one_quarter">1 Quarter</option>
+      <option value="six_months">Six months</option>
+      <option value="one_year">One year</option>
+    </select>
 
-    <div v-if="amount > 0" class="mt-10">
-      <p id="deploymentLength" class="text-2xl font-semibold">
-        What is the length of each deployment?
-      </p>
-
-      <select
-        aria-labelledby="deploymentLength"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        :value="length"
-        @change="(event) => setDeploymentsLength(event.target.value)"
-      >
-        <option value="">Select</option>
-        <option value="one_month">1 Month</option>
-        <option value="one_quarter">1 Quarter</option>
-        <option value="six_months">Six months</option>
-        <option value="one_year">One year</option>
-      </select>
-    </div>
-
-    <div v-if="amount > 0" class="mt-10">
-      <p id="firstDeployment" class="text-2xl font-semibold">
-        Choose your first deployment start date
-      </p>
-
-      <v-input
-        type="date"
-        iconLeft="calendar-alt"
-        aria-labelledby="firstDeployment"
-        :min="date"
-        :value="first"
-        @change="(event) => setDeploymentsFirst(event.target.value)"
-      />
-    </div>
+    <p id="firstDeployment" class="mt-10 text-2xl font-semibold">
+      Choose your first deployment start date
+    </p>
+    <v-input
+      type="date"
+      iconLeft="calendar-alt"
+      aria-labelledby="firstDeployment"
+      :min="date"
+      :value="first"
+      @change="(event) => setDeploymentsFirst(event.target.value)"
+    />
   </Box>
 </template>
 

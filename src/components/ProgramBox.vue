@@ -3,7 +3,7 @@
     <header class="flex justify-center content-center">
       <h2 class="visually_hidden">{{ title }}</h2>
       <font-awesome-icon icon="exclamation-circle" class="w-6 h-6 text-gray-500" />
-      <p class="pl-2 text-lg text-blue">{{ help }}</p>
+      <p class="pl-2 text-lg text-blue" v-html="help" />
     </header>
 
     <div class="relative min-h-200-px my-5 text-center">
