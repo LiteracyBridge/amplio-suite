@@ -2,10 +2,10 @@
   <Box
     :prev="{ name: 'Step-1' }"
     :next="{ name: 'Step-3' }"
-    title="Where are the programs going to be developed?"
+    title="Let's add some geographic details"
   >
     <p class="text-2xl font-semibold">
-      Country
+      Where will you implement this program?
     </p>
     <multiselect
       ref="country"
@@ -16,11 +16,8 @@
       @select="(country) => setCountry(country)"
     />
 
-    <p class="text-2xl font-semibold">
-      Region
-    </p>
     <multiselect
-      class="multi"
+      class="mt-10 multi"
       tag-placeholder="Add this as new region"
       placeholder="Search or add a region"
       :value="region"
@@ -30,7 +27,11 @@
       @tag="addTag"
       @select="addRegion"
       @remove="removeRegion"
-    />
+    >
+      <template slot="noOptions">
+        Enter the region name
+      </template>
+    </multiselect>
   </Box>
 </template>
 
