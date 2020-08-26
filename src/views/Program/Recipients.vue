@@ -29,7 +29,8 @@
         <tr
           v-for="(recipient, index) in recipients"
           :key="index"
-          :class="index % 2 === 0 ? 'hover:bg-gray-200' : 'bg-gray-200 hover:bg-gray-300'"
+          :class="index % 2 === 0 ? '' : 'bg-gray-200'"
+          class="hover:bg-gray-400"
         >
           <td
             v-for="col in cols"
