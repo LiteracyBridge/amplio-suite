@@ -78,13 +78,13 @@ const setRecipientDeployments = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setRecipientCountry = ({ commit }, payload) => {
-  commit('setRecipientCountry', payload)
+const addRecipientRegion = ({ commit }, payload) => {
+  commit('addRecipientRegion', payload)
   commit('setDirty', true)
 }
 
-const setRecipientRegion = ({ commit }, payload) => {
-  commit('setRecipientRegion', payload)
+const removeRecipientRegion = ({ commit }, payload) => {
+  commit('removeRecipientRegion', payload)
   commit('setDirty', true)
 }
 
@@ -194,8 +194,8 @@ export default {
   removeRecipient,
 
   setRecipientDeployments,
-  setRecipientCountry,
-  setRecipientRegion,
+  addRecipientRegion,
+  removeRecipientRegion,
   setRecipientDistrict,
   setRecipientCommunity,
   setRecipientGroupName,

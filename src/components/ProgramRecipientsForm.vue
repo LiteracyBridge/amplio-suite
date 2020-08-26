@@ -1,11 +1,12 @@
 <template>
   <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
-    <p mandatory-field>Country</p>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.country"
-      @input="setRecipientCountry({ recipientIndex, country: $event.target.value })"
+    <p class="mandatory-field">Region</p>
+    <multiselect
+      placeholder="Select a region"
+      :value="recipient.region"
+      :options="regionsOptions"
+      @select="(region) => addRecipientRegion({ recipientIndex, region })"
+      @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
     <p class="pl-4 mandatory-field">Number of Talking Books</p>
@@ -16,15 +17,7 @@
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
-    <p class="mandatory-field">Region</p>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.region"
-      @input="setRecipientRegion({ recipientIndex, region: $event.target.value })"
-    />
-
-    <p class="pl-4 mandatory-field">Language</p>
+    <p class="mandatory-field">Language</p>
     <languages-selector
       :languages="recipient.language"
       :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
@@ -32,7 +25,7 @@
       :multiple="false"
     />
 
-    <p class="mandatory-field">District</p>
+    <p class="pl-4 mandatory-field">District</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -40,7 +33,7 @@
       @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
 
-    <p class="pl-4 mandatory-field">Listening Model</p>
+    <p class="mandatory-field">Listening Model</p>
     <multiselect
       :options="listeningModelsOptions"
       :value="listeningModelsSelected"
@@ -55,7 +48,7 @@
       placeholder="Select the listening model"
     />
 
-    <p class="mandatory-field">Community</p>
+    <p class="pl-4 mandatory-field">Community</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -63,7 +56,7 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4">Group Name</p>
+    <p>Group Name</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -71,7 +64,7 @@
       @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
-    <p class="mandatory-field">Deployments</p>
+    <p class="pl-4 mandatory-field">Deployments</p>
     <multiselect
       :options="deployments"
       :value="recipient.deployments"
@@ -89,13 +82,16 @@
       </template>
     </multiselect>
 
-    <p class="pl-4">Support Entity</p>
+    <p>Support Entity</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
       :value="recipient.supportEntity"
       @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
     />
+
+    <span></span>
+    <span></span>
 
     <p>Agent</p>
     <v-input
@@ -208,6 +204,7 @@ export default {
         .map(key => ({ key, value: state.labelMap[key] }))
     }),
     ...mapState('programData', [
+      'region',
       'listeningModels'
     ]),
     ...mapState('listeningModels', {
@@ -222,6 +219,16 @@ export default {
         .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     }
   },
+  watch: {
+    region: {
+      immediate: true,
+      handler () {
+        if (this.regionsOptions.length === 0) {
+          this.regionsOptions = [...this.region]
+        }
+      }
+    }
+  },
   components: {
     VInput,
     VTooltip,
@@ -230,6 +237,7 @@ export default {
     // LanguageMultiSelector,
   },
   data: () => ({
+    regionsOptions: [],
     beneficiariesIsOpen: false,
   }),
   mounted () {
@@ -241,8 +249,8 @@ export default {
     ]),
     ...mapActions('recipients', [
       'setRecipientDeployments',
-      'setRecipientCountry',
-      'setRecipientRegion',
+      'addRecipientRegion',
+      'removeRecipientRegion',
       'setRecipientDistrict',
       'setRecipientCommunity',
       'setRecipientGroupName',
