@@ -40,12 +40,17 @@
       />
 
       <span class="pl-4">Region</span>
-      <v-input
-        type="text"
-        placeholder="Enter region name"
-        :value="region.join(',')"
-        mx="mx-0"
-        @input="setRegion($event.target.value)"
+      <multiselect
+        class="multi"
+        tag-placeholder="Add this as new region"
+        placeholder="Search or add a region"
+        :value="region"
+        :options="regionsOptions"
+        :multiple="true"
+        :taggable="true"
+        @tag="addTag"
+        @select="addRegion"
+        @remove="removeRegion"
       />
 
       <span>Direct Beneficiaries</span>
@@ -200,6 +205,16 @@ export default {
         .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     }
   },
+  watch: {
+    region: {
+      immediate: true,
+      handler () {
+        if (this.regionsOptions.length === 0) {
+          this.regionsOptions = [...this.region]
+        }
+      }
+    }
+  },
   components: {
     Box,
     VButton,
@@ -211,8 +226,9 @@ export default {
   data () {
     return {
       help: "ou can modify your program name and languages here. You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
+      regionsOptions: [],
       languageToDelete: null,
-      beneficiariesIsOpen: false
+      beneficiariesIsOpen: false,
     }
   },
   mounted (){
@@ -243,7 +259,8 @@ export default {
       'setProgramName',
     ]),
     ...mapActions('programData', [
-      'setRegion',
+      'addRegion',
+      'removeRegion',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
@@ -272,6 +289,10 @@ export default {
     cancelLanguageDeletion () {
       this.languageToDelete = null
       this.closeModal()
+    },
+    addTag (newTag) {
+      this.regionsOptions.push(newTag)
+      this.addRegion(newTag)
     },
   }
 }
