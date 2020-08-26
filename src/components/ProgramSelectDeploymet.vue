@@ -5,11 +5,11 @@
       @change="changeDeployment($event.target.value)"
     >
       <option
-        v-for="item in deployments"
+        v-for="(item, index) in deployments"
         :key="item.deployment"
         :value="item.deploymentname"
       >
-        Deployment {{ item.deployment }}
+        Deployment {{ index + 1 }}
       </option>
     </select>
 

@@ -11,7 +11,7 @@
       <p class="text-sm text-gray-500 text-left">Component</p>
 
       <template v-for="(item, index) in deployments">
-        <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ item.deploymentname }}</p>
+        <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
 
         <v-input
           :key="`${item.deploymentname}-b`"
