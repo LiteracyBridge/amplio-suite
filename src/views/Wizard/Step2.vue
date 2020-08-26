@@ -7,15 +7,13 @@
     <p class="text-2xl font-semibold">
       Country
     </p>
-
-    <v-input
+    <multiselect
       ref="country"
-      type="text"
-      name="country"
-      label="Enter country name"
+      class="multi"
       :value="country"
-      mx="mx-auto my-4"
-      @input="setCountry($event.target.value)"
+      :options="countries"
+      placeholder="Select one country"
+      @select="(country) => setCountry(country)"
     />
 
     <p class="text-2xl font-semibold">
@@ -36,8 +34,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import Multiselect from 'vue-multiselect'
+
 import Box from '@/components/SetupBox'
 import VInput from '@/components/VInput'
+
+import countries from '@/data/countries.json'
 
 export default {
   computed: {
@@ -48,10 +50,16 @@ export default {
   },
   components: {
     Box,
-    VInput
+    VInput,
+    Multiselect,
+  },
+  data () {
+    return {
+      countries
+    }
   },
   mounted () {
-    this.$refs.country.$el.children[0].focus()
+    this.$refs.country.$refs.search.focus()
   },
   methods: {
     ...mapActions('wizard', [
@@ -61,3 +69,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.multi {
+  @apply w-64 mx-auto;
+}
+</style>
