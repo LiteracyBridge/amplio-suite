@@ -61,7 +61,10 @@ export default {
     }
   },
   mounted () {
-    this.$refs.country.$refs.search.focus()
+    if (!this.country) this.$refs.country.$refs.search.focus()
+
+    // Populete the options
+    this.options = [...this.region]
   },
   methods: {
     ...mapActions('wizard', [
