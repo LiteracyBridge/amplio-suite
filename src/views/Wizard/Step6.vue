@@ -45,7 +45,7 @@ export default {
       this.setLanguages({ lang: language.code, index })
     },
     onLanguageDeleted(language) {
-      this.deleteLanguage(language)
+      this.deleteLanguage(language.code)
     }
   }
 }
