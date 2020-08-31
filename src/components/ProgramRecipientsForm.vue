@@ -131,7 +131,7 @@
 
     <p><span class="text-2xl font-bold text-red-500">*</span>Direct Beneficiaries</p>
     <v-input
-      type="text"
+      type="number"
       mx="mx-0 w-full"
       :value="recipient.directBeneficiaries"
       @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
@@ -153,7 +153,20 @@
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
       <template v-for="opt in directBeneficiariesLabels">
-        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
+        <div :key="`${opt.key}-label`">
+          <span>{{ opt.value }}</span>
+          <v-tooltip
+            v-if="recipient.directBeneficiariesAdditionalFields[opt.key] > recipient.directBeneficiaries"
+            text="This field cannot be greater than Direct Beneficiaries"
+            position="left"
+            class="ml-2"
+          >
+            <font-awesome-icon
+              class="text-orange-600"
+              icon="exclamation-circle"
+            />
+          </v-tooltip>
+        </div>
         <v-input
           :key="`${opt.key}-input`"
           type="number"
@@ -189,6 +202,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
+import VTooltip from '@/components/VTooltip'
 import Multiselect from 'vue-multiselect'
 import LanguageMultiSelector from '@/components/LanguageMultiSelector'
 
@@ -227,6 +241,7 @@ export default {
   },
   components: {
     VInput,
+    VTooltip,
     Multiselect,
     LanguageMultiSelector,
   },
