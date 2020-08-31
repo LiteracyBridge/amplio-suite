@@ -3,8 +3,8 @@
     <span>Language</span>
     <languages-selector
       :languages="selectedMessage.language"
-      :onLanguageSelected="({ name, code }) => addMessageLang({ playlistIndex, messageIndex, lang: code })"
-      :onLanguageDeleted="({ name, code }) => removeMessageLang({ playlistIndex, messageIndex, lang: code })"
+      :onLanguageSelected="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: '' })"
       :multiple="false"
     />
 
