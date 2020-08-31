@@ -153,9 +153,9 @@ const setRecipientsAdditionalFields = ({ commit, state }, payload) => {
 }
 
 const addAdditionalLabel = ({ commit, state }) => {
-  const total = Object.keys(state.additionalLabelsMap).length
-  const value = `New field ${total}`
-  const key = `field_${total}`
+  // Create a new field key with a random id
+  const value = `New additional field`
+  const key = `field_${Math.random().toString(36).substring(7)}`
 
   const labels = { ...state.additionalLabelsMap }
   labels[key] = value
