@@ -34,6 +34,7 @@ from models import category
 from models import sustainable_development
 from models import listening_model
 from models import roadmap
+from models import recipient
 
 target_metadata = Base.metadata
 
