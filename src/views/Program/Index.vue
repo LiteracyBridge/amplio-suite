@@ -1,46 +1,31 @@
 <template>
   <main class="container mx-auto text-center">
-    <div class="py-6 px-4 flex justify-between">
-      <h1 class="text-2xl text-blue">{{ programName }} Program</h1>
+    <div class="py-6 flex justify-between">
+      <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
-      <div>
-        <v-button
-          class="mx-2"
-          :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
-          text="Submit"
-          @click="onSubmit"
-        />
-        <v-button
-          size="2x"
-          class="mx-2"
-          :color="settingIsDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400'"
-          text="Discard Changes"
-          @click="onDiscardChanges"
-        />
-        <v-button
-          size="2x"
-          class="mx-2"
-          :color="settingIsDirty ? 'bg-green' : 'bg-gray-400'"
-          text="Save Change"
-          @click="onSaveChanges"
-        />
-      </div>
+      <v-button
+        :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
+        text="Submit"
+        @click="onSubmit"
+      />
     </div>
 
-    <nav aria-label="Program sections" class="flex">
-      <router-link
-        v-for="section in sections"
-        :key="section"
-        :to="`/programs/${programCode}/settings/${section}`"
-        :class="$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black'"
-        class="py-2 px-4 uppercase text-lg">
-        {{ section }}
-      </router-link>
-    </nav>
+    <div class="bg-white rounded-lg shadow-box">
+      <nav aria-label="Program sections" class="flex border-b">
+        <router-link
+          v-for="(section, index) in sections"
+          :key="section"
+          :to="`/programs/${programCode}/settings/${section}`"
+          :class="[$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black', index === 0 ? 'rounded-tl-lg' : '']"
+          class="p-4 text-lg uppercase hover:bg-green hover:text-white">
+          {{ section }}
+        </router-link>
+      </nav>
 
-     <transition :name="transitionName" mode="out-in">
-      <router-view />
-    </transition>
+      <transition :name="transitionName" mode="out-in">
+        <router-view />
+      </transition>
+    </div>
 
     <footer class="py-6">
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
@@ -64,7 +49,6 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
-import { eventBus } from '@/eventBus'
 import VButton from '@/components/Button'
 import VSnackbars from '@/components/VSnackbars'
 
@@ -84,9 +68,6 @@ export default {
     ...mapGetters('ui', [
       'settingIsDirty',
     ]),
-    ...mapGetters('uiSettings', [
-      'tabStatus'
-    ])
   },
   watch: {
     '$route': 'fetchAllData'
@@ -113,7 +94,7 @@ export default {
     this.transitionName = sections.indexOf(toName) < sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
 
     // Check if the data is save
-    if (this.tabStatus[fromName]) {
+    if (this.settingIsDirty) {
       this.handleOpenModal()
       next(false)
     } else {
@@ -121,11 +102,8 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    const sFrom = from.path.split('/')
-    const fromName = sFrom[sFrom.length - 1]
-
     // Check if the data is save
-    if (this.tabStatus[fromName]) {
+    if (this.settingIsDirty) {
       this.handleOpenModal()
       next(false)
     } else {
@@ -143,12 +121,6 @@ export default {
     async onSubmit () {
       const result = await this.deployProgram()
       if (result === 'success') this.showSnackbar = true
-    },
-    onSaveChanges () {
-      eventBus.$emit('save-crud-data')
-    },
-    onDiscardChanges () {
-      eventBus.$emit('discard-crud-data')
     },
     handleOpenModal () {
       this.isModalOpen = true
