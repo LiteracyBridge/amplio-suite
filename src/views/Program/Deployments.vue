@@ -1,10 +1,15 @@
 <template>
-  <box
-    :httpStatus="status"
-    :isDirty="dirty"
-    title="deployments"
-    help="You can modify your deployment details here. Enter component details after filling component tab."
-  >
+  <section class="relative p-6 pt-0">
+    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
+
+    <program-header
+      title="General"
+      :isDirty="isDirty"
+      :description="description"
+      :onSaveChanges="updateDeployment"
+      :onDiscardChanges="fetchDeployments"
+    />
+
     <div class="grid grid-cols-deployments items-center justify-between">
       <p class="col-start-2 text-sm text-gray-500 text-left">Start Date</p>
       <p class="text-sm text-gray-500 text-left">End Date</p>
@@ -82,48 +87,37 @@
         />
       </footer>
     </portal>
-  </box>
+  </section>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import { eventBus } from '@/eventBus'
-
-import Box from '@/components/ProgramBox'
 import VButton from '@/components/Button'
 import VInput from '@/components/VInput'
+import Loading from '@/components/Loading'
+import ProgramHeader from '@/components/ProgramHeader'
 
 export default {
   computed: {
     ...mapState('deployments', {
       status: state => state.status,
-      dirty: state => state.dirty,
+      isDirty: state => state.dirty,
       deployments: state => state.items
     })
   },
   components: {
-    Box,
     VButton,
     VInput,
+    Loading,
+    ProgramHeader,
   },
   data: () => ({
+    description: "You can modify your deployment details here. Enter component details after filling component tab.",
     modal: {
       show: false
     }
   }),
-  mounted (){
-    eventBus.$on('save-crud-data', () => {
-      this.updateDeployment()
-    }),
-    eventBus.$on('discard-crud-data', () => {
-      this.fetchDeployments()
-    })
-  },
-  beforeDestroy () {
-    eventBus.$off('save-crud-data')
-    eventBus.$off('discard-crud-data')
-  },
   methods: {
     ...mapActions('ui', [
       'setModal',
