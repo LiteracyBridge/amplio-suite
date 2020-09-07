@@ -111,7 +111,6 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // Check if the data is save
-
     if (this.anyTabDirty) {
       this.handleOpenModal()
       next(false)
