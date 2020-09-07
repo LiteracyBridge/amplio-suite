@@ -39,6 +39,11 @@ def upgrade():
     sa.Column('latitude', postgresql.DOUBLE_PRECISION(), nullable=True),
     sa.Column('longitude', postgresql.DOUBLE_PRECISION(), nullable=True),
     sa.Column('variant', sa.String(), nullable=True),
+    sa.Column('deployments', sa.JSON(), nullable=True),
+    sa.Column('agent_gender', sa.String(), nullable=True),
+    sa.Column('direct_beneficiaries', sa.Integer(), nullable=True),
+    sa.Column('direct_beneficiaries_additional', sa.JSON(), nullable=True),
+    sa.Column('indirect_beneficiaries', sa.Integer(), nullable=True),
     sa.CheckConstraint('(((recipientid)::text = lower((recipientid)::text)))', name='lowercase_recipientid_check'),
     sa.PrimaryKeyConstraint('recipientid'),
     sa.UniqueConstraint('partner', 'project', 'communityname', 'groupname', 'agent', name='recipients_uniqueness_key')
