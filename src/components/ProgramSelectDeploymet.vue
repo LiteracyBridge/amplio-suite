@@ -27,14 +27,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
 
 export default {
   props: {
-    onChange: {
-      type: Function,
+    value: {
+      type: Object,
       required: true
     },
     dirty: {
@@ -46,9 +46,16 @@ export default {
     ...mapState('deployments', {
       deployments: state => state.items
     }),
-    ...mapGetters('uiSettings', [
-      'selectedDeployment'
-    ]),
+  },
+  watch: {
+    deployments: {
+      immediate: true,
+      handler () {
+        if (Object.keys(this.value).length === 0) {
+          this.$emit('input', { ...this.deployments[0] })
+        }
+      }
+    }
   },
   components: {
     VButton,
@@ -61,9 +68,6 @@ export default {
       'setModal',
       'closeModal'
     ]),
-    ...mapActions('uiSettings', [
-      'setDeploymentIndex'
-    ]),
     handleOpenModal () {
       this.isModalOpen = true
       this.setModal('Save or discard the change')
@@ -75,16 +79,12 @@ export default {
     changeDeployment(deploymentName) {
       if (this.dirty) {
         this.handleOpenModal()
-        this.$refs.selectDeplo.value = this.selectedDeployment.deploymentname
+        this.$refs.selectDeplo.value = this.value.deploymentname
         return
       }
 
-      const index = this.deployments
-        .map(item => item.deploymentname)
-        .indexOf(deploymentName)
-
-      this.setDeploymentIndex(index)
-      this.onChange(deploymentName)
+      const deployment = this.deployments.find(deplo => deplo.deploymentname === deploymentName)
+      this.$emit('input', { ...deployment })
     }
   }
 }

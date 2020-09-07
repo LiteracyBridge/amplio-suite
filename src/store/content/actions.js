@@ -6,7 +6,7 @@ import {
 } from '@/api/content.api'
 
 
-const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymentName=null) => {
+const fetchContent = async ({ state, rootState, commit }, deploymentName=null) => {
   const { programCode, programName } = rootState.program
   if (!programName) return
   if (!deploymentName && state.programCode === programCode && !state.dirty) return
@@ -15,7 +15,7 @@ const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymen
   commit('requestInit')
 
   if (!deploymentName) {
-    deploymentName = rootGetters['uiSettings/selectedDeployment'].deploymentname
+    deploymentName = rootState.deployments.items[0].deploymentname
   }
 
   try {
@@ -27,10 +27,9 @@ const fetchContent = async ({ state, rootState, rootGetters, commit }, deploymen
   }
 }
 
-const updateContent = async ({ state, rootState, commit }) => {
+const updateContent = async ({ state, commit }, deployment) => {
   const { programCode, playlists } = state
-  const { selectedDeploymentIndex } = rootState.uiSettings.content
-  const deployment_id = (selectedDeploymentIndex + 1).toString()
+  const deployment_id = deployment.deployment
 
   commit('requestInit')
 

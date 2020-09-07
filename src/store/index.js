@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import ui from './ui'
 import account from './account'
 import wizard from './wizard'
-import uiSettings from './uiSettings'
 
 import program from './program'
 import programs from './programs'
@@ -27,7 +26,6 @@ export default new Vuex.Store({
     ui,
     account,
     wizard,
-    uiSettings,
 
     program,
     programs,

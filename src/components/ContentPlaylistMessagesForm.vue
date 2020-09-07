@@ -1,5 +1,5 @@
 <template>
-  <div v-if="selectedMessage" class="grid grid-cols-content-message row-gap-2 items-center px-8">
+  <div v-if="message" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
     <languages-selector
       :languages="selectedMessage.language"
@@ -12,14 +12,14 @@
     <v-input
       type="text"
       mx="mx-0 w-full"
-      :value="selectedMessage.variant"
+      :value="message.variant"
       @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
     />
 
     <span>Format</span>
     <select
       class="py-2"
-      :value="selectedMessage.format"
+      :value="message.format"
       @change="(event) => setMessageFormat({ playlistIndex, messageIndex, format: event.target.value })"
     >
       <option
@@ -34,7 +34,7 @@
     <span class="pl-4">Default Category</span>
     <select
       class="py-2"
-      :value="selectedMessage.default_category"
+      :value="message.default_category"
       @change="setMessageCategory({ playlistIndex, messageIndex, category: $event.target.value })"
     >
       <option value="">Select</option>
@@ -50,7 +50,7 @@
     <span>SDG Goals</span>
     <select
       class="py-2 col-start-2 col-end-5"
-      :value="selectedMessage.sdg_goal"
+      :value="message.sdg_goal"
       @change="setMessageSDGGoal({ playlistIndex, messageIndex, goal: +$event.target.value })"
     >
       <option value="">Select</option>
@@ -67,7 +67,7 @@
     <select
       ref="sdg_target"
       class="py-2 col-start-2 col-end-5"
-      :value="selectedMessage.sdg_target"
+      :value="message.sdg_target"
       @change="setMessageSDGTarget({ playlistIndex, messageIndex, target: +$event.target.value })"
     >
       <option value="">Select</option>
@@ -76,7 +76,7 @@
         :key="target.subsection"
         :value="target.subsection"
       >
-        {{ `${selectedMessage.sdg_goal}.${target.subsection} ${target.label}` }}
+        {{ `${message.sdg_goal}.${target.subsection} ${target.label}` }}
       </option>
     </select>
 
@@ -85,7 +85,7 @@
       cols="30"
       rows="3"
       class="col-start-2 col-end-5 p-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-      :value="selectedMessage.key_point"
+      :value="message.key_point"
       @input="(event) => setMessageKeyPoints({ playlistIndex, messageIndex, text: event.target.value })"
     >
     </textarea>
@@ -93,14 +93,22 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
   props: {
+    message: {
+      type: Object,
+      required: true
+    },
     playlistIndex: {
+      type: Number,
+      required: true
+    },
+    messageIndex: {
       type: Number,
       required: true
     },
@@ -109,19 +117,13 @@ export default {
     ...mapState('sustainableDevelopments', [
       'goals'
     ]),
-    ...mapGetters('uiSettings', [
-      'selectedMessage'
-    ]),
-    ...mapState('uiSettings', {
-      messageIndex: state => state.content.selectedMessageIndex
-    }),
     categories () {
       return this.$store.state.categories.categories
         .filter(cat => !cat.is_leaf)
     },
     targets () {
       const goal = this.goals
-        .find(goal => goal.section === this.selectedMessage.sdg_goal)
+        .find(goal => goal.section === this.message.sdg_goal)
 
       if (goal) return goal.targets
       else return []

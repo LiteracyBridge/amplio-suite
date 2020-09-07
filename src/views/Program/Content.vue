@@ -17,16 +17,17 @@
       <program-side-menu
         name="playlist"
         v-model="playlists"
-        :on-select="(index) => { this.selectedPlaylistIndex = index }"
+        :on-select="(index) => { this.playlistIndex = index }"
         :on-add="onAddPlaylist"
         :on-remove="removePlaylist"
-        :selected-index="selectedPlaylistIndex"
+        :selected-index="playlistIndex"
       />
 
       <div class="text-left">
         <playlist-header
+          v-if="playlist"
           :playlist="playlist"
-          :playlistIndex="selectedPlaylistIndex"
+          :playlistIndex="playlistIndex"
         />
 
         <div class="p-4 text-xl bg-gray-400">
@@ -34,8 +35,10 @@
         </div>
 
         <playlist-messages
+          v-if="playlist"
+          :deployment="deployment"
           :playlist="playlist"
-          :playlistIndex="selectedPlaylistIndex"
+          :playlistIndex="playlistIndex"
          />
       </div>
     </div>
@@ -59,7 +62,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
 import Loading from '@/components/Loading'
@@ -75,9 +78,6 @@ export default {
       'status',
       'dirty',
     ]),
-    ...mapGetters('uiSettings', [
-      'selectedDeployment',
-    ]),
     playlists: {
       get () {
         return this.$store.state.content.playlists
@@ -87,14 +87,14 @@ export default {
       }
     },
     playlist () {
-      return this.playlists[this.selectedPlaylistIndex]
+      return this.playlists[this.playlistIndex]
     },
     isFormFill () {
       const requiredFields = [
         'title'
       ]
 
-      const partial = this.selectedPlaylist.messages.map(message => {
+      const partial = this.playlist.messages.map(message => {
         return requiredFields.map(key => {
           const value = message[key]
           if (typeof value === 'string' || value instanceof String) return value !== ''
@@ -102,10 +102,15 @@ export default {
         })
       })
 
-      partial.push(this.selectedPlaylist.title !== '')
+      partial.push(this.playlist.title !== '')
 
       return partial.flat().every(Boolean)
     },
+  },
+  watch: {
+    deployment () {
+      this.fetchContent(this.deployment.deploymentname)
+    }
   },
   components: {
     VButton,
@@ -119,7 +124,9 @@ export default {
   data () {
     return {
       description: "You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting.",
-      selectedPlaylistIndex: 0,
+      deployment: {},
+      playlistIndex: 0,
+
       showModal: false
     }
   },
@@ -157,8 +164,8 @@ export default {
       this.closeModal()
     },
     async onAddPlaylist () {
-      await this.addPlaylist(this.selectedDeployment.deploymentname)
-      this.selectedPlaylistIndex ++
+      await this.addPlaylist(this.deployment.deploymentname)
+      this.playlistIndex ++
     },
   }
 }

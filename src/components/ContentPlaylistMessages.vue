@@ -38,13 +38,13 @@
 
           <span
             tabindex="0"
-            :class="index === selectedMessageIndex ? 'text-blue underline font-semibold' : 'text-black'"
+            :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
             class="w-48 ml-2 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
             @click="setMessageIndex(index)"
             @keyup.space="setMessageIndex(index)"
           >
-            {{ index === selectedMessageIndex ? 'Hide Details' : 'Show Details' }}
-            <font-awesome-icon :icon="index === selectedMessageIndex ? 'chevron-up' : 'chevron-down'" />
+            {{ index === messageIndex ? 'Hide Details' : 'Show Details' }}
+            <font-awesome-icon :icon="index === messageIndex ? 'chevron-up' : 'chevron-down'" />
           </span>
 
           <button
@@ -57,12 +57,14 @@
         </div>
 
         <div
-          :class="index === selectedMessageIndex ? 'h-82' : 'h-0'"
+          :class="index === messageIndex ? 'h-82' : 'h-0'"
           class="overflow-hidden transition-all duration-700"
         >
           <playlist-messages-form
-            :class="index === selectedMessageIndex ? 'visible' : 'invisible'"
+            v-if="index === messageIndex"
+            :message="message"
             :playlistIndex="playlistIndex"
+            :messageIndex="messageIndex"
           />
         </div>
       </div>
@@ -102,7 +104,7 @@
 
 <script>
 import Draggable from 'vuedraggable'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
@@ -111,6 +113,10 @@ import VTooltip from '@/components/VTooltip'
 
 export default {
   props: {
+    deployment: {
+      type: Object,
+      required: true
+    },
     playlist: {
       type: Object,
       required: true
@@ -121,10 +127,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('uiSettings', [
-      'selectedDeployment',
-      'selectedMessage'
-    ]),
     ...mapState('content', [
       'duplicateMessage',
     ]),
@@ -136,6 +138,9 @@ export default {
         this.setMessageIndex(-1)
         this.setMessages({ playlistIndex: this.playlistIndex, messages: value })
       }
+    },
+    message () {
+      return this.playlist.messages[this.messageIndex]
     }
   },
   components: {
@@ -146,6 +151,8 @@ export default {
     VTooltip,
   },
   data: () => ({
+    messageIndex: -1,
+
     target: {},
 
     modal: {
@@ -160,9 +167,6 @@ export default {
     window.removeEventListener('keydown', this.handleKeyboard)
   },
   methods: {
-    ...mapActions('uiSettings', [
-      'setMessageIndex'
-    ]),
     ...mapActions('ui', [
       'setModal',
       'closeModal'
@@ -187,9 +191,13 @@ export default {
       this.removeMessage({ playlistIndex: this.playlistIndex, messageIndex: this.modal.eleIndex })
       this.handleCloseModal()
     },
+    setMessageIndex (index) {
+      if (this.messageIndex === index) this.messageIndex = -1
+      else this.messageIndex = index
+    },
     addNewMessage() {
       const payload = {
-        deployment_id: this.selectedDeployment.deployment,
+        deployment_id: this.deployment.deployment,
         playlist_index: this.playlistIndex
       }
       this.addMessage(payload)
