@@ -20,7 +20,10 @@ export const getDefaultState = () => ({
   languages: [],
 
   feedbackFrequently: '',
-  feedbackFrequentlyOther: ''
+  feedbackFrequentlyOther: '',
+
+  directBeneficiariesMap: {},
+  directBeneficiariesAdditionalMap: {},
 })
 
 export default {

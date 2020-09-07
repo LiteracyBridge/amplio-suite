@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
 import VButton from '@/components/Button'
@@ -213,12 +213,6 @@ export default {
     ...mapGetters('recipients', [
       'labelUsed'
     ]),
-    ...mapState('recipients', {
-      additionalLabels: state => Object.keys(state.additionalLabelsMap)
-        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
-      directBeneficiariesLabels: state => Object.keys(state.labelMap)
-        .map(key => ({ key, value: state.labelMap[key] }))
-    }),
     ...mapState('listeningModels', {
       listeningModelsOptions: state => state.listeningModels
     }),
@@ -282,14 +276,10 @@ export default {
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
-    ]),
-    ...mapMutations('recipients', [
-      'setRecipientsLabelMap'
-    ]),
-    ...mapActions('recipients', [
-      'addAdditionalLabel',
-      'setAdditionalLabel',
-      'deleteAdditionalLabel'
+      'setDirectBeneficiariesLabel',
+      'setDirectBeneficiariesAdditionalLabel',
+      'addDirectBeneficiariesAdditionalLabel',
+      'deleteDirectBeneficiariesAdditionalLabel',
     ]),
     addTag (region) {
       this.regionOptions.push(region)

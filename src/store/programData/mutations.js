@@ -23,6 +23,8 @@ const setProgramData = (state, payload) => {
   state.feedbackFrequently = payload.feedback_frequency
   state.feedbackFrequentlyOther = payload.feedback_frequency_other
   state.languages = payload.languages
+  state.directBeneficiariesMap = payload.direct_beneficiaries_map
+  state.directBeneficiariesAdditionalMap = payload.direct_beneficiaries_additional_map
 }
 
 const setProgramCode = (state, payload) => {
@@ -88,6 +90,33 @@ const setFeedbackFrequentlyOther = (state, payload) => {
   state.feedbackFrequentlyOther = payload
 }
 
+const setDirectBeneficiariesLabel = (state, payload) => {
+  const { key, value } = payload
+  state.directBeneficiariesMap[key] = value
+}
+
+const setDirectBeneficiariesAdditionalLabel = (state, payload) => {
+  const { key, value } = payload
+  state.directBeneficiariesAdditionalMap[key] = value
+}
+
+const addDirectBeneficiariesAdditionalLabel = (state, payload) => {
+  const { key, value } = payload
+  const map = { ...state.directBeneficiariesAdditionalMap }
+  map[key] = value
+
+  state.directBeneficiariesAdditionalMap = map
+}
+
+const removeDirectBeneficiariesAdditionalLabel = (state, labelKey) => {
+  const labels = state.directBeneficiariesAdditionalMap
+  const index = labels.findIndex(label => label.key === labelKey)
+
+  if (index >= 0) {
+    state.directBeneficiariesAdditionalMap.splice(index, 1)
+  }
+}
+
 
 export default {
   resetState,
@@ -109,4 +138,9 @@ export default {
   deleteLanguage,
   setFeedbackFrequently,
   setFeedbackFrequentlyOther,
+
+  setDirectBeneficiariesLabel,
+  setDirectBeneficiariesAdditionalLabel,
+  addDirectBeneficiariesAdditionalLabel,
+  removeDirectBeneficiariesAdditionalLabel,
 }
