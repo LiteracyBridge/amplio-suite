@@ -1,21 +1,47 @@
 import {
   getRecipients,
-  postRecipients,
-  putRecipients,
+  postRecipient,
+  putRecipient,
+  deleteRecipient,
 } from '@/api/recipients.api'
 
+const recipientTemplate = {
+  id: null,
 
-const fetchRecipients = async ({ commit, state }, programCode) => {
+  communityName: '',
+  groupName: '',
+  country: '',
+  region: '',
+  district: '',
+  numberTalkingBooks: null,
+  supportEntity: '',
+  language: '',
+  agent: '',
+  deployments: [],
+  listeningModel: '',
+  agentGender: '',
+  directBeneficiaries: null,
+  directBeneficiariesAdditional: {},
+  indirectBeneficiaries: null,
+
+  // FIXME
+  partner: 'fixme',
+  affiliate: 'fixme',
+  component: 'fixme',
+}
+
+
+const fetchRecipients = async ({ commit, state, rootState }) => {
+  const { programCode } = rootState.program
+
   if (state.status === 'loading') return
+  if (state.programCode === programCode && !state.dirty) return
 
   commit('requestInit')
 
   try {
-    const response = await getRecipients(programCode, state.recipients.length)
-    const recipients = [ ...state.recipients, ...response]
-    commit('setRecipients', recipients)
-    commit('setDirty', false)
-    commit('requestSuccess')
+    const response = await getRecipients(programCode)
+    commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
@@ -23,52 +49,80 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
 }
 
 const updateRecipients = async ({ commit, state }) => {
-  const { programCode, recipients } = state.program
+  // FIXME: pass the recipient index to update
+  // This change it is easier to make with the new recipients ui
+  const recipientIndex = 0
+
+  const { programCode, recipients } = state
+  const recipient = recipients[recipientIndex]
+  let recipientId = recipient.id
+
+  const recipientData = {
+    program_code: programCode,
+    recipient_id: recipientId,
+    partner: recipient.partner,
+    community_name: recipient.communityName,
+    group_name: recipient.groupName,
+    affiliate: recipient.affiliate,
+    component: recipient.component,
+    country: recipient.country,
+    region: recipient.region,
+    district: recipient.district,
+    num_households: recipient.directBeneficiariesAdditional.households || 0,
+    num_tbs: recipient.numberTalkingBooks,
+    support_entity: recipient.supportEntity,
+    model: recipient.listeningModel,
+    language: recipient.language,
+    agent: recipient.agent,
+    deployments: recipient.deployments,
+    agent_gender: recipient.agentGender,
+    direct_beneficiaries: recipient.directBeneficiaries,
+    direct_beneficiaries_additional: recipient.directBeneficiariesAdditional,
+    indirect_beneficiaries: recipient.indirectBeneficiaries,
+    variant: 'variant',
+  }
 
   commit('requestInit')
 
   try {
-    await putRecipients({ program_code: programCode, recipients })
+    // Create recipient if this dont have recipientId
+    // Else update the recipient
+    if (!recipientId) recipientId = await postRecipient(recipientData)
+    else await putRecipient(recipientData)
+
     commit('setDirty', false)
     commit('requestSuccess')
+    commit('setRecipientId', { recipientIndex, id: recipientId })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
-const addRecipient = async ({ commit, state }) => {
-  const { programCode } = state
-  const total = state.recipients.length
-  let newRecipient
-
-  commit('requestInit')
-
-  try {
-    newRecipient = await postRecipients({ program_code: programCode, total })
-    commit('setDirty', false)
-    commit('requestSuccess')
-  } catch (error) {
-    commit('requestError')
-    commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
-  }
-
-  let recipients = [...state.recipients]
-  recipients.push(newRecipient)
-  commit('setRecipients', recipients)
+const addRecipient = async ({ commit }) => {
+  commit('addRecipient', recipientTemplate)
 }
 
+// FIXME: Remove this actions when remove lateral menu
 const setRecipients = ({ commit }, recipients) => {
   commit('setRecipients', recipients)
   commit('setDirty', true)
 }
 
-const removeRecipient = ({ commit, state }, index) => {
-  let recipients = [...state.recipients]
-  recipients.splice(index, 1)
+const removeRecipient = async ({ commit, state }, index) => {
+  const recipient = state.recipients[index]
 
-  commit('setRecipients', recipients)
-  commit('setDirty', true)
+  commit('requestInit')
+
+  try {
+    await deleteRecipient(state.programCode, recipient.id)
+    commit('setDirty', true)
+    commit('requestSuccess')
+    commit('removeRecipient', recipient)
+  } catch (error) {
+    commit('requestError')
+    commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
+  }
 }
 
 const setRecipientDeployments = ({ commit }, payload) => {
@@ -107,13 +161,8 @@ const setRecipientLang = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const toggleRecipientListeningModel = ({ commit, state }, payload) => {
-  const { recipientIndex, listeningModel } = payload
-  const modelIndex = state.recipients[recipientIndex].listeningModels.indexOf(listeningModel)
-
-  if (modelIndex > -1) commit('removeRecipientListeningModel', { recipientIndex, modelIndex })
-  else commit('addRecipientListeningModel', { recipientIndex, listeningModel })
-
+const setRecipientListeningModel = ({ commit }, payload) => {
+  commit('setRecipientListeningModel', payload)
   commit('setDirty', true)
 }
 
@@ -188,7 +237,6 @@ export default {
   fetchRecipients,
   updateRecipients,
   setRecipients,
-
   addRecipient,
   removeRecipient,
 
@@ -198,15 +246,14 @@ export default {
   setRecipientDistrict,
   setRecipientCommunity,
   setRecipientGroupName,
-  setRecipientNumberTalkingBooks,
   setRecipientLang,
-  toggleRecipientListeningModel,
+  setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
   setRecipientSupportEntity,
+  setRecipientNumberTalkingBooks,
   setRecipientDirectBeneficiaries,
   setRecipientsAdditionalFields,
-  addAdditionalLabel,
   deleteAdditionalLabel,
   setAdditionalLabel,
   setRecipientsIndirectBeneficiaries,

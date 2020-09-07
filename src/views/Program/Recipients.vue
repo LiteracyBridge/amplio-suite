@@ -182,14 +182,15 @@ export default {
     },
     isFormFill () {
       const requiredFields = [
-        'country', 'region', 'district', 'community',
-        'language', 'listeningModels', 'numberTalkingBooks',
+        'country', 'region', 'district', 'communityName',
+        'language', 'listeningModel', 'numberTalkingBooks',
         'deployments', 'directBeneficiaries'
       ]
 
       const partial = requiredFields.map(key => {
         const value = this.recipient[key]
         if (typeof value === 'string' || value instanceof String) return value !== ''
+        else if (typeof value === 'number') return value >= 0
         else if (Array.isArray(value)) return value.length > 0
       })
 

@@ -1,39 +1,36 @@
-// FIXME Write the real api functions
-const recipientTemplate = (index) => ({
-  title: `Recipient ${index}`,
-  deployments: [],
-  country: '',
-  region: 'Turkana',
-  district: 'South',
-  community: 'Lokapel',
-  groupName: 'Naro',
-  language: 'Turkana (tuv)',
-  listeningModels: [],
-  numberTalkingBooks: index,
-  agent: 'Some more long text',
-  agentGender: '',
-  supportEntity: '',
-  directBeneficiaries: '',
-  directBeneficiariesAdditionalFields: {},
-  indirectBeneficiaries: ''
-})
+import httpClient from './httpClient'
 
-const getRecipients = async (programCode, from=0) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const response = Array(10).fill().map((_, i) => recipientTemplate(from + i))
-      resolve(response)
-    }, 2000)
+const END_POINT = '/recipient'
+
+const getRecipients = async (programCode) => {
+  const response = await httpClient.get(END_POINT, {
+    params: { program_code: programCode }
   })
+
+  if (response.data.status == 200) {
+    return response.data
+  } else {
+    return {
+      program_code: programCode,
+      recipients: []
+    }
+  }
 }
 
-const postRecipients = (data) => recipientTemplate(data.total + 1)
+const postRecipient = async (recipient) => {
+  const response = await httpClient.post(END_POINT, recipient)
+  return response.data.recipientId
+}
 
-const putRecipients = () => true
+const putRecipient = async (recipient) => await httpClient.put(END_POINT, recipient)
 
+const deleteRecipient = async (programCode, recipientId) => await httpClient.delete(END_POINT, {
+  params: { program_code: programCode, recipient_id: recipientId }
+})
 
 export {
   getRecipients,
-  postRecipients,
-  putRecipients
+  postRecipient,
+  putRecipient,
+  deleteRecipient
 }

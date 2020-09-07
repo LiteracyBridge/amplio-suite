@@ -36,15 +36,11 @@
     <p class="mandatory-field">Listening Model</p>
     <multiselect
       :options="listeningModelsOptions"
-      :value="listeningModelsSelected"
-      :multiple="true"
+      :value="listeningModelSelected"
       label="label"
       trackBy="label"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
-      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
       placeholder="Select the listening model"
     />
 
@@ -52,7 +48,7 @@
     <v-input
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.community"
+      :value="recipient.communityName"
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
@@ -160,8 +156,8 @@
         <v-input
           :key="`${opt.key}-input`"
           type="number"
-          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
-          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
+          :value="recipient.directBeneficiariesAdditional[opt.key]"
+          @input="setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: $event.target.value })"
           mx="mx-0"
         />
       </template>
@@ -171,8 +167,8 @@
         <v-input
           :key="`${opt.key}-input`"
           type="number"
-          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
-          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
+          :value="recipient.directBeneficiariesAdditional[opt.key]"
+          @input="setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: $event.target.value })"
           mx="mx-0"
         />
       </template>
@@ -210,11 +206,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('recipients', {
-      additionalLabels: state => Object.keys(state.additionalLabelsMap)
-        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
-      directBeneficiariesLabels: state => Object.keys(state.labelMap)
-        .map(key => ({ key, value: state.labelMap[key] }))
+    ...mapState('programData', {
+      additionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
+        .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
+      directBeneficiariesLabels: state => Object.keys(state.directBeneficiariesMap)
+        .map(key => ({ key, value: state.directBeneficiariesMap[key] }))
     }),
     ...mapState('programData', [
       'region',
@@ -227,9 +223,8 @@ export default {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
     },
-    listeningModelsSelected () {
-      return this.recipient.listeningModels
-        .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
+    listeningModelSelected () {
+      return this.listeningModelsOptions.find(opt => opt.id === this.recipient.listeningModel)
     }
   },
   components: {
@@ -267,13 +262,13 @@ export default {
       'setRecipientCommunity',
       'setRecipientGroupName',
       'setRecipientLang',
-      'toggleRecipientListeningModel',
+      'setRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
       'setRecipientSupportEntity',
-      'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
-      'setRecipientsAdditionalFields',
+      'setRecipientDirectBeneficiaries',
+      'setRecipientDirectBeneficiariesAdditional',
       'setRecipientsIndirectBeneficiaries',
     ]),
   }
