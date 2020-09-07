@@ -31,7 +31,9 @@ def lambda_handler(event, context):
                 'deployments_first': event['deployments_first'],
                 'feedback_frequency': event['feedback_frequency'],
                 'feedback_frequency_other': event['feedback_frequency_other'],
-                'languages': event['languages']
+                'languages': event['languages'],
+                'direct_beneficiaries_map': event.get('direct_beneficiaries_map'),
+                'direct_beneficiaries_additional_map': event.get('direct_beneficiaries_additional_map'),
             })
 
         session.commit()

@@ -14,6 +14,13 @@ time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
 time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
 
+beneficiaries_map = {
+    'households': 'Number of Households',
+    'male': 'Number Male',
+    'female': 'Number Female',
+    'youth': 'Number Youth'
+}
+
 class DeploymentFreq(Enum):
     one_month = 1
     one_quarter = 3
@@ -37,6 +44,8 @@ class Program(Base, SerializerMixin):
     feedback_frequency = Column(String(50), nullable=False)
     feedback_frequency_other = Column(String(50), nullable=False)
     languages = Column(JSON, nullable=False)
+    direct_beneficiaries_map = Column(JSON, default=beneficiaries_map)
+    direct_beneficiaries_additional_map = Column(JSON, default={})
 
     @validates('deployments_length')
     def validate_deployments_length(self, key, deployments_length):
