@@ -119,6 +119,22 @@ services:
   #   <<: *base
   #   command: message_delete.lambda_handler
 
+  lambda-recipient_index:
+    <<: *base
+    command: recipient_index.lambda_handler
+
+  lambda-recipient_create:
+    <<: *base
+    command: recipient_create.lambda_handler
+
+  lambda-recipient_update:
+    <<: *base
+    command: recipient_update.lambda_handler
+
+  lambda-recipient_delete:
+    <<: *base
+    command: recipient_delete.lambda_handler
+
   lambda-deployment_retrieve:
     <<: *base
     command: deployment_retrieve.lambda_handler
