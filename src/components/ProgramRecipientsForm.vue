@@ -227,7 +227,6 @@ export default {
     VTooltip,
     Multiselect,
     LanguagesSelector,
-    // LanguageMultiSelector,
   },
   data: () => ({
     beneficiariesIsOpen: false,
