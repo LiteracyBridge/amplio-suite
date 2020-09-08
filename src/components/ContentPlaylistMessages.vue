@@ -1,82 +1,72 @@
 <template>
-  <div>
-    <draggable
-      v-model="messages"
-      :animation="200"
-      ghost-class="moving-item"
-      @start="dragging = true"
-      @end="dragging = false"
-    >
-      <div
-        v-for="(message, index) in messages"
-        :key="index"
-        tabindex="0"
-        class="mx-1 cursor-move"
-        data-name="message"
-        :data-index="index"
-      >
-        <div class="flex items-center mt-4">
-          <v-input
-            type="text"
-            name="messageTitle"
-            label="*Message title"
-            mx="w-full px-4 mx-0"
-            :value="message.title"
-            @input="setMessageTitle({ playlistIndex, messageIndex: index, title: $event.target.value })"
-          />
-
-          <v-tooltip
-            v-if="duplicateMessage.has(index)"
-            text="Duplicate message title in this playlist"
-            class="my-auto"
-          >
-            <font-awesome-icon
-              class="text-orange-600"
-              icon="exclamation-circle"
-            />
-          </v-tooltip>
-
-          <span
-            tabindex="0"
-            :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
-            class="w-48 ml-2 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
-            @click="setMessageIndex(index)"
-            @keyup.space="setMessageIndex(index)"
-          >
-            {{ index === messageIndex ? 'Hide Details' : 'Show Details' }}
-            <font-awesome-icon :icon="index === messageIndex ? 'chevron-up' : 'chevron-down'" />
-          </span>
-
-          <button
-            :aria-label="`Delete message ${message.title}`"
-            @click="handleOpenModal(index)"
-            @keyup.space="handleOpenModal(index)"
-          >
-            <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-          </button>
-        </div>
-
-        <div
-          :class="index === messageIndex ? 'h-82' : 'h-0'"
-          class="overflow-hidden transition-all duration-700"
-        >
-          <playlist-messages-form
-            v-if="index === messageIndex"
-            :message="message"
-            :playlistIndex="playlistIndex"
-            :messageIndex="messageIndex"
-          />
-        </div>
-      </div>
-    </draggable>
-
-    <span
+  <draggable
+    v-model="messages"
+    :animation="200"
+    ghost-class="moving-item"
+    @start="dragging = true"
+    @end="dragging = false"
+  >
+    <div
+      v-for="(message, index) in messages"
+      :key="index"
       tabindex="0"
-      @click="addNewMessage"
-      class="block mt-4 p-2 text-green font-bold cursor-pointer"
+      class="mx-1 cursor-move"
+      data-name="message"
+      :data-index="index"
     >
-      + Add Message
-    </span>
+      <div class="flex items-center mt-4">
+        <v-input
+          type="text"
+          :name="`message ${message.title}`"
+          label="*Message title"
+          mx="w-full px-4 mx-0"
+          :value="message.title"
+          @input="setMessageTitle({ playlistIndex, messageIndex: index, title: $event.target.value })"
+        />
+
+        <v-tooltip
+          v-if="duplicateMessage.has(index)"
+          text="Duplicate message title in this playlist"
+          class="my-auto"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
+
+        <span
+          tabindex="0"
+          :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
+          class="w-48 ml-2 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+          @click="setMessageIndex(index)"
+          @keyup.space="setMessageIndex(index)"
+        >
+          {{ index === messageIndex ? 'Hide Details' : 'Show Details' }}
+          <font-awesome-icon :icon="index === messageIndex ? 'chevron-up' : 'chevron-down'" />
+        </span>
+
+        <button
+          :aria-label="`Delete message ${message.title}`"
+          @click="handleOpenModal(index)"
+          @keyup.space="handleOpenModal(index)"
+        >
+          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
+        </button>
+      </div>
+
+      <div
+        :class="index === messageIndex ? 'h-96' : 'h-0'"
+        class="overflow-hidden transition-all duration-700"
+      >
+        <playlist-messages-form
+          v-if="index === messageIndex"
+          :message="message"
+          :playlistIndex="playlistIndex"
+          :messageIndex="messageIndex"
+        />
+      </div>
+    </div>
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="modal.show">
@@ -99,7 +89,7 @@
         />
       </footer>
     </portal>
-  </div>
+  </draggable>
 </template>
 
 <script>
@@ -173,7 +163,6 @@ export default {
     ]),
     ...mapActions('content', [
       'setMessages',
-      'addMessage',
       'setMessageTitle',
       'removeMessage'
     ]),
@@ -194,13 +183,6 @@ export default {
     setMessageIndex (index) {
       if (this.messageIndex === index) this.messageIndex = -1
       else this.messageIndex = index
-    },
-    addNewMessage() {
-      const payload = {
-        deployment_id: this.deployment.deployment,
-        playlist_index: this.playlistIndex
-      }
-      this.addMessage(payload)
     },
     handleKeyboard (event) {
       const { target, code } = event
