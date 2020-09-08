@@ -13,7 +13,7 @@
         <Button
           v-if="next !== ''"
           id="nextStep"
-          text="NEXT"
+          :text="nextLabel"
           type="submit"
           :aria-disabled="isFill ? 'false' : 'true'"
           :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
@@ -60,6 +60,10 @@ export default {
     next: {
       type: [String, Object],
       default: ''
+    },
+    nextLabel: {
+      type: String,
+      default: 'NEXT'
     }
   },
   methods: {

@@ -2,9 +2,20 @@
   <Box
     ref="box"
     :next="`/programs/${programCode}/settings`"
+    nextLabel="Go to program specification"
     title="Thank you! We automatically updated the Program Specification based
-    on your responses. Please complete the remaining details."
-  />
+    on your responses."
+  >
+    <p class="text-xl">
+      <router-link
+        :to="{ name: 'roadmap', params: { programCode }}"
+        class="text-blue hover:underline"
+      >
+        View launch check
+      </router-link>
+      list or go to program specification.
+    </p>
+  </Box>
 </template>
 
 <script>
