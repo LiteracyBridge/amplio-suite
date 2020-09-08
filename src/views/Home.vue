@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
-      Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
+      Welcome to Amplio, <span class="capitalize">{{ user.name }}</span>!
     </h1>
 
     <div v-if="programLoaded" class="grid grid-cols-3 gap-10">
