@@ -142,7 +142,7 @@
         <div :key="`${opt.key}-label`">
           <span>{{ opt.value }}</span>
           <v-tooltip
-            v-if="recipient.directBeneficiariesAdditionalFields[opt.key] > recipient.directBeneficiaries"
+            v-if="recipient.directBeneficiariesAdditional[opt.key] > recipient.directBeneficiaries"
             text="This field cannot be greater than Direct Beneficiaries"
             position="left"
             class="ml-2"
