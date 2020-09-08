@@ -17,68 +17,63 @@
     />
 
     <span>Format</span>
-    <select
-      class="py-2"
+    <multiselect
       :value="message.format"
-      @change="(event) => setMessageFormat({ playlistIndex, messageIndex, format: event.target.value })"
-    >
-      <option
-        v-for="opt in formatOptions"
-        :key="opt.value"
-        :value="opt.value"
-      >
-        {{ opt.text }}
-      </option>
-    </select>
+      :options="formatOptions"
+      placeholder="Select a format"
+      @select="(format) => setMessageFormat({ playlistIndex, messageIndex, format })"
+      @remove="(format) => setMessageFormat({ playlistIndex, messageIndex, format: null })"
+    />
 
-    <span class="pl-4">Default Category</span>
-    <select
-      class="py-2"
-      :value="message.default_category"
-      @change="setMessageCategory({ playlistIndex, messageIndex, category: $event.target.value })"
+    <span class="col-span-2" />
+
+    <span>Default Category</span>
+    <multiselect
+      :options="categories"
+      :value="selectedCategory"
+      :custom-label="(opt) => `${opt.name} - ${opt.full_name}`"
+      track-by="code"
+      placeholder="Select the default category"
+      class="col-span-3"
+      @select="(opt) => setMessageCategory({ playlistIndex, messageIndex, category: opt.code })"
+      @remove="(opt) => setMessageCategory({ playlistIndex, messageIndex, category: null })"
     >
-      <option value="">Select</option>
-      <option
-        v-for="cat in categories"
-        :key="cat.code"
-        :value="cat.code"
-      >
-        {{ cat.name }} - {{ cat.full_name }}
-      </option>
-    </select>
+      <template slot="option" slot-scope="props">
+        <span>{{ props.option.name }} - {{ props.option.full_name }}</span>
+      </template>
+    </multiselect>
 
     <span>SDG Goals</span>
-    <select
-      class="py-2 col-start-2 col-end-5"
-      :value="message.sdg_goal"
-      @change="setMessageSDGGoal({ playlistIndex, messageIndex, goal: +$event.target.value })"
+    <multiselect
+      class="col-span-3"
+      :options="goals"
+      :value="selectedGoal"
+      :custom-label="(opt) => `${opt.section}. ${opt.goal}`"
+      track-by="section"
+      placeholder="Select the goal"
+      @select="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: opt.section })"
+      @remove="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: null })"
     >
-      <option value="">Select</option>
-      <option
-        v-for="goal in goals"
-        :key="goal.section"
-        :value="goal.section"
-      >
-        {{ `${goal.section}. ${goal.goal}` }}
-      </option>
-    </select>
+      <template slot="option" slot-scope="props">
+        <span>{{ props.option.section }}. {{ props.option.goal }}</span>
+      </template>
+    </multiselect>
 
     <span>SDG Target</span>
-    <select
-      ref="sdg_target"
-      class="py-2 col-start-2 col-end-5"
-      :value="message.sdg_target"
-      @change="setMessageSDGTarget({ playlistIndex, messageIndex, target: +$event.target.value })"
+    <multiselect
+      class="col-span-3"
+      :options="targets"
+      :value="selectedTarget"
+      :custom-label="(opt) => `${message.sdg_goal}.${opt.subsection} ${opt.label}`"
+      track-by="subsection"
+      placeholder="Select the target"
+      @select="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: opt.subsection })"
+      @remove="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: null })"
     >
-      <option value="">Select</option>
-      <option
-        v-for="target in targets"
-        :key="target.subsection"
-        :value="target.subsection"
-      >
-        {{ `${message.sdg_goal}.${target.subsection} ${target.label}` }}
-      </option>
-    </select>
+      <template slot="option" slot-scope="props">
+        <span>{{ message.sdg_goal }}.{{ props.option.subsection }} {{ props.option.label }}</span>
+      </template>
+    </multiselect>
 
     <span>Key Points</span>
     <textarea
@@ -95,6 +90,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
@@ -127,22 +123,31 @@ export default {
 
       if (goal) return goal.targets
       else return []
+    },
+    selectedCategory () {
+      return this.categories.find(cat => cat.code === this.message.default_category)
+    },
+    selectedGoal () {
+      return this.goals.find(goal => goal.section === this.message.sdg_goal)
+    },
+    selectedTarget () {
+      return this.targets.find(target => target.subsection === this.message.sdg_target)
     }
   },
   components: {
+    Multiselect,
     VInput,
     LanguagesSelector,
   },
   data () {
     return {
       formatOptions: [
-        { value: '', text: 'Select One' },
-        { value: 'drama', text: 'Drama' },
-        { value: 'endorsement', text: 'Endorsement' },
-        { value: 'interview', text: 'Interview' },
-        { value: 'message', text: 'Message' },
-        { value: 'song', text: 'Song' },
-        { value: 'other', text: 'Other' },
+        'Drama',
+        'Endorsement',
+        'Interview',
+        'Message',
+        'Song',
+        'Other',
       ],
     }
   },
