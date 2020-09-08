@@ -27,10 +27,12 @@ functions_to_deploy=(
 	content_create
 	content_retrieve
 	content_update
+	deploy
 	deployment_delete
 	deployment_retrieve
 	deployment_update
 	languages_index
+	listening_model_index
 	message_create
 	migrations
 	playlist_create
@@ -41,8 +43,9 @@ functions_to_deploy=(
 	programs_index
 	project_create
 	project_retrieve
+	roadmap_index
+	roadmap_update
 	sustainable_developments_index
-	deploy
 )
 
 # Lambda role
