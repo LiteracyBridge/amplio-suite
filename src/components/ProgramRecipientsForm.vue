@@ -1,5 +1,9 @@
 <template>
   <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
+    <p class="col-span-4 text-center text-blue">
+      All fields with an asterisk are required.The optional fields are recommended for reporting.
+    </p>
+
     <p><span class="text-2xl font-bold text-red-500">*</span>Country</p>
     <v-input
       type="text"

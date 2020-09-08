@@ -3,7 +3,7 @@
     httpStatus="success"
     :isDirty="dirty"
     title="recipients"
-    help="You can view the list of recipients on this page. You can select the pencil icon to view or edit details for that recipient. All fields with an asterisk are required. The optional fields are recommended for reporting."
+    help="You can view the list of recipients on this page. You can select the pencil icon to view or edit details for that recipient."
   >
     <table class="w-full table-auto">
       <thead>
@@ -28,7 +28,7 @@
           <td
             v-for="col in cols"
             :key="`${index}-${col.key}`"
-            class="p-4 border-b"
+            class="px-4 py-2 border-b"
           >
             {{ recipient[col.key] }}
           </td>
