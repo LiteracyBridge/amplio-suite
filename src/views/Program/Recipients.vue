@@ -35,7 +35,7 @@
           <td
             v-for="col in cols"
             :key="`${index}-${col.key}`"
-            class="p-4 border-b"
+            class="px-4 py-2 border-b"
           >
             {{ recipient[col.key] }}
           </td>
