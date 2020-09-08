@@ -39,7 +39,7 @@
         :onLanguageDeleted="this.onLanguageDeleted"
       />
 
-      <span class="pl-4">Region</span>
+      <span class="pl-4">Region/State</span>
       <multiselect
         class="multi"
         tag-placeholder="Add this as new region"

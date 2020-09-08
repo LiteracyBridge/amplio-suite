@@ -29,7 +29,7 @@
       @remove="removeRegion"
     >
       <template slot="noOptions">
-        Enter the region name
+        Region/State
       </template>
     </multiselect>
   </Box>
