@@ -8,15 +8,7 @@
       :multiple="false"
     />
 
-    <span class="pl-4">Variant</span>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="message.variant"
-      @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
-    />
-
-    <span>Format</span>
+    <span class="pl-4">Format</span>
     <multiselect
       :value="message.format"
       :options="formatOptions"
@@ -24,8 +16,6 @@
       @select="(format) => setMessageFormat({ playlistIndex, messageIndex, format })"
       @remove="(format) => setMessageFormat({ playlistIndex, messageIndex, format: null })"
     />
-
-    <span class="col-span-2" />
 
     <span>Default Category</span>
     <multiselect
@@ -84,6 +74,15 @@
       @input="(event) => setMessageKeyPoints({ playlistIndex, messageIndex, text: event.target.value })"
     >
     </textarea>
+
+    <span>Variant</span>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      class="col-span-3"
+      :value="message.variant"
+      @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
+    />
   </div>
 </template>
 
