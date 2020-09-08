@@ -168,15 +168,8 @@ export default {
     ...mapState('recipients', [
       'status',
       'dirty',
+      'recipients',
     ]),
-    recipients: {
-      get () {
-        return this.$store.state.recipients.recipients
-      },
-      set (value) {
-        this.setRecipients(value)
-      }
-    },
     recipient () {
       return this.recipients[this.selectedRecipientIndex]
     },
@@ -218,7 +211,6 @@ export default {
     ...mapActions('recipients', [
       'updateRecipients',
       'fetchRecipients',
-      'setRecipients',
       'addRecipient',
       'removeRecipient',
     ]),

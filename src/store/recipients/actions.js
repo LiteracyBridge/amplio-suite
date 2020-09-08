@@ -103,12 +103,6 @@ const addRecipient = async ({ commit }) => {
   commit('addRecipient', recipientTemplate)
 }
 
-// FIXME: Remove this actions when remove lateral menu
-const setRecipients = ({ commit }, recipients) => {
-  commit('setRecipients', recipients)
-  commit('setDirty', true)
-}
-
 const removeRecipient = async ({ commit, state }, index) => {
   const recipient = state.recipients[index]
 
@@ -236,7 +230,6 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 export default {
   fetchRecipients,
   updateRecipients,
-  setRecipients,
   addRecipient,
   removeRecipient,
 
