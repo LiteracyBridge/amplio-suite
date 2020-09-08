@@ -16,7 +16,7 @@
       <thead>
         <tr>
           <th
-            v-for="col in cols"
+            v-for="col in columns"
             :key="col.key"
             class="px-4 py-2 text-green border-b"
           >
@@ -33,7 +33,7 @@
           class="hover:bg-gray-400"
         >
           <td
-            v-for="col in cols"
+            v-for="col in columns"
             :key="`${index}-${col.key}`"
             class="px-4 py-2 border-b"
           >
@@ -131,7 +131,7 @@ import { mapState, mapActions } from 'vuex'
 import VButton from '@/components/Button'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
-const cols = [
+const columns = [
   {
     label: 'Region',
     key: 'region'
@@ -196,7 +196,7 @@ export default {
   },
   data: () => ({
     selectedRecipientIndex: 0,
-    cols,
+    columns,
     showModal: {
       edit: false,
       delete: false,
@@ -219,6 +219,12 @@ export default {
         const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
         if (bottomOfWindow) this.fetchRecipients(this.programCode)
       }
+    },
+    onAddRecipient () {
+      this.addRecipient()
+
+      const index = this.recipients.length - 1
+      this.onClickEdit(index)
     },
     onClickEdit (index) {
       this.selectedRecipientIndex = index
