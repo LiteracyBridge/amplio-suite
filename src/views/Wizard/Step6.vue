@@ -13,6 +13,7 @@
         :languages="this.languages"
         :onLanguageSelected="this.onLanguageSelected"
         :onLanguageDeleted="this.onLanguageDeleted"
+        labelBy='name'
         :autofocus="true"
       />
     </div>

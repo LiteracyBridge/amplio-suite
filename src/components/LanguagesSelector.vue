@@ -10,7 +10,7 @@
       :clear-on-select="true"
       :preserve-search="false"
       :internal-search="false"
-      :custom-label="({ name, code }) => code"
+      :custom-label="(opt) => opt[labelBy]"
       track-by="code"
       placeholder="Type a language to add"
       @select="onLanguageSelected"
@@ -52,6 +52,10 @@ export default {
     onLanguageDeleted: {
       required: true,
       type: Function,
+    },
+    labelBy: {
+      type: String,
+      default: 'code'
     },
     autofocus: {
       type: Boolean,
