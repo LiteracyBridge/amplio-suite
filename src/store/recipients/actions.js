@@ -48,11 +48,7 @@ const fetchRecipients = async ({ commit, state, rootState }) => {
   }
 }
 
-const updateRecipients = async ({ commit, state }) => {
-  // FIXME: pass the recipient index to update
-  // This change it is easier to make with the new recipients ui
-  const recipientIndex = 0
-
+const updateRecipient = async ({ commit, state }, recipientIndex) => {
   const { programCode, recipients } = state
   const recipient = recipients[recipientIndex]
   let recipientId = recipient.id
@@ -229,7 +225,7 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 
 export default {
   fetchRecipients,
-  updateRecipients,
+  updateRecipient,
   addRecipient,
   removeRecipient,
 

@@ -68,17 +68,28 @@
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
-        v-if="recipients.length > 0"
         :recipientIndex="selectedRecipientIndex"
         :recipient="recipient"
       />
     </portal>
 
     <portal to="modalFooter" v-if="showModal.edit">
-      <footer class="flex flex-row-reverse justify-between">
+      <footer class="flex justify-end gap-4">
         <v-button
           @click="onCloseModal"
-          color="bg-transparent border border-black"
+          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
+          textColor="text-black"
+          text="Discard"
+        />
+        <v-button
+          @click="onClickSave"
+          :color="dirty ? 'text-white bg-green' : 'bg-gray-400 text-white'"
+          textColor="text-black"
+          text="Save"
+        />
+        <v-button
+          @click="onCloseModal"
+          :color="dirty ? 'bg-gray-400 text-white' : 'bg-transparent border border-black'"
           textColor="text-black"
           text="Close"
         />
@@ -108,7 +119,7 @@
     </portal>
 
     <!-- Mandatory fields modal -->
-    <portal to="modalBody" v-if="showModal">
+    <portal to="modalBody" v-if="showModal.mandatory">
       <p class="text-xl">Please complete all of the mandatory fields.</p>
     </portal>
 
@@ -142,7 +153,7 @@ const columns = [
   },
   {
     label: 'Community',
-    key: 'community'
+    key: 'communityName'
   },
   {
     label: 'Group',
@@ -175,7 +186,7 @@ export default {
     },
     isFormFill () {
       const requiredFields = [
-        'country', 'region', 'district', 'communityName',
+        'region', 'district', 'communityName',
         'language', 'listeningModel', 'numberTalkingBooks',
         'deployments', 'directBeneficiaries'
       ]
@@ -209,8 +220,8 @@ export default {
       'closeModal'
     ]),
     ...mapActions('recipients', [
-      'updateRecipients',
       'fetchRecipients',
+      'updateRecipient',
       'addRecipient',
       'removeRecipient',
     ]),
@@ -234,6 +245,12 @@ export default {
       this.selectedRecipientIndex = index
       this.onOpenModal('delete', 'Delete Recipient')
     },
+    onClickSave () {
+      this.onCloseModal()
+
+      if (this.isFormFill) this.updateRecipient(this.selectedRecipientIndex)
+      else this.onOpenModal('mandatory', 'Required Fields')
+    },
     onOpenModal (modal, title) {
       this.showModal[modal] = true
       this.setModal(title)
@@ -243,6 +260,10 @@ export default {
       this.showModal.delete = false
       this.showModal.mandatory = false
       this.closeModal()
+
+      if (!this.isFormFill) {
+        this.onOpenModal('edit', 'Recipient Details')
+      }
     },
     confirmDeleteRecipient () {
       this.removeRecipient(this.selectedRecipientIndex)
