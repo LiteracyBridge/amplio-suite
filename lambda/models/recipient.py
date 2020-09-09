@@ -33,6 +33,7 @@ class Recipient(Base, SerializerMixin):
     variant = Column(String)
 
     # New fields
+    group_size = Column(Integer, nullable=False)
     deployments = Column(JSON)
     agent_gender = Column(String)
     direct_beneficiaries = Column(Integer)

@@ -21,6 +21,7 @@ keys = [
     'model',
     'language',
     'agent',
+    'group_size',
 ]
 
 @migration
@@ -48,6 +49,7 @@ def lambda_handler(event, context):
                 'language': event['language'],
                 'agent': event['agent'],
                 'variant': event['variant'],
+                'group_size': event['group_size'],
                 'deployments': event.get('deployments'),
                 'agent_gender': event.get('agent_gender'),
                 'direct_beneficiaries': event.get('direct_beneficiaries'),

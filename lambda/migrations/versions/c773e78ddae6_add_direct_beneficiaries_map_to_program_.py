@@ -20,7 +20,7 @@ def upgrade():
     op.add_column('programs', sa.Column('direct_beneficiaries_map', sa.JSON(), nullable=True))
     op.add_column('programs', sa.Column('direct_beneficiaries_additional_map', sa.JSON(), nullable=True))
 
-    beneficiaries_map = """{households, "Number of Households", male, "Number Male", female, "Number Female", youth, "Number Youth"}"""
+    beneficiaries_map = """{male, "Number of Male", female, "Number of Female", youth, "Number of Youth"}"""
 
     op.execute(f"""
         UPDATE programs

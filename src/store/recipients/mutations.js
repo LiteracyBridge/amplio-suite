@@ -30,8 +30,10 @@ const setRecipients = (state, payload) => {
     language: recipient.language,
     agent: recipient.agent,
     variant: recipient.variant,
+    households: recipient.num_households,
+    groupSize: recipient.group_size,
     deployments: recipient.deployments,
-    listeningModel: recipient.model,
+    listeningModel: +recipient.model,
     agentGender: recipient.agent_gender,
     directBeneficiaries: recipient.direct_beneficiaries,
     directBeneficiariesAdditional: recipient.direct_beneficiaries_additional,
@@ -114,6 +116,21 @@ const setRecipientAgentGender = (state, payload) => {
   state.recipients[recipientIndex].agentGender = gender
 }
 
+const setRecipientVariant = (state, payload) => {
+  const { recipientIndex, variant } = payload
+  state.recipients[recipientIndex].variant = variant
+}
+
+const setRecipientHouseholds = (state, payload) => {
+  const { recipientIndex, households } = payload
+  state.recipients[recipientIndex].households = households
+}
+
+const setRecipientGroupSize = (state, payload) => {
+  const { recipientIndex, groupSize } = payload
+  state.recipients[recipientIndex].groupSize = groupSize
+}
+
 const setRecipientSupportEntity = (state, payload) => {
   const { recipientIndex, supportEntity } = payload
   state.recipients[recipientIndex].supportEntity = supportEntity
@@ -161,6 +178,9 @@ export default {
   setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientVariant,
+  setRecipientHouseholds,
+  setRecipientGroupSize,
   setRecipientSupportEntity,
   setRecipientNumberTalkingBooks,
   setRecipientDirectBeneficiaries,

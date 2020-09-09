@@ -38,6 +38,7 @@ def upgrade():
     sa.Column('agent', sa.String(), nullable=False),
     sa.Column('latitude', postgresql.DOUBLE_PRECISION(), nullable=True),
     sa.Column('longitude', postgresql.DOUBLE_PRECISION(), nullable=True),
+    sa.Column('group_size', sa.Integer(), nullable=True),
     sa.Column('variant', sa.String(), nullable=True),
     sa.Column('deployments', sa.JSON(), nullable=True),
     sa.Column('agent_gender', sa.String(), nullable=True),
@@ -48,6 +49,9 @@ def upgrade():
     sa.PrimaryKeyConstraint('recipientid'),
     sa.UniqueConstraint('partner', 'project', 'communityname', 'groupname', 'agent', name='recipients_uniqueness_key')
     )
+
+    op.execute('UPDATE recipients SET group_size = 0')
+    op.alter_column('recipients', 'group_size', nullable=False)
 
 def downgrade():
     op.drop_table('recipients')

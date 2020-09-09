@@ -25,7 +25,7 @@
       :multiple="false"
     />
 
-    <p class="pl-4 mandatory-field">District</p>
+    <p class="pl-4 mandatory-field">District/County</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -128,6 +128,7 @@
       :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
       class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
+      @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
     >
       {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
       <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
@@ -138,40 +139,28 @@
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
-      <template v-for="opt in directBeneficiariesLabels">
-        <div :key="`${opt.key}-label`">
-          <span>{{ opt.value }}</span>
-          <v-tooltip
-            v-if="recipient.directBeneficiariesAdditional[opt.key] > recipient.directBeneficiaries"
-            text="This field cannot be greater than Direct Beneficiaries"
-            position="left"
-            class="ml-2"
-          >
-            <font-awesome-icon
-              class="text-orange-600"
-              icon="exclamation-circle"
-            />
-          </v-tooltip>
-        </div>
-        <v-input
-          :key="`${opt.key}-input`"
-          type="number"
-          :value="recipient.directBeneficiariesAdditional[opt.key]"
-          @input="setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: $event.target.value })"
-          mx="mx-0"
-        />
-      </template>
+      <beneficiaries-field
+        label="Number of Households"
+        :val="recipient.households"
+        :showTooltip="recipient.households > recipient.directBeneficiaries"
+        :input="(val) => setRecipientHouseholds({ recipientIndex, households: +val })"
+      />
 
-      <template v-for="opt in additionalLabels">
-        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
-        <v-input
-          :key="`${opt.key}-input`"
-          type="number"
-          :value="recipient.directBeneficiariesAdditional[opt.key]"
-          @input="setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: $event.target.value })"
-          mx="mx-0"
-        />
-      </template>
+      <beneficiaries-field
+        label="Group Size"
+        :val="recipient.groupSize"
+        :showTooltip="recipient.groupSize > recipient.directBeneficiaries"
+        :input="(val) => setRecipientGroupSize({ recipientIndex, groupSize: +val })"
+      />
+
+      <beneficiaries-field
+        v-for="opt in beneficiariesAdditionalFields"
+        :key="opt.key"
+        :label="opt.value"
+        :val="recipient.directBeneficiariesAdditional[opt.key]"
+        :showTooltip="recipient.directBeneficiariesAdditional[opt.key] > recipient.directBeneficiaries"
+        :input="(val) => setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: +val })"
+      />
     </div>
 
     <p>Indirect beneficiaries</p>
@@ -193,6 +182,7 @@ import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
+import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries'
 
 export default {
   props: {
@@ -207,10 +197,15 @@ export default {
   },
   computed: {
     ...mapState('programData', {
-      additionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
-        .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
-      directBeneficiariesLabels: state => Object.keys(state.directBeneficiariesMap)
-        .map(key => ({ key, value: state.directBeneficiariesMap[key] }))
+      beneficiariesAdditionalFields: state => {
+        const part1 = Object.keys(state.directBeneficiariesAdditionalMap)
+          .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] }))
+
+        const part2 = Object.keys(state.directBeneficiariesMap)
+          .map(key => ({ key, value: state.directBeneficiariesMap[key] }))
+
+        return part2.concat(part1)
+      },
     }),
     ...mapState('programData', [
       'region',
@@ -232,6 +227,7 @@ export default {
     VTooltip,
     Multiselect,
     LanguagesSelector,
+    BeneficiariesField,
   },
   watch: {
     region: {
@@ -265,6 +261,9 @@ export default {
       'setRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
+      'setRecipientVariant',
+      'setRecipientHouseholds',
+      'setRecipientGroupSize',
       'setRecipientSupportEntity',
       'setRecipientNumberTalkingBooks',
       'setRecipientDirectBeneficiaries',

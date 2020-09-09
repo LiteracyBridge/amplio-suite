@@ -15,7 +15,6 @@ time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
 
 beneficiaries_map = {
-    'households': 'Number of Households',
     'male': 'Number Male',
     'female': 'Number Female',
     'youth': 'Number Youth'

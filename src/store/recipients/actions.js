@@ -17,12 +17,15 @@ const recipientTemplate = {
   supportEntity: '',
   language: '',
   agent: '',
+  households: 0,
+  groupSize: 0,
   deployments: [],
   listeningModel: '',
   agentGender: '',
   directBeneficiaries: null,
   directBeneficiariesAdditional: {},
   indirectBeneficiaries: null,
+  variant: '',
 
   // FIXME
   partner: 'fixme',
@@ -64,7 +67,7 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
     country: recipient.country,
     region: recipient.region,
     district: recipient.district,
-    num_households: recipient.directBeneficiariesAdditional.households || 0,
+    num_households: recipient.households,
     num_tbs: recipient.numberTalkingBooks,
     support_entity: recipient.supportEntity,
     model: recipient.listeningModel,
@@ -72,10 +75,11 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
     agent: recipient.agent,
     deployments: recipient.deployments,
     agent_gender: recipient.agentGender,
+    group_size: recipient.groupSize,
     direct_beneficiaries: recipient.directBeneficiaries,
     direct_beneficiaries_additional: recipient.directBeneficiariesAdditional,
     indirect_beneficiaries: recipient.indirectBeneficiaries,
-    variant: 'variant',
+    variant: recipient.variant,
   }
 
   commit('requestInit')
@@ -166,6 +170,21 @@ const setRecipientAgentGender = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
+const setRecipientVariant = ({ commit }, payload) => {
+  commit('setRecipientVariant', payload)
+  commit('setDirty', true)
+}
+
+const setRecipientHouseholds = ({ commit }, payload) => {
+  commit('setRecipientHouseholds', payload)
+  commit('setDirty', true)
+}
+
+const setRecipientGroupSize = ({ commit }, payload) => {
+  commit('setRecipientGroupSize', payload)
+  commit('setDirty', true)
+}
+
 const setRecipientSupportEntity = ({ commit }, payload) => {
   commit('setRecipientSupportEntity', payload)
   commit('setDirty', true)
@@ -239,6 +258,9 @@ export default {
   setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientVariant,
+  setRecipientHouseholds,
+  setRecipientGroupSize,
   setRecipientSupportEntity,
   setRecipientNumberTalkingBooks,
   setRecipientDirectBeneficiaries,
