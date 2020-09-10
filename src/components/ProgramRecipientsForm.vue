@@ -1,5 +1,17 @@
 <template>
-  <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
+  <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
+    <p class="col-span-4 text-center text-blue">
+      All fields with an asterisk are required.The optional fields are recommended for reporting.
+    </p>
+
+    <p
+      v-if="invalidConstraint"
+      class="col-span-4 text-center text-red-500"
+    >
+      <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
+      Community, Group Name and Agent combination must be unique.
+    </p>
+
     <p class="mandatory-field">Region</p>
     <multiselect
       placeholder="Select a region"
@@ -193,7 +205,11 @@ export default {
     recipient: {
       type: Object,
       required: true
-    }
+    },
+    invalidConstraint: {
+      type: Boolean,
+      required: true
+    },
   },
   computed: {
     ...mapState('programData', {

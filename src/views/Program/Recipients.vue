@@ -41,10 +41,16 @@
           </td>
           <td class="px-4 border-b">
             <button
-              class="mr-3 icon-zoom-xl"
+              class="icon-zoom-xl"
               @click="onClickEdit(index)"
             >
               <font-awesome-icon icon="edit" />
+            </button>
+            <button
+              class="mx-3 icon-zoom-xl"
+              @click="onClickDuplicate(index)"
+            >
+              <font-awesome-icon icon="copy" />
             </button>
             <button
               class="text-red-500 icon-zoom-xl"
@@ -70,6 +76,7 @@
       <program-recipients-form
         :recipientIndex="selectedRecipientIndex"
         :recipient="recipient"
+        :invalidConstraint="invalidConstraint"
       />
     </portal>
 
@@ -83,7 +90,7 @@
         />
         <v-button
           @click="onClickSave"
-          :color="dirty ? 'text-white bg-green' : 'bg-gray-400 text-white'"
+          :color="!dirty || invalidConstraint ? 'bg-gray-400 text-white' : 'text-white bg-green'"
           textColor="text-black"
           text="Save"
         />
@@ -201,6 +208,13 @@ export default {
 
       return partial.every(Boolean)
     },
+    invalidConstraint () {
+      const options = this.recipients
+        .map(recipient => `${recipient.communityName}-${recipient.groupName}-${recipient.agent}`)
+      const option = `${this.recipient.communityName}-${this.recipient.groupName}-${this.recipient.agent}`
+
+      return options.filter(opt => opt === option).length > 1
+    },
   },
   components: {
     VButton,
@@ -224,6 +238,7 @@ export default {
       'fetchRecipients',
       'updateRecipient',
       'addRecipient',
+      'copyRecipient',
       'removeRecipient',
       'discardRecipient',
     ]),
@@ -240,6 +255,13 @@ export default {
       this.onClickEdit(index)
     },
     onClickEdit (index) {
+      this.selectedRecipientIndex = index
+      this.onOpenModal('edit', 'Recipient Details')
+    },
+    onClickDuplicate (index) {
+      this.copyRecipient(index)
+
+      index = this.recipients.length - 1
       this.selectedRecipientIndex = index
       this.onOpenModal('edit', 'Recipient Details')
     },

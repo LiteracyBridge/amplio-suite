@@ -108,6 +108,14 @@ const addRecipient = async ({ commit, rootState }) => {
   commit('setDirty', true)
 }
 
+const copyRecipient = async ({ commit, state }, recipientIndex) => {
+  const recipient = { ...state.recipients[recipientIndex] }
+  recipient.id = null
+
+  commit('addRecipient', recipient)
+  commit('setDirty', true)
+}
+
 const removeRecipient = async ({ commit, state }, index) => {
   const recipient = state.recipients[index]
 
@@ -267,6 +275,7 @@ export default {
   fetchRecipients,
   updateRecipient,
   addRecipient,
+  copyRecipient,
   removeRecipient,
   discardRecipient,
 
