@@ -130,7 +130,7 @@
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
       @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
     >
-      {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
+      {{ beneficiariesIsOpen ? 'Hide' : 'Show' }} Direct beneficiaries details
       <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
     </p>
     <span></span>
