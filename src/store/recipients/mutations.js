@@ -1,3 +1,29 @@
+// Map db model to store model
+const responseToRecipient = (response) => ({
+  id: response.recipient_id,
+  partner: response.partner,
+  communityName: response.community_name,
+  groupName: response.group_name,
+  affiliate: response.affiliate,
+  component: response.component,
+  country: response.country,
+  region: response.region,
+  district: response.district,
+  numberTalkingBooks: response.num_tbs,
+  supportEntity: response.support_entity,
+  language: response.language,
+  agent: response.agent,
+  variant: response.variant,
+  households: response.num_households,
+  groupSize: response.group_size,
+  deployments: response.deployments,
+  listeningModel: +response.model,
+  agentGender: response.agent_gender,
+  directBeneficiaries: response.direct_beneficiaries,
+  directBeneficiariesAdditional: response.direct_beneficiaries_additional,
+  indirectBeneficiaries: response.indirect_beneficiaries,
+})
+
 const setDirty = (state, status) => {
   state.dirty = status
 }
@@ -15,34 +41,20 @@ const requestSuccess = (state) => {
 }
 
 const setRecipients = (state, payload) => {
-  const recipients = payload.recipients.map(recipient => ({
-    id: recipient.recipient_id,
-    partner: recipient.partner,
-    communityName: recipient.community_name,
-    groupName: recipient.group_name,
-    affiliate: recipient.affiliate,
-    component: recipient.component,
-    country: recipient.country,
-    region: recipient.region,
-    district: recipient.district,
-    numberTalkingBooks: recipient.num_tbs,
-    supportEntity: recipient.support_entity,
-    language: recipient.language,
-    agent: recipient.agent,
-    variant: recipient.variant,
-    households: recipient.num_households,
-    groupSize: recipient.group_size,
-    deployments: recipient.deployments,
-    listeningModel: +recipient.model,
-    agentGender: recipient.agent_gender,
-    directBeneficiaries: recipient.direct_beneficiaries,
-    directBeneficiariesAdditional: recipient.direct_beneficiaries_additional,
-    indirectBeneficiaries: recipient.indirect_beneficiaries,
-  }))
+  const recipients = payload.recipients
+    .map(recipient => responseToRecipient(recipient))
 
   state.dirty = false
   state.status = 'success'
   state.programCode = payload.program_code
+  state.recipients = recipients
+}
+
+const setRecipient = (state, payload) => {
+  const { recipient, recipientIndex } = payload
+  const recipients = [...state.recipients]
+  recipients[recipientIndex] = responseToRecipient(recipient)
+
   state.recipients = recipients
 }
 
@@ -164,6 +176,7 @@ export default {
   requestError,
   requestSuccess,
   setRecipients,
+  setRecipient,
   addRecipient,
   removeRecipient,
 

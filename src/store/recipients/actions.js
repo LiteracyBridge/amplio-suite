@@ -5,7 +5,7 @@ import {
   deleteRecipient,
 } from '@/api/recipients.api'
 
-const recipientTemplate = {
+const recipientTemplate = () => ({
   id: null,
 
   communityName: '',
@@ -31,7 +31,7 @@ const recipientTemplate = {
   partner: 'fixme',
   affiliate: 'fixme',
   component: 'fixme',
-}
+})
 
 
 const fetchRecipients = async ({ commit, state, rootState }) => {
@@ -43,7 +43,7 @@ const fetchRecipients = async ({ commit, state, rootState }) => {
   commit('requestInit')
 
   try {
-    const response = await getRecipients(programCode)
+    const response = await getRecipients({ program_code: programCode })
     commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
@@ -100,7 +100,8 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
 }
 
 const addRecipient = async ({ commit }) => {
-  commit('addRecipient', recipientTemplate)
+  commit('addRecipient', recipientTemplate())
+  commit('setDirty', true)
 }
 
 const removeRecipient = async ({ commit, state }, index) => {
@@ -110,9 +111,25 @@ const removeRecipient = async ({ commit, state }, index) => {
 
   try {
     await deleteRecipient(state.programCode, recipient.id)
-    commit('setDirty', true)
+    commit('setDirty', false)
     commit('requestSuccess')
     commit('removeRecipient', recipient)
+  } catch (error) {
+    commit('requestError')
+    commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
+  }
+}
+
+const discardRecipient = async ({ commit, state }, recipientIndex) => {
+  const recipient = state.recipients[recipientIndex]
+
+  commit('requestInit')
+
+  try {
+    const response = await getRecipients({ program_code: state.programCode, recipient_id: recipient.id})
+    commit('setDirty', false)
+    commit('requestSuccess')
+    commit('setRecipient', { recipient: response.recipient, recipientIndex })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
@@ -247,6 +264,7 @@ export default {
   updateRecipient,
   addRecipient,
   removeRecipient,
+  discardRecipient,
 
   setRecipientDeployments,
   addRecipientRegion,

@@ -76,7 +76,7 @@
     <portal to="modalFooter" v-if="showModal.edit">
       <footer class="flex justify-end gap-4">
         <v-button
-          @click="onCloseModal"
+          @click="onClickDiscard"
           :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
           textColor="text-black"
           text="Discard"
@@ -88,6 +88,7 @@
           text="Save"
         />
         <v-button
+          v-if="recipient.id !== null"
           @click="onCloseModal"
           :color="dirty ? 'bg-gray-400 text-white' : 'bg-transparent border border-black'"
           textColor="text-black"
@@ -206,7 +207,7 @@ export default {
     ProgramRecipientsForm,
   },
   data: () => ({
-    selectedRecipientIndex: 0,
+    selectedRecipientIndex: null,
     columns,
     showModal: {
       edit: false,
@@ -224,6 +225,7 @@ export default {
       'updateRecipient',
       'addRecipient',
       'removeRecipient',
+      'discardRecipient',
     ]),
     scroll () {
       window.onscroll = () => {
@@ -251,6 +253,14 @@ export default {
       if (this.isFormFill) this.updateRecipient(this.selectedRecipientIndex)
       else this.onOpenModal('mandatory', 'Required Fields')
     },
+    onClickDiscard () {
+      if (!this.recipient.id) {
+        this.onCloseModal()
+        this.removeRecipient(this.selectedRecipientIndex)
+      } else {
+        this.discardRecipient(this.selectedRecipientIndex)
+      }
+    },
     onOpenModal (modal, title) {
       this.showModal[modal] = true
       this.setModal(title)
@@ -261,7 +271,7 @@ export default {
       this.showModal.mandatory = false
       this.closeModal()
 
-      if (!this.isFormFill) {
+      if (!this.isFormFill && this.recipient.id) {
         this.onOpenModal('edit', 'Recipient Details')
       }
     },

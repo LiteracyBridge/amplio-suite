@@ -7,17 +7,32 @@ session = create_db_session()
 @migration
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
-    recipients = session.query(Recipient) \
-        .filter(Recipient.program_code == event['program_code'])
+    if 'recipient_id' in event:
+        recipient = session.query(Recipient) \
+            .filter(
+                Recipient.program_code == event['program_code'],
+                Recipient.recipient_id == event['recipient_id']
+            ) \
+            .first()
 
-    recipients = [recipient.to_dict() for recipient in recipients]
+        if recipient:
+            return {
+                'status': 200,
+                'program_code': event['program_code'],
+                'recipient': recipient.to_dict()
+            }
+    else:
+        recipients = session.query(Recipient) \
+            .filter(Recipient.program_code == event['program_code'])
 
-    if recipients:
-        return {
-            'status': 200,
-            'program_code': event['program_code'],
-            'recipients': recipients
-        }
+        recipients = [recipient.to_dict() for recipient in recipients]
+
+        if recipients:
+            return {
+                'status': 200,
+                'program_code': event['program_code'],
+                'recipients': recipients
+            }
 
     return {
         'status': 401,
