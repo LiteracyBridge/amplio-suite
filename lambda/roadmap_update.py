@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.roadmap import Roadmap
 
@@ -14,6 +14,9 @@ def lambda_handler(event, context):
         ).one_or_none()
         if not roadmap:
             roadmap = Roadmap(**event)
+        
+        validate_user_access(event, roadmap)
+
         roadmap.completed = event['completed']
         session.merge(roadmap)
         session.commit()

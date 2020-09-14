@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.recipient import Recipient
 
@@ -14,6 +14,8 @@ def lambda_handler(event, context):
                 Recipient.recipient_id == event['recipient_id']
             ) \
             .first()
+        
+        validate_user_access(event, recipient)
 
         if recipient:
             return {
@@ -25,7 +27,7 @@ def lambda_handler(event, context):
         recipients = session.query(Recipient) \
             .filter(Recipient.program_code == event['program_code'])
 
-        recipients = [recipient.to_dict() for recipient in recipients]
+        recipients = [validate_user_access(event, recipient).to_dict() for recipient in recipients]
 
         if recipients:
             return {

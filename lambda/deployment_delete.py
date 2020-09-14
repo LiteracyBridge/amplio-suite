@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.deployment import Deployment
 
@@ -14,6 +14,8 @@ def lambda_handler(event, context):
                 Deployment.deployment == event['deployment']
             ) \
             .first()
+
+        validate_user_access(event, deployment)
 
         session.delete(deployment)
         session.commit()

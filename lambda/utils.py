@@ -87,6 +87,46 @@ def create_db_session():
 
     return session
 
+def user_programs(username):
+    if os.getenv('ENV') != 'AWS':
+        return ['TEST', 'TEST2', 'My Test Program 8']
+    
+    from amplio.rolemanager import manager
+    manager.open_tables()
+    program_items = manager.get_programs_for_user(username).items()
+    return [program for program, _role in program_items]
+
+class UnauthorizedAccess(Exception):
+    pass
+
+def validate_user_access(event, model):
+    # FIXME: there must always be a username in prod - we're allowing a passthrough behaviour here until we deploy
+    username = None
+    if ('context' in event) and ('username' in event['context']):
+        username = event['context']['username']
+    elif 'email' in event:
+        username = event['email']
+    else:
+        print(f"Didn't get a username - skipping model permission validation...")
+        return model
+    # Once in prod, just uncomment this next line
+    # username = event['context']['username']
+    
+    if not model:
+        return None
+
+    program_code = model.program_code
+    # program_code can be a function or a variable, so we unify
+    # FIXME: we should unify this at the model level - make all of them be a function
+    # but currently the name is clashing with Roadmap
+    if callable(program_code):
+        program_code = program_code()
+
+    if program_code not in user_programs(username):
+        raise UnauthorizedAccess()
+    
+    return model
+
 def save_to_csv(text, file_path):
     # FIXME this must be a env var
     bucket = 'stg-amplio-progspecs'

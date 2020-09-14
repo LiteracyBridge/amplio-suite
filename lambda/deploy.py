@@ -2,7 +2,7 @@ import io
 import csv
 import json
 
-from utils import create_db_session, save_to_csv
+from utils import create_db_session, save_to_csv, user_programs, UnauthorizedAccess
 from decorators import migration, validate_keys
 from models.deployment import Deployment
 from models.content import Content
@@ -18,6 +18,12 @@ session = create_db_session()
 @migration
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
+    username = event['context']['username']
+
+    if event['program_code'] not in user_programs(username): # FIXME: we'd prefer to check with the model rather than the program_code
+        raise UnauthorizedAccess()
+
+
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content)

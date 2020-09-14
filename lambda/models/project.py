@@ -13,3 +13,6 @@ class Project(Base, SerializerMixin):
     projectcode = Column(String(255), primary_key=True, index=True, nullable=False)
     project = Column(String(255), nullable=False)
     active = Column(Boolean)
+    
+    def program_code(self):
+        return self.projectcode

@@ -20,3 +20,6 @@ class Deployment(Base, SerializerMixin):
     component = Column(String, nullable=False)
 
     content = relationship('Content', cascade='all, delete')
+    
+    def program_code(self):
+        return self.project

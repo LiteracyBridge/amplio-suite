@@ -111,6 +111,9 @@ class Program(Base, SerializerMixin):
         }
 
         return Deployment(**data)
+    
+    def program_code(self):
+        return self.projectcode
 
 
 # should validate_list_input belong to a utils package of some sort?
