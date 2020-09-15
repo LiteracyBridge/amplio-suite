@@ -45,6 +45,8 @@ class Program(Base, SerializerMixin):
     languages = Column(JSON, nullable=False)
     direct_beneficiaries_map = Column(JSON, default=beneficiaries_map)
     direct_beneficiaries_additional_map = Column(JSON, default={})
+    partner = Column(String, nullable=False)
+    affiliate = Column(String, nullable=False)
 
     @validates('deployments_length')
     def validate_deployments_length(self, key, deployments_length):

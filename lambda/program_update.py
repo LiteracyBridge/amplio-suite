@@ -2,6 +2,7 @@ from utils import create_db_session
 from decorators import migration, validate_keys
 from models.project import Project
 from models.program import Program
+from models.recipient import Recipient
 
 
 keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
@@ -32,8 +33,18 @@ def lambda_handler(event, context):
                 'feedback_frequency': event['feedback_frequency'],
                 'feedback_frequency_other': event['feedback_frequency_other'],
                 'languages': event['languages'],
+                'partner': event['partner'],
+                'affiliate': event['affiliate'],
                 'direct_beneficiaries_map': event.get('direct_beneficiaries_map'),
                 'direct_beneficiaries_additional_map': event.get('direct_beneficiaries_additional_map'),
+            })
+        session.flush()
+
+        session.query(Recipient) \
+            .filter(Recipient.program_code == event['programCode']) \
+            .update({
+                'partner': event['partner'],
+                'affiliate': event['affiliate'],
             })
 
         session.commit()
