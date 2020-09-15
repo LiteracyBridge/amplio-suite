@@ -38,6 +38,22 @@ const setProgramName = async ({ dispatch }, payload) => {
   await check('programName', step, dispatch)
 }
 
+const setPartner = async ({ dispatch }, payload) => {
+  const { partner, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
+  await dispatch('programData/setPartner', partner, { root: true })
+  await check(attrs, 1, dispatch)
+}
+
+const setAffiliate = async ({ dispatch }, payload) => {
+  const { affiliate, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
+  await dispatch('programData/setAffiliate', affiliate, { root: true })
+  await check(attrs, step, dispatch)
+}
+
 // step-geo
 const setCountry = async ({ dispatch }, payload) => {
   const { country, step } = payload
@@ -141,9 +157,14 @@ export default {
   setIsCompleted,
 
   setProgramName,
+<<<<<<< HEAD
   setCountry,
   addRegion,
   removeRegion,
+=======
+  setPartner,
+  setAffiliate,
+>>>>>>> 9f5d4b0... Close #242 add partner and affiliate to wizard and general tab
   toggleGoal,
   toggleListening,
   setDeploymentsCount,

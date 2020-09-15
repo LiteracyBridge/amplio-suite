@@ -51,18 +51,17 @@ const fetchRecipients = async ({ commit, state, rootState }) => {
   }
 }
 
-const updateRecipient = async ({ commit, state }, recipientIndex) => {
+const updateRecipient = async ({ commit, state, rootState }, recipientIndex) => {
   const { programCode, recipients } = state
+  const { partner, affiliate } = rootState.programData
   const recipient = recipients[recipientIndex]
   let recipientId = recipient.id
 
   const recipientData = {
     program_code: programCode,
     recipient_id: recipientId,
-    partner: recipient.partner,
     community_name: recipient.communityName,
     group_name: recipient.groupName,
-    affiliate: recipient.affiliate,
     component: recipient.component,
     country: recipient.country,
     region: recipient.region,
@@ -80,6 +79,8 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
     direct_beneficiaries_additional: recipient.directBeneficiariesAdditional,
     indirect_beneficiaries: recipient.indirectBeneficiaries,
     variant: recipient.variant,
+    partner,
+    affiliate,
   }
 
   commit('requestInit')

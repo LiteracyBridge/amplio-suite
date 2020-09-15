@@ -21,6 +21,8 @@ export const getDefaultState = () => ({
 
   feedbackFrequently: '',
   feedbackFrequentlyOther: '',
+  partner: '',
+  affiliate: '',
 
   directBeneficiariesMap: {},
   directBeneficiariesAdditionalMap: {},

@@ -11,6 +11,8 @@ const isCompleted = ({ state, rootState }, payload) => {
       case 'deploymentsLength':
       case 'feedbackFrequently':
       case 'feedbackFrequentlyOther':
+      case 'partner':
+      case 'affiliate':
         partial = state[attr] !== ''
         break
       case 'region':
@@ -108,6 +110,15 @@ const deleteLanguage = async ({ commit }, language) => {
   commit('setDirty', true)
 }
 
+const setPartner = ({ commit }, payload) => {
+  commit('setPartner', payload)
+  commit('setDirty', true)
+}
+const setAffiliate = ({ commit }, payload) => {
+  commit('setAffiliate', payload)
+  commit('setDirty', true)
+}
+
 const setDirectBeneficiariesLabel = ({ commit }, payload) => {
   commit('setDirectBeneficiariesLabel', payload)
   commit('setDirty', true)
@@ -145,6 +156,8 @@ export default {
   setFeedbackFrequentlyOther,
   setLanguages,
   deleteLanguage,
+  setPartner,
+  setAffiliate,
 
   setDirectBeneficiariesLabel,
   setDirectBeneficiariesAdditionalLabel,

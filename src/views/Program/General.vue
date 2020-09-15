@@ -207,6 +207,8 @@ export default {
     ...mapState('programData', [
       'country',
       'region',
+      'partner',
+      'affiliate',
       'languages',
       'listeningModels',
     ]),
@@ -273,6 +275,8 @@ export default {
       'setCountry',
       'addRegion',
       'removeRegion',
+      'setPartner',
+      'setAffiliate',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',

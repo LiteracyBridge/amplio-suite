@@ -20,6 +20,8 @@ const generateProgramData = (state, rootState) => ({
   languages: rootState.programData.languages,
   direct_beneficiaries_map: rootState.programData.directBeneficiariesMap,
   direct_beneficiaries_additional_map: rootState.programData.directBeneficiariesAdditionalMap,
+  partner: rootState.programData.partner,
+  affiliate: rootState.programData.affiliate,
 })
 
 const fetchProgram = async ({ commit, state, rootState }, programCode) => {
