@@ -6,20 +6,20 @@ import {
 } from '@/api/content.api'
 
 
-const fetchContent = async ({ state, rootState, commit }, deploymentName=null) => {
+const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
   const { programCode, programName } = rootState.program
   if (!programName) return
-  if (!deploymentName && state.programCode === programCode && !state.dirty) return
+  if (!deployment && state.programCode === programCode && !state.dirty) return
 
   commit('resetState')
   commit('requestInit')
 
-  if (!deploymentName) {
-    deploymentName = rootState.deployments.items[0].deploymentname
+  if (!deployment) {
+    deployment = rootState.deployments.items[0].deploymentname
   }
 
   try {
-    const response = await getContent(programCode, deploymentName)
+    const response = await getContent(programCode, deployment)
     commit('setContent', response)
   } catch (error) {
     commit('requestError')
@@ -29,12 +29,12 @@ const fetchContent = async ({ state, rootState, commit }, deploymentName=null) =
 
 const updateContent = async ({ state, commit }, deployment) => {
   const { programCode, playlists } = state
-  const deployment_id = deployment.deployment
+  const deployment = deployment.deployment
 
   commit('requestInit')
 
   try {
-    await putContent({ program_code: programCode, deployment_id, content: playlists })
+    await putContent({ program_code: programCode, deployment, content: playlists })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -43,14 +43,14 @@ const updateContent = async ({ state, commit }, deployment) => {
   }
 }
 
-const addPlaylist = async ({ state, commit, dispatch }, deploymentId) => {
+const addPlaylist = async ({ state, commit, dispatch }, deployment) => {
   const { programCode } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await contentAddPlaylist({ program_code: programCode, deployment_id: deploymentId})
+    await contentAddPlaylist({ program_code: programCode, deployment})
     await dispatch('fetchContent')
   } catch (error) {
     commit('requestError')

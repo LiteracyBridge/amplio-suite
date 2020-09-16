@@ -5,7 +5,7 @@ from models.content import Content
 session = create_db_session()
 
 @migration
-@validate_keys(['program_code', 'deployment_id', 'content'])
+@validate_keys(['program_code', 'deployment', 'content'])
 def lambda_handler(event, context):
     try:
         content = Content(**event)

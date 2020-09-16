@@ -24,7 +24,7 @@ const setContent = (state, payload) => {
   state.dirty = false
   state.status = 'success'
   state.programCode = payload.programCode
-  state.deploymentName = payload.deploymentName
+  state.deploymentName = payload.deployment
   state.playlists = payload.playlists
 }
 

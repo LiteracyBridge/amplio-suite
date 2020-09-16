@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, JSON, UniqueConstraint, ForeignKey
+from sqlalchemy import Column, String, JSON, UniqueConstraint, ForeignKeyConstraint
 from sqlalchemy_serializer import SerializerMixin
 
 from models.base import Base
@@ -27,15 +27,20 @@ def playlist_template(title):
 class Content(Base, SerializerMixin):
     __tablename__ = 'content'
     __table_args__ = (
-        UniqueConstraint('program_code', 'deployment_id', name='content_uniqueness_key'),
+        UniqueConstraint('projectcode', 'deployment', name='content_uniqueness_key'),
+        ForeignKeyConstraint(
+            ['projectcode', 'deployment'],
+            ['deployments.project', 'deployments.deployment'],
+            name='content_program_code_fkey'
+        ),
     )
-    program_code = Column(String(255), primary_key=True)
-    deployment_id = Column(String(255), ForeignKey('deployments.deployment'), primary_key=True)
+    program_code = Column('projectcode', String(255), primary_key=True)
+    deployment = Column(String(255), primary_key=True)
     content = Column(JSON, nullable=False)
 
-    def __init__(self, program_code, deployment_id, content=[]):
+    def __init__(self, program_code, deployment, content=[]):
         self.program_code = program_code
-        self.deployment_id = deployment_id
+        self.deployment = deployment
         self.content = content
 
         if content == []:

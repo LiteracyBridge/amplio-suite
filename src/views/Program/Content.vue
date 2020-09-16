@@ -179,7 +179,7 @@ export default {
     },
     addNewMessage() {
       const payload = {
-        deployment_id: this.deployment.deployment,
+        deployment: this.deployment.deployment,
         playlist_index: this.playlistIndex
       }
       this.addMessage(payload)

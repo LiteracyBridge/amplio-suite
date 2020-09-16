@@ -17,7 +17,7 @@ const setProgramData = (state, payload) => {
   state.region = payload.region
   state.goals = payload.sustainable_development_goals
   state.listeningModels = payload.listening_models
-  state.deploymentsAmount = payload.deployments_amount
+  state.deploymentsCount = payload.deployments_count
   state.deploymentsLength = payload.deployments_length
   state.deploymentsFirst = payload.deployments_first
   state.feedbackFrequently = payload.feedback_frequency
@@ -58,8 +58,8 @@ const removeListeningModel = (state, index) => {
   state.listeningModels.splice(index, 1)
 }
 
-const setDeploymentsAmount = (state, payload) => {
-  state.deploymentsAmount = payload
+const setDeploymentsCount = (state, payload) => {
+  state.deploymentsCount = payload
 }
 
 const setDeploymentsLength = (state, payload) => {
@@ -102,7 +102,7 @@ export default {
   removeGoal,
   addListeningModel,
   removeListeningModel,
-  setDeploymentsAmount,
+  setDeploymentsCount,
   setDeploymentsLength,
   setDeploymentsFirst,
   setLanguages,
