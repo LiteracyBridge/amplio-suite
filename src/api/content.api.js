@@ -4,7 +4,7 @@ const END_POINT = '/content'
 
 const getContent = async (programCode, deployment) => {
   try {
-    const response = await httpClient.get(END_POINT, {
+    const response = await httpClient().get(END_POINT, {
       params: { program_code: programCode, deployment }
     })
 
@@ -18,11 +18,11 @@ const getContent = async (programCode, deployment) => {
   }
 }
 
-const putContent = async (body) => httpClient.put(END_POINT, body)
+const putContent = async (body) => httpClient().put(END_POINT, body)
 
-const contentAddPlaylist = async (body) => httpClient.post('playlist', body)
+const contentAddPlaylist = async (body) => httpClient().post('playlist', body)
 
-const contentAddPMessage = async (body) => httpClient.post('message', body)
+const contentAddPMessage = async (body) => httpClient().post('message', body)
 
 export {
   getContent,
