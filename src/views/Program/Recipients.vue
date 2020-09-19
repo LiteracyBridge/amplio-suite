@@ -1,10 +1,17 @@
 <template>
-  <box
-    :httpStatus="status"
-    :isDirty="dirty"
-    title="recipients"
-    help="You can modify your recipients details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
-  >
+  <section class="relative p-6 pt-0">
+    <header>
+      <h2 class="visually_hidden">Recipients</h2>
+
+      <div>
+        <font-awesome-icon icon="exclamation-circle" class="w-6 h-6 text-gray-500" />
+        <span class="mx-4 text-lg text-blue">
+          You can modify your recipients details on this page. All fields with an asterisk are required.
+          The optional fields are recommended for reporting.
+        </span>
+      </div>
+    </header>
+
     <div class="grid" style="grid-template-columns: 1fr 4fr;">
       <program-side-menu
         name="recipient"
@@ -39,16 +46,13 @@
         />
       </footer>
     </portal>
-  </box>
+  </section>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import { eventBus } from '@/eventBus'
-
 import VButton from '@/components/Button'
-import Box from '@/components/ProgramBox'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
@@ -87,7 +91,6 @@ export default {
   },
   components: {
     VButton,
-    Box,
     ProgramSideMenu,
     ProgramRecipientsForm,
   },
@@ -96,19 +99,6 @@ export default {
 
     showModal: false
   }),
-  mounted (){
-    eventBus.$on('save-crud-data', () => {
-      if (this.isFormFill) this.updateRecipients()
-      else this.onOpenModal()
-    }),
-    eventBus.$on('discard-crud-data', () => {
-      this.fetchRecipients()
-    })
-  },
-  beforeDestroy () {
-    eventBus.$off('save-crud-data')
-    eventBus.$off('discard-crud-data')
-  },
   methods: {
     ...mapActions('ui', [
       'setModal',

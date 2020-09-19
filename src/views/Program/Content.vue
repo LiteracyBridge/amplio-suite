@@ -1,10 +1,16 @@
 <template>
-  <box
-    :httpStatus="status"
-    :isDirty="dirty"
-    title="content"
-    help="You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting."
-  >
+  <section class="relative p-6 pt-0">
+    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
+
+    <program-header
+      class="mb-2"
+      title="Content"
+      :isDirty="dirty"
+      :description="description"
+      :onSaveChanges="onSaveChanges"
+      :onDiscardChanges="onDiscardChanges"
+    />
+
     <program-select-deploymet :dirty="dirty" :on-change="(deployment) => fetchContent(deployment)" />
 
     <div class="grid" style="grid-template-columns: 1fr 4fr;">
@@ -43,16 +49,15 @@
         />
       </footer>
     </portal>
-  </box>
+  </section>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
-import { eventBus } from '@/eventBus'
-
 import VButton from '@/components/Button'
-import Box from '@/components/ProgramBox'
+import Loading from '@/components/Loading'
+import ProgramHeader from '@/components/ProgramHeader'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramSelectDeploymet from '@/components/ProgramSelectDeploymet'
 import PlaylistHeader from '@/components/ContentPlaylistHeader'
@@ -99,7 +104,8 @@ export default {
   },
   components: {
     VButton,
-    Box,
+    Loading,
+    ProgramHeader,
     ProgramSideMenu,
     ProgramSelectDeploymet,
     PlaylistHeader,
@@ -107,23 +113,12 @@ export default {
   },
   data () {
     return {
+      description: "You can modify your content details on this page. All fields with an asterisk are required. The optional fields are recommended for reporting.",
       showModal: false
     }
   },
   mounted (){
     this.fetchCategories()
-
-    eventBus.$on('save-crud-data', () => {
-      if (this.isFormFill) this.updateContent()
-      else this.onOpenModal()
-    }),
-    eventBus.$on('discard-crud-data', () => {
-      this.fetchContent()
-    })
-  },
-  beforeDestroy () {
-    eventBus.$off('save-crud-data')
-    eventBus.$off('discard-crud-data')
   },
   methods: {
     ...mapActions('ui', [
@@ -143,6 +138,13 @@ export default {
     ...mapActions('uiSettings', [
       'setPlaylistIndex'
     ]),
+    onSaveChanges () {
+      if (this.isFormFill) this.updateContent()
+      else this.onOpenModal()
+    },
+    onDiscardChanges () {
+      this.fetchContent()
+    },
     onOpenModal () {
       this.showModal = true
       this.setModal('Required Fields')
