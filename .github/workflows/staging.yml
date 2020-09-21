@@ -1,4 +1,4 @@
-name: Production Build
+name: Publish site to Staging
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
       run: |
         yarn install
 
-    - name: Production Build
+    - name: Staging Build
       run: |
         yarn build
 
@@ -46,8 +46,8 @@ jobs:
       with:
         args: --acl public-read --delete
       env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_PRODUCTION_BUCKET_NAME }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_S3_BUCKET: 'amplio-suite'
+        AWS_ACCESS_KEY_ID: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-west-2'
         SOURCE_DIR: 'dist'
