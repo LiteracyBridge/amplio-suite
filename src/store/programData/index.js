@@ -7,6 +7,9 @@ export const getDefaultState = () => ({
   status: '',
   programCode: '',
 
+  country: '',
+  region: [],
+
   goals: [],
   listeningModels: [],
 

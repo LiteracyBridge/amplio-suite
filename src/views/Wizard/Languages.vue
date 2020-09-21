@@ -1,7 +1,8 @@
 <template>
   <Box
-    :prev="{ name: 'Step-5' }"
-    :next="{ name: 'Step-7' }"
+    :step="step"
+    :prev="{ name: 'step-feedback' }"
+    :next="{ name: 'step-final' }"
     title="You are doing great!"
   >
     <p id="lang" class="text-2xl font-semibold">
@@ -27,6 +28,12 @@ import Box from '@/components/SetupBox'
 import LanguagesSelector from '@/components/LanguagesSelector'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   components: {
     Box,
     LanguagesSelector,
@@ -43,10 +50,10 @@ export default {
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length
-      this.setLanguages({ lang: language.code, index })
+      this.setLanguages({ lang: language.code, index, step: this.step })
     },
     onLanguageDeleted(language) {
-      this.deleteLanguage(language.code)
+      this.deleteLanguage({ lang: language.code, step: this.step })
     }
   }
 }

@@ -1,7 +1,8 @@
 <template>
   <Box
-    :prev="{ name: 'Step-2' }"
-    :next="{ name: 'Step-4' }"
+    :step="step"
+    :prev="{ name: 'step-sdg' }"
+    :next="{ name: 'step-deployments' }"
     title="Excellent! How will participants listen to TalkingBooks?"
   >
     <p class="text-2xl font-semibold">
@@ -17,8 +18,8 @@
         :aria-checked="listeningModels.includes(opt.id) ? 'true': 'false'"
         :aria-describedby="`listeningModels-${opt.id}`"
         class="relative cursor-pointer rounded border border-gray-500 s"
-        @click="toggleListening(opt.id)"
-        @keyup.space="toggleListening(opt.id)"
+        @click="toggleListening({ listeningMode: opt.id, step })"
+        @keyup.space="toggleListening({ listeningMode: opt.id, step })"
         @keyup.enter="clickOnButton"
       >
         <img
@@ -77,6 +78,12 @@ import Box from '@/components/SetupBox'
 import Check from '@/assets/svg/check-circle.svg'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState('programData', [
       'listeningModels'

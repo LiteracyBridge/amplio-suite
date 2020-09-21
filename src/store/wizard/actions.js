@@ -31,74 +31,105 @@ const check = async (attrs, step, dispatch) => {
   else dispatch('removeCompletedStep', step)
 }
 
-// Step 1
+// step-program-name
 const setProgramName = async ({ dispatch }, payload) => {
-  await dispatch('program/setProgramName', payload, { root: true })
-
-  await check('programName', 1, dispatch)
+  const { name, step } = payload
+  await dispatch('program/setProgramName', name, { root: true })
+  await check('programName', step, dispatch)
 }
 
-// Step 2
-const toggleGoal = async ({ dispatch }, goal) => {
+// step-geo
+const setCountry = async ({ dispatch }, payload) => {
+  const { country, step } = payload
+  const attrs = ['country', 'region']
+
+  await dispatch('programData/setCountry', country, { root: true })
+  await check(attrs, step, dispatch)
+}
+
+const addRegion = async ({ dispatch }, payload) => {
+  const { region, step } = payload
+  const attrs = ['country', 'region']
+
+  await dispatch('programData/addRegion', region, { root: true })
+  await check(attrs, step, dispatch)
+}
+
+const removeRegion = async ({ dispatch }, payload) => {
+  const { region, step } = payload
+  const attrs = ['country', 'region']
+
+  await dispatch('programData/removeRegion', region, { root: true })
+  await check(attrs, step, dispatch)
+}
+
+// step-sdg
+const toggleGoal = async ({ dispatch }, payload) => {
+  const { goal, step } = payload
   await dispatch('programData/toggleGoal', goal, { root: true })
-
-  await check('goals', 2, dispatch)
+  await check('goals', step, dispatch)
 }
 
-// Step 3
-const toggleListening = async ({ dispatch }, model) => {
-  await dispatch('programData/toggleListening', model, { root: true })
-
-  await check('listeningModels', 3, dispatch)
+// steep-listening-models
+const toggleListening = async ({ dispatch }, payload) => {
+  const { listeningMode, step } = payload
+  await dispatch('programData/toggleListening', listeningMode, { root: true })
+  await check('listeningModels', step, dispatch)
 }
 
-// Step 4
+// step-deployments
 const setDeploymentsAmount = async ({ dispatch }, payload) => {
-  await dispatch('programData/setDeploymentsAmount', payload, { root: true })
-
+  const { amount, step } = payload
   const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
-  await check(attrs, 4, dispatch)
+
+  await dispatch('programData/setDeploymentsAmount', amount, { root: true })
+  await check(attrs, step, dispatch)
 }
 
 const setDeploymentsLength = async ({ dispatch }, payload) => {
-  await dispatch('programData/setDeploymentsLength', payload, { root: true })
-
+  const { length, step } = payload
   const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
-  await check(attrs, 4, dispatch)
+
+  await dispatch('programData/setDeploymentsLength', length, { root: true })
+  await check(attrs, step, dispatch)
 }
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
-  await dispatch('programData/setDeploymentsFirst', payload, { root: true })
-
+  const { first, step } = payload
   const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
-  await check(attrs, 4, dispatch)
+
+  await dispatch('programData/setDeploymentsFirst', first, { root: true })
+  await check(attrs, step, dispatch)
 }
 
-// Step 5
+// step-feedback
 const setFeedbackFrequently = async ({ dispatch }, payload) => {
-  await dispatch('programData/setFeedbackFrequently', payload, { root: true })
-
+  const { frequently, step } = payload
   const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
-  await check(attrs, 5, dispatch)
+
+  await dispatch('programData/setFeedbackFrequently', frequently, { root: true })
+  await check(attrs, step, dispatch)
 }
 
 const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
-  await dispatch('programData/setFeedbackFrequentlyOther', payload, { root: true })
-
+  const { frequently, step } = payload
   const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
-  await check(attrs, 5, dispatch)
+
+  await dispatch('programData/setFeedbackFrequentlyOther', frequently, { root: true })
+  await check(attrs, step, dispatch)
 }
 
-// Step 6
+// step-languages
 const setLanguages = async ({ dispatch }, payload) => {
-  await dispatch('programData/setLanguages', payload, { root: true })
-
-  await check('languages', 6, dispatch)
+  const { lang, index, step } = payload
+  await dispatch('programData/setLanguages', { lang, index }, { root: true })
+  await check('languages', step, dispatch)
 }
 
-const deleteLanguage = async ({ dispatch }, languageCode) => {
-  await dispatch('programData/deleteLanguage', languageCode, { root: true })
-  await check('languages', 6, dispatch)
+const deleteLanguage = async ({ dispatch }, payload) => {
+  const { lang, step } = payload
+  await dispatch('programData/deleteLanguage', lang, { root: true })
+  await check('languages', step, dispatch)
 }
 
 export default {
@@ -110,6 +141,9 @@ export default {
   setIsCompleted,
 
   setProgramName,
+  setCountry,
+  addRegion,
+  removeRegion,
   toggleGoal,
   toggleListening,
   setDeploymentsAmount,

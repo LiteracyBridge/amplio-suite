@@ -57,45 +57,58 @@ const routes = [
   },
   {
     path: '/programs/:programCode/wizard',
-    redirect: { name: 'Step-1' },
+    redirect: { name: 'step-program-name' },
     props: true,
     component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
     beforeEnter: multiguard([requireAuth, stepIsCompleted]),
     children: [
       {
         path: 'step-1',
-        name: 'Step-1',
-        component: () => import(/* webpackChunkName: "setup-1" */ '../views/Wizard/Step1.vue')
+        name: 'step-program-name',
+        props: { step: 1 },
+        component: () => import(/* webpackChunkName: "step-program-name" */ '../views/Wizard/ProgramName.vue')
       },
       {
         path: 'step-2',
-        name: 'Step-2',
-        component: () => import(/* webpackChunkName: "setup-2" */ '../views/Wizard/Step2.vue')
+        name: 'step-geo',
+        props: { step: 2 },
+        component: () => import(/* webpackChunkName: "step-geo" */ '../views/Wizard/Geo.vue')
       },
       {
         path: 'step-3',
-        name: 'Step-3',
-        component: () => import(/* webpackChunkName: "setup-3" */ '../views/Wizard/Step3.vue')
+        name: 'step-sdg',
+        props: { step: 3 },
+        component: () => import(/* webpackChunkName: "step-sdg" */ '../views/Wizard/SDG.vue')
       },
       {
         path: 'step-4',
-        name: 'Step-4',
-        component: () => import(/* webpackChunkName: "setup-4" */ '../views/Wizard/Step4.vue')
+        name: 'step-listening-model',
+        props: { step: 4 },
+        component: () => import(/* webpackChunkName: "step-listening-model" */ '../views/Wizard/ListeningModel.vue')
       },
       {
         path: 'step-5',
-        name: 'Step-5',
-        component: () => import(/* webpackChunkName: "setup-5" */ '../views/Wizard/Step5.vue')
+        name: 'step-deployments',
+        props: { step: 5 },
+        component: () => import(/* webpackChunkName: "step-deployments" */ '../views/Wizard/Deployments.vue')
       },
       {
         path: 'step-6',
-        name: 'Step-6',
-        component: () => import(/* webpackChunkName: "setup-6" */ '../views/Wizard/Step6.vue')
+        name: 'step-feedback',
+        props: { step: 6 },
+        component: () => import(/* webpackChunkName: "step-feedback" */ '../views/Wizard/Feedback.vue')
       },
       {
         path: 'step-7',
-        name: 'Step-7',
-        component: () => import(/* webpackChunkName: "setup-7" */ '../views/Wizard/Step7.vue')
+        name: 'step-languages',
+        props: { step: 7 },
+        component: () => import(/* webpackChunkName: "step-languages" */ '../views/Wizard/Languages.vue')
+      },
+      {
+        path: 'step-8',
+        name: 'step-final',
+        props: { step: 8 },
+        component: () => import(/* webpackChunkName: "step-final" */ '../views/Wizard/Final.vue')
       }
     ]
   },
@@ -139,11 +152,11 @@ const router = new VueRouter({
 
 function stepIsCompleted (to, from, next) {
   // Check if the step is completed
-
   if (!to.path.includes('wizard')) next()
   else {
-    const s = to.path.split('/')
-    const nextStep = +s[s.length -1].split('-')[1]
+    // const s = to.path.split('/')
+    // const nextStep = +s[s.length -1].split('-')[1]
+    const nextStep = to.matched[1].props.default.step
     const isComplete = store.state.wizard.completedSteps.includes(nextStep - 1)
 
     if (isComplete) next()
