@@ -32,14 +32,14 @@ const setRecipientDeployments = (state, payload) => {
   state.recipients[recipientIndex].deployments = deployments
 }
 
-const setRecipientCountry = (state, payload) => {
-  const { recipientIndex, country } = payload
-  state.recipients[recipientIndex].country = country
-}
-
-const setRecipientRegion = (state, payload) => {
+const addRecipientRegion = (state, payload) => {
   const { recipientIndex, region } = payload
   state.recipients[recipientIndex].region = region
+}
+
+const removeRecipientRegion = (state, payload) => {
+  const { recipientIndex } = payload
+  state.recipients[recipientIndex].region = null
 }
 
 const setRecipientDistrict = (state, payload) => {
@@ -125,8 +125,8 @@ export default {
 
   setRecipientsLabelMap,
   setRecipientDeployments,
-  setRecipientCountry,
-  setRecipientRegion,
+  addRecipientRegion,
+  removeRecipientRegion,
   setRecipientDistrict,
   setRecipientCommunity,
   setRecipientGroupName,

@@ -1,7 +1,9 @@
 <template>
   <Box
     ref="box"
+    :step="step"
     :next="`/programs/${programCode}/settings`"
+    nextLabel="Go to program specification"
     title="Thank you! We automatically updated the Program Specification based
     on your responses. Please complete the remaining details."
   />
@@ -13,6 +15,12 @@ import { mapState, mapActions } from 'vuex'
 import Box from '@/components/SetupBox'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   components: {
     Box
   },
@@ -28,10 +36,10 @@ export default {
     ...mapActions('program', [
       'createProgram'
     ]),
-    ...mapActions('wizard', [
-      'addCompletedStep',
-      'setIsCompleted'
-    ]),
+    ...mapActions('wizard', {
+      setWizardIsCompleted: 'setIsCompleted',
+      addCompletedStep: 'addCompletedStep'
+    }),
     ...mapActions('roadmap', [
       'fetchRoadmap',
       'updateRoadmap',
@@ -39,11 +47,11 @@ export default {
     ]),
   },
   async mounted () {
+    this.addCompletedStep(this.step)
     await this.fetchRoadmap()
 
     if (!this.wizarsIsComplete) {
-      this.addCompletedStep(7)
-      this.setIsCompleted()
+      this.setWizardIsCompleted()
       this.createProgram()
 
       this.toggleStep(1)

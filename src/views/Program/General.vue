@@ -12,7 +12,7 @@
 
     <div class="min-h-200-px my-5 text-center">
       <div class="grid grid-cols-content-message row-gap-2 items-center text-left">
-        <p id="programName">Program</p>
+        <span id="programName">Program</span>
         <v-input
           type="text"
           ref="programName"
@@ -22,6 +22,40 @@
           @input="(event) => setProgramName(event.target.value)"
           mx="mx-0"
           class="w-full"
+        />
+
+        <span class="col-span-2" />
+
+        <span>Country</span>
+        <multiselect
+          :value="country"
+          :options="countries"
+          placeholder="Select one country"
+          @select="setCountry"
+        />
+
+        <span class="pl-4">Region</span>
+        <multiselect
+          tag-placeholder="Add this as new region"
+          placeholder="Search or add a region"
+          :value="region"
+          :options="regionOptions"
+          :multiple="true"
+          :taggable="true"
+          @tag="addTag"
+          @select="addRegion"
+          @remove="removeRegion"
+        >
+          <template slot="noOptions">
+            Region/State
+          </template>
+        </multiselect>
+
+        <span id="langs">Languages</span>
+        <LanguagesSelector
+          :languages="this.languages"
+          :onLanguageSelected="this.onLanguageSelected"
+          :onLanguageDeleted="this.onLanguageDeleted"
         />
 
         <span class="pl-4">Listening Model</span>
@@ -37,13 +71,6 @@
           @select="(model) => toggleListening(model.id)"
           @remove="(model) => toggleListening(model.id)"
           placeholder="Select the listening model"
-        />
-
-        <p id="langs">Languages</p>
-        <LanguagesSelector
-          :languages="this.languages"
-          :onLanguageSelected="this.onLanguageSelected"
-          :onLanguageDeleted="this.onLanguageDeleted"
         />
       </div>
 
@@ -169,6 +196,8 @@ import LanguagesSelector from '@/components/LanguagesSelector'
 import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 
+import countries from '@/data/countries.json'
+
 export default {
   computed: {
     ...mapState('program', [
@@ -176,6 +205,8 @@ export default {
       'programName'
     ]),
     ...mapState('programData', [
+      'country',
+      'region',
       'languages',
       'listeningModels',
     ]),
@@ -221,11 +252,14 @@ export default {
     return {
       description: "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
 
+      countries,
+      regionOptions: [],
       languageToDelete: null,
       beneficiariesIsOpen: false
     }
   },
-  mounted (){
+  mounted () {
+    this.regionOptions = [...this.region] // Populete the options
     this.fetchListeningModels()
   },
   methods: {
@@ -242,6 +276,9 @@ export default {
       'setProgramName',
     ]),
     ...mapActions('programData', [
+      'setCountry',
+      'addRegion',
+      'removeRegion',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
@@ -254,6 +291,10 @@ export default {
       'setAdditionalLabel',
       'deleteAdditionalLabel'
     ]),
+    addTag (region) {
+      this.regionOptions.push(region)
+      this.addRegion({ region, step: this.step })
+    },
     onLanguageSelected(language) {
       let index = this.languages.length
       this.setLanguages({ lang: language.code, index })

@@ -18,8 +18,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import { fetchData } from '@/utils'
-
 export default {
   name: 'Setup',
   props: ['programCode'],
@@ -28,20 +26,13 @@ export default {
   ]),
   data () {
     return {
-      total: 7,
+      total: 8,
       transitionName: 'slide-left'
     }
   },
-  mounted () {
-    const step = +this.$route.name.split('-')[1]
-    this.setStep(step)
-  },
-  created () {
-    this.fetchAllData()
-  },
   beforeRouteUpdate (to, from, next) {
-    const toStep = to.path.split('-')[1]
-    const fromStep = from.path.split('-')[1]
+    const toStep = to.matched[1].props.default.step
+    const fromStep = from.matched[1].props.default.step
     this.transitionName = toStep < fromStep ? 'slide-right' : 'slide-left'
     next()
   },
@@ -49,9 +40,6 @@ export default {
     ...mapActions('wizard', [
       'setStep'
     ]),
-    fetchAllData () {
-      fetchData(this.programCode)
-    }
   }
 }
 </script>

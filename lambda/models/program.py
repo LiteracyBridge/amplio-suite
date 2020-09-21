@@ -27,6 +27,8 @@ class Program(Base, SerializerMixin):
     )
     id = Column(Integer, primary_key=True, index=True)
     projectcode = Column(ForeignKey('projects.projectcode'), index=True, nullable=False)
+    country = Column(String(50), nullable=False)
+    region = Column(JSON, nullable=False)
     sustainable_development_goals = Column(JSON, nullable=False)
     listening_models = Column(JSON, nullable=False)
     deployments_amount = Column(Integer, nullable=False)

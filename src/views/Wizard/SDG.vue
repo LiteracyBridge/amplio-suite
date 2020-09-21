@@ -1,7 +1,8 @@
 <template>
   <Box
-    :prev="{ name: 'Step-1' }"
-    :next="{ name: 'Step-3' }"
+    :step="step"
+    :prev="{ name: 'step-geo' }"
+    :next="{ name: 'step-listening-model' }"
     title="Help us understand more about your program."
   >
     <p id="sdg" class="text-2xl font-semibold">
@@ -21,8 +22,8 @@
         :aria-checked="goals.includes(goal.section) ? 'true': 'false'"
         :aria-describedby="`goal-${goal.section}`"
         class="relative s"
-        @click="toggleGoal(goal.section)"
-        @keyup.space="toggleGoal(goal.section)"
+        @click="toggleGoal({ goal: goal.section, step })"
+        @keyup.space="toggleGoal({ goal: goal.section, step })"
         @keyup.enter="clickOnButton"
       >
         <img
@@ -54,6 +55,12 @@ import Box from '@/components/SetupBox'
 import Check from '@/assets/svg/check-circle.svg'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState('programData', [
       'goals'

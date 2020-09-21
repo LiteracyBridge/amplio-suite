@@ -1,7 +1,8 @@
 <template>
   <Box
-    :prev="{ name: 'Step-4' }"
-    :next="{ name: 'Step-6' }"
+    :step="step"
+    :prev="{ name: 'step-deployments' }"
+    :next="{ name: 'step-languages' }"
     title="You are doing great!"
   >
     <div>
@@ -14,7 +15,7 @@
         aria-labelledby="feedbackFrequently"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="feedbackFrequently"
-        @change="(event) => setFeedbackFrequently(event.target.value)"
+        @change="setFeedbackFrequently({ frequently: $event.target.value, step })"
       >
         <option value="">Select</option>
         <option value="monthly">Monthly</option>
@@ -35,7 +36,7 @@
         aria-labelledby="feedbackFrequentlyOther"
         class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         :value="feedbackFrequentlyOther"
-        @change="(event) => setFeedbackFrequentlyOther(event.target.value)"
+        @change="setFeedbackFrequentlyOther({ frequently: $event.target.value, step })"
       >
         <option value="">Select</option>
         <option value="weekly">Weekly</option>
@@ -54,6 +55,12 @@ import { mapState, mapActions } from 'vuex'
 import Box from '@/components/SetupBox'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState('programData', [
       'feedbackFrequently',

@@ -18,6 +18,8 @@ def lambda_handler(event, context):
         project = Project(projectcode=event['programCode'], project=event['name'], active=False) # TODO: default active=false on the model
         program = Program(
             projectcode = project.projectcode, # we'd eventually switch this to project=project
+            country = event['country'],
+            region = event['region'],
             sustainable_development_goals = event['sdg_goals'],
             listening_models = event['listening_models'],
             deployments_amount = event['deployments_amount'],

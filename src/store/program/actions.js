@@ -8,6 +8,8 @@ import { postDeploy } from '@/api/deploy.api'
 const generateProgramData = (state, rootState) => ({
   programCode: state.programCode,
   name: state.programName,
+  country: rootState.programData.country,
+  region: rootState.programData.region,
   sdg_goals: rootState.programData.goals,
   listening_models: rootState.programData.listeningModels,
   deployments_length: rootState.programData.deploymentsLength,

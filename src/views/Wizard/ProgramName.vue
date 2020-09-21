@@ -1,6 +1,7 @@
 <template>
   <Box
-    :next="{ name: 'Step-2' }"
+    :step="step"
+    :next="{ name: 'step-geo' }"
     title="Let’s start by getting your program details. If your
     program details change later, you can always update the program
     specification to match your requirements."
@@ -16,7 +17,7 @@
       label="Enter Program Name"
       :value="programName"
       mx="mx-auto my-4"
-      @input="(event) => setProgramName(event.target.value)"
+      @input="setProgramName({ name: $event.target.value, step })"
     />
   </Box>
 </template>
@@ -28,6 +29,12 @@ import Box from '@/components/SetupBox'
 import VInput from '@/components/VInput'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState('program', [
       'programName'

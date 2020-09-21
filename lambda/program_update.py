@@ -22,6 +22,8 @@ def lambda_handler(event, context):
         session.query(Program) \
             .filter(Program.projectcode == event['programCode']) \
             .update({
+                'country': event['country'],
+                'region': event['region'],
                 'sustainable_development_goals': event['sdg_goals'],
                 'listening_models': event['listening_models'],
                 'deployments_amount': event['deployments_amount'],

@@ -13,7 +13,7 @@
         <Button
           v-if="next !== ''"
           id="nextStep"
-          text="NEXT"
+          :text="nextLabel"
           type="submit"
           :aria-disabled="isFill ? 'false' : 'true'"
           :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
@@ -38,17 +38,20 @@ import Button from '@/components/Button'
 export default {
   computed: {
     ...mapState('wizard', [
-      'actualStep',
       'completedSteps'
     ]),
     isFill () {
-      return this.completedSteps.includes(this.actualStep)
+      return this.completedSteps.includes(this.step)
     }
   },
   components: {
     Button
   },
   props: {
+    step: {
+      type: Number,
+      required: true
+    },
     title: {
       type: String,
       default: ''
@@ -60,7 +63,11 @@ export default {
     next: {
       type: [String, Object],
       default: ''
-    }
+    },
+    nextLabel: {
+      type: String,
+      default: 'NEXT'
+    },
   },
   methods: {
     ...mapActions('wizard', [

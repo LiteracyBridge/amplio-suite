@@ -1,7 +1,8 @@
 <template>
   <Box
-    :prev="{ name: 'Step-3' }"
-    :next="{ name: 'Step-5' }"
+    :step="step"
+    :prev="{ name: 'step-listening-model' }"
+    :next="{ name: 'step-feedback' }"
     title="A deployment is a collection of play lists that will be put
     in the field for a period of time, usually one quarter."
   >
@@ -14,7 +15,7 @@
       min="0"
       aria-labelledby="deployments"
       :value="amount"
-      @change="(event) => setDeploymentsAmount(event.target.value)"
+      @change="setDeploymentsAmount({ amount: $event.target.value, step })"
     />
 
     <p id="deploymentLength" class="mt-10 text-2xl font-semibold">
@@ -24,7 +25,7 @@
       aria-labelledby="deploymentLength"
       class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
       :value="length"
-      @change="(event) => setDeploymentsLength(event.target.value)"
+      @change="setDeploymentsLength({ length: $event.target.value, step })"
     >
       <option value="">Select</option>
       <option value="one_month">1 Month</option>
@@ -42,7 +43,7 @@
       aria-labelledby="firstDeployment"
       :min="date"
       :value="first"
-      @change="(event) => setDeploymentsFirst(event.target.value)"
+      @change="setDeploymentsFirst({ first: $event.target.value, step })"
     />
   </Box>
 </template>
@@ -54,6 +55,12 @@ import Box from '@/components/SetupBox'
 import VInput from '@/components/VInput'
 
 export default {
+  props: {
+    step: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState('programData', {
       amount: state => state.deploymentsAmount,
