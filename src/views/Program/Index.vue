@@ -4,7 +4,7 @@
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
       <v-button
-        :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
+        :color="anyTabDirty ? 'bg-gray-400' : 'bg-blue'"
         text="Submit"
         @click="onSubmit"
       />

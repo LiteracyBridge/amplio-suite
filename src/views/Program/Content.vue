@@ -11,7 +11,10 @@
       :onDiscardChanges="onDiscardChanges"
     />
 
-    <program-select-deploymet :dirty="dirty" :on-change="(deployment) => fetchContent(deployment)" />
+    <program-select-deploymet
+      :dirty="dirty"
+      v-model="deployment"
+    />
 
     <div class="grid" style="grid-template-columns: 1fr 4fr;">
       <program-side-menu
