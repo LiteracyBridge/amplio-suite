@@ -2,7 +2,7 @@
   <div v-if="message" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
     <languages-selector
-      :languages="selectedMessage.language"
+      :languages="message.language"
       :onLanguageSelected="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: code })"
       :onLanguageDeleted="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: '' })"
       :multiple="false"
