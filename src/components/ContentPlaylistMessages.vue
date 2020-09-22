@@ -22,7 +22,7 @@
             label="*Message title"
             mx="w-full px-4 mx-0"
             :value="message.title"
-            @input="(event) => setMessageTitle({ playlistIndex: selectedPlaylistIndex, messageIndex: index, title: event.target.value })"
+            @input="setMessageTitle({ playlistIndex, messageIndex: index, title: $event.target.value })"
           />
 
           <v-tooltip
@@ -38,13 +38,13 @@
 
           <span
             tabindex="0"
-            :class="index === selectedMessageIndex ? 'text-blue underline font-semibold' : 'text-black'"
+            :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
             class="w-48 ml-2 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
             @click="setMessageIndex(index)"
             @keyup.space="setMessageIndex(index)"
           >
-            {{ index === selectedMessageIndex ? 'Hide Details' : 'Show Details' }}
-            <font-awesome-icon :icon="index === selectedMessageIndex ? 'chevron-up' : 'chevron-down'" />
+            {{ index === messageIndex ? 'Hide Details' : 'Show Details' }}
+            <font-awesome-icon :icon="index === messageIndex ? 'chevron-up' : 'chevron-down'" />
           </span>
 
           <button
@@ -57,11 +57,14 @@
         </div>
 
         <div
-          :class="index === selectedMessageIndex ? 'h-82' : 'h-0'"
+          :class="index === messageIndex ? 'h-82' : 'h-0'"
           class="overflow-hidden transition-all duration-700"
         >
           <playlist-messages-form
-            :class="index === selectedMessageIndex ? 'visible' : 'invisible'"
+            v-if="index === messageIndex"
+            :message="message"
+            :playlistIndex="playlistIndex"
+            :messageIndex="messageIndex"
           />
         </div>
       </div>
@@ -101,7 +104,7 @@
 
 <script>
 import Draggable from 'vuedraggable'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
@@ -109,27 +112,35 @@ import VButton from '@/components/Button'
 import VTooltip from '@/components/VTooltip'
 
 export default {
+  props: {
+    deployment: {
+      type: Object,
+      required: true
+    },
+    playlist: {
+      type: Object,
+      required: true
+    },
+    playlistIndex: {
+      type: Number,
+      required: true
+    },
+  },
   computed: {
-    ...mapState('uiSettings', {
-      selectedPlaylistIndex: state => state.content.selectedPlaylistIndex,
-      selectedMessageIndex: state => state.content.selectedMessageIndex
-    }),
-    ...mapGetters('uiSettings', [
-      'selectedDeployment',
-      'selectedPlaylist',
-      'selectedMessage'
-    ]),
     ...mapState('content', [
       'duplicateMessage',
     ]),
     messages: {
       get () {
-        return this.selectedPlaylist.messages
+        return this.playlist.messages
       },
       set (value) {
         this.setMessageIndex(-1)
-        this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: value })
+        this.setMessages({ playlistIndex: this.playlistIndex, messages: value })
       }
+    },
+    message () {
+      return this.playlist.messages[this.messageIndex]
     }
   },
   components: {
@@ -140,6 +151,8 @@ export default {
     VTooltip,
   },
   data: () => ({
+    messageIndex: -1,
+
     target: {},
 
     modal: {
@@ -154,9 +167,6 @@ export default {
     window.removeEventListener('keydown', this.handleKeyboard)
   },
   methods: {
-    ...mapActions('uiSettings', [
-      'setMessageIndex'
-    ]),
     ...mapActions('ui', [
       'setModal',
       'closeModal'
@@ -178,13 +188,17 @@ export default {
       this.closeModal()
     },
     confirmDeleteMessage() {
-      this.removeMessage({ playlistIndex: this.selectedPlaylistIndex, messageIndex: this.modal.eleIndex })
+      this.removeMessage({ playlistIndex: this.playlistIndex, messageIndex: this.modal.eleIndex })
       this.handleCloseModal()
+    },
+    setMessageIndex (index) {
+      if (this.messageIndex === index) this.messageIndex = -1
+      else this.messageIndex = index
     },
     addNewMessage() {
       const payload = {
-        deployment_id: this.selectedDeployment.deployment,
-        playlist_index: this.selectedPlaylistIndex
+        deployment_id: this.deployment.deployment,
+        playlist_index: this.playlistIndex
       }
       this.addMessage(payload)
     },
@@ -218,7 +232,7 @@ export default {
       tmp[newIndex] = tmp[oldIndex]
       tmp[oldIndex] = a
 
-      this.setMessages({ playlistIndex: this.selectedPlaylistIndex, messages: tmp })
+      this.setMessages({ playlistIndex: this.playlistIndex, messages: tmp })
       this.setMessageIndex(-1)
 
       // Update dashed element

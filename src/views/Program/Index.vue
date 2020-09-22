@@ -4,7 +4,7 @@
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
       <v-button
-        :color="settingIsDirty ? 'bg-gray-400' : 'bg-blue'"
+        :color="anyTabDirty ? 'bg-gray-400' : 'bg-blue'"
         text="Submit"
         @click="onSubmit"
       />
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
 import VSnackbars from '@/components/VSnackbars'
@@ -65,9 +65,17 @@ export default {
     ...mapState('program', [
       'programName',
     ]),
-    ...mapGetters('ui', [
-      'settingIsDirty',
-    ]),
+    anyTabDirty () {
+      const partial = [
+        this.$store.state.program.dirty,
+        this.$store.state.programData.dirty,
+        this.$store.state.deployments.dirty,
+        this.$store.state.content.dirty,
+        this.$store.state.recipients.dirty
+      ]
+
+      return partial.some(Boolean)
+    },
   },
   watch: {
     '$route': 'fetchAllData'
@@ -94,7 +102,7 @@ export default {
     this.transitionName = sections.indexOf(toName) < sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
 
     // Check if the data is save
-    if (this.settingIsDirty) {
+    if (this.anyTabDirty) {
       this.handleOpenModal()
       next(false)
     } else {
@@ -103,7 +111,8 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // Check if the data is save
-    if (this.settingIsDirty) {
+
+    if (this.anyTabDirty) {
       this.handleOpenModal()
       next(false)
     } else {
