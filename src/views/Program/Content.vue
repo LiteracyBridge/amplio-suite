@@ -33,9 +33,7 @@
           :playlistIndex="playlistIndex"
         />
 
-        <div class="p-4 text-xl bg-gray-400">
-          <p>Messages</p>
-        </div>
+        <p class="p-4 text-xl bg-gray-400">Messages</p>
 
         <playlist-messages
           v-if="playlist"
@@ -43,6 +41,14 @@
           :playlist="playlist"
           :playlistIndex="playlistIndex"
          />
+
+         <span
+          tabindex="0"
+          @click="addNewMessage"
+          class="block mt-4 p-2 text-green font-bold cursor-pointer"
+        >
+          + Add Message
+        </span>
       </div>
     </div>
 
@@ -147,6 +153,7 @@ export default {
       'setPlaylist',
       'addPlaylist',
       'removePlaylist',
+      'addMessage',
     ]),
     ...mapActions('categories', [
       'fetchCategories'
@@ -169,6 +176,13 @@ export default {
     async onAddPlaylist () {
       await this.addPlaylist(this.deployment.deploymentname)
       this.playlistIndex ++
+    },
+    addNewMessage() {
+      const payload = {
+        deployment_id: this.deployment.deployment,
+        playlist_index: this.playlistIndex
+      }
+      this.addMessage(payload)
     },
   }
 }
