@@ -17,8 +17,9 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('content', sa.Column('deployment', sa.String(length=255), nullable=False))
-    op.add_column('content', sa.Column('projectcode', sa.String(length=255), nullable=False))
+    op.alter_column('content', 'program_code', new_column_name='projectcode')
+    op.alter_column('content', 'deployment_id', new_column_name='deployment')
+    op.alter_column('programs', 'deployments_amount', new_column_name='deployments_count')
 
     op.drop_constraint('content_uniqueness_key', 'content', type_='unique')
     op.create_unique_constraint('content_uniqueness_key', 'content', ['projectcode', 'deployment'])
@@ -30,19 +31,11 @@ def upgrade():
         ['project', 'deployment']
     )
 
-    op.drop_column('content', 'program_code')
-    op.drop_column('content', 'deployment_id')
-
-    op.add_column('programs', sa.Column('deployments_count', sa.Integer(), nullable=False))
-    op.drop_column('programs', 'deployments_amount')
-
 
 def downgrade():
-    op.add_column('programs', sa.Column('deployments_amount', sa.INTEGER(), autoincrement=False, nullable=False))
-    op.drop_column('programs', 'deployments_count')
-
-    op.add_column('content', sa.Column('deployment_id', sa.VARCHAR(length=255), autoincrement=False, nullable=False))
-    op.add_column('content', sa.Column('program_code', sa.VARCHAR(length=255), autoincrement=False, nullable=False))
+    op.alter_column('content', 'projectcode', new_column_name='program_code')
+    op.alter_column('content', 'deployment', new_column_name='deployment_id')
+    op.alter_column('programs', 'deployments_count', new_column_name='deployments_amount')
 
     op.drop_constraint('content_uniqueness_key', 'content', type_='unique')
     op.create_unique_constraint('content_uniqueness_key', 'content', ['program_code', 'deployment_id'])
@@ -53,6 +46,3 @@ def downgrade():
         ['program_code', 'deployment_id'],
         ['project', 'deployment']
     )
-
-    op.drop_column('content', 'projectcode')
-    op.drop_column('content', 'deployment')
