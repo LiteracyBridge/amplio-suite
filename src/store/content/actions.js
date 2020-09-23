@@ -29,12 +29,12 @@ const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
 
 const updateContent = async ({ state, commit }, deployment) => {
   const { programCode, playlists } = state
-  const deployment = deployment.deployment
+  const deployment_id = deployment.deployment
 
   commit('requestInit')
 
   try {
-    await putContent({ program_code: programCode, deployment, content: playlists })
+    await putContent({ program_code: programCode, deployment_id, content: playlists })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
