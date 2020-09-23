@@ -14,8 +14,8 @@
       type="number"
       min="0"
       aria-labelledby="deployments"
-      :value="amount"
-      @change="setDeploymentsAmount({ amount: $event.target.value, step })"
+      :value="count"
+      @change="setDeploymentsCount({ count: $event.target.value, step })"
     />
 
     <p id="deploymentLength" class="mt-10 text-2xl font-semibold">
@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     ...mapState('programData', {
-      amount: state => state.deploymentsAmount,
+      count: state => state.deploymentsCount,
       first: state => state.deploymentsFirst,
       length: state => state.deploymentsLength
     })
@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     ...mapActions('wizard', [
-      'setDeploymentsAmount',
+      'setDeploymentsCount',
       'setDeploymentsLength',
       'setDeploymentsFirst'
     ])

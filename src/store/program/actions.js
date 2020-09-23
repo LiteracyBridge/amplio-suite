@@ -13,7 +13,7 @@ const generateProgramData = (state, rootState) => ({
   sdg_goals: rootState.programData.goals,
   listening_models: rootState.programData.listeningModels,
   deployments_length: rootState.programData.deploymentsLength,
-  deployments_amount: +rootState.programData.deploymentsAmount,
+  deployments_count: +rootState.programData.deploymentsCount,
   deployments_first: rootState.programData.deploymentsFirst,
   feedback_frequency: rootState.programData.feedbackFrequently,
   feedback_frequency_other: rootState.programData.feedbackFrequentlyOther,

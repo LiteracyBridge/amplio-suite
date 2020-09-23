@@ -5,13 +5,13 @@ from models.content import Content
 session = create_db_session()
 
 @migration
-@validate_keys(['program_code', 'deployment_id', 'content'])
+@validate_keys(['program_code', 'deployment', 'content'])
 def lambda_handler(event, context):
     try:
         session.query(Content) \
             .filter(
                 Content.program_code == event['program_code'],
-                Content.deployment_id == event['deployment_id']
+                Content.deployment == event['deployment']
             ) \
             .update({'content': event['content']})
 

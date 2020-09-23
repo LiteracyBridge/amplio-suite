@@ -6,7 +6,7 @@ from decorators import migration, validate_keys
 
 
 keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
-        'deployments_length', 'deployments_amount', 'deployments_first',
+        'deployments_length', 'deployments_count', 'deployments_first',
         'feedback_frequency', 'feedback_frequency_other', 'languages']
 
 session = create_db_session()
@@ -22,7 +22,7 @@ def lambda_handler(event, context):
             region = event['region'],
             sustainable_development_goals = event['sdg_goals'],
             listening_models = event['listening_models'],
-            deployments_amount = event['deployments_amount'],
+            deployments_count = event['deployments_count'],
             deployments_length = event['deployments_length'],
             deployments_first = event['deployments_first'],
             feedback_frequency = event['feedback_frequency'],
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             languages = event['languages'],
         )
         deployments = program.default_deployments()
-        contents = [Content(program_code=deplo.project, deployment_id=deplo.deployment)
+        contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
             for deplo in deployments]
 
         session.add(project)

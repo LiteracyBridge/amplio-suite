@@ -14,12 +14,12 @@ def lambda_handler(event, context):
         .first()
 
     deployment = program.next_deployments()
-    content = Content(program_code=deployment.project, deployment_id=deployment.deployment)
+    content = Content(program_code=deployment.project, deployment=deployment.deployment)
 
     #
     session.query(Program) \
         .filter(Program.projectcode == event['program_code']) \
-        .update({'deployments_amount': program.deployments_amount + 1})
+        .update({'deployments_count': program.deployments_count + 1})
 
     session.flush()
     session.add(deployment)

@@ -13,7 +13,7 @@ export const getDefaultState = () => ({
   goals: [],
   listeningModels: [],
 
-  deploymentsAmount: 0,
+  deploymentsCount: 0,
   deploymentsLength: '',
   deploymentsFirst: '',
 

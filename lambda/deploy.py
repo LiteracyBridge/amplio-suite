@@ -46,7 +46,7 @@ def lambda_handler(event, context):
                     target = ''
 
                 row = {
-                    'deployment_num': content.deployment_id,
+                    'deployment_num': content.deployment,
                     'playlist_title': playlist['title'], 'message_title': message['title'],
                     'key_points': message['key_point'], 'languagecode': message['language'],
                     'variant': message['variant'], 'default_category': message['default_category'],

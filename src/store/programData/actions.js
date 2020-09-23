@@ -18,8 +18,8 @@ const isCompleted = ({ state, rootState }, payload) => {
       case 'listeningModels':
         partial = state[attr].length > 0
         break
-      case 'deploymentsAmount':
-        partial = state.deploymentsAmount > 0
+      case 'deploymentsCount':
+        partial = state.deploymentsCount > 0
         break
       case 'deploymentsFirst':
         partial = new Date(state.deploymentsFirst) > new Date()
@@ -73,8 +73,8 @@ const toggleListening = ({ commit, state }, model) => {
   commit('setDirty', true)
 }
 
-const setDeploymentsAmount = async ({ commit }, payload) => {
-  await commit('setDeploymentsAmount', payload)
+const setDeploymentsCount = async ({ commit }, payload) => {
+  await commit('setDeploymentsCount', payload)
   commit('setDirty', true)
 }
 
@@ -115,7 +115,7 @@ export default {
   removeRegion,
   toggleGoal,
   toggleListening,
-  setDeploymentsAmount,
+  setDeploymentsCount,
   setDeploymentsLength,
   setDeploymentsFirst,
   setFeedbackFrequently,

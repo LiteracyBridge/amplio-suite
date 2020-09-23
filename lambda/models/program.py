@@ -31,7 +31,7 @@ class Program(Base, SerializerMixin):
     region = Column(JSON, nullable=False)
     sustainable_development_goals = Column(JSON, nullable=False)
     listening_models = Column(JSON, nullable=False)
-    deployments_amount = Column(Integer, nullable=False)
+    deployments_count = Column(Integer, nullable=False)
     deployments_length = Column(String(50), nullable=False)
     deployments_first = Column(Date, nullable=False)
     feedback_frequency = Column(String(50), nullable=False)
@@ -66,7 +66,7 @@ class Program(Base, SerializerMixin):
         increment = DeploymentFreq[self.deployments_length].value
         initial_date = datetime.strptime(self.deployments_first, '%Y-%m-%d')
 
-        for i in range(1, self.deployments_amount + 1):
+        for i in range(1, self.deployments_count + 1):
             start_date = initial_date + relativedelta(months=increment * (i - 1))
             end_date = initial_date + relativedelta(months=increment * i)
 
@@ -87,14 +87,14 @@ class Program(Base, SerializerMixin):
     def next_deployments(self):
         increment = DeploymentFreq[self.deployments_length].value
 
-        start_date = self.deployments_first + relativedelta(months=increment * self.deployments_amount)
-        end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_amount + 1))
+        start_date = self.deployments_first + relativedelta(months=increment * self.deployments_count)
+        end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_count + 1))
 
         data = {
             'project': self.projectcode,
-            'deployment': str(self.deployments_amount + 1),
-            'deploymentname': str(self.deployments_amount + 1),
-            'deploymentnumber': self.deployments_amount + 1,
+            'deployment': str(self.deployments_count + 1),
+            'deploymentname': str(self.deployments_count + 1),
+            'deploymentnumber': self.deployments_count + 1,
             'startdate': start_date,
             'enddate': end_date,
             'component': ''

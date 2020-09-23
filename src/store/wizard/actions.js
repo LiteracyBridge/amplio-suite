@@ -78,17 +78,17 @@ const toggleListening = async ({ dispatch }, payload) => {
 }
 
 // step-deployments
-const setDeploymentsAmount = async ({ dispatch }, payload) => {
-  const { amount, step } = payload
-  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
+const setDeploymentsCount = async ({ dispatch }, payload) => {
+  const { count, step } = payload
+  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
-  await dispatch('programData/setDeploymentsAmount', amount, { root: true })
+  await dispatch('programData/setDeploymentsCount', count, { root: true })
   await check(attrs, step, dispatch)
 }
 
 const setDeploymentsLength = async ({ dispatch }, payload) => {
   const { length, step } = payload
-  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
+  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
   await dispatch('programData/setDeploymentsLength', length, { root: true })
   await check(attrs, step, dispatch)
@@ -96,7 +96,7 @@ const setDeploymentsLength = async ({ dispatch }, payload) => {
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
   const { first, step } = payload
-  const attrs = ['deploymentsAmount', 'deploymentsLength', 'deploymentsFirst']
+  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
   await dispatch('programData/setDeploymentsFirst', first, { root: true })
   await check(attrs, step, dispatch)
@@ -146,7 +146,7 @@ export default {
   removeRegion,
   toggleGoal,
   toggleListening,
-  setDeploymentsAmount,
+  setDeploymentsCount,
   setDeploymentsLength,
   setDeploymentsFirst,
   setFeedbackFrequently,
