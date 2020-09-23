@@ -157,14 +157,11 @@ export default {
   setIsCompleted,
 
   setProgramName,
-<<<<<<< HEAD
   setCountry,
   addRegion,
   removeRegion,
-=======
   setPartner,
   setAffiliate,
->>>>>>> 9f5d4b0... Close #242 add partner and affiliate to wizard and general tab
   toggleGoal,
   toggleListening,
   setDeploymentsCount,
