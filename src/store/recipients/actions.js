@@ -230,40 +230,8 @@ const setRecipientNumberTalkingBooks = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setRecipientsAdditionalFields = ({ commit, state }, payload) => {
-    const { recipientIndex, key, value } = payload
-    const fields = { ...state.recipients[recipientIndex].directBeneficiariesAdditionalFields }
-    fields[key] = value
-
-  commit('setRecipientsAdditionalFields', { recipientIndex, fields })
-  commit('setDirty', true)
-}
-
-const addAdditionalLabel = ({ commit, state }) => {
-  // Create a new field key with a random id
-  const value = `New additional field`
-  const key = `field_${Math.random().toString(36).substring(7)}`
-
-  const labels = { ...state.additionalLabelsMap }
-  labels[key] = value
-
-  commit('setAdditionalLabels', labels)
-  commit('setDirty', true)
-}
-
-const deleteAdditionalLabel = ({ commit, state, getters }, key) => {
-  const { labelUsed } = getters
-  if (labelUsed[key].used) return
-
-  const labels = { ...state.additionalLabelsMap }
-  delete labels[key]
-
-  commit('setAdditionalLabels', labels)
-  commit('setDirty', true)
-}
-
-const setAdditionalLabel = ({ commit }, payload) => {
-  commit('setAdditionalLabel', payload)
+const setRecipientDirectBeneficiariesAdditional = ({ commit }, payload) => {
+  commit('setRecipientDirectBeneficiariesAdditional', payload)
   commit('setDirty', true)
 }
 
@@ -296,8 +264,6 @@ export default {
   setRecipientSupportEntity,
   setRecipientNumberTalkingBooks,
   setRecipientDirectBeneficiaries,
-  setRecipientsAdditionalFields,
-  deleteAdditionalLabel,
-  setAdditionalLabel,
+  setRecipientDirectBeneficiariesAdditional,
   setRecipientsIndirectBeneficiaries,
 }

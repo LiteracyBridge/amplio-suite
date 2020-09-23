@@ -21,7 +21,7 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <p class="mandatory-field">Number of Talking Books</p>
+    <p class="pl-4 mandatory-field">Number of Talking Books</p>
     <v-input
       type="number"
       mx="mx-0 w-full"
@@ -187,8 +187,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import Multiselect from 'vue-multiselect'
-
 import Multiselect from 'vue-multiselect'
 
 import VInput from '@/components/VInput'

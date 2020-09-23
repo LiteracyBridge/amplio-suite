@@ -1,7 +1,7 @@
 """Create recipients table
 
 Revision ID: adef6ba0325f
-Revises: 2bab28cb10f5
+Revises: 911b451e82a0
 Create Date: 2020-09-01 18:26:54.516331
 
 """
@@ -12,7 +12,7 @@ from models.utils.pgpoint import PGPoint
 
 # revision identifiers, used by Alembic.
 revision = 'adef6ba0325f'
-down_revision = '2bab28cb10f5'
+down_revision = '911b451e82a0'
 branch_labels = None
 depends_on = None
 

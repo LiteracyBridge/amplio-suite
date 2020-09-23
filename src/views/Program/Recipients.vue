@@ -9,6 +9,14 @@
           You can modify your recipients details on this page. All fields with an asterisk are required.
           The optional fields are recommended for reporting.
         </span>
+
+        <span
+          tabindex="0"
+          @click="onAddRecipient"
+          class="block pl-4 text-left text-green font-bold cursor-pointer"
+        >
+          + Add Recipient
+        </span>
       </div>
     </header>
 

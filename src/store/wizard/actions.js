@@ -34,8 +34,10 @@ const check = async (attrs, step, dispatch) => {
 // step-program-name
 const setProgramName = async ({ dispatch }, payload) => {
   const { name, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
   await dispatch('program/setProgramName', name, { root: true })
-  await check('programName', step, dispatch)
+  await check(attrs, step, dispatch)
 }
 
 const setPartner = async ({ dispatch }, payload) => {
@@ -43,7 +45,7 @@ const setPartner = async ({ dispatch }, payload) => {
   const attrs = ['programName', 'partner', 'affiliate']
 
   await dispatch('programData/setPartner', partner, { root: true })
-  await check(attrs, 1, dispatch)
+  await check(attrs, step, dispatch)
 }
 
 const setAffiliate = async ({ dispatch }, payload) => {
