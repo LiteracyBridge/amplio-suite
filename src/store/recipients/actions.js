@@ -10,7 +10,6 @@ const recipientTemplate = () => ({
 
   communityName: '',
   groupName: '',
-  country: '',
   region: '',
   district: '',
   numberTalkingBooks: null,
@@ -26,11 +25,7 @@ const recipientTemplate = () => ({
   directBeneficiariesAdditional: {},
   indirectBeneficiaries: null,
   variant: '',
-
-  // FIXME
-  partner: 'fixme',
-  affiliate: 'fixme',
-  component: 'fixme',
+  component: '',
 })
 
 
@@ -51,9 +46,8 @@ const fetchRecipients = async ({ commit, state, rootState }) => {
   }
 }
 
-const updateRecipient = async ({ commit, state, rootState }, recipientIndex) => {
+const updateRecipient = async ({ commit, state }, recipientIndex) => {
   const { programCode, recipients } = state
-  const { partner, affiliate } = rootState.programData
   const recipient = recipients[recipientIndex]
   let recipientId = recipient.id
 
@@ -63,7 +57,6 @@ const updateRecipient = async ({ commit, state, rootState }, recipientIndex) => 
     community_name: recipient.communityName,
     group_name: recipient.groupName,
     component: recipient.component,
-    country: recipient.country,
     region: recipient.region,
     district: recipient.district,
     num_households: recipient.households,
@@ -79,8 +72,6 @@ const updateRecipient = async ({ commit, state, rootState }, recipientIndex) => 
     direct_beneficiaries_additional: recipient.directBeneficiariesAdditional,
     indirect_beneficiaries: recipient.indirectBeneficiaries,
     variant: recipient.variant,
-    partner,
-    affiliate,
   }
 
   commit('requestInit')

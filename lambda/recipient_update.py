@@ -7,12 +7,9 @@ session = create_db_session()
 keys = [
     'recipient_id',
     'program_code',
-    'partner',
     'community_name',
     'group_name',
-    'affiliate',
     'component',
-    'country',
     'region',
     'district',
     'num_households',
@@ -34,12 +31,9 @@ def lambda_handler(event, context):
                 Recipient.program_code == event['program_code'],
             ) \
             .update({
-                'partner': event['partner'],
                 'community_name': event['community_name'],
                 'group_name': event['group_name'],
-                'affiliate': event['affiliate'],
                 'component': event['component'],
-                'country': event['country'],
                 'region': event['region'],
                 'district': event['district'],
                 'num_households': event['num_households'],

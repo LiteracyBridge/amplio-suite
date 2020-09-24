@@ -3,18 +3,16 @@ from string import ascii_lowercase, digits
 
 from utils import create_db_session
 from decorators import migration, validate_keys
+from models.program import Program
 from models.recipient import Recipient
 
 session = create_db_session()
 
 keys = [
     'program_code',
-    'partner',
     'community_name',
     'group_name',
-    'affiliate',
     'component',
-    'country',
     'region',
     'district',
     'num_households',
@@ -31,16 +29,20 @@ keys = [
 def lambda_handler(event, context):
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
 
+    program = session.query(Program) \
+        .filter(Program.projectcode == event['program_code']) \
+        .first()
+
     try:
         recipient = Recipient(
             recipient_id=recipient_id,
             program_code=event['program_code'],
-            partner=event['partner'],
+            partner=program.partner,
+            affiliate=program.affiliate,
+            country=program.country,
             community_name=event['community_name'],
             group_name=event['group_name'],
-            affiliate=event['affiliate'],
             component=event['component'],
-            country=event['country'],
             region=event['region'],
             district=event['district'],
             num_households=event['num_households'],

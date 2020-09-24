@@ -5,9 +5,22 @@ from models.program import Program
 from models.recipient import Recipient
 
 
-keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
-        'deployments_length', 'deployments_count', 'deployments_first',
-        'feedback_frequency', 'feedback_frequency_other', 'languages']
+keys = [
+    'programCode',
+    'name',
+    'sdg_goals',
+    'listening_models',
+    'deployments_count',
+    'deployments_length',
+    'deployments_first',
+    'feedback_frequency',
+    'feedback_frequency_other',
+    'languages',
+    'partner',
+    'affiliate',
+    'country',
+    'region',
+]
 
 session = create_db_session()
 
@@ -43,6 +56,7 @@ def lambda_handler(event, context):
         session.query(Recipient) \
             .filter(Recipient.program_code == event['programCode']) \
             .update({
+                'country': event['country'],
                 'partner': event['partner'],
                 'affiliate': event['affiliate'],
             })
