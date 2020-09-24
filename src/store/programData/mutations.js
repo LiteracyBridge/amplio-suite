@@ -107,11 +107,6 @@ const setDirectBeneficiariesLabel = (state, payload) => {
 
 const setDirectBeneficiariesAdditionalLabel = (state, payload) => {
   const { key, value } = payload
-  state.directBeneficiariesAdditionalMap[key] = value
-}
-
-const addDirectBeneficiariesAdditionalLabel = (state, payload) => {
-  const { key, value } = payload
   const map = { ...state.directBeneficiariesAdditionalMap }
   map[key] = value
 
@@ -153,6 +148,5 @@ export default {
 
   setDirectBeneficiariesLabel,
   setDirectBeneficiariesAdditionalLabel,
-  addDirectBeneficiariesAdditionalLabel,
   removeDirectBeneficiariesAdditionalLabel,
 }

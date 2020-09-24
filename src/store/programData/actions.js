@@ -133,7 +133,7 @@ const addDirectBeneficiariesAdditionalLabel = ({ commit }) => {
   const value = 'New additional field'
   const key = `field_${Math.random().toString(36).substring(7)}`
 
-  commit('addDirectBeneficiariesAdditionalLabel', { value, key })
+  commit('setDirectBeneficiariesAdditionalLabel', { value, key })
   commit('setDirty', true)
 }
 
