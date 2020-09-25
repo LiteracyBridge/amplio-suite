@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, user_programs, UnauthorizedAccess
 from decorators import migration, validate_keys
 from models.content import Content
 
@@ -7,10 +7,17 @@ session = create_db_session()
 @migration
 @validate_keys(['program_code', 'deployment', 'content'])
 def lambda_handler(event, context):
+    program_code = event['program_code']
+
+    username = event['context']['username']
+
+    if program_code not in user_programs(username): # FIXME: we'd prefer to check with the model rather than the program_code
+        raise UnauthorizedAccess()
+
     try:
         session.query(Content) \
             .filter(
-                Content.program_code == event['program_code'],
+                Content.program_code == program_code,
                 Content.deployment == event['deployment']
             ) \
             .update({'content': event['content']})

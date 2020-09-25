@@ -1,17 +1,12 @@
 import os
 from utils import get_db_url
-from decorators import migration, validate_keys
+from decorators import migration
 from amplio.rolemanager import manager
 
 manager.open_tables()
 
 @migration
-@validate_keys(['email'])
 def lambda_handler(event, context):
-    # FIXME: we should **not** receive an email, but get it from the current
-    # auth token - this index should be scoped for the current user
-    email = event['email']
-
     # FIXME: make Amplio manager work locally
     if os.getenv('ENV') != 'AWS':
         return {
@@ -22,6 +17,8 @@ def lambda_handler(event, context):
                 'My Test Program 8': 'AD,PM,CO,FO'
             }
         }
+
+    email = event['context']['username']
 
     program_items = manager.get_programs_for_user(email).items()
     roles = {}

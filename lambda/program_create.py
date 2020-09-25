@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from models.project import Project
 from models.program import Program
 from models.content import Content
@@ -16,6 +16,7 @@ session = create_db_session()
 def lambda_handler(event, context):
     try:
         project = Project(projectcode=event['programCode'], project=event['name'], active=False) # TODO: default active=false on the model
+        validate_user_access(event, project)
         program = Program(
             projectcode = project.projectcode, # we'd eventually switch this to project=project
             country = event['country'],

@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.deployment import Deployment
 
@@ -10,7 +10,7 @@ def lambda_handler(event, context):
     deployments = session.query(Deployment) \
         .filter(Deployment.project == event['program_code'])
 
-    deployments = [deplo.to_dict() for deplo in deployments]
+    deployments = [validate_user_access(event, deplo).to_dict() for deplo in deployments]
     deployments = sorted(deployments, key=lambda deplo: deplo['deploymentnumber'])
 
     if deployments:

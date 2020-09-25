@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.roadmap import Roadmap
 
@@ -13,6 +13,8 @@ def lambda_handler(event, context):
         ) \
         .first()
 
+    validate_user_access(event, roadmap)
+    
     if roadmap:
         completed = roadmap.to_dict()['completed']
     else:

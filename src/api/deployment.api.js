@@ -4,7 +4,7 @@ const END_POINT = '/deployment'
 
 const getDeployments = async (programCode) => {
   try {
-    const response = await httpClient.get(END_POINT, {
+    const response = await httpClient().get(END_POINT, {
       params: { program_code: programCode }
     })
     return {
@@ -16,9 +16,9 @@ const getDeployments = async (programCode) => {
   }
 }
 
-const putDeployments = async (data) => httpClient.put(END_POINT, data)
+const putDeployments = async (data) => httpClient().put(END_POINT, data)
 
-const deleteDeployment = async (params) => httpClient.delete(END_POINT, { params })
+const deleteDeployment = async (params) => httpClient().delete(END_POINT, { params })
 
 export {
   getDeployments,

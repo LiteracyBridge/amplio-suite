@@ -1,4 +1,4 @@
-from utils import create_db_session
+from utils import create_db_session, validate_user_access
 from decorators import migration, validate_keys
 from models.project import Project
 
@@ -14,6 +14,8 @@ def lambda_handler(event, context):
             'status': 422,
             'error': str(err)
         }
+    
+    validate_user_access(event, project)
 
     session.add(project)
     session.commit()
