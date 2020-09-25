@@ -112,6 +112,7 @@ class Program(Base, SerializerMixin):
 
         return Deployment(**data)
     
+    @property
     def program_code(self):
         return self.projectcode
 

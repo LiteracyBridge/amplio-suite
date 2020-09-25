@@ -115,14 +115,7 @@ def validate_user_access(event, model):
     if not model:
         return None
 
-    program_code = model.program_code
-    # program_code can be a function or a variable, so we unify
-    # FIXME: we should unify this at the model level - make all of them be a function
-    # but currently the name is clashing with Roadmap
-    if callable(program_code):
-        program_code = program_code()
-
-    if program_code not in user_programs(username):
+    if model.program_code not in user_programs(username):
         raise UnauthorizedAccess()
     
     return model

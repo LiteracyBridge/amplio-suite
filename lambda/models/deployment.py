@@ -21,5 +21,6 @@ class Deployment(Base, SerializerMixin):
 
     content = relationship('Content', cascade='all, delete')
     
+    @property
     def program_code(self):
         return self.project

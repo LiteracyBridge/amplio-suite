@@ -14,5 +14,6 @@ class Project(Base, SerializerMixin):
     project = Column(String(255), nullable=False)
     active = Column(Boolean)
     
+    @property
     def program_code(self):
         return self.projectcode
