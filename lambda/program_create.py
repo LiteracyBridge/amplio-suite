@@ -28,6 +28,8 @@ def lambda_handler(event, context):
             feedback_frequency = event['feedback_frequency'],
             feedback_frequency_other = event['feedback_frequency_other'],
             languages = event['languages'],
+            partner = event['partner'],
+            affiliate = event['affiliate'],
         )
         deployments = program.default_deployments()
         contents = [Content(program_code=deplo.project, deployment=deplo.deployment)

@@ -1,7 +1,7 @@
 """Rename program.deployments_amount, content.deployment_id and content.program_code
 
 Revision ID: 10b0848a46f0
-Revises: 911b451e82a0
+Revises: 5dd49c12691e
 Create Date: 2020-09-16 14:24:31.162821
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '10b0848a46f0'
-down_revision = '911b451e82a0'
+down_revision = '5dd49c12691e'
 branch_labels = None
 depends_on = None
 

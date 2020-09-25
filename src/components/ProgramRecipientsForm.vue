@@ -1,5 +1,17 @@
 <template>
-  <div class="grid grid-cols-content-message row-gap-2 items-center pl-8">
+  <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
+    <p class="col-span-4 text-center text-blue">
+      All fields with an asterisk are required.The optional fields are recommended for reporting.
+    </p>
+
+    <p
+      v-if="invalidConstraint"
+      class="col-span-4 text-center text-red-500"
+    >
+      <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
+      Community, Group Name and Agent combination must be unique.
+    </p>
+
     <p class="mandatory-field">Region</p>
     <multiselect
       placeholder="Select a region"
@@ -9,7 +21,7 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <p class="mandatory-field">Number of Talking Books</p>
+    <p class="pl-4 mandatory-field">Number of Talking Books</p>
     <v-input
       type="number"
       mx="mx-0 w-full"
@@ -25,7 +37,7 @@
       :multiple="false"
     />
 
-    <p class="pl-4 mandatory-field">District</p>
+    <p class="pl-4 mandatory-field">District/County</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -36,15 +48,11 @@
     <p class="mandatory-field">Listening Model</p>
     <multiselect
       :options="listeningModelsOptions"
-      :value="listeningModelsSelected"
-      :multiple="true"
+      :value="listeningModelSelected"
       label="label"
       trackBy="label"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      @select="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
-      @remove="(listeningModel) => toggleRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
       placeholder="Select the listening model"
     />
 
@@ -52,7 +60,7 @@
     <v-input
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.community"
+      :value="recipient.communityName"
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
@@ -121,7 +129,7 @@
       </v-tooltip>
     </div>
     <v-input
-      type="text"
+      type="number"
       mx="mx-0 w-full"
       :value="recipient.directBeneficiaries"
       @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
@@ -132,8 +140,9 @@
       :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
       class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
+      @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
     >
-      {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
+      {{ beneficiariesIsOpen ? 'Hide' : 'Show' }} Direct beneficiaries details
       <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
     </p>
     <span></span>
@@ -142,27 +151,28 @@
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
       class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
     >
-      <template v-for="opt in directBeneficiariesLabels">
-        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
-        <v-input
-          :key="`${opt.key}-input`"
-          type="number"
-          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
-          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
-          mx="mx-0"
-        />
-      </template>
+      <beneficiaries-field
+        label="Number of Households"
+        :val="recipient.households"
+        :showTooltip="recipient.households > recipient.directBeneficiaries"
+        :input="(val) => setRecipientHouseholds({ recipientIndex, households: +val })"
+      />
 
-      <template v-for="opt in additionalLabels">
-        <p :key="`${opt.key}-label`">{{ opt.value }}</p>
-        <v-input
-          :key="`${opt.key}-input`"
-          type="number"
-          :value="recipient.directBeneficiariesAdditionalFields[opt.key]"
-          @input="setRecipientsAdditionalFields({ recipientIndex, key: opt.key, value: $event.target.value })"
-          mx="mx-0"
-        />
-      </template>
+      <beneficiaries-field
+        label="Group Size"
+        :val="recipient.groupSize"
+        :showTooltip="recipient.groupSize > recipient.directBeneficiaries"
+        :input="(val) => setRecipientGroupSize({ recipientIndex, groupSize: +val })"
+      />
+
+      <beneficiaries-field
+        v-for="opt in beneficiariesAdditionalFields"
+        :key="opt.key"
+        :label="opt.value"
+        :val="recipient.directBeneficiariesAdditional[opt.key]"
+        :showTooltip="recipient.directBeneficiariesAdditional[opt.key] > recipient.directBeneficiaries"
+        :input="(val) => setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: +val })"
+      />
     </div>
 
     <p>Indirect beneficiaries</p>
@@ -177,12 +187,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-
 import Multiselect from 'vue-multiselect'
 
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
+import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries'
 
 export default {
   props: {
@@ -193,14 +203,23 @@ export default {
     recipient: {
       type: Object,
       required: true
-    }
+    },
+    invalidConstraint: {
+      type: Boolean,
+      required: true
+    },
   },
   computed: {
-    ...mapState('recipients', {
-      additionalLabels: state => Object.keys(state.additionalLabelsMap)
-        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
-      directBeneficiariesLabels: state => Object.keys(state.labelMap)
-        .map(key => ({ key, value: state.labelMap[key] }))
+    ...mapState('programData', {
+      beneficiariesAdditionalFields: state => {
+        const part1 = Object.keys(state.directBeneficiariesAdditionalMap)
+          .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] }))
+
+        const part2 = Object.keys(state.directBeneficiariesMap)
+          .map(key => ({ key, value: state.directBeneficiariesMap[key] }))
+
+        return part2.concat(part1)
+      },
     }),
     ...mapState('programData', [
       'region',
@@ -213,9 +232,8 @@ export default {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
     },
-    listeningModelsSelected () {
-      return this.recipient.listeningModels
-        .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
+    listeningModelSelected () {
+      return this.listeningModelsOptions.find(opt => opt.id === this.recipient.listeningModel)
     }
   },
   components: {
@@ -223,6 +241,7 @@ export default {
     VTooltip,
     Multiselect,
     LanguagesSelector,
+    BeneficiariesField,
   },
   watch: {
     region: {
@@ -253,13 +272,16 @@ export default {
       'setRecipientCommunity',
       'setRecipientGroupName',
       'setRecipientLang',
-      'toggleRecipientListeningModel',
+      'setRecipientListeningModel',
       'setRecipientAgent',
       'setRecipientAgentGender',
+      'setRecipientVariant',
+      'setRecipientHouseholds',
+      'setRecipientGroupSize',
       'setRecipientSupportEntity',
-      'setRecipientDirectBeneficiaries',
       'setRecipientNumberTalkingBooks',
-      'setRecipientsAdditionalFields',
+      'setRecipientDirectBeneficiaries',
+      'setRecipientDirectBeneficiariesAdditional',
       'setRecipientsIndirectBeneficiaries',
     ]),
   }

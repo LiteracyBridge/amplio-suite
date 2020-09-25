@@ -34,8 +34,26 @@ const check = async (attrs, step, dispatch) => {
 // step-program-name
 const setProgramName = async ({ dispatch }, payload) => {
   const { name, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
   await dispatch('program/setProgramName', name, { root: true })
-  await check('programName', step, dispatch)
+  await check(attrs, step, dispatch)
+}
+
+const setPartner = async ({ dispatch }, payload) => {
+  const { partner, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
+  await dispatch('programData/setPartner', partner, { root: true })
+  await check(attrs, step, dispatch)
+}
+
+const setAffiliate = async ({ dispatch }, payload) => {
+  const { affiliate, step } = payload
+  const attrs = ['programName', 'partner', 'affiliate']
+
+  await dispatch('programData/setAffiliate', affiliate, { root: true })
+  await check(attrs, step, dispatch)
 }
 
 // step-geo
@@ -80,7 +98,7 @@ const toggleListening = async ({ dispatch }, payload) => {
 // step-deployments
 const setDeploymentsCount = async ({ dispatch }, payload) => {
   const { count, step } = payload
-  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
+  const attrs = ['deploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
   await dispatch('programData/setDeploymentsCount', count, { root: true })
   await check(attrs, step, dispatch)
@@ -88,7 +106,7 @@ const setDeploymentsCount = async ({ dispatch }, payload) => {
 
 const setDeploymentsLength = async ({ dispatch }, payload) => {
   const { length, step } = payload
-  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
+  const attrs = ['deploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
   await dispatch('programData/setDeploymentsLength', length, { root: true })
   await check(attrs, step, dispatch)
@@ -96,7 +114,7 @@ const setDeploymentsLength = async ({ dispatch }, payload) => {
 
 const setDeploymentsFirst = async ({ dispatch }, payload) => {
   const { first, step } = payload
-  const attrs = ['setDeploymentsCount', 'deploymentsLength', 'deploymentsFirst']
+  const attrs = ['deploymentsCount', 'deploymentsLength', 'deploymentsFirst']
 
   await dispatch('programData/setDeploymentsFirst', first, { root: true })
   await check(attrs, step, dispatch)
@@ -144,6 +162,8 @@ export default {
   setCountry,
   addRegion,
   removeRegion,
+  setPartner,
+  setAffiliate,
   toggleGoal,
   toggleListening,
   setDeploymentsCount,

@@ -11,6 +11,8 @@ const isCompleted = ({ state, rootState }, payload) => {
       case 'deploymentsLength':
       case 'feedbackFrequently':
       case 'feedbackFrequentlyOther':
+      case 'partner':
+      case 'affiliate':
         partial = state[attr] !== ''
         break
       case 'region':
@@ -108,6 +110,38 @@ const deleteLanguage = async ({ commit }, language) => {
   commit('setDirty', true)
 }
 
+const setPartner = ({ commit }, payload) => {
+  commit('setPartner', payload)
+  commit('setDirty', true)
+}
+const setAffiliate = ({ commit }, payload) => {
+  commit('setAffiliate', payload)
+  commit('setDirty', true)
+}
+
+const setDirectBeneficiariesLabel = ({ commit }, payload) => {
+  commit('setDirectBeneficiariesLabel', payload)
+  commit('setDirty', true)
+}
+
+const setDirectBeneficiariesAdditionalLabel = ({ commit }, payload) => {
+  commit('setDirectBeneficiariesAdditionalLabel', payload)
+  commit('setDirty', true)
+}
+
+const addDirectBeneficiariesAdditionalLabel = ({ commit }) => {
+  const value = 'New additional field'
+  const key = `field_${Math.random().toString(36).substring(7)}`
+
+  commit('setDirectBeneficiariesAdditionalLabel', { value, key })
+  commit('setDirty', true)
+}
+
+const deleteDirectBeneficiariesAdditionalLabel = ({ commit }, labelKey) => {
+  commit('deleteDirectBeneficiariesAdditionalLabel', labelKey)
+  commit('setDirty', true)
+}
+
 export default {
   isCompleted,
   setCountry,
@@ -122,4 +156,11 @@ export default {
   setFeedbackFrequentlyOther,
   setLanguages,
   deleteLanguage,
+  setPartner,
+  setAffiliate,
+
+  setDirectBeneficiariesLabel,
+  setDirectBeneficiariesAdditionalLabel,
+  addDirectBeneficiariesAdditionalLabel,
+  deleteDirectBeneficiariesAdditionalLabel,
 }

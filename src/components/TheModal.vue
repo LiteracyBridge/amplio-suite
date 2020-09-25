@@ -1,7 +1,7 @@
 <template>
   <div
     :class="isOpen ? 'block' : 'hidden'"
-    class="fixed top-0 left-0 bottom-0 right-0 bg-semi-transparent-darken overflow-y-auto z-1000"
+    class="fixed top-0 left-0 bottom-0 right-0 bg-semi-transparent-darken z-1000"
   >
     <div tabindex="0" />
 
@@ -17,7 +17,7 @@
 
     <div
       class="absolute p-6 bg-white text-center shadow-modal rounded-md"
-      style="top: 10rem; left: 50vw; transform: translateX(-50%); min-width: calc(640px - (1.5rem * 2));"
+      style="top: 30rem; left: 50vw; transform: translateX(-50%) translateY(-50%); min-width: calc(640px - (1.5rem * 2));"
       role="dialog"
       aria-modal="true"
     >
@@ -26,7 +26,7 @@
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 
-        <div class="pt-6 pb-20 text-xl">
+        <div class="pr-6 overflow-y-auto" style="max-height: 60vh;">
           <portal-target name="modalBody" slim />
         </div>
 

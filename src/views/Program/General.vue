@@ -72,6 +72,24 @@
           @remove="(model) => toggleListening(model.id)"
           placeholder="Select the listening model"
         />
+
+        <span>Partner</span>
+        <v-input
+          type="text"
+          :value="partner"
+          mx="mx-0"
+          class="w-full"
+          @input="setPartner($event.target.value)"
+        />
+
+        <span class="pl-4">Affiliate</span>
+        <v-input
+          type="text"
+          :value="affiliate"
+          mx="mx-0"
+          class="w-full"
+          @input="setAffiliate($event.target.value)"
+        />
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
@@ -105,13 +123,15 @@
             :key="`${opt.key}-input`"
             type="text"
             :value="opt.value"
-            @input="setRecipientsLabelMap({ key: opt.key, value: $event.target.value })"
+            @input="setDirectBeneficiariesLabel({ key: opt.key, value: $event.target.value })"
             mx="mx-0"
             class="w-full"
           />
         </template>
 
-        <template v-for="(opt, index) in additionalLabels">
+        <span class="col-span-2" />
+
+        <template v-for="(opt, index) in directBeneficiariesAdditionalLabels">
           <span
             :key="`${opt.key}-label`"
             :class="index % 2 === 1 ? 'pl-4' : ''"
@@ -122,23 +142,23 @@
             <v-input
               type="text"
               :value="opt.value"
-              @input="setAdditionalLabel({ key: opt.key, value: $event.target.value })"
+              @input="setDirectBeneficiariesAdditionalLabel({ key: opt.key, value: $event.target.value })"
               mx="mx-0"
               class="w-full"
             />
 
             <button
               :aria-label="`Delete option field ${opt.value}`"
-              :class="labelUsed[opt.key].used ? 'text-grey-500' : 'text-red-500'"
+              :class="labelUsed.includes(opt.key) ? 'text-grey-500' : 'text-red-500'"
               class="w-6 h-6 ml-2 icon-zoom"
-              @click="deleteAdditionalLabel(opt.key)"
+              @click="deleteDirectBeneficiariesAdditionalLabel(opt.key)"
             >
               <font-awesome-icon icon="trash-alt" />
             </button>
 
             <v-tooltip
-              v-if="labelUsed[opt.key].used"
-              :text="`Field used in ${labelUsed[opt.key].recipients.join(' - ')}`"
+              v-if="labelUsed.includes(opt.key)"
+              text="Field used in multiple recipients"
               class="my-auto"
             >
               <font-awesome-icon
@@ -153,7 +173,7 @@
           <span
             tabindex="0"
             class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
-            @click="addAdditionalLabel"
+            @click="addDirectBeneficiariesAdditionalLabel"
           >
             + Add Optional Field
           </span>
@@ -186,7 +206,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
 import VButton from '@/components/Button'
@@ -207,17 +227,19 @@ export default {
     ...mapState('programData', [
       'country',
       'region',
+      'partner',
+      'affiliate',
       'languages',
       'listeningModels',
     ]),
     ...mapGetters('recipients', [
       'labelUsed'
     ]),
-    ...mapState('recipients', {
-      additionalLabels: state => Object.keys(state.additionalLabelsMap)
-        .map(key => ({ key, value: state.additionalLabelsMap[key] })),
-      directBeneficiariesLabels: state => Object.keys(state.labelMap)
-        .map(key => ({ key, value: state.labelMap[key] }))
+    ...mapState('programData', {
+      directBeneficiariesLabels: state => Object.keys(state.directBeneficiariesMap)
+        .map(key => ({ key, value: state.directBeneficiariesMap[key] })),
+      directBeneficiariesAdditionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
+        .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
     }),
     ...mapState('listeningModels', {
       listeningModelsOptions: state => state.listeningModels
@@ -279,17 +301,15 @@ export default {
       'setCountry',
       'addRegion',
       'removeRegion',
+      'setPartner',
+      'setAffiliate',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
-    ]),
-    ...mapMutations('recipients', [
-      'setRecipientsLabelMap'
-    ]),
-    ...mapActions('recipients', [
-      'addAdditionalLabel',
-      'setAdditionalLabel',
-      'deleteAdditionalLabel'
+      'setDirectBeneficiariesLabel',
+      'setDirectBeneficiariesAdditionalLabel',
+      'addDirectBeneficiariesAdditionalLabel',
+      'deleteDirectBeneficiariesAdditionalLabel',
     ]),
     addTag (region) {
       this.regionOptions.push(region)

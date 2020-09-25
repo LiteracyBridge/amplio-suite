@@ -1,12 +1,34 @@
-// FIXME When save the data on the DB, uncomment the follow line
-// import { getDefaultState } from './index'
+// Map db model to store model
+const responseToRecipient = (response) => ({
+  id: response.recipient_id,
+  partner: response.partner,
+  communityName: response.community_name,
+  groupName: response.group_name,
+  affiliate: response.affiliate,
+  component: response.component,
+  country: response.country,
+  region: response.region,
+  district: response.district,
+  numberTalkingBooks: response.num_tbs,
+  supportEntity: response.support_entity,
+  language: response.language,
+  agent: response.agent,
+  variant: response.variant,
+  households: response.num_households,
+  groupSize: response.group_size,
+  deployments: response.deployments,
+  listeningModel: +response.model,
+  agentGender: response.agent_gender,
+  directBeneficiaries: response.direct_beneficiaries,
+  directBeneficiariesAdditional: response.direct_beneficiaries_additional,
+  indirectBeneficiaries: response.indirect_beneficiaries,
+})
 
 const setDirty = (state, status) => {
   state.dirty = status
 }
 
 const requestInit = (state) => {
-  // Object.assign(state, getDefaultState())
   state.status = 'loading'
 }
 
@@ -19,12 +41,41 @@ const requestSuccess = (state) => {
 }
 
 const setRecipients = (state, payload) => {
-  state.recipients = payload
+  const recipients = payload.recipients
+    .map(recipient => responseToRecipient(recipient))
+
+  state.dirty = false
+  state.status = 'success'
+  state.programCode = payload.program_code
+  state.recipients = recipients
 }
 
-const setRecipientsLabelMap = (state, payload) => {
-  const { key, value } = payload
-  state.labelMap[key] = value
+const setRecipient = (state, payload) => {
+  const { recipient, recipientIndex } = payload
+  const recipients = [...state.recipients]
+  recipients[recipientIndex] = responseToRecipient(recipient)
+
+  state.recipients = recipients
+}
+
+const addRecipient = (state, payload) => {
+  const { recipients } = state
+  state.recipients = [...recipients, payload]
+}
+
+const removeRecipient = (state, payload) => {
+  const recipients = [...state.recipients]
+  const recipientIndex = recipients.findIndex(reci => reci.id === payload.id)
+
+  if (recipientIndex > -1) {
+    recipients.splice(recipientIndex, 1)
+    state.recipients = recipients
+  }
+}
+
+const setRecipientId = (state, payload) => {
+  const { recipientIndex, id } = payload
+  state.recipients[recipientIndex].id = id
 }
 
 const setRecipientDeployments = (state, payload) => {
@@ -49,7 +100,7 @@ const setRecipientDistrict = (state, payload) => {
 
 const setRecipientCommunity = (state, payload) => {
   const { recipientIndex, community } = payload
-  state.recipients[recipientIndex].community = community
+  state.recipients[recipientIndex].communityName = community
 }
 
 const setRecipientGroupName = (state, payload) => {
@@ -62,14 +113,9 @@ const setRecipientLang = (state, payload) => {
   state.recipients[recipientIndex].language = lang
 }
 
-const addRecipientListeningModel = (state, payload) => {
+const setRecipientListeningModel = (state, payload) => {
   const { recipientIndex, listeningModel } = payload
-  state.recipients[recipientIndex].listeningModels.push(listeningModel)
-}
-
-const removeRecipientListeningModel = (state, payload) => {
-  const { recipientIndex, modelIndex } = payload
-  state.recipients[recipientIndex].listeningModels.splice(modelIndex, 1)
+  state.recipients[recipientIndex].listeningModel = listeningModel
 }
 
 const setRecipientAgent = (state, payload) => {
@@ -82,6 +128,21 @@ const setRecipientAgentGender = (state, payload) => {
   state.recipients[recipientIndex].agentGender = gender
 }
 
+const setRecipientVariant = (state, payload) => {
+  const { recipientIndex, variant } = payload
+  state.recipients[recipientIndex].variant = variant
+}
+
+const setRecipientHouseholds = (state, payload) => {
+  const { recipientIndex, households } = payload
+  state.recipients[recipientIndex].households = households
+}
+
+const setRecipientGroupSize = (state, payload) => {
+  const { recipientIndex, groupSize } = payload
+  state.recipients[recipientIndex].groupSize = groupSize
+}
+
 const setRecipientSupportEntity = (state, payload) => {
   const { recipientIndex, supportEntity } = payload
   state.recipients[recipientIndex].supportEntity = supportEntity
@@ -89,31 +150,24 @@ const setRecipientSupportEntity = (state, payload) => {
 
 const setRecipientDirectBeneficiaries = (state, payload) => {
   const { recipientIndex, directBeneficiaries } = payload
-  state.recipients[recipientIndex].directBeneficiaries = directBeneficiaries
+  state.recipients[recipientIndex].directBeneficiaries = +directBeneficiaries
 }
 
 const setRecipientNumberTalkingBooks = (state, payload) => {
   const { recipientIndex, numberTalkingBooks } = payload
-  state.recipients[recipientIndex].numberTalkingBooks = numberTalkingBooks
+  state.recipients[recipientIndex].numberTalkingBooks = +numberTalkingBooks
 }
 
-const setRecipientsAdditionalFields = (state, payload) => {
-  const { recipientIndex, fields } = payload
-  state.recipients[recipientIndex].directBeneficiariesAdditionalFields = fields
-}
-
-const setAdditionalLabels = (state, labels) => {
-  state.additionalLabelsMap = labels
-}
-
-const setAdditionalLabel = (state, payload) => {
-  const { key, value } = payload
-  state.additionalLabelsMap[key] = value
+const setRecipientDirectBeneficiariesAdditional = (state, payload) => {
+  const { recipientIndex, key, value } = payload
+  const data = { ...state.recipients[recipientIndex].directBeneficiariesAdditional }
+  data[key] = value
+  state.recipients[recipientIndex].directBeneficiariesAdditional = data
 }
 
 const setRecipientsIndirectBeneficiaries = (state, payload) => {
   const { recipientIndex, indirectBeneficiaries } = payload
-  state.recipients[recipientIndex].indirectBeneficiaries = indirectBeneficiaries
+  state.recipients[recipientIndex].indirectBeneficiaries = +indirectBeneficiaries
 }
 
 export default {
@@ -122,8 +176,11 @@ export default {
   requestError,
   requestSuccess,
   setRecipients,
+  setRecipient,
+  addRecipient,
+  removeRecipient,
 
-  setRecipientsLabelMap,
+  setRecipientId,
   setRecipientDeployments,
   addRecipientRegion,
   removeRecipientRegion,
@@ -131,15 +188,15 @@ export default {
   setRecipientCommunity,
   setRecipientGroupName,
   setRecipientLang,
-  addRecipientListeningModel,
-  removeRecipientListeningModel,
+  setRecipientListeningModel,
   setRecipientAgent,
   setRecipientAgentGender,
+  setRecipientVariant,
+  setRecipientHouseholds,
+  setRecipientGroupSize,
   setRecipientSupportEntity,
-  setRecipientDirectBeneficiaries,
   setRecipientNumberTalkingBooks,
-  setRecipientsAdditionalFields,
-  setAdditionalLabels,
-  setAdditionalLabel,
+  setRecipientDirectBeneficiaries,
+  setRecipientDirectBeneficiariesAdditional,
   setRecipientsIndirectBeneficiaries,
 }
