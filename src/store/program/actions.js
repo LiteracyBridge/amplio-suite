@@ -48,8 +48,6 @@ const createProgram = async ({ state, rootState, commit }) => {
 
   try {
     await postProgram(generateProgramData(state, rootState))
-    commit('setDirty', false)
-    commit('programData/setDirty', false, { root: true })
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
