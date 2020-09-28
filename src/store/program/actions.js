@@ -31,6 +31,7 @@ const fetchProgram = async ({ commit, state, rootState }, programCode) => {
   commit('resetState')
   commit('requestInit')
   commit('setProgramCode', programCode)
+  commit('wizard/resetState', null, { root: true })
   commit('programData/resetState', null, { root: true })
 
   try {
