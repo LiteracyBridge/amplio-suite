@@ -2,7 +2,7 @@ from utils import create_db_session, validate_user_access
 from models.project import Project
 from models.program import Program
 from models.content import Content
-from decorators import migration, validate_keys
+from decorators import validate_keys
 
 
 keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
@@ -11,7 +11,6 @@ keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
 
 session = create_db_session()
 
-@migration
 @validate_keys(keys)
 def lambda_handler(event, context):
     try:

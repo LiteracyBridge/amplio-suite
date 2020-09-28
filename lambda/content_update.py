@@ -1,10 +1,9 @@
 from utils import create_db_session, user_programs, UnauthorizedAccess
-from decorators import migration, validate_keys
+from decorators import validate_keys
 from models.content import Content
 
 session = create_db_session()
 
-@migration
 @validate_keys(['program_code', 'deployment', 'content'])
 def lambda_handler(event, context):
     program_code = event['program_code']
