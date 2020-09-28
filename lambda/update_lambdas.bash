@@ -53,7 +53,7 @@ functions_to_deploy=(
 )
 
 # Lambda role
-role_arn="arn:aws:iam::261167734304:role/AmplioSuiteLambda"
+role_arn=$(aws iam get-role --role-name AmplioSuiteLambda | jq -r '.Role.Arn')
 
 # Read config form AWS
 functions=$(aws lambda list-functions | jq '[.Functions[].FunctionName] | join(" ")')
@@ -66,7 +66,7 @@ cp -r ./package/ utils.py decorators.py .env ./migrations alembic.ini ./models .
 zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done. Uploading layer..."
 
-layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
+layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
 echo "The layer ARN is: ${layer_arn}"
 rm -rf partial.zip ./python/
 set +e
@@ -98,6 +98,7 @@ do
 			--zip-file fileb://${fun}.zip \
 			--handler ${fun}.lambda_handler \
       --environment "Variables={ENV=AWS}" \
+			--description "Part of the Suite at suite.amplio.org" \
 			--vpc-config SubnetIds=${subnet_ids},SecurityGroupIds=${sec_group_id} >> output
   fi
 
