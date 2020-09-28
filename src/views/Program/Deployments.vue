@@ -7,7 +7,7 @@
       :isDirty="isDirty"
       :description="description"
       :onSaveChanges="updateDeployment"
-      :onDiscardChanges="fetchDeployments"
+      :onDiscardChanges="() => fetchDeployments(programCode)"
     />
 
     <div class="grid grid-cols-deployments items-center justify-between">
