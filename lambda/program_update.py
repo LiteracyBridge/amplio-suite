@@ -1,5 +1,5 @@
 from utils import create_db_session, user_programs, UnauthorizedAccess
-from decorators import migration, validate_keys
+from decorators import validate_keys
 from models.project import Project
 from models.program import Program
 from models.recipient import Recipient
@@ -24,7 +24,6 @@ keys = [
 
 session = create_db_session()
 
-@migration
 @validate_keys(keys)
 def lambda_handler(event, context):
     program_code = event['programCode']

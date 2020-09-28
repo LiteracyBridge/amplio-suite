@@ -1,12 +1,11 @@
 from utils import create_db_session, validate_user_access
 from models.program import Program
 from models.content import Content
-from decorators import migration, validate_keys
+from decorators import validate_keys
 
 
 session = create_db_session()
 
-@migration
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
     program = session.query(Program) \

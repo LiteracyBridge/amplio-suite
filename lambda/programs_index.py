@@ -1,11 +1,9 @@
 import os
 from utils import get_db_url
-from decorators import migration
 from amplio.rolemanager import manager
 
 manager.open_tables()
 
-@migration
 def lambda_handler(event, context):
     # FIXME: make Amplio manager work locally
     if os.getenv('ENV') != 'AWS':

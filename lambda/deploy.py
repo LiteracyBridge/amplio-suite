@@ -3,7 +3,7 @@ import csv
 import json
 
 from utils import create_db_session, save_to_csv, user_programs, UnauthorizedAccess
-from decorators import migration, validate_keys
+from decorators import validate_keys
 from models.deployment import Deployment
 from models.content import Content
 from models.sustainable_development import SustainableDevelopmentGoals, SustainableDevelopmentTargets
@@ -15,7 +15,6 @@ header_deplo = ['project', 'deployment_num', 'startdate', 'enddate', 'component'
 
 session = create_db_session()
 
-@migration
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
     username = event['context']['username']
