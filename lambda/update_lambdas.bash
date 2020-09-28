@@ -43,6 +43,10 @@ functions_to_deploy=(
 	programs_index
 	project_create
 	project_retrieve
+	recipient_create
+	recipient_delete
+	recipient_retrieve
+	recipient_update
 	roadmap_index
 	roadmap_update
 	sustainable_developments_index
