@@ -231,6 +231,7 @@ export default {
   created () {
     this.fetchProgram(this.programCode)
     this.fetchRecipients(this.programCode)
+    this.fetchDeployments(this.programCode)
   },
   data: () => ({
     selectedRecipientIndex: null,
@@ -248,6 +249,9 @@ export default {
     ]),
     ...mapActions('program', [
       'fetchProgram',
+    ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',
@@ -292,11 +296,11 @@ export default {
     },
     onClickDiscard () {
       if (!this.recipient.id) {
-        this.onCloseModal()
         this.removeRecipient(this.selectedRecipientIndex)
       } else {
         this.discardRecipient(this.selectedRecipientIndex)
       }
+      this.onCloseModal()
     },
     onOpenModal (modal, title) {
       this.showModal[modal] = true
