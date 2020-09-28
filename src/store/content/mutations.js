@@ -59,6 +59,12 @@ const setMessages = (state, payload) => {
   state.playlists[playlistIndex].messages = messages
 }
 
+const addNewMessage = (state, payload) => {
+  const { playlistIndex, message } = payload
+  const actualMessages = state.playlists[playlistIndex].messages
+  state.playlists[playlistIndex].messages = [...actualMessages, message]
+}
+
 const addDuplicateMessage = (state, messageIndex) => {
   state.duplicateMessage.add(messageIndex)
 }
@@ -128,6 +134,7 @@ export default {
   removePlaylist,
 
   setMessages,
+  addNewMessage,
   addDuplicateMessage,
   removeDuplicateMessage,
   setMessageTitle,

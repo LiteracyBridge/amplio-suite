@@ -45,7 +45,7 @@
 
          <span
           tabindex="0"
-          @click="addNewMessage"
+          @click="() => addNewMessage(playlistIndex)"
           class="block mt-4 p-2 text-green font-bold cursor-pointer"
         >
           + Add Message
@@ -163,7 +163,7 @@ export default {
       'setPlaylist',
       'addPlaylist',
       'removePlaylist',
-      'addMessage',
+      'addNewMessage',
     ]),
     ...mapActions('categories', [
       'fetchCategories'
@@ -173,7 +173,7 @@ export default {
       else this.onOpenModal()
     },
     onDiscardChanges () {
-      this.fetchContent()
+      this.fetchContent({ programCode: this.programCode, deployment: this.deployment.deployment})
     },
     onOpenModal () {
       this.showModal = true
@@ -185,14 +185,7 @@ export default {
     },
     async onAddPlaylist () {
       await this.addPlaylist(this.deployment.deploymentname)
-      this.playlistIndex ++
-    },
-    addNewMessage() {
-      const payload = {
-        deployment: this.deployment.deployment,
-        playlist_index: this.playlistIndex
-      }
-      this.addMessage(payload)
+      this.playlistIndex = this.playlists.length - 1
     },
   }
 }

@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         
         validate_user_access(event, content)
 
-        content.add_empty_message(event['playlist_index'])
+        message = content.add_empty_message(event['playlist_index'])
 
         session.query(Content) \
             .filter(
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
 
         return {
             'status': 202,
-            'message': 'successfully create a new message'
+            'message': message
         }
     except BaseException as err:
         return {

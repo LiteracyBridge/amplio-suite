@@ -39,14 +39,15 @@ const updateContent = async ({ state, commit }, deployment) => {
 }
 
 const addPlaylist = async ({ state, commit, dispatch }, deployment) => {
-  const { programCode } = state
+  const { programCode, deploymentName } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
     await contentAddPlaylist({ program_code: programCode, deployment})
-    await dispatch('fetchContent')
+    commit('requestSuccess')
+    await dispatch('fetchContent', { programCode, deployment: deploymentName })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -85,16 +86,16 @@ const setMessages = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const addMessage = async ({ state, commit, dispatch }, payload) => {
+const addNewMessage = async ({ state, commit }, playlistIndex) => {
   const { programCode, deploymentName } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await contentAddPMessage({ program_code: programCode, ...payload })
+    const response = await contentAddPMessage({ program_code: programCode, deployment: deploymentName, playlist_index: playlistIndex })
     commit('requestSuccess')
-    await dispatch('fetchContent', { programCode, deployment: deploymentName })
+    commit('addNewMessage', { playlistIndex, message: response.data.message })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -167,7 +168,7 @@ export default {
   setPlaylistAudience,
 
   setMessages,
-  addMessage,
+  addNewMessage,
   removeMessage,
   setMessageTitle,
   setMessageVariant,
