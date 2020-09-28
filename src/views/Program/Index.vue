@@ -52,8 +52,6 @@ import { mapState, mapActions } from 'vuex'
 import VButton from '@/components/Button'
 import VSnackbars from '@/components/VSnackbars'
 
-import { fetchData } from '@/utils'
-
 export default {
   name: 'Program',
   props: ['programCode'],
@@ -77,9 +75,6 @@ export default {
       return partial.some(Boolean)
     },
   },
-  watch: {
-    '$route': 'fetchAllData'
-  },
   data () {
     return {
       sections: ['general', 'deployments', 'content', 'recipients'],
@@ -88,9 +83,6 @@ export default {
       isModalOpen: false,
       showSnackbar: false,
     }
-  },
-  created () {
-    this.fetchAllData()
   },
   beforeRouteUpdate (to, from, next) {
     const sTo = to.path.split('/')
@@ -138,9 +130,6 @@ export default {
       this.isModalOpen = false
       this.closeModal()
     },
-    fetchAllData () {
-      fetchData(this.programCode)
-    }
   },
 }
 </script>

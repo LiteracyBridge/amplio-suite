@@ -1,6 +1,6 @@
 <template>
   <section class="relative p-6 pt-0">
-    <loading v-if="isRequestLoading" class="-ml-6 rounded-b-lg" />
+    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       title="General"
@@ -219,9 +219,10 @@ import ProgramHeader from '@/components/ProgramHeader'
 import countries from '@/data/countries.json'
 
 export default {
+  props: ['programCode'],
   computed: {
     ...mapState('program', [
-      'programCode',
+      'status',
       'programName'
     ]),
     ...mapState('programData', [
@@ -251,15 +252,6 @@ export default {
     isDirty () {
       return this.$store.state.program.dirty || this.$store.state.programData.dirty
     },
-    isRequestLoading () {
-      return [
-        this.$store.state.program.status,
-        this.$store.state.programData.status,
-        this.$store.state.recipients.status,
-        this.$store.state.languages.status,
-        this.$store.state.listeningModels.status,
-      ].every(status => status === 'loading')
-    }
   },
   components: {
     VButton,
@@ -269,6 +261,19 @@ export default {
     LanguagesSelector,
     Loading,
     ProgramHeader,
+  },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchRecipients(this.programCode)
+    this.fetchListeningModels()
+  },
+  watch: {
+    region: {
+      immediate: true,
+      handler () {
+        this.regionOptions = [...this.region] // Populete the options
+      }
+    },
   },
   data () {
     return {
@@ -280,17 +285,10 @@ export default {
       beneficiariesIsOpen: false
     }
   },
-  mounted () {
-    this.regionOptions = [...this.region] // Populete the options
-    this.fetchListeningModels()
-  },
   methods: {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
-    ]),
-    ...mapActions('listeningModels', [
-      'fetchListeningModels'
     ]),
     ...mapActions('program', [
       'fetchProgram',
@@ -310,6 +308,12 @@ export default {
       'setDirectBeneficiariesAdditionalLabel',
       'addDirectBeneficiariesAdditionalLabel',
       'deleteDirectBeneficiariesAdditionalLabel',
+    ]),
+    ...mapActions('recipients', [
+      'fetchRecipients',
+    ]),
+    ...mapActions('listeningModels', [
+      'fetchListeningModels',
     ]),
     addTag (region) {
       this.regionOptions.push(region)

@@ -10,7 +10,7 @@ const getContent = async (programCode, deployment) => {
 
     return {
       programCode,
-      deployment,
+      deployment: response.data.deployment,
       playlists: response.data.content
     }
   } catch (e) {

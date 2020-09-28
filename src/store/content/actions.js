@@ -6,17 +6,13 @@ import {
 } from '@/api/content.api'
 
 
-const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
-  const { programCode, programName } = rootState.program
-  if (!programName) return
-  if (!deployment && state.programCode === programCode && !state.dirty) return
+const fetchContent = async ({ state, commit }, payload) => {
+  const { programCode, deployment } = payload
 
-  commit('resetState')
+  if (state.status === 'loading') return
+  if (state.programCode === programCode && !state.dirty && state.deployment === deployment) return
+
   commit('requestInit')
-
-  if (!deployment) {
-    deployment = rootState.deployments.items[0].deploymentname
-  }
 
   try {
     const response = await getContent(programCode, deployment)
@@ -29,12 +25,11 @@ const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
 
 const updateContent = async ({ state, commit }, deployment) => {
   const { programCode, playlists } = state
-  const deployment_id = deployment.deployment
 
   commit('requestInit')
 
   try {
-    await putContent({ program_code: programCode, deployment_id, content: playlists })
+    await putContent({ program_code: programCode, deployment, content: playlists })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -91,14 +86,15 @@ const setMessages = ({ commit }, payload) => {
 }
 
 const addMessage = async ({ state, commit, dispatch }, payload) => {
-  const { programCode } = state
+  const { programCode, deploymentName } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
     await contentAddPMessage({ program_code: programCode, ...payload })
-    await dispatch('fetchContent')
+    commit('requestSuccess')
+    await dispatch('fetchContent', { programCode, deployment: deploymentName })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })

@@ -99,6 +99,7 @@ import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 
 export default {
+  props: ['programCode'],
   computed: {
     ...mapState('deployments', {
       status: state => state.status,
@@ -112,6 +113,10 @@ export default {
     Loading,
     ProgramHeader,
   },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchDeployments(this.programCode)
+  },
   data: () => ({
     description: "You can modify your deployment details here. Enter component details after filling component tab.",
     modal: {
@@ -122,6 +127,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('program', [
+      'fetchProgram',
     ]),
     ...mapActions('deployments', [
       'fetchDeployments',
