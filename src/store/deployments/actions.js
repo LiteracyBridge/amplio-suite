@@ -29,7 +29,8 @@ const createDeployment = async ({ state, commit, dispatch }) => {
 
   try {
     await postProgramNewDeployment({ program_code: programCode })
-    await dispatch('fetchDeployments')
+    commit('requestSuccess')
+    await dispatch('fetchDeployments', programCode)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -60,7 +61,8 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
 
   try {
     await deleteDeployment({ program_code: programCode, deployment })
-    await dispatch('fetchDeployments')
+    commit('requestSuccess')
+    await dispatch('fetchDeployments', programCode)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
