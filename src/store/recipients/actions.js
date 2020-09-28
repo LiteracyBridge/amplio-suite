@@ -29,9 +29,7 @@ const recipientTemplate = () => ({
 })
 
 
-const fetchRecipients = async ({ commit, state, rootState }) => {
-  const { programCode } = rootState.program
-
+const fetchRecipients = async ({ commit, state }, programCode) => {
   if (state.status === 'loading') return
   if (state.programCode === programCode && !state.dirty) return
 

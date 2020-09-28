@@ -6,9 +6,8 @@ import {
 import { postProgramNewDeployment } from '@/api/programs.api'
 
 
-const fetchDeployments = async ({ state, rootState, commit }) => {
-  const { programCode, programName } = rootState.program
-  if (!programName) return
+const fetchDeployments = async ({ state, commit }, programCode) => {
+  if (state.status === 'loading') return
   if (state.programCode === programCode && !state.dirty) return
 
   commit('requestInit')

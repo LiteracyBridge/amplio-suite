@@ -228,6 +228,10 @@ export default {
     VButton,
     ProgramRecipientsForm,
   },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchRecipients(this.programCode)
+  },
   data: () => ({
     selectedRecipientIndex: null,
     columns,
@@ -241,6 +245,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('program', [
+      'fetchProgram',
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',

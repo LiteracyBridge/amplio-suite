@@ -40,12 +40,19 @@ export default {
     dirty: {
       type: Boolean,
       required: true
-    }
+    },
+    programCode: {
+      type: String,
+      required: true
+    },
   },
   computed: {
     ...mapState('deployments', {
       deployments: state => state.items
     }),
+  },
+  created () {
+    this.fetchDeployments(this.programCode)
   },
   watch: {
     deployments: {
@@ -67,6 +74,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
     ]),
     handleOpenModal () {
       this.isModalOpen = true
