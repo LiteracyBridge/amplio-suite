@@ -25,7 +25,7 @@
         @click="selectProgram(codeName)"
         @keyup.space="selectProgram(codeName)"
       >
-        <img class="mx-auto" src="/img/program.png">
+        <img class="mx-auto" src="/img/program.png" alt="">
         <h3 class="py-4 text-xl font-bold">{{ codeName }}</h3>
       </div>
     </div>
