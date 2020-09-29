@@ -12,7 +12,15 @@
       Community, Group Name and Agent combination must be unique.
     </p>
 
-    <label class="mandatory-field" for="region">Region</label>
+    <p
+      v-if="invalidBeneficiaries"
+      class="col-span-4 text-center text-red-500"
+    >
+      <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
+      Invalid Direct Beneficiaries details
+    </p>
+
+    <label class="mandatory-field" for="region">Region/State</label>
     <multiselect
       id="region"
       placeholder="Select a region"
@@ -22,13 +30,45 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
+    <label class="pl-4 mandatory-field" for="district">District/County</label>
     <v-input
-      name="numTalkingBooks"
-      type="number"
+      name="district"
+      type="text"
       mx="mx-0 w-full"
       :value="recipient.numberTalkingBooks"
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+    />
+
+    <p class="mandatory-field">Community</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.communityName"
+      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+    />
+
+    <p class="pl-4">Group Name</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.groupName"
+      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+    />
+
+    <p>Agent</p>
+    <v-input
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.agent"
+      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
+    />
+
+    <p class="pl-4">Agent Gender</p>
+    <multiselect
+      :options="['Male', 'Female', 'Other']"
+      :value="recipient.agentGender"
+      placeholder="Select the agent gender"
+      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
     />
 
     <p class="mandatory-field">Language</p>
@@ -40,14 +80,18 @@
       :multiple="false"
     />
 
-    <label class="pl-4 mandatory-field" for="district">District/County</label>
+    <span class="col-span-2" />
+
+    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
     <v-input
-      name="district"
-      type="text"
+      name="numTalkingBooks"
+      type="number"
       mx="mx-0 w-full"
       :value="recipient.district"
       @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
+
+    <span class="col-span-2" />
 
     <label class="mandatory-field" for="listeningModel">Listening Model</label>
     <multiselect
@@ -61,23 +105,7 @@
       placeholder="Select the listening model"
     />
 
-    <label class="pl-4 mandatory-field" for="community">Community</label>
-    <v-input
-      name="community"
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.communityName"
-      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
-    />
-
-    <label for="groupName">Group Name</label>
-    <v-input
-      name="groupName"
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.groupName"
-      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
-    />
+    <span class="col-span-2" />
 
     <label class="pl-4 mandatory-field" for="deployments">Deployments</label>
     <multiselect
@@ -98,6 +126,8 @@
       </template>
     </multiselect>
 
+    <span class="col-span-2" />
+
     <label for="supportEntity">Support Entity</label>
     <v-input
       name="supportEntity"
@@ -108,24 +138,6 @@
     />
 
     <span class="col-span-2" />
-
-    <label for="agent">Agent</label>
-    <v-input
-      name="agent"
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.agent"
-      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
-    />
-
-    <label class="pl-4" for="agentGender">Agent Gender</label>
-    <multiselect
-      id="agentGender"
-      :options="['Male', 'Female', 'Other']"
-      :value="recipient.agentGender"
-      placeholder="Select the agent gender"
-      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
-    />
 
     <div>
       <label class="mandatory-field" for="directBeneficiaries">Direct Beneficiaries</label>
