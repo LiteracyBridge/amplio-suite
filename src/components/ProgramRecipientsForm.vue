@@ -233,6 +233,10 @@ export default {
       type: Boolean,
       required: true
     },
+    invalidBeneficiaries: {
+      type: Boolean,
+      required: true
+    }
   },
   computed: {
     ...mapState('programData', {

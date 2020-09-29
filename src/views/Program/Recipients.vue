@@ -85,6 +85,7 @@
         :recipientIndex="selectedRecipientIndex"
         :recipient="recipient"
         :invalidConstraint="invalidConstraint"
+        :invalidBeneficiaries="invalidBeneficiaries"
       />
     </portal>
 
@@ -98,7 +99,7 @@
         />
         <v-button
           @click="onClickSave"
-          :color="!dirty || invalidConstraint ? 'bg-gray-400 text-white' : 'text-white bg-green'"
+          :color="!dirty || invalidConstraint || invalidBeneficiaries ? 'bg-gray-400 text-white' : 'text-white bg-green'"
           textColor="text-black"
           text="Save"
         />
@@ -142,7 +143,7 @@
     <portal to="modalFooter" v-if="showModal.mandatory">
       <footer class="flex flex-row-reverse justify-between pt-20">
         <v-button
-          @click="onCloseModal"
+          @click="onClickEdit(selectedRecipientIndex)"
           color="bg-transparent border border-black"
           textColor="text-black"
           text="Close"
@@ -222,6 +223,18 @@ export default {
       const option = `${this.recipient.communityName}-${this.recipient.groupName}-${this.recipient.agent}`
 
       return options.filter(opt => opt === option).length > 1
+    },
+    invalidBeneficiaries () {
+      const values = Object.values(this.recipient.directBeneficiariesAdditional)
+        .map(val => val > this.recipient.directBeneficiaries)
+
+      const keys = ['households', 'groupSize']
+      keys.forEach(key => {
+        const partial = this.recipient[key] > this.recipient.directBeneficiaries
+        values.push(partial)
+      })
+
+      return values.some(Boolean)
     },
   },
   components: {
@@ -307,6 +320,8 @@ export default {
       this.setModal(title)
     },
     onCloseModal () {
+      if (this.invalidBeneficiaries || this.invalidConstraint) return
+
       this.showModal.edit = false
       this.showModal.delete = false
       this.showModal.mandatory = false
