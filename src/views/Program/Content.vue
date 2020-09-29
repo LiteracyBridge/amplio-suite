@@ -129,7 +129,6 @@ export default {
   created () {
     this.fetchProgram(this.programCode)
     this.fetchContent({ programCode: this.programCode })
-    this.fetchCategories()
   },
   components: {
     VButton,
@@ -164,9 +163,6 @@ export default {
       'addPlaylist',
       'removePlaylist',
       'addNewMessage',
-    ]),
-    ...mapActions('categories', [
-      'fetchCategories'
     ]),
     onSaveChanges () {
       if (this.isFormFill) this.updateContent(this.deployment.deployment)

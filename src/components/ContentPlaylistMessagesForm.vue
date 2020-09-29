@@ -2,6 +2,7 @@
   <div v-if="message" class="grid grid-cols-content-message row-gap-2 items-center px-8">
     <span>Language</span>
     <languages-selector
+      :options="languages"
       :languages="message.language"
       :onLanguageSelected="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: code })"
       :onLanguageDeleted="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: '' })"
@@ -115,6 +116,9 @@ export default {
     },
   },
   computed: {
+    ...mapState('programData', [
+      'languages'
+    ]),
     ...mapState('sustainableDevelopments', [
       'goals'
     ]),
@@ -156,10 +160,14 @@ export default {
       ],
     }
   },
-  mounted() {
+  created () {
+    this.fetchCategories()
     this.fetchSustainableDevelopments()
   },
   methods: {
+    ...mapActions('categories', [
+      'fetchCategories'
+    ]),
     ...mapActions('sustainableDevelopments', [
       'fetchSustainableDevelopments'
     ]),

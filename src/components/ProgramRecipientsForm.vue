@@ -33,6 +33,7 @@
 
     <p class="mandatory-field">Language</p>
     <languages-selector
+      :options="languages"
       :languages="recipient.language"
       :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
       :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
@@ -235,6 +236,7 @@ export default {
     }),
     ...mapState('programData', [
       'region',
+      'languages',
       'listeningModels'
     ]),
     ...mapState('listeningModels', {
