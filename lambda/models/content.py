@@ -6,7 +6,7 @@ from models.base import Base
 def message_template(index):
     return {
         'title': f"Message Title {index}",
-        'language': '',
+        'languages': [],
         'format': '',
         'default_category': '',
         'variant': '',

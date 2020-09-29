@@ -121,8 +121,13 @@ const setMessageTitle = ({ commit, state }, payload) => {
   commit('setDirty', true)
 }
 
-const setMessageLang = ({ commit }, payload) => {
-  commit('setMessageLang', payload)
+const addMessageLanguage = ({ commit }, payload) => {
+  commit('addMessageLanguage', payload)
+  commit('setDirty', true)
+}
+
+const removeMessageLanguage = ({ commit }, payload) => {
+  commit('removeMessageLanguage', payload)
   commit('setDirty', true)
 }
 
@@ -172,7 +177,8 @@ export default {
   removeMessage,
   setMessageTitle,
   setMessageVariant,
-  setMessageLang,
+  addMessageLanguage,
+  removeMessageLanguage,
   setMessageCategory,
   setMessageFormat,
   setMessageSDGGoal,

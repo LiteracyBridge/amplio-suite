@@ -3,10 +3,10 @@
     <span>Language</span>
     <languages-selector
       :options="languages"
-      :languages="message.language"
-      :onLanguageSelected="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: code })"
-      :onLanguageDeleted="({ name, code }) => setMessageLang({ playlistIndex, messageIndex, lang: '' })"
-      :multiple="false"
+      :languages="message.languages"
+      :onLanguageSelected="({ name, code }) => addMessageLanguage({ playlistIndex, messageIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => removeMessageLanguage({ playlistIndex, messageIndex, lang: code })"
+      :multiple="true"
     />
 
     <label class="pl-4" for="format">Format</label>
@@ -174,7 +174,8 @@ export default {
     ...mapActions('content', [
       'setMessageVariant',
       'setMessageFormat',
-      'setMessageLang',
+      'addMessageLanguage',
+      'removeMessageLanguage',
       'setMessageCategory',
       'setMessageSDGGoal',
       'setMessageSDGTarget',

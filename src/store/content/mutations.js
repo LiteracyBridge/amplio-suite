@@ -78,9 +78,17 @@ const setMessageTitle = (state, payload) => {
   state.playlists[playlistIndex].messages[messageIndex].title = title
 }
 
-const setMessageLang = (state, payload) => {
+const addMessageLanguage = (state, payload) => {
   const { playlistIndex, messageIndex, lang } = payload
-  state.playlists[playlistIndex].messages[messageIndex].language = lang
+  const languages = state.playlists[playlistIndex].messages[messageIndex].languages
+  state.playlists[playlistIndex].messages[messageIndex].languages = [...languages, lang]
+}
+
+const removeMessageLanguage = (state, payload) => {
+  const { playlistIndex, messageIndex, lang } = payload
+  let languages = state.playlists[playlistIndex].messages[messageIndex].languages
+  languages = languages.filter(language => language != lang)
+  state.playlists[playlistIndex].messages[messageIndex].languages = languages
 }
 
 const setMessageCategory = (state, payload) => {
@@ -138,7 +146,8 @@ export default {
   addDuplicateMessage,
   removeDuplicateMessage,
   setMessageTitle,
-  setMessageLang,
+  addMessageLanguage,
+  removeMessageLanguage,
   setMessageCategory,
   setMessageVariant,
   setMessageFormat,
