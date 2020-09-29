@@ -8,13 +8,13 @@
       v-if="label"
       :for="name === '' ? false : name"
       :style="{ left: iconLeft ? '40px' : '10px' }"
-      class="absolute inline-block px-2 bg-white text-gray-500"
+      class="absolute inline-block px-2 bg-white text-label"
     >
       {{ label }}
     </label>
     <input
       :class="iconLeft ? 'pl-12' : 'pl-5'"
-      class="w-full block py-2 pr-5 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline text-field-input"
+      class="w-full block py-2 pr-5 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
       :value="value"
       :name="name === '' ? false : name"
       :id="name === '' ? false : name"

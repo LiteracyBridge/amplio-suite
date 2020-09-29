@@ -1,7 +1,12 @@
 <template>
   <div>
+    <label class="visually_hidden" for="language_input">
+      Select { multiple ? 'multiple' : 'one'} language
+    </label>
+
     <multiselect
       v-if="supportedLanguages.length > 0"
+      id="language_input"
       ref="languages"
       :value="selectedLanguages"
       :options="filterLanguages"
