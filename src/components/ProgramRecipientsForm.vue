@@ -240,7 +240,7 @@ export default {
       'listeningModels'
     ]),
     ...mapState('listeningModels', {
-      listeningModelsOptions: state => state.listeningModels
+      allListeningModels: state => state.listeningModels
     }),
     deployments () {
       return this.$store.state.deployments.items
@@ -265,11 +265,19 @@ export default {
           this.regionsOptions = [...this.region]
         }
       }
+    },
+    allListeningModels: {
+      immediate: true,
+      handler () {
+        this.listeningModelsOptions = this.allListeningModels
+          .filter(model => this.listeningModels.includes(model.id))
+      }
     }
   },
   data: () => ({
     regionsOptions: [],
     beneficiariesIsOpen: false,
+    listeningModelsOptions: [],
   }),
   mounted () {
     this.fetchListeningModels()
