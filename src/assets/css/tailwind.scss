@@ -4,6 +4,11 @@
 @import './a11y';
 @import './transition';
 
+// For vue-multiselect
+.multiselect__tags .multiselect__placeholder {
+  @apply text-label;
+}
+
 .moving-item {
   @apply opacity-50 bg-gray-400 rounded border border-2 border-blue;
 }

@@ -5,10 +5,13 @@
     :next="{ name: 'step-sdg' }"
     title="Let's add some geographic details"
   >
-    <p class="text-2xl font-semibold">
+    <p class="text-2xl font-semibold mb-5">
       Where will you implement this program?
     </p>
+
+    <label class="visually_hidden" for="country_input">Select one country</label>
     <multiselect
+      id="country_input"
       ref="country"
       class="multi"
       :value="country"
@@ -17,8 +20,10 @@
       @select="(country) => setCountry({ country, step })"
     />
 
+    <label class="visually_hidden" for="region_input">Select one country</label>
     <multiselect
-      class="mt-10 multi"
+      id="region_input"
+      class="mt-5 multi"
       tag-placeholder="Add this as new region"
       placeholder="Search or add a region"
       :value="region"

@@ -18,6 +18,7 @@ module.exports = {
         outline: '0 0 0 3px rgba(71, 92, 170, 0.7)'
       },
       colors: {
+        label: '#4f5a65',
         green: '#289b6a',
         blue: '#475caa',
         'semi-transparent': 'hsla(0, 0%, 4%, .2)',
