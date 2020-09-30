@@ -4,7 +4,7 @@
 
     <program-header
       title="General"
-      :isDirty="isDirty"
+      :canSave="isDirty"
       :description="description"
       :onSaveChanges="updateProgram"
       :onDiscardChanges="() => fetchProgram(this.programCode)"
