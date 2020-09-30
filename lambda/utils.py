@@ -121,8 +121,11 @@ def validate_user_access(event, model):
     return model
 
 def save_to_csv(text, file_path):
-    # FIXME this must be a env var
-    bucket = 'stg-amplio-progspecs'
+    bucket_info = get_secret('Suite.Lambda.Deploy.S3.BucketName')
+    if not bucket_info or "bucket" not in bucket_info:
+        raise Exception('You must create a "Suite.Lambda.Deploy.S3.BucketName" secret in AWS SecretsManager with a key "bucket" and the name of the S3 bucket as value')
+
+    bucket = bucket_info['bucket']
 
     client = boto3.client('s3')
     client.put_object(Body=text, Bucket=bucket, Key=file_path)
