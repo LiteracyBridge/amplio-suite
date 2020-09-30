@@ -14,7 +14,7 @@
         <v-tooltip
           v-if="!canDeploy"
           text="You need save the current change and have one message and one recipient"
-          position="rigth"
+          position="right"
           class="ml-2"
         >
           <font-awesome-icon
