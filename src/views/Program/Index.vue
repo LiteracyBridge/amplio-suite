@@ -3,12 +3,26 @@
     <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
-      <v-button
-        title="Please complete all required fields. You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
-        :color="anyTabDirty ? 'bg-gray-400' : 'bg-blue'"
-        text="Submit"
-        @click="onSubmit"
-      />
+      <div>
+        <v-button
+          title="Please complete all required fields. You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
+          :color="canDeploy ? 'bg-blue' : 'bg-gray-400'"
+          text="Submit"
+          @click="onSubmit"
+          :aria-disabled="canDeploy ? 'false' : 'true'"
+        />
+        <v-tooltip
+          v-if="!canDeploy"
+          text="You need save the current change and have one message and one recipient"
+          position="rigth"
+          class="ml-2"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
+      </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-box">
@@ -51,6 +65,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 import VSnackbars from '@/components/VSnackbars'
 
 export default {
@@ -58,6 +73,7 @@ export default {
   props: ['programCode'],
   components: {
     VButton,
+    VTooltip,
     VSnackbars,
   },
   computed: {
@@ -82,12 +98,15 @@ export default {
       return partial.some(Boolean)
     },
     canDeploy () {
-      const hasOneMessage = this.playlists
-        .map(playlist => playlist.messages.length > 0)
+      const hasOneMessage = (this.playlists
+        .map(playlist => playlist.messages.map(message => message.title))
+        .flat()
+        .filter(title => !title.startsWith('Message Title'))
+      ).length > 0
 
       const hasOneRecipient = this.recipients.length > 0
 
-      return [hasOneMessage, hasOneRecipient]
+      return hasOneMessage && hasOneRecipient && !this.anyTabDirty
     }
   },
   data () {
@@ -144,6 +163,8 @@ export default {
       'fetchRecipients',
     ]),
     async onSubmit () {
+      if (!this.canDeploy) return
+
       const result = await this.deployProgram()
       if (result === 'success') this.showSnackbar = true
     },
