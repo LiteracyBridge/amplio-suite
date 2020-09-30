@@ -5,15 +5,14 @@
 
       <div>
         <v-button
-          title="Please complete all required fields. You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
-          :color="canDeploy ? 'bg-blue' : 'bg-gray-400'"
           text="Submit"
-          @click="onSubmit"
+          :color="canDeploy ? 'bg-blue' : 'bg-gray-400'"
           :aria-disabled="canDeploy ? 'false' : 'true'"
+          @click="onSubmit"
         />
         <v-tooltip
           v-if="!canDeploy"
-          text="You need save the current change and have one message and one recipient"
+          text="You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
           position="right"
           class="ml-2"
         >

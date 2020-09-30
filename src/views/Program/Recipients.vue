@@ -3,21 +3,13 @@
     <header>
       <h2 class="visually_hidden">Recipients</h2>
 
-      <div>
-        <font-awesome-icon icon="exclamation-circle" class="w-6 h-6 text-gray-500" />
-        <span class="mx-4 text-lg text-blue">
-          You can modify your recipients details on this page. All fields with an asterisk are required.
-          The optional fields are recommended for reporting.
-        </span>
-
-        <span
-          tabindex="0"
-          @click="onAddRecipient"
-          class="block pl-4 text-left text-green font-bold cursor-pointer"
-        >
-          + Add Recipient
-        </span>
-      </div>
+      <span
+        tabindex="0"
+        @click="onAddRecipient"
+        class="block pl-4 py-4 text-left font-semibold text-blue cursor-pointer hover:underline"
+      >
+        + Add Recipient
+      </span>
     </header>
 
     <table class="w-full table-auto">
