@@ -25,7 +25,7 @@
         />
 
         <v-tooltip
-          v-if="duplicateMessage.has(index)"
+          v-if="duplicateMessage.includes(message.title)"
           text="Duplicate message title in this playlist"
           class="my-auto"
         >

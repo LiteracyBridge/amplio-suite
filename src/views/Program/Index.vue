@@ -4,6 +4,7 @@
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
       <v-button
+        title="Please complete all required fields. You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
         :color="anyTabDirty ? 'bg-gray-400' : 'bg-blue'"
         text="Submit"
         @click="onSubmit"
@@ -63,6 +64,12 @@ export default {
     ...mapState('program', [
       'programName',
     ]),
+    ...mapState('content', [
+      'playlists',
+    ]),
+    ...mapState('recipients', [
+      'recipients',
+    ]),
     anyTabDirty () {
       const partial = [
         this.$store.state.program.dirty,
@@ -74,6 +81,14 @@ export default {
 
       return partial.some(Boolean)
     },
+    canDeploy () {
+      const hasOneMessage = this.playlists
+        .map(playlist => playlist.messages.length > 0)
+
+      const hasOneRecipient = this.recipients.length > 0
+
+      return [hasOneMessage, hasOneRecipient]
+    }
   },
   data () {
     return {
@@ -83,6 +98,10 @@ export default {
       isModalOpen: false,
       showSnackbar: false,
     }
+  },
+  created () {
+    this.fetchContent({ programCode: this.programCode })
+    this.fetchRecipients(this.programCode)
   },
   beforeRouteUpdate (to, from, next) {
     const sTo = to.path.split('/')
@@ -117,6 +136,12 @@ export default {
     ]),
     ...mapActions('program', [
       'deployProgram',
+    ]),
+    ...mapActions('content', [
+      'fetchContent',
+    ]),
+    ...mapActions('recipients', [
+      'fetchRecipients',
     ]),
     async onSubmit () {
       const result = await this.deployProgram()

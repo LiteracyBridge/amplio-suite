@@ -65,15 +65,12 @@ const setPlaylist = async ({ commit }, payload) => {
 }
 
 const setPlaylistTitle = ({ commit, state }, payload) => {
-  const titles = state.playlists.map(ele => ele.title)
-  if (titles.includes(payload.title)) {
-    commit('addDuplicatePlaylists', payload.playlistIndex)
-  } else {
-    commit('removeDuplicatePlaylists', payload.playlistIndex)
-  }
-
   commit('setPlaylistTitle', payload)
   commit('setDirty', true)
+
+  const titles = state.playlists.map(playlist => playlist.title)
+  const duplicate = titles.filter((title => v => title.has(v) || !title.add(v))(new Set))
+  commit('setDuplicatePlaylists', duplicate)
 }
 
 const setPlaylistAudience = ({ commit }, payload)=> {
@@ -108,17 +105,14 @@ const removeMessage = async ({ commit }, payload) => {
 }
 
 const setMessageTitle = ({ commit, state }, payload) => {
-  const { playlistIndex, messageIndex, title } = payload
-  const titles = state.playlists[playlistIndex].messages.map(ele => ele.title)
-
-  if (titles.includes(title)) {
-    commit('addDuplicateMessage', messageIndex)
-  } else {
-    commit('removeDuplicateMessage', messageIndex)
-  }
+  const { playlistIndex } = payload
 
   commit('setMessageTitle', payload)
   commit('setDirty', true)
+
+  const titles = state.playlists[playlistIndex].messages.map(message => message.title)
+  const duplicate = titles.filter((title => v => title.has(v) || !title.add(v))(new Set))
+  commit('setDuplicateMessage', duplicate)
 }
 
 const addMessageLanguage = ({ commit }, payload) => {

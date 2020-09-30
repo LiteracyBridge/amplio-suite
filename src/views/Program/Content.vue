@@ -25,6 +25,7 @@
         :on-add="onAddPlaylist"
         :on-remove="removePlaylist"
         :selected-index="playlistIndex"
+        :titles="duplicatePlaylists"
       />
 
       <div class="text-left">
@@ -55,7 +56,7 @@
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="showModal">
-      <p class="text-xl">Please complete all of the mandatory fields.</p>
+      <p class="text-xl">{{ modalBody }}</p>
     </portal>
 
     <portal to="modalFooter" v-if="showModal">
@@ -88,6 +89,8 @@ export default {
     ...mapState('content', [
       'status',
       'dirty',
+      'duplicatePlaylists',
+      'duplicateMessage'
     ]),
     playlists: {
       get () {
@@ -99,6 +102,9 @@ export default {
     },
     playlist () {
       return this.playlists[this.playlistIndex]
+    },
+    canSave () {
+      return this.dirty && this.duplicatePlaylists.length === 0 && this.duplicateMessage.length === 0
     },
     isFormFill () {
       const requiredFields = [
@@ -145,7 +151,8 @@ export default {
       deployment: {},
       playlistIndex: 0,
 
-      showModal: false
+      showModal: false,
+      modalBody: '',
     }
   },
   methods: {
@@ -165,15 +172,25 @@ export default {
       'addNewMessage',
     ]),
     onSaveChanges () {
-      if (this.isFormFill) this.updateContent(this.deployment.deployment)
-      else this.onOpenModal()
+      if (this.duplicatePlaylists.length !== 0) {
+        this.modalBody = 'Please rename the duplicate playlist title for can save.'
+        this.onOpenModal('Duplicated Playlist Title')
+      } else if (this.duplicateMessage.length !== 0) {
+        this.modalBody = 'Please rename the duplicate message title for can save.'
+        this.onOpenModal('Duplicated Message Title')
+      } else if (this.isFormFill) {
+        this.updateContent(this.deployment.deployment)
+      } else {
+        this.modalBody = 'Please complete all of the mandatory fields.'
+        this.onOpenModal('Required Fields')
+      }
     },
     onDiscardChanges () {
       this.fetchContent({ programCode: this.programCode, deployment: this.deployment.deployment})
     },
-    onOpenModal () {
+    onOpenModal (title) {
       this.showModal = true
-      this.setModal('Required Fields')
+      this.setModal(title)
     },
     onCloseModal () {
       this.showModal = false

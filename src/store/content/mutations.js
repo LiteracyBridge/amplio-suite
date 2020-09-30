@@ -32,12 +32,8 @@ const setPlaylist = (state, payload) => {
   state.playlists = payload
 }
 
-const addDuplicatePlaylists = (state, playlistIndex) => {
-  state.duplicatePlaylists.add(playlistIndex)
-}
-
-const removeDuplicatePlaylists = (state, playlistIndex) => {
-  state.duplicatePlaylists.delete(playlistIndex)
+const setDuplicatePlaylists = (state, payload) => {
+  state.duplicatePlaylists = payload
 }
 
 const setPlaylistTitle = (state, payload) => {
@@ -65,12 +61,8 @@ const addNewMessage = (state, payload) => {
   state.playlists[playlistIndex].messages = [...actualMessages, message]
 }
 
-const addDuplicateMessage = (state, messageIndex) => {
-  state.duplicateMessage.add(messageIndex)
-}
-
-const removeDuplicateMessage = (state, messageIndex) => {
-  state.duplicateMessage.delete(messageIndex)
+const setDuplicateMessage = (state, payload) => {
+  state.duplicateMessage = payload
 }
 
 const setMessageTitle = (state, payload) => {
@@ -135,16 +127,14 @@ export default {
   setContent,
 
   setPlaylist,
-  addDuplicatePlaylists,
-  removeDuplicatePlaylists,
+  setDuplicatePlaylists,
   setPlaylistTitle,
   setPlaylistAudience,
   removePlaylist,
 
   setMessages,
   addNewMessage,
-  addDuplicateMessage,
-  removeDuplicateMessage,
+  setDuplicateMessage,
   setMessageTitle,
   addMessageLanguage,
   removeMessageLanguage,
