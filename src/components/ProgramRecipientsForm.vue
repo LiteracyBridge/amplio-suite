@@ -12,8 +12,9 @@
       Community, Group Name and Agent combination must be unique.
     </p>
 
-    <p class="mandatory-field">Region</p>
+    <label class="mandatory-field" for="region">Region</label>
     <multiselect
+      id="region"
       placeholder="Select a region"
       :value="recipient.region"
       :options="regionsOptions"
@@ -21,8 +22,9 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <p class="pl-4 mandatory-field">Number of Talking Books</p>
+    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
     <v-input
+      name="numTalkingBooks"
       type="number"
       mx="mx-0 w-full"
       :value="recipient.numberTalkingBooks"
@@ -37,16 +39,18 @@
       :multiple="false"
     />
 
-    <p class="pl-4 mandatory-field">District/County</p>
+    <label class="pl-4 mandatory-field" for="district">District/County</label>
     <v-input
+      name="district"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.district"
       @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
 
-    <p class="mandatory-field">Listening Model</p>
+    <label class="mandatory-field" for="listeningModel">Listening Model</label>
     <multiselect
+      id="listeningModel"
       :options="listeningModelsOptions"
       :value="listeningModelSelected"
       label="label"
@@ -56,24 +60,27 @@
       placeholder="Select the listening model"
     />
 
-    <p class="pl-4 mandatory-field">Community</p>
+    <label class="pl-4 mandatory-field" for="community">Community</label>
     <v-input
+      name="community"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.communityName"
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="">Group Name</p>
+    <label for="groupName">Group Name</label>
     <v-input
+      name="groupName"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.groupName"
       @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
-    <p class="pl-4 mandatory-field">Deployments</p>
+    <label class="pl-4 mandatory-field" for="deployments">Deployments</label>
     <multiselect
+      id="deployments"
       :options="deployments"
       :value="recipient.deployments"
       :multiple="true"
@@ -90,8 +97,9 @@
       </template>
     </multiselect>
 
-    <p>Support Entity</p>
+    <label for="supportEntity">Support Entity</label>
     <v-input
+      name="supportEntity"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.supportEntity"
@@ -100,16 +108,18 @@
 
     <span class="col-span-2" />
 
-    <p>Agent</p>
+    <label for="agent">Agent</label>
     <v-input
+      name="agent"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.agent"
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <p class="pl-4">Agent Gender</p>
+    <label class="pl-4" for="agentGender">Agent Gender</label>
     <multiselect
+      id="agentGender"
       :options="['Male', 'Female', 'Other']"
       :value="recipient.agentGender"
       placeholder="Select the agent gender"
@@ -117,7 +127,7 @@
     />
 
     <div>
-      <span class="mandatory-field">Direct Beneficiaries</span>
+      <label class="mandatory-field" for="directBeneficiaries">Direct Beneficiaries</label>
       <v-tooltip
         text="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
         class="ml-2"
@@ -129,6 +139,7 @@
       </v-tooltip>
     </div>
     <v-input
+      name="directBeneficiaries"
       type="number"
       mx="mx-0 w-full"
       :value="recipient.directBeneficiaries"
@@ -175,8 +186,9 @@
       />
     </div>
 
-    <p>Indirect beneficiaries</p>
+    <label for="indirectBeneficiaries">Indirect beneficiaries</label>
     <v-input
+      name="indirectBeneficiaries"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.indirectBeneficiaries"

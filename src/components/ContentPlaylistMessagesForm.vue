@@ -8,8 +8,9 @@
       :multiple="false"
     />
 
-    <span class="pl-4">Format</span>
+    <label class="pl-4" for="format">Format</label>
     <multiselect
+      id="format"
       :value="message.format"
       :options="formatOptions"
       placeholder="Select a format"
@@ -17,8 +18,9 @@
       @remove="(format) => setMessageFormat({ playlistIndex, messageIndex, format: null })"
     />
 
-    <span>Default Category</span>
+    <label for="defaultCat">Default Category</label>
     <multiselect
+      id="defaultCat"
       :options="categories"
       :value="selectedCategory"
       :custom-label="(opt) => `${opt.name} - ${opt.full_name}`"
@@ -33,8 +35,9 @@
       </template>
     </multiselect>
 
-    <span>SDG Goals</span>
+    <label for="sdgGoals">SDG Goals</label>
     <multiselect
+      id="sdgGoals"
       class="col-span-3"
       :options="goals"
       :value="selectedGoal"
@@ -49,8 +52,9 @@
       </template>
     </multiselect>
 
-    <span>SDG Target</span>
+    <label for="sdgTarget">SDG Target</label>
     <multiselect
+      id="sdgTarget"
       class="col-span-3"
       :options="targets"
       :value="selectedTarget"
@@ -65,8 +69,9 @@
       </template>
     </multiselect>
 
-    <span>Key Points</span>
+    <label for="keyPoints">Key Points</label>
     <textarea
+      id="keyPoints"
       cols="30"
       rows="3"
       class="col-start-2 col-end-5 p-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
@@ -75,8 +80,9 @@
     >
     </textarea>
 
-    <span>Variant</span>
+    <label for="variant">Variant</label>
     <v-input
+      name="variant"
       type="text"
       mx="mx-0 w-full"
       class="col-span-3"

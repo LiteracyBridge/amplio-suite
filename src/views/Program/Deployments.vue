@@ -10,57 +10,71 @@
       :onDiscardChanges="() => fetchDeployments(programCode)"
     />
 
-    <div class="grid grid-cols-deployments items-center justify-between">
-      <p class="col-start-2 text-sm text-gray-500 text-left">Start Date</p>
-      <p class="text-sm text-gray-500 text-left">End Date</p>
-      <p class="text-sm text-gray-500 text-left">Component</p>
-
-      <template v-for="(item, index) in deployments">
-        <p :key="`${item.deploymentname}-a`" class="pr-4 col-start-1">Deployment {{ index + 1 }}</p>
-
-        <v-input
-          :key="`${item.deploymentname}-b`"
-          type="date"
-          iconLeft="calendar-alt"
-          :aria-label="`Start of deployment ${item.deploymentname}`"
-          :value="item.startdate"
-          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'startdate', date: event.target.value })"
-          mx="mx-0"
-        />
-
-        <v-input
-          :key="`${item.deploymentname}-c`"
-          type="date"
-          iconLeft="calendar-alt"
-          :aria-label="`End of deployment ${item.deploymentname}`"
-          :value="item.enddate"
-          :min="item.startDate"
-          @change="(event) => setDeploymentDate({ id: item.deploymentname, what: 'enddate', date: event.target.value })"
-          mx="mx-0"
-        />
-
-        <select
-          :key="`${item.deploymentname}-d`"
-          :aria-label="`Components of the deployment ${item.deploymentname}`"
-          class="w-64 my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+    <table class="w-full table-auto">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 text-green border-b"># Deployment</th>
+          <th class="px-4 py-2 text-green border-b">Start Date</th>
+          <th class="px-4 py-2 text-green border-b">End Date</th>
+          <th class="px-4 py-2 text-green border-b">Components</th>
+          <th class="px-4 py-2 text-green border-b">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(deployment, index) in deployments"
+          :key="index"
+          :class="index % 2 === 0 ? '' : 'bg-gray-200'"
+          class="hover:bg-gray-400"
         >
-          <option value="">All</option>
-        </select>
-
-        <button
-          v-if="index === deployments.length - 1"
-          :key="`${item.deploymentname}-e`"
-          @click="handleOpenModal"
-          :aria-label="`Delete deployment ${item.deploymentname}`"
-        >
-          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-        </button>
-      </template>
-    </div>
+          <td class="px-4 py-2 border-b">
+            Deployment {{ index + 1 }}
+          </td>
+          <td class="px-4 py-2 border-b">
+            <v-input
+              type="date"
+              iconLeft="calendar-alt"
+              :aria-label="`Start of deployment ${deployment.deploymentname}`"
+              :value="deployment.startdate"
+              @change="setDeploymentDate({ id: deployment.deploymentname, what: 'startdate', date: $event.target.value })"
+              mx="mx-0 w-full"
+            />
+          </td>
+          <td class="px-4 py-2 border-b">
+            <v-input
+              type="date"
+              iconLeft="calendar-alt"
+              :aria-label="`End of deployment ${deployment.deploymentname}`"
+              :value="deployment.enddate"
+              :min="deployment.startDate"
+              @change="setDeploymentDate({ id: deployment.deploymentname, what: 'enddate', date: $event.target.value })"
+              mx="mx-0 w-full"
+            />
+          </td>
+          <td class="px-4 py-2 border-b">
+            <select
+              :aria-label="`Components of the deployment ${deployment.deploymentname}`"
+              class="w-full my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+            >
+              <option value="">All</option>
+            </select>
+          </td>
+          <td class="px-4 py-2 border-b">
+            <button
+              v-if="index === deployments.length - 1"
+              @click="handleOpenModal"
+              :aria-label="`Delete deployment ${deployment.deploymentname}`"
+            >
+              <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <span
       tabindex="0"
-      class="block p-2 text-left text-green font-bold cursor-pointer"
+      class="block p-2 text-left text-blue-hover-hunder"
       @click="createDeployment"
       @keyup.enter="createDeployment"
     >

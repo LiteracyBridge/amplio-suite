@@ -14,6 +14,7 @@
           :color="isDirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 cursor-not-allowed'"
           class="w-full mt-2"
           @click="onDiscardChanges"
+          :aria-disabled="isDirty ? 'false' : 'true'"
         />
 
         <v-button
@@ -21,6 +22,7 @@
           :color="isDirty ? 'bg-green' : 'bg-gray-400 cursor-not-allowed'"
           class="w-full mt-2"
           @click="onSaveChanges"
+          :aria-disabled="isDirty ? 'false' : 'true'"
         />
       </div>
     </div>
