@@ -33,7 +33,7 @@ import { mapState, mapActions } from 'vuex'
 
 import Steps from '@/components/RoadmapSteps'
 
-const generalOptions = [
+const generalOptions = (programCode) => [
   {
     title: 'Plan',
     img: 'plan.png',
@@ -46,8 +46,9 @@ const generalOptions = [
       },
       {
         id: 2,
+        type: 'router',
         label: 'Complete Program Specification',
-        link: '',
+        to: `/programs/${programCode}/settings`,
         completed: false
       }
     ]
@@ -216,7 +217,7 @@ export default {
   },
   data () {
     return {
-      generalOptions,
+      generalOptions: generalOptions(this.programCode),
       launchOptions,
     }
   },

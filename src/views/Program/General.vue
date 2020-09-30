@@ -27,7 +27,7 @@
 
         <span class="col-span-2" />
 
-        <label for="country">Country</label>
+        <label for="country">District/County</label>
         <multiselect
           id="country"
           :value="country"
@@ -37,7 +37,7 @@
           @select="setCountry"
         />
 
-        <label class="pl-4" for="region">Region</label>
+        <label class="pl-4" for="region">Region/State</label>
         <multiselect
           id="region"
           tag-placeholder="Add this as new region"
@@ -55,7 +55,7 @@
           </template>
         </multiselect>
 
-        <span>Languages</span>
+        <span id="langs">Languages</span>
         <LanguagesSelector
           :languages="this.languages"
           :onLanguageSelected="this.onLanguageSelected"

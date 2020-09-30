@@ -161,11 +161,11 @@ import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
 const columns = [
   {
-    label: 'Region',
+    label: 'Region/State',
     key: 'region'
   },
   {
-    label: 'District',
+    label: 'District/County',
     key: 'district'
   },
   {
