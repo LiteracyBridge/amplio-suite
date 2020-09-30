@@ -4,7 +4,8 @@
 
     <program-header
       title="General"
-      :canSave="isDirty"
+      :dirty="dirty"
+      :canSave="dirty"
       :description="description"
       :onSaveChanges="updateDeployment"
       :onDiscardChanges="() => fetchDeployments(programCode)"
@@ -116,8 +117,8 @@ export default {
   props: ['programCode'],
   computed: {
     ...mapState('deployments', {
-      status: state => state.status,
-      isDirty: state => state.dirty,
+      status: 'status',
+      dirty: 'dirty',
       deployments: state => state.items
     })
   },

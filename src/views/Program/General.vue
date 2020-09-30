@@ -4,7 +4,8 @@
 
     <program-header
       title="General"
-      :canSave="isDirty"
+      :dirty="dirty"
+      :canSave="dirty"
       :description="description"
       :onSaveChanges="updateProgram"
       :onDiscardChanges="() => fetchProgram(this.programCode)"
@@ -255,7 +256,7 @@ export default {
       return this.listeningModels
         .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     },
-    isDirty () {
+    dirty () {
       return this.$store.state.program.dirty || this.$store.state.programData.dirty
     },
   },

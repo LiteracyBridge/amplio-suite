@@ -11,7 +11,7 @@
       <div>
         <v-button
           text="Discard Changes"
-          :color="canSave ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 cursor-not-allowed'"
+          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 cursor-not-allowed'"
           class="w-full mt-2"
           @click="onDiscardChanges"
           :aria-disabled="isDirty ? 'false' : 'true'"
@@ -40,6 +40,10 @@ export default {
     },
     description: {
       type: String,
+      required: true
+    },
+    dirty: {
+      type: Boolean,
       required: true
     },
     canSave: {

@@ -5,6 +5,7 @@
     <program-header
       class="mb-2"
       title="Content"
+      :dirty="dirty"
       :canSave="canSave"
       :description="description"
       :onSaveChanges="onSaveChanges"
