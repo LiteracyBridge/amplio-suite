@@ -38,7 +38,7 @@
 
     <span
       tabindex="0"
-      class="block mt-4 pr-4 font-semibold text-green cursor-pointer hover:underline"
+      class="block mt-4 pr-4 text-blue-hover-hunder"
       @click="onAdd"
     >
       + Add {{ name }}

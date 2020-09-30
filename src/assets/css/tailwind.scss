@@ -9,6 +9,16 @@
   @apply text-label;
 }
 
+.text-blue-hover-hunder {
+  @apply text-blue;
+  @apply font-semibold;
+  @apply cursor-pointer;
+}
+
+.text-blue-hover-hunder:hover {
+  @apply underline;
+}
+
 .moving-item {
   @apply opacity-50 bg-gray-400 rounded border border-2 border-blue;
 }

@@ -46,7 +46,7 @@
          <span
           tabindex="0"
           @click="() => addNewMessage(playlistIndex)"
-          class="block mt-4 p-2 text-green font-bold cursor-pointer"
+          class="block mt-4 p-2 text-blue-hover-hunder"
         >
           + Add Message
         </span>
