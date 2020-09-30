@@ -90,9 +90,17 @@
     </portal>
 
     <portal to="modalFooter" v-if="showModal.edit">
-      <footer class="flex justify-end gap-4">
+      <footer v-if="recipient" class="flex justify-end gap-4">
         <v-button
+          v-if="recipient.id"
           @click="onClickDiscard"
+          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
+          textColor="text-black"
+          text="Discard"
+        />
+        <v-button
+          v-else
+          @click="onClickDiscardNewRecipient"
           :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
           textColor="text-black"
           text="Discard"
@@ -104,7 +112,7 @@
           text="Save"
         />
         <v-button
-          v-if="recipient.id !== null"
+          v-if="recipient.id"
           @click="onCloseModal"
           :color="dirty ? 'bg-gray-400 text-white' : 'bg-transparent border border-black'"
           textColor="text-black"
@@ -202,6 +210,8 @@ export default {
       return this.recipients[this.selectedRecipientIndex]
     },
     isFormFill () {
+      if (!this.recipient) return null
+
       const requiredFields = [
         'region', 'district', 'communityName',
         'language', 'listeningModel', 'numberTalkingBooks',
@@ -218,6 +228,8 @@ export default {
       return partial.every(Boolean)
     },
     invalidConstraint () {
+      if (!this.recipient) return null
+
       const options = this.recipients
         .map(recipient => `${recipient.communityName}-${recipient.groupName}-${recipient.agent}`)
       const option = `${this.recipient.communityName}-${this.recipient.groupName}-${this.recipient.agent}`
@@ -225,6 +237,8 @@ export default {
       return options.filter(opt => opt === option).length > 1
     },
     invalidBeneficiaries () {
+      if (!this.recipient) return null
+
       const values = Object.values(this.recipient.directBeneficiariesAdditional)
         .map(val => val > this.recipient.directBeneficiaries)
 
@@ -308,12 +322,16 @@ export default {
       else this.onOpenModal('mandatory', 'Required Fields')
     },
     onClickDiscard () {
-      if (!this.recipient.id) {
-        this.removeRecipient(this.selectedRecipientIndex)
-      } else {
-        this.discardRecipient(this.selectedRecipientIndex)
-      }
       this.onCloseModal()
+      this.discardRecipient(this.selectedRecipientIndex)
+    },
+    onClickDiscardNewRecipient () {
+      this.discardRecipient(this.selectedRecipientIndex)
+
+      this.showModal.edit = false
+      this.showModal.delete = false
+      this.showModal.mandatory = false
+      this.closeModal()
     },
     onOpenModal (modal, title) {
       this.showModal[modal] = true

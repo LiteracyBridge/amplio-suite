@@ -106,8 +106,8 @@ const copyRecipient = async ({ commit, state }, recipientIndex) => {
   commit('setDirty', true)
 }
 
-const removeRecipient = async ({ commit, state }, index) => {
-  const recipient = state.recipients[index]
+const removeRecipient = async ({ commit, state }, recipientIndex) => {
+  const recipient = state.recipients[recipientIndex]
 
   commit('requestInit')
 
@@ -124,6 +124,11 @@ const removeRecipient = async ({ commit, state }, index) => {
 
 const discardRecipient = async ({ commit, state }, recipientIndex) => {
   const recipient = state.recipients[recipientIndex]
+
+  if (!recipient.id) {
+    commit('removeRecipient', recipient)
+    return
+  }
 
   commit('requestInit')
 
