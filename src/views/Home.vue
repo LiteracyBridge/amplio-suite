@@ -32,28 +32,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import HomeBox from '@/components/HomeBox'
 
-import { fetchData } from '@/utils'
-
 export default {
-  components: {
-    HomeBox
-  },
-  methods: {
-    fetchAllData () {
-      fetchData(this.programCode)
-    }
-  },
-  watch: {
-    '$route': 'fetchAllData'
-  },
   props: ['programCode'],
-  created () {
-    this.fetchAllData()
-  },
   computed: {
     ...mapState('account', [
       'user'
@@ -62,16 +46,32 @@ export default {
       programName: 'programName',
       programStatus: state => state.status
     }),
-    programLoaded() {
+    programLoaded () {
       return !['loading', ''].includes(this.programStatus)
     },
-    linkTo() {
+    linkTo () {
       if (this.programName) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`
       }
     }
+  },
+  components: {
+    HomeBox
+  },
+  watch: {
+    '$route' () {
+      this.fetchProgram(this.programCode)
+    }
+  },
+  created () {
+    this.fetchProgram(this.programCode)
+  },
+  methods: {
+    ...mapActions('program', [
+      'fetchProgram'
+    ]),
   }
 }
 </script>

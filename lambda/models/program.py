@@ -15,9 +15,9 @@ time_period = ['weekly', 'bi_weekly', 'monthly', 'quarterly',
                'semi_annually', 'annually', 'not_applicable']
 
 beneficiaries_map = {
-    'male': 'Number Male',
-    'female': 'Number Female',
-    'youth': 'Number Youth'
+    'male': 'Number of Male',
+    'female': 'Number of Female',
+    'youth': 'Number of Youth'
 }
 
 class DeploymentFreq(Enum):

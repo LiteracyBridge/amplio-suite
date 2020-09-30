@@ -12,8 +12,17 @@
       Community, Group Name and Agent combination must be unique.
     </p>
 
-    <p class="mandatory-field">Region</p>
+    <p
+      v-if="invalidBeneficiaries"
+      class="col-span-4 text-center text-red-500"
+    >
+      <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
+      Invalid Direct Beneficiaries details
+    </p>
+
+    <label class="mandatory-field" for="region">Region/State</label>
     <multiselect
+      id="region"
       placeholder="Select a region"
       :value="recipient.region"
       :options="regionsOptions"
@@ -21,42 +30,16 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <p class="pl-4 mandatory-field">Number of Talking Books</p>
+    <label class="pl-4 mandatory-field" for="district">District/County</label>
     <v-input
-      type="number"
+      name="district"
+      type="text"
       mx="mx-0 w-full"
       :value="recipient.numberTalkingBooks"
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
-    <p class="mandatory-field">Language</p>
-    <languages-selector
-      :languages="recipient.language"
-      :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
-      :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
-      :multiple="false"
-    />
-
-    <p class="pl-4 mandatory-field">District/County</p>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.district"
-      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
-    />
-
-    <p class="mandatory-field">Listening Model</p>
-    <multiselect
-      :options="listeningModelsOptions"
-      :value="listeningModelSelected"
-      label="label"
-      trackBy="label"
-      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
-      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
-      placeholder="Select the listening model"
-    />
-
-    <p class="pl-4 mandatory-field">Community</p>
+    <p class="mandatory-field">Community</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -64,41 +47,13 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="">Group Name</p>
+    <p class="pl-4">Group Name</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
       :value="recipient.groupName"
       @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
-
-    <p class="pl-4 mandatory-field">Deployments</p>
-    <multiselect
-      :options="deployments"
-      :value="recipient.deployments"
-      :multiple="true"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      @input="(deployments) => setRecipientDeployments({ recipientIndex, deployments })"
-      placeholder="Select the deployments"
-    >
-      <template slot="option" slot-scope="props">
-        <div class="option__desc">
-          <span class="option__title">Deployment {{ props.option }}</span>
-        </div>
-      </template>
-    </multiselect>
-
-    <p>Support Entity</p>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.supportEntity"
-      @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
-    />
-
-    <span class="col-span-2" />
 
     <p>Agent</p>
     <v-input
@@ -116,8 +71,76 @@
       @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
     />
 
+    <p class="mandatory-field">Language</p>
+    <languages-selector
+      :options="languages"
+      :languages="recipient.language"
+      :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :multiple="false"
+    />
+
+    <span class="col-span-2" />
+
+    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
+    <v-input
+      name="numTalkingBooks"
+      type="number"
+      mx="mx-0 w-full"
+      :value="recipient.district"
+      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
+    />
+
+    <span class="col-span-2" />
+
+    <label class="mandatory-field" for="listeningModel">Listening Model</label>
+    <multiselect
+      id="listeningModel"
+      :options="listeningModelsOptions"
+      :value="listeningModelSelected"
+      label="label"
+      trackBy="label"
+      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      placeholder="Select the listening model"
+    />
+
+    <span class="col-span-2" />
+
+    <label class="pl-4 mandatory-field" for="deployments">Deployments</label>
+    <multiselect
+      id="deployments"
+      :options="deployments"
+      :value="recipient.deployments"
+      :multiple="true"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :preserve-search="true"
+      @input="(deployments) => setRecipientDeployments({ recipientIndex, deployments })"
+      placeholder="Select the deployments"
+    >
+      <template slot="option" slot-scope="props">
+        <div class="option__desc">
+          <span class="option__title">Deployment {{ props.option }}</span>
+        </div>
+      </template>
+    </multiselect>
+
+    <span class="col-span-2" />
+
+    <label for="supportEntity">Support Entity</label>
+    <v-input
+      name="supportEntity"
+      type="text"
+      mx="mx-0 w-full"
+      :value="recipient.supportEntity"
+      @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
+    />
+
+    <span class="col-span-2" />
+
     <div>
-      <span class="mandatory-field">Direct Beneficiaries</span>
+      <label class="mandatory-field" for="directBeneficiaries">Direct Beneficiaries</label>
       <v-tooltip
         text="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
         class="ml-2"
@@ -129,6 +152,7 @@
       </v-tooltip>
     </div>
     <v-input
+      name="directBeneficiaries"
       type="number"
       mx="mx-0 w-full"
       :value="recipient.directBeneficiaries"
@@ -175,8 +199,9 @@
       />
     </div>
 
-    <p>Indirect beneficiaries</p>
+    <label for="indirectBeneficiaries">Indirect beneficiaries</label>
     <v-input
+      name="indirectBeneficiaries"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.indirectBeneficiaries"
@@ -208,6 +233,10 @@ export default {
       type: Boolean,
       required: true
     },
+    invalidBeneficiaries: {
+      type: Boolean,
+      required: true
+    }
   },
   computed: {
     ...mapState('programData', {
@@ -223,10 +252,11 @@ export default {
     }),
     ...mapState('programData', [
       'region',
+      'languages',
       'listeningModels'
     ]),
     ...mapState('listeningModels', {
-      listeningModelsOptions: state => state.listeningModels
+      allListeningModels: state => state.listeningModels
     }),
     deployments () {
       return this.$store.state.deployments.items
@@ -251,11 +281,19 @@ export default {
           this.regionsOptions = [...this.region]
         }
       }
+    },
+    allListeningModels: {
+      immediate: true,
+      handler () {
+        this.listeningModelsOptions = this.allListeningModels
+          .filter(model => this.listeningModels.includes(model.id))
+      }
     }
   },
   data: () => ({
     regionsOptions: [],
     beneficiariesIsOpen: false,
+    listeningModelsOptions: [],
   }),
   mounted () {
     this.fetchListeningModels()

@@ -3,21 +3,13 @@
     <header>
       <h2 class="visually_hidden">Recipients</h2>
 
-      <div>
-        <font-awesome-icon icon="exclamation-circle" class="w-6 h-6 text-gray-500" />
-        <span class="mx-4 text-lg text-blue">
-          You can modify your recipients details on this page. All fields with an asterisk are required.
-          The optional fields are recommended for reporting.
-        </span>
-
-        <span
-          tabindex="0"
-          @click="onAddRecipient"
-          class="block pl-4 text-left text-green font-bold cursor-pointer"
-        >
-          + Add Recipient
-        </span>
-      </div>
+      <span
+        tabindex="0"
+        @click="onAddRecipient"
+        class="block pl-4 py-4 text-left font-semibold text-blue cursor-pointer hover:underline"
+      >
+        + Add Recipient
+      </span>
     </header>
 
     <table class="w-full table-auto">
@@ -85,25 +77,34 @@
         :recipientIndex="selectedRecipientIndex"
         :recipient="recipient"
         :invalidConstraint="invalidConstraint"
+        :invalidBeneficiaries="invalidBeneficiaries"
       />
     </portal>
 
     <portal to="modalFooter" v-if="showModal.edit">
-      <footer class="flex justify-end gap-4">
+      <footer v-if="recipient" class="flex justify-end gap-4">
         <v-button
+          v-if="recipient.id"
           @click="onClickDiscard"
           :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
           textColor="text-black"
           text="Discard"
         />
         <v-button
+          v-else
+          @click="onClickDiscardNewRecipient"
+          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
+          textColor="text-black"
+          text="Discard"
+        />
+        <v-button
           @click="onClickSave"
-          :color="!dirty || invalidConstraint ? 'bg-gray-400 text-white' : 'text-white bg-green'"
+          :color="!dirty || invalidConstraint || invalidBeneficiaries ? 'bg-gray-400 text-white' : 'text-white bg-green'"
           textColor="text-black"
           text="Save"
         />
         <v-button
-          v-if="recipient.id !== null"
+          v-if="recipient.id"
           @click="onCloseModal"
           :color="dirty ? 'bg-gray-400 text-white' : 'bg-transparent border border-black'"
           textColor="text-black"
@@ -142,7 +143,7 @@
     <portal to="modalFooter" v-if="showModal.mandatory">
       <footer class="flex flex-row-reverse justify-between pt-20">
         <v-button
-          @click="onCloseModal"
+          @click="onClickEdit(selectedRecipientIndex)"
           color="bg-transparent border border-black"
           textColor="text-black"
           text="Close"
@@ -160,11 +161,11 @@ import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
 const columns = [
   {
-    label: 'Region',
+    label: 'Region/State',
     key: 'region'
   },
   {
-    label: 'District',
+    label: 'District/County',
     key: 'district'
   },
   {
@@ -201,6 +202,8 @@ export default {
       return this.recipients[this.selectedRecipientIndex]
     },
     isFormFill () {
+      if (!this.recipient) return null
+
       const requiredFields = [
         'region', 'district', 'communityName',
         'language', 'listeningModel', 'numberTalkingBooks',
@@ -217,16 +220,37 @@ export default {
       return partial.every(Boolean)
     },
     invalidConstraint () {
+      if (!this.recipient) return null
+
       const options = this.recipients
         .map(recipient => `${recipient.communityName}-${recipient.groupName}-${recipient.agent}`)
       const option = `${this.recipient.communityName}-${this.recipient.groupName}-${this.recipient.agent}`
 
       return options.filter(opt => opt === option).length > 1
     },
+    invalidBeneficiaries () {
+      if (!this.recipient) return null
+
+      const values = Object.values(this.recipient.directBeneficiariesAdditional)
+        .map(val => val > this.recipient.directBeneficiaries)
+
+      const keys = ['households', 'groupSize']
+      keys.forEach(key => {
+        const partial = this.recipient[key] > this.recipient.directBeneficiaries
+        values.push(partial)
+      })
+
+      return values.some(Boolean)
+    },
   },
   components: {
     VButton,
     ProgramRecipientsForm,
+  },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchRecipients(this.programCode)
+    this.fetchDeployments(this.programCode)
   },
   data: () => ({
     selectedRecipientIndex: null,
@@ -241,6 +265,12 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('program', [
+      'fetchProgram',
+    ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',
@@ -284,18 +314,24 @@ export default {
       else this.onOpenModal('mandatory', 'Required Fields')
     },
     onClickDiscard () {
-      if (!this.recipient.id) {
-        this.onCloseModal()
-        this.removeRecipient(this.selectedRecipientIndex)
-      } else {
-        this.discardRecipient(this.selectedRecipientIndex)
-      }
+      this.onCloseModal()
+      this.discardRecipient(this.selectedRecipientIndex)
+    },
+    onClickDiscardNewRecipient () {
+      this.discardRecipient(this.selectedRecipientIndex)
+
+      this.showModal.edit = false
+      this.showModal.delete = false
+      this.showModal.mandatory = false
+      this.closeModal()
     },
     onOpenModal (modal, title) {
       this.showModal[modal] = true
       this.setModal(title)
     },
     onCloseModal () {
+      if (this.invalidBeneficiaries || this.invalidConstraint) return
+
       this.showModal.edit = false
       this.showModal.delete = false
       this.showModal.mandatory = false

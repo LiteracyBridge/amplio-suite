@@ -5,7 +5,7 @@
     :next="{ name: 'step-final' }"
     title="You are doing great!"
   >
-    <p id="lang" class="text-2xl font-semibold">
+    <p class="text-2xl font-semibold">
       What languages will you develop your content in?
     </p>
 

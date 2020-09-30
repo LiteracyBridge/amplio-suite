@@ -9,8 +9,8 @@ export const getDefaultState = () => ({
   deploymentName: "",
   playlists: [],
 
-  duplicatePlaylists: new Set(),
-  duplicateMessage: new Set(),
+  duplicatePlaylists: [],
+  duplicateMessage: [],
 })
 
 export default {

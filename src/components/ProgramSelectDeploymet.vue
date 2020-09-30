@@ -1,6 +1,8 @@
 <template>
   <h3 class="-mx-6 px-6 py-4 bg-gray-400 text-xl text-left border-2 border-gray-600">
+    <label class="visually_hidden" for="selectDeplo">Select the deployment</label>
     <select
+      id="selectDeplo"
       ref="selectDeplo"
       @change="changeDeployment($event.target.value)"
     >
@@ -40,12 +42,19 @@ export default {
     dirty: {
       type: Boolean,
       required: true
-    }
+    },
+    programCode: {
+      type: String,
+      required: true
+    },
   },
   computed: {
     ...mapState('deployments', {
       deployments: state => state.items
     }),
+  },
+  created () {
+    this.fetchDeployments(this.programCode)
   },
   watch: {
     deployments: {
@@ -67,6 +76,9 @@ export default {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
     ]),
     handleOpenModal () {
       this.isModalOpen = true

@@ -5,13 +5,15 @@
     <program-header
       class="mb-2"
       title="Content"
-      :isDirty="dirty"
+      :dirty="dirty"
+      :canSave="canSave"
       :description="description"
       :onSaveChanges="onSaveChanges"
       :onDiscardChanges="onDiscardChanges"
     />
 
     <program-select-deploymet
+      :programCode="programCode"
       :dirty="dirty"
       v-model="deployment"
     />
@@ -24,6 +26,7 @@
         :on-add="onAddPlaylist"
         :on-remove="removePlaylist"
         :selected-index="playlistIndex"
+        :titles="duplicatePlaylists"
       />
 
       <div class="text-left">
@@ -44,8 +47,8 @@
 
          <span
           tabindex="0"
-          @click="addNewMessage"
-          class="block mt-4 p-2 text-green font-bold cursor-pointer"
+          @click="() => addNewMessage(playlistIndex)"
+          class="block mt-4 p-2 text-blue-hover-hunder"
         >
           + Add Message
         </span>
@@ -54,7 +57,7 @@
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="showModal">
-      <p class="text-xl">Please complete all of the mandatory fields.</p>
+      <p class="text-xl">{{ modalBody }}</p>
     </portal>
 
     <portal to="modalFooter" v-if="showModal">
@@ -82,10 +85,13 @@ import PlaylistHeader from '@/components/ContentPlaylistHeader'
 import PlaylistMessages from '@/components/ContentPlaylistMessages'
 
 export default {
+  props: ['programCode'],
   computed: {
     ...mapState('content', [
       'status',
       'dirty',
+      'duplicatePlaylists',
+      'duplicateMessage'
     ]),
     playlists: {
       get () {
@@ -97,6 +103,9 @@ export default {
     },
     playlist () {
       return this.playlists[this.playlistIndex]
+    },
+    canSave () {
+      return this.dirty && this.duplicatePlaylists.length === 0 && this.duplicateMessage.length === 0
     },
     isFormFill () {
       const requiredFields = [
@@ -118,8 +127,15 @@ export default {
   },
   watch: {
     deployment () {
-      this.fetchContent(this.deployment.deploymentname)
+      this.fetchContent({
+        programCode: this.programCode,
+        deployment: this.deployment.deploymentname
+      })
     }
+  },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchContent({ programCode: this.programCode })
   },
   components: {
     VButton,
@@ -136,16 +152,17 @@ export default {
       deployment: {},
       playlistIndex: 0,
 
-      showModal: false
+      showModal: false,
+      modalBody: '',
     }
-  },
-  mounted (){
-    this.fetchCategories()
   },
   methods: {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('program', [
+      'fetchProgram',
     ]),
     ...mapActions('content', [
       'fetchContent',
@@ -153,21 +170,28 @@ export default {
       'setPlaylist',
       'addPlaylist',
       'removePlaylist',
-      'addMessage',
-    ]),
-    ...mapActions('categories', [
-      'fetchCategories'
+      'addNewMessage',
     ]),
     onSaveChanges () {
-      if (this.isFormFill) this.updateContent()
-      else this.onOpenModal()
+      if (this.duplicatePlaylists.length !== 0) {
+        this.modalBody = 'Please rename the duplicate playlist title for can save.'
+        this.onOpenModal('Duplicated Playlist Title')
+      } else if (this.duplicateMessage.length !== 0) {
+        this.modalBody = 'Please rename the duplicate message title for can save.'
+        this.onOpenModal('Duplicated Message Title')
+      } else if (this.isFormFill) {
+        this.updateContent(this.deployment.deployment)
+      } else {
+        this.modalBody = 'Please complete all of the mandatory fields.'
+        this.onOpenModal('Required Fields')
+      }
     },
     onDiscardChanges () {
-      this.fetchContent()
+      this.fetchContent({ programCode: this.programCode, deployment: this.deployment.deployment})
     },
-    onOpenModal () {
+    onOpenModal (title) {
       this.showModal = true
-      this.setModal('Required Fields')
+      this.setModal(title)
     },
     onCloseModal () {
       this.showModal = false
@@ -175,14 +199,7 @@ export default {
     },
     async onAddPlaylist () {
       await this.addPlaylist(this.deployment.deploymentname)
-      this.playlistIndex ++
-    },
-    addNewMessage() {
-      const payload = {
-        deployment: this.deployment.deployment,
-        playlist_index: this.playlistIndex
-      }
-      this.addMessage(payload)
+      this.playlistIndex = this.playlists.length - 1
     },
   }
 }

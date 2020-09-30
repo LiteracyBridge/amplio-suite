@@ -1,10 +1,11 @@
 <template>
   <section class="relative p-6 pt-0">
-    <loading v-if="isRequestLoading" class="-ml-6 rounded-b-lg" />
+    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       title="General"
-      :isDirty="isDirty"
+      :dirty="dirty"
+      :canSave="dirty"
       :description="description"
       :onSaveChanges="updateProgram"
       :onDiscardChanges="() => fetchProgram(this.programCode)"
@@ -12,11 +13,11 @@
 
     <div class="min-h-200-px my-5 text-center">
       <div class="grid grid-cols-content-message row-gap-2 items-center text-left">
-        <span id="programName">Program</span>
+        <label for="programName">Program Name</label>
         <v-input
-          type="text"
           ref="programName"
-          aria-labelledby="programName"
+          name="programName"
+          type="text"
           placeholder="Enter Program Name"
           :value="programName"
           @input="(event) => setProgramName(event.target.value)"
@@ -26,16 +27,19 @@
 
         <span class="col-span-2" />
 
-        <span>Country</span>
+        <label for="country">District/County</label>
         <multiselect
+          id="country"
           :value="country"
           :options="countries"
           placeholder="Select one country"
+          aria-label="Select one country"
           @select="setCountry"
         />
 
-        <span class="pl-4">Region</span>
+        <label class="pl-4" for="region">Region/State</label>
         <multiselect
+          id="region"
           tag-placeholder="Add this as new region"
           placeholder="Search or add a region"
           :value="region"
@@ -58,8 +62,9 @@
           :onLanguageDeleted="this.onLanguageDeleted"
         />
 
-        <span class="pl-4">Listening Model</span>
+        <label class="pl-4" for="listeningModel">Listening Model</label>
         <multiselect
+          id="listeningModel"
           :options="listeningModelsOptions"
           :value="listeningModelsSelected"
           :multiple="true"
@@ -73,8 +78,9 @@
           placeholder="Select the listening model"
         />
 
-        <span>Partner</span>
+        <label for="partner">Partner</label>
         <v-input
+          name="partner"
           type="text"
           :value="partner"
           mx="mx-0"
@@ -82,8 +88,9 @@
           @input="setPartner($event.target.value)"
         />
 
-        <span class="pl-4">Affiliate</span>
+        <label class="pl-4" for="affiliate">Affiliate</label>
         <v-input
+          name="affiliate"
           type="text"
           :value="affiliate"
           mx="mx-0"
@@ -97,7 +104,7 @@
         <span
           tabindex="0"
           :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-          class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+          class="w-48 ml-2 p-2 text-blue-hover-hunder"
           @click="beneficiariesIsOpen = !beneficiariesIsOpen"
         >
           {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
@@ -172,7 +179,7 @@
         <div class="col-span-4">
           <span
             tabindex="0"
-            class="block mt-4 pr-4 text-green cursor-pointer hover:underline hover:font-semibold"
+            class="block mt-4 pr-4 text-blue-hover-hunder"
             @click="addDirectBeneficiariesAdditionalLabel"
           >
             + Add Optional Field
@@ -219,9 +226,10 @@ import ProgramHeader from '@/components/ProgramHeader'
 import countries from '@/data/countries.json'
 
 export default {
+  props: ['programCode'],
   computed: {
     ...mapState('program', [
-      'programCode',
+      'status',
       'programName'
     ]),
     ...mapState('programData', [
@@ -248,18 +256,9 @@ export default {
       return this.listeningModels
         .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
     },
-    isDirty () {
+    dirty () {
       return this.$store.state.program.dirty || this.$store.state.programData.dirty
     },
-    isRequestLoading () {
-      return [
-        this.$store.state.program.status,
-        this.$store.state.programData.status,
-        this.$store.state.recipients.status,
-        this.$store.state.languages.status,
-        this.$store.state.listeningModels.status,
-      ].every(status => status === 'loading')
-    }
   },
   components: {
     VButton,
@@ -269,6 +268,19 @@ export default {
     LanguagesSelector,
     Loading,
     ProgramHeader,
+  },
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchRecipients(this.programCode)
+    this.fetchListeningModels()
+  },
+  watch: {
+    region: {
+      immediate: true,
+      handler () {
+        this.regionOptions = [...this.region] // Populete the options
+      }
+    },
   },
   data () {
     return {
@@ -280,17 +292,10 @@ export default {
       beneficiariesIsOpen: false
     }
   },
-  mounted () {
-    this.regionOptions = [...this.region] // Populete the options
-    this.fetchListeningModels()
-  },
   methods: {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
-    ]),
-    ...mapActions('listeningModels', [
-      'fetchListeningModels'
     ]),
     ...mapActions('program', [
       'fetchProgram',
@@ -310,6 +315,12 @@ export default {
       'setDirectBeneficiariesAdditionalLabel',
       'addDirectBeneficiariesAdditionalLabel',
       'deleteDirectBeneficiariesAdditionalLabel',
+    ]),
+    ...mapActions('recipients', [
+      'fetchRecipients',
+    ]),
+    ...mapActions('listeningModels', [
+      'fetchListeningModels',
     ]),
     addTag (region) {
       this.regionOptions.push(region)

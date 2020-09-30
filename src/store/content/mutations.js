@@ -32,12 +32,8 @@ const setPlaylist = (state, payload) => {
   state.playlists = payload
 }
 
-const addDuplicatePlaylists = (state, playlistIndex) => {
-  state.duplicatePlaylists.add(playlistIndex)
-}
-
-const removeDuplicatePlaylists = (state, playlistIndex) => {
-  state.duplicatePlaylists.delete(playlistIndex)
+const setDuplicatePlaylists = (state, payload) => {
+  state.duplicatePlaylists = payload
 }
 
 const setPlaylistTitle = (state, payload) => {
@@ -59,12 +55,14 @@ const setMessages = (state, payload) => {
   state.playlists[playlistIndex].messages = messages
 }
 
-const addDuplicateMessage = (state, messageIndex) => {
-  state.duplicateMessage.add(messageIndex)
+const addNewMessage = (state, payload) => {
+  const { playlistIndex, message } = payload
+  const actualMessages = state.playlists[playlistIndex].messages
+  state.playlists[playlistIndex].messages = [...actualMessages, message]
 }
 
-const removeDuplicateMessage = (state, messageIndex) => {
-  state.duplicateMessage.delete(messageIndex)
+const setDuplicateMessage = (state, payload) => {
+  state.duplicateMessage = payload
 }
 
 const setMessageTitle = (state, payload) => {
@@ -72,9 +70,17 @@ const setMessageTitle = (state, payload) => {
   state.playlists[playlistIndex].messages[messageIndex].title = title
 }
 
-const setMessageLang = (state, payload) => {
+const addMessageLanguage = (state, payload) => {
   const { playlistIndex, messageIndex, lang } = payload
-  state.playlists[playlistIndex].messages[messageIndex].language = lang
+  const languages = state.playlists[playlistIndex].messages[messageIndex].languages
+  state.playlists[playlistIndex].messages[messageIndex].languages = [...languages, lang]
+}
+
+const removeMessageLanguage = (state, payload) => {
+  const { playlistIndex, messageIndex, lang } = payload
+  let languages = state.playlists[playlistIndex].messages[messageIndex].languages
+  languages = languages.filter(language => language != lang)
+  state.playlists[playlistIndex].messages[messageIndex].languages = languages
 }
 
 const setMessageCategory = (state, payload) => {
@@ -121,17 +127,17 @@ export default {
   setContent,
 
   setPlaylist,
-  addDuplicatePlaylists,
-  removeDuplicatePlaylists,
+  setDuplicatePlaylists,
   setPlaylistTitle,
   setPlaylistAudience,
   removePlaylist,
 
   setMessages,
-  addDuplicateMessage,
-  removeDuplicateMessage,
+  addNewMessage,
+  setDuplicateMessage,
   setMessageTitle,
-  setMessageLang,
+  addMessageLanguage,
+  removeMessageLanguage,
   setMessageCategory,
   setMessageVariant,
   setMessageFormat,

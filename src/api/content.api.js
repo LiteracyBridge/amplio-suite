@@ -10,7 +10,7 @@ const getContent = async (programCode, deployment) => {
 
     return {
       programCode,
-      deployment,
+      deployment: response.data.deployment,
       playlists: response.data.content
     }
   } catch (e) {
@@ -22,7 +22,7 @@ const putContent = async (body) => httpClient().put(END_POINT, body)
 
 const contentAddPlaylist = async (body) => httpClient().post('playlist', body)
 
-const contentAddPMessage = async (body) => httpClient().post('message', body)
+const contentAddPMessage = async (body) => await httpClient().post('message', body)
 
 export {
   getContent,

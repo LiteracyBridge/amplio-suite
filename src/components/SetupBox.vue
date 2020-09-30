@@ -17,12 +17,14 @@
           type="submit"
           :aria-disabled="isFill ? 'false' : 'true'"
           :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
+          class="text-xl font-bold"
           @click="handleNext"
           />
 
         <Button
           v-if="prev !== ''"
           text="PREV"
+          class="text-xl font-bold"
           @click="handlePrev"
         />
       </footer>

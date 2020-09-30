@@ -6,17 +6,13 @@ import {
 } from '@/api/content.api'
 
 
-const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
-  const { programCode, programName } = rootState.program
-  if (!programName) return
-  if (!deployment && state.programCode === programCode && !state.dirty) return
+const fetchContent = async ({ state, commit }, payload) => {
+  const { programCode, deployment } = payload
 
-  commit('resetState')
+  if (state.status === 'loading') return
+  if (state.programCode === programCode && !state.dirty && state.deployment === deployment) return
+
   commit('requestInit')
-
-  if (!deployment) {
-    deployment = rootState.deployments.items[0].deploymentname
-  }
 
   try {
     const response = await getContent(programCode, deployment)
@@ -29,12 +25,11 @@ const fetchContent = async ({ state, rootState, commit }, deployment=null) => {
 
 const updateContent = async ({ state, commit }, deployment) => {
   const { programCode, playlists } = state
-  const deployment_id = deployment.deployment
 
   commit('requestInit')
 
   try {
-    await putContent({ program_code: programCode, deployment_id, content: playlists })
+    await putContent({ program_code: programCode, deployment, content: playlists })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -44,14 +39,15 @@ const updateContent = async ({ state, commit }, deployment) => {
 }
 
 const addPlaylist = async ({ state, commit, dispatch }, deployment) => {
-  const { programCode } = state
+  const { programCode, deploymentName } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
     await contentAddPlaylist({ program_code: programCode, deployment})
-    await dispatch('fetchContent')
+    commit('requestSuccess')
+    await dispatch('fetchContent', { programCode, deployment: deploymentName })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -69,15 +65,12 @@ const setPlaylist = async ({ commit }, payload) => {
 }
 
 const setPlaylistTitle = ({ commit, state }, payload) => {
-  const titles = state.playlists.map(ele => ele.title)
-  if (titles.includes(payload.title)) {
-    commit('addDuplicatePlaylists', payload.playlistIndex)
-  } else {
-    commit('removeDuplicatePlaylists', payload.playlistIndex)
-  }
-
   commit('setPlaylistTitle', payload)
   commit('setDirty', true)
+
+  const titles = state.playlists.map(playlist => playlist.title)
+  const duplicate = titles.filter((title => v => title.has(v) || !title.add(v))(new Set))
+  commit('setDuplicatePlaylists', duplicate)
 }
 
 const setPlaylistAudience = ({ commit }, payload)=> {
@@ -90,15 +83,16 @@ const setMessages = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const addMessage = async ({ state, commit, dispatch }, payload) => {
-  const { programCode } = state
+const addNewMessage = async ({ state, commit }, playlistIndex) => {
+  const { programCode, deploymentName } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await contentAddPMessage({ program_code: programCode, ...payload })
-    await dispatch('fetchContent')
+    const response = await contentAddPMessage({ program_code: programCode, deployment: deploymentName, playlist_index: playlistIndex })
+    commit('requestSuccess')
+    commit('addNewMessage', { playlistIndex, message: response.data.message })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -111,21 +105,23 @@ const removeMessage = async ({ commit }, payload) => {
 }
 
 const setMessageTitle = ({ commit, state }, payload) => {
-  const { playlistIndex, messageIndex, title } = payload
-  const titles = state.playlists[playlistIndex].messages.map(ele => ele.title)
-
-  if (titles.includes(title)) {
-    commit('addDuplicateMessage', messageIndex)
-  } else {
-    commit('removeDuplicateMessage', messageIndex)
-  }
+  const { playlistIndex } = payload
 
   commit('setMessageTitle', payload)
   commit('setDirty', true)
+
+  const titles = state.playlists[playlistIndex].messages.map(message => message.title)
+  const duplicate = titles.filter((title => v => title.has(v) || !title.add(v))(new Set))
+  commit('setDuplicateMessage', duplicate)
 }
 
-const setMessageLang = ({ commit }, payload) => {
-  commit('setMessageLang', payload)
+const addMessageLanguage = ({ commit }, payload) => {
+  commit('addMessageLanguage', payload)
+  commit('setDirty', true)
+}
+
+const removeMessageLanguage = ({ commit }, payload) => {
+  commit('removeMessageLanguage', payload)
   commit('setDirty', true)
 }
 
@@ -171,11 +167,12 @@ export default {
   setPlaylistAudience,
 
   setMessages,
-  addMessage,
+  addNewMessage,
   removeMessage,
   setMessageTitle,
   setMessageVariant,
-  setMessageLang,
+  addMessageLanguage,
+  removeMessageLanguage,
   setMessageCategory,
   setMessageFormat,
   setMessageSDGGoal,

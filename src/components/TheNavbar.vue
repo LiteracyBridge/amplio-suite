@@ -23,12 +23,12 @@
       <nav aria-label="Primary" :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
         <div class="inline-flex">
           <DropDown :options="options" class="hidden md:block">
-            <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
+            <span class="block px-3 text-xl text-white font-bold rounded hover:text-gray-500">Products</span>
           </DropDown>
 
           <!-- On mobile, hidden the dropdown and show this -->
           <div class="md:hidden">
-            <span class="block px-3 text-xl text-white rounded hover:text-gray-500">Products</span>
+            <span class="block px-3 text-xl text-white font-bold rounded hover:text-gray-500">Products</span>
             <div class="ml-8">
               <a
                 v-for="(opt, index) in options"
@@ -45,19 +45,19 @@
 
           <router-link
             :to="{ name: 'roadmap', params: { programCode } }"
-            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
           >
             Roadmap
           </router-link>
 
 
-          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500">
+          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500">
             Content Library
           </a>
           <a
             target="_blank"
             href="https://forms.gle/DNC5uT9iZFrxCyLH8"
-            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded hover:text-gray-500"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
           >
             Feedback
           </a>
@@ -83,7 +83,7 @@
 
           <span
             tabindex="0"
-            class="block px-3 pt-3 md:pt-0 text-xl text-white rounded cursor-pointer hover:text-gray-500"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded cursor-pointer hover:text-gray-500"
             @click="handleLogout"
             @keyup.enter="handleLogout"
           >

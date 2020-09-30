@@ -1,7 +1,12 @@
 <template>
   <div>
+    <label class="visually_hidden" for="language_input">
+      Select { multiple ? 'multiple' : 'one'} language
+    </label>
+
     <multiselect
       v-if="supportedLanguages.length > 0"
+      id="language_input"
       ref="languages"
       :value="selectedLanguages"
       :options="filterLanguages"
@@ -41,6 +46,10 @@ export default {
     Multiselect
   },
   props: {
+    options: {
+      type: Array,
+      default: null
+    },
     languages: {
       required: true,
       type: [Array, String],
@@ -86,18 +95,28 @@ export default {
     supportedLanguages: {
       immediate: true,
       handler () {
+        if (this.supportedLanguages.length === 0) return
+
         if (this.autofocus && this.supportedLanguages.length > 0) {
           this.$nextTick(() => {
             this.$refs.languages.$refs.search.focus()
           });
         }
 
-        this.filterLanguages = [...this.supportedLanguages]
+        if (this.options) {
+          this.allOptions = this.options.map(langCode => this.supportedLanguages.find(lang => lang.code === langCode))
+          this.filterLanguages = [...this.allOptions]
+        }
+        else  {
+          this.allOptions = [...this.supportedLanguages]
+          this.filterLanguages = [...this.supportedLanguages]
+        }
       }
     }
   },
   data () {
     return {
+      allOptions: [],
       filterLanguages: []
     }
   },
@@ -106,7 +125,9 @@ export default {
       'fetchLanguages',
     ]),
     onSearch (query) {
-      this.filterLanguages = this.supportedLanguages
+      query = query.trim().toLowerCase()
+
+      this.filterLanguages = this.allOptions
         .filter(lang => lang.name.toLowerCase().includes(query))
     }
   },

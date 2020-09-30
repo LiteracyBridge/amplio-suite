@@ -3,11 +3,25 @@
     <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
-      <v-button
-        :color="anyTabDirty ? 'bg-gray-400' : 'bg-blue'"
-        text="Submit"
-        @click="onSubmit"
-      />
+      <div>
+        <v-button
+          text="Submit"
+          :color="canDeploy ? 'bg-blue' : 'bg-gray-400'"
+          :aria-disabled="canDeploy ? 'false' : 'true'"
+          @click="onSubmit"
+        />
+        <v-tooltip
+          v-if="!canDeploy"
+          text="You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
+          position="right"
+          class="ml-2"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
+      </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-box">
@@ -50,20 +64,26 @@
 import { mapState, mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 import VSnackbars from '@/components/VSnackbars'
-
-import { fetchData } from '@/utils'
 
 export default {
   name: 'Program',
   props: ['programCode'],
   components: {
     VButton,
+    VTooltip,
     VSnackbars,
   },
   computed: {
     ...mapState('program', [
       'programName',
+    ]),
+    ...mapState('content', [
+      'playlists',
+    ]),
+    ...mapState('recipients', [
+      'recipients',
     ]),
     anyTabDirty () {
       const partial = [
@@ -76,9 +96,17 @@ export default {
 
       return partial.some(Boolean)
     },
-  },
-  watch: {
-    '$route': 'fetchAllData'
+    canDeploy () {
+      const hasOneMessage = (this.playlists
+        .map(playlist => playlist.messages.map(message => message.title))
+        .flat()
+        .filter(title => !title.startsWith('Message Title'))
+      ).length > 0
+
+      const hasOneRecipient = this.recipients.length > 0
+
+      return hasOneMessage && hasOneRecipient && !this.anyTabDirty
+    }
   },
   data () {
     return {
@@ -90,7 +118,8 @@ export default {
     }
   },
   created () {
-    this.fetchAllData()
+    this.fetchContent({ programCode: this.programCode })
+    this.fetchRecipients(this.programCode)
   },
   beforeRouteUpdate (to, from, next) {
     const sTo = to.path.split('/')
@@ -126,7 +155,15 @@ export default {
     ...mapActions('program', [
       'deployProgram',
     ]),
+    ...mapActions('content', [
+      'fetchContent',
+    ]),
+    ...mapActions('recipients', [
+      'fetchRecipients',
+    ]),
     async onSubmit () {
+      if (!this.canDeploy) return
+
       const result = await this.deployProgram()
       if (result === 'success') this.showSnackbar = true
     },
@@ -138,9 +175,6 @@ export default {
       this.isModalOpen = false
       this.closeModal()
     },
-    fetchAllData () {
-      fetchData(this.programCode)
-    }
   },
 }
 </script>

@@ -1,15 +1,16 @@
 <template>
-  <div
-    @mouseover="show = true"
-    @mouseleave="show = false"
-    class="relative inline-block text-center border-b border-black border-dotted cursor-pointer"
-  >
-    <slot />
+  <div class="relative inline-block text-center border-b border-black border-dotted cursor-pointer">
+    <div
+      @mouseover="show = true"
+      @mouseleave="show = false"
+    >
+      <slot />
+    </div>
 
     <span
-      :class="[show ? 'opacity-100' : 'opacity-0', position === 'left' ? '-ml-4' : '']"
+      :class="[show ? 'visible' : 'invisible', position === 'left' ? '-ml-4' : '']"
       class="absolute z-10 p-2 text-sm text-white text-center bg-gray-600 rounded-lg"
-      style="width: 200px; bottom: 100%; transition: opacity .6s;"
+      style="width: 300px; bottom: 100%;"
       :style="`transform: ${translate}`"
     >
       {{ text }}

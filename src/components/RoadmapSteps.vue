@@ -5,7 +5,14 @@
       <h3 class="text-xl font-bold">{{ opt.title }}</h3>
       <div>
         <div v-for="step in opt.steps" :key="step.label" class="flex justify-between my-1">
-          <a href="#" target="_blank" class="text-blue text-lg underline">{{ step.label }}</a>
+          <router-link
+            v-if="step.type === 'router'"
+            :to="step.to"
+            class="text-blue text-lg underline"
+          >
+            {{ step.label }}
+          </router-link>
+          <a v-else href="#" target="_blank" class="text-blue text-lg underline">{{ step.label }}</a>
           <div
             class="px-1 border border-black w-6 h-6"
             @click="onClick(step.id)"

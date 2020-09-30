@@ -4,6 +4,21 @@
 @import './a11y';
 @import './transition';
 
+// For vue-multiselect
+.multiselect__tags .multiselect__placeholder {
+  @apply text-label;
+}
+
+.text-blue-hover-hunder {
+  @apply text-blue;
+  @apply font-semibold;
+  @apply cursor-pointer;
+}
+
+.text-blue-hover-hunder:hover {
+  @apply underline;
+}
+
 .moving-item {
   @apply opacity-50 bg-gray-400 rounded border border-2 border-blue;
 }

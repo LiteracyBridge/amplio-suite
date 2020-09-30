@@ -6,9 +6,8 @@ import {
 import { postProgramNewDeployment } from '@/api/programs.api'
 
 
-const fetchDeployments = async ({ state, rootState, commit }) => {
-  const { programCode, programName } = rootState.program
-  if (!programName) return
+const fetchDeployments = async ({ state, commit }, programCode) => {
+  if (state.status === 'loading') return
   if (state.programCode === programCode && !state.dirty) return
 
   commit('requestInit')
@@ -30,7 +29,8 @@ const createDeployment = async ({ state, commit, dispatch }) => {
 
   try {
     await postProgramNewDeployment({ program_code: programCode })
-    await dispatch('fetchDeployments')
+    commit('requestSuccess')
+    await dispatch('fetchDeployments', programCode)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -61,7 +61,8 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
 
   try {
     await deleteDeployment({ program_code: programCode, deployment })
-    await dispatch('fetchDeployments')
+    commit('requestSuccess')
+    await dispatch('fetchDeployments', programCode)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })

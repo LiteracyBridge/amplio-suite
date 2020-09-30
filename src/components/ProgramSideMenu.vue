@@ -25,6 +25,17 @@
         >
           {{ item.title }}
         </span>
+        <v-tooltip
+          v-if="titles.includes(item.title)"
+          text="Duplicate playlist title"
+          position="center"
+          class="ml-2"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
 
         <button
           :aria-label="`Delete ${name} ${item.title}`"
@@ -38,7 +49,7 @@
 
     <span
       tabindex="0"
-      class="block mt-4 pr-4 font-semibold text-green cursor-pointer hover:underline"
+      class="block mt-4 pr-4 text-blue-hover-hunder"
       @click="onAdd"
     >
       + Add {{ name }}
@@ -74,6 +85,7 @@ import Draggable from 'vuedraggable'
 import { mapActions } from 'vuex'
 
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 
 export default {
   props: {
@@ -101,10 +113,15 @@ export default {
       type: Number,
       required: true
     },
+    titles: {
+      type: Array,
+      required: true
+    }
   },
   components: {
     Draggable,
     VButton,
+    VTooltip,
   },
   data: () => ({
     target: {},

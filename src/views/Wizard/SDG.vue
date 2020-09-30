@@ -28,11 +28,11 @@
       >
         <img
           :src="goal.imgUrl"
-          :alt="goal.label"
+          :alt="goal.goal"
           :class="goals.includes(goal.section) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
         >
-        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.label }}</p>
+        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.goal }}</p>
         <Check
           v-if="goals.includes(goal.section)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"

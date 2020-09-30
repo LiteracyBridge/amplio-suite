@@ -31,6 +31,7 @@ const fetchProgram = async ({ commit, state, rootState }, programCode) => {
   commit('resetState')
   commit('requestInit')
   commit('setProgramCode', programCode)
+  commit('wizard/resetState', null, { root: true })
   commit('programData/resetState', null, { root: true })
 
   try {
@@ -48,8 +49,6 @@ const createProgram = async ({ state, rootState, commit }) => {
 
   try {
     await postProgram(generateProgramData(state, rootState))
-    commit('setDirty', false)
-    commit('programData/setDirty', false, { root: true })
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
