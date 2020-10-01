@@ -73,8 +73,8 @@ def get_secret(secret_name, region_name='us-west-2'):
 
 def get_db_url():
     if os.getenv('ENV') == 'AWS':
-        config = get_secret('stg/postgres')
-        DATABASE_URL = f"postgresql+psycopg2://{config['username']}:{config['password']}@{config['host']}:{config['port']}/ampliosuite"
+        config = get_secret('Suite.Lambda')
+        DATABASE_URL = f"postgresql+psycopg2://{config['username']}:{config['password']}@{config['host']}:{config['port']}/{config['suite_dbname']}"
     else:
         DATABASE_URL = os.getenv('DATABASE_URL')
 
@@ -121,8 +121,11 @@ def validate_user_access(event, model):
     return model
 
 def save_to_csv(text, file_path):
-    # FIXME this must be a env var
-    bucket = 'stg-amplio-progspecs'
+    bucket_info = get_secret('Suite.Lambda')
+    if not bucket_info or "deploy_s3_bucket" not in bucket_info:
+        raise Exception('You must create a "Suite.Lambda" secret in AWS Secrets Manager with a "deploy_s3_bucket" key for the CSV exports to work')
+    
+    bucket = bucket_info['deploy_s3_bucket']
 
     client = boto3.client('s3')
     client.put_object(Body=text, Bucket=bucket, Key=file_path)
