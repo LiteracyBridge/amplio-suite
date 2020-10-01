@@ -2,7 +2,7 @@ import random
 from string import ascii_lowercase, digits
 
 from utils import create_db_session, validate_user_access
-from decorators import migration, validate_keys
+from decorators import validate_keys
 from models.program import Program
 from models.recipient import Recipient
 
@@ -24,7 +24,6 @@ keys = [
     'group_size',
 ]
 
-@migration
 @validate_keys(keys)
 def lambda_handler(event, context):
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))

@@ -1,13 +1,12 @@
 import json
 
 from utils import create_db_session, validate_user_access
-from decorators import migration, validate_keys
+from decorators import validate_keys
 from models.project import Project
 from models.deployment import Deployment
 
 session = create_db_session()
 
-@migration
 @validate_keys(['project_id'])
 def lambda_handler(event, context):
     try:
