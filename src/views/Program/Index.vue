@@ -97,6 +97,8 @@ export default {
       return partial.some(Boolean)
     },
     canDeploy () {
+      if (!this.playlists) return false
+
       const hasOneMessage = (this.playlists
         .map(playlist => playlist.messages.map(message => message.title))
         .flat()
@@ -118,7 +120,7 @@ export default {
     }
   },
   created () {
-    this.fetchContent({ programCode: this.programCode })
+    // this.fetchContent({ programCode: this.programCode })
     this.fetchRecipients(this.programCode)
   },
   beforeRouteUpdate (to, from, next) {

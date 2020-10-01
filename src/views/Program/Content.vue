@@ -1,6 +1,6 @@
 <template>
   <section class="relative p-6 pt-0">
-    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
+    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       class="mb-2"
@@ -20,6 +20,7 @@
 
     <div class="grid" style="grid-template-columns: 1fr 4fr;">
       <program-side-menu
+        v-if="playlists"
         name="playlist"
         v-model="playlists"
         :on-select="(index) => { this.playlistIndex = index }"
@@ -102,7 +103,8 @@ export default {
       }
     },
     playlist () {
-      return this.playlists[this.playlistIndex]
+      if (!this.playlists) return null
+      else return this.playlists[this.playlistIndex]
     },
     canSave () {
       return this.dirty && this.duplicatePlaylists.length === 0 && this.duplicateMessage.length === 0
@@ -127,15 +129,16 @@ export default {
   },
   watch: {
     deployment () {
-      this.fetchContent({
-        programCode: this.programCode,
-        deployment: this.deployment.deploymentname
-      })
+      if (Object.keys(this.deployment).length > 0) {
+        this.fetchContent({
+          programCode: this.programCode,
+          deployment: this.deployment.deploymentname
+        })
+      }
     }
   },
   created () {
     this.fetchProgram(this.programCode)
-    this.fetchContent({ programCode: this.programCode })
   },
   components: {
     VButton,

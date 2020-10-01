@@ -60,7 +60,7 @@ export default {
     deployments: {
       immediate: true,
       handler () {
-        if (Object.keys(this.value).length === 0) {
+        if (Object.keys(this.value).length === 0 && this.deployments) {
           this.$emit('input', { ...this.deployments[0] })
         }
       }

@@ -65,7 +65,7 @@
 
         <div class="inline-flex">
           <select
-            v-if="programs.length > 1"
+            v-if="programs && programs.length > 1"
             aria-label="Select a program"
             class="px-4 py-1 rounded"
             :value="programCode"
