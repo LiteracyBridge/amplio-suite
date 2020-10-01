@@ -3,6 +3,7 @@ from sqlalchemy.orm import validates, relationship
 from sqlalchemy_serializer import SerializerMixin
 
 from models.base import Base
+from models.content import Content
 
 class Deployment(Base, SerializerMixin):
     __tablename__ = "deployments"
