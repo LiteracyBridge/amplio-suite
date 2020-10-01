@@ -35,8 +35,8 @@
       name="district"
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.numberTalkingBooks"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+      :value="recipient.district"
+      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
 
     <p class="mandatory-field">Community</p>
@@ -87,8 +87,8 @@
       name="numTalkingBooks"
       type="number"
       mx="mx-0 w-full"
-      :value="recipient.district"
-      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
+      :value="recipient.numberTalkingBooks"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
     />
 
     <span class="col-span-2" />
