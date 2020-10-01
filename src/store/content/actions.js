@@ -10,7 +10,7 @@ const fetchContent = async ({ state, commit }, payload) => {
   const { programCode, deployment } = payload
 
   if (state.status === 'loading') return
-  if (state.programCode === programCode && !state.dirty && state.deployment === deployment) return
+  if (state.programCode === programCode && !state.dirty && state.deploymentName === deployment) return
 
   commit('requestInit')
 
