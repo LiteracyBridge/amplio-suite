@@ -15,8 +15,8 @@
           id="nextStep"
           :text="nextLabel"
           type="submit"
-          :aria-disabled="isFill ? 'false' : 'true'"
-          :class="isFill ? '' : 'cursor-not-allowed opacity-25'"
+          :aria-disabled="isFill && status !== 'loading' ? 'false' : 'true'"
+          :class="isFill && status !== 'loading' ? '' : 'cursor-not-allowed opacity-25'"
           class="text-xl font-bold"
           @click="handleNext"
           />
@@ -39,6 +39,9 @@ import Button from '@/components/Button'
 
 export default {
   computed: {
+    ...mapState('program', [
+      'status',
+    ]),
     ...mapState('wizard', [
       'completedSteps'
     ]),
@@ -81,7 +84,7 @@ export default {
       this.$router.push(this.prev)
     },
     handleNext () {
-      if(this.isFill) {
+      if(this.isFill && this.status !== 'loading') {
         this.nextStep()
         this.$router.push(this.next)
       }
