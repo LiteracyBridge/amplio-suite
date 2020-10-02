@@ -39,6 +39,18 @@ export default {
       'programCode'
     ])
   },
+  async created () {
+    if (!this.wizarsIsComplete) {
+    this.addCompletedStep(this.step)
+      this.setWizardIsCompleted()
+      this.createProgram()
+
+      await this.fetchRoadmap()
+      await this.toggleStep(1)
+      await this.updateRoadmap()
+    }
+    this.$refs.box.$el.querySelector('button').focus()
+  },
   methods: {
     ...mapActions('program', [
       'createProgram'
@@ -52,19 +64,6 @@ export default {
       'updateRoadmap',
       'toggleStep'
     ]),
-  },
-  async mounted () {
-    this.addCompletedStep(this.step)
-    await this.fetchRoadmap()
-
-    if (!this.wizarsIsComplete) {
-      this.setWizardIsCompleted()
-      this.createProgram()
-
-      this.toggleStep(1)
-      this.updateRoadmap()
-    }
-    this.$refs.box.$el.querySelector('button').focus()
   }
 }
 </script>
