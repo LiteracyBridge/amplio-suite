@@ -20,7 +20,7 @@ const getContent = async (programCode, deployment) => {
 
 const putContent = async (body) => httpClient().put(END_POINT, body)
 
-const contentAddPlaylist = async (body) => httpClient().post('playlist', body)
+const contentAddPlaylist = async (body) => await httpClient().post('playlist', body)
 
 const contentAddPMessage = async (body) => await httpClient().post('message', body)
 

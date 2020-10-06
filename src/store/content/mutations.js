@@ -32,6 +32,10 @@ const setPlaylist = (state, payload) => {
   state.playlists = payload
 }
 
+const addPlaylist = (state, payload) => {
+  state.playlists = [...state.playlists, payload]
+}
+
 const setDuplicatePlaylists = (state, payload) => {
   state.duplicatePlaylists = payload
 }
@@ -127,6 +131,7 @@ export default {
   setContent,
 
   setPlaylist,
+  addPlaylist,
   setDuplicatePlaylists,
   setPlaylistTitle,
   setPlaylistAudience,

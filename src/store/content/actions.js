@@ -38,16 +38,16 @@ const updateContent = async ({ state, commit }, deployment) => {
   }
 }
 
-const addPlaylist = async ({ state, commit, dispatch }, deployment) => {
-  const { programCode, deploymentName } = state
+const addPlaylist = async ({ state, commit }, deployment) => {
+  const { programCode } = state
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await contentAddPlaylist({ program_code: programCode, deployment})
+    const response = await contentAddPlaylist({ program_code: programCode, deployment})
     commit('requestSuccess')
-    await dispatch('fetchContent', { programCode, deployment: deploymentName })
+    commit('addPlaylist', response.data.playlist)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })

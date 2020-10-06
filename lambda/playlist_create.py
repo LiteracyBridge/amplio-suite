@@ -16,7 +16,7 @@ def lambda_handler(event, context):
 
         validate_user_access(event, content)
 
-        content.add_empty_playlist()
+        new_playlist = content.add_empty_playlist()
 
         session.query(Content) \
             .filter(
@@ -29,7 +29,8 @@ def lambda_handler(event, context):
 
         return {
             'status': 202,
-            'message': 'successfully create a new playlist'
+            'message': 'successfully create a new playlist',
+            'playlist': new_playlist
         }
     except BaseException as err:
         return {
