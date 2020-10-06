@@ -96,7 +96,7 @@
     <label class="mandatory-field" for="listeningModel">Listening Model</label>
     <multiselect
       id="listeningModel"
-      :options="listeningModelsOptions"
+      :options="listeningModels"
       :value="listeningModelSelected"
       label="label"
       trackBy="label"
@@ -253,17 +253,16 @@ export default {
     ...mapState('programData', [
       'region',
       'languages',
-      'listeningModels'
     ]),
-    ...mapState('listeningModels', {
-      allListeningModels: state => state.listeningModels
-    }),
+    ...mapState('listeningModels', [
+      'listeningModels',
+    ]),
     deployments () {
       return this.$store.state.deployments.items
         .map(item => item.deploymentnumber)
     },
     listeningModelSelected () {
-      return this.listeningModelsOptions.find(opt => opt.id === this.recipient.listeningModel)
+      return this.listeningModels.find(opt => opt.id === this.recipient.listeningModel)
     }
   },
   components: {
@@ -282,18 +281,10 @@ export default {
         }
       }
     },
-    allListeningModels: {
-      immediate: true,
-      handler () {
-        this.listeningModelsOptions = this.allListeningModels
-          .filter(model => this.listeningModels.includes(model.id))
-      }
-    }
   },
   data: () => ({
     regionsOptions: [],
     beneficiariesIsOpen: false,
-    listeningModelsOptions: [],
   }),
   mounted () {
     this.fetchListeningModels()
