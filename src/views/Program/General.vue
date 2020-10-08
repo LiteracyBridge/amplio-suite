@@ -27,7 +27,7 @@
 
         <span class="col-span-2" />
 
-        <label for="country">District/County</label>
+        <label for="country">Country</label>
         <multiselect
           id="country"
           :value="country"
