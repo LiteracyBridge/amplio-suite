@@ -43,14 +43,14 @@ export default {
       'user'
     ]),
     ...mapState('program', {
-      programName: 'programName',
+      wizardCompleted: 'wizardCompleted',
       programStatus: state => state.status
     }),
     programLoaded () {
       return !['loading', ''].includes(this.programStatus)
     },
     linkTo () {
-      if (this.programName) {
+      if (this.wizardCompleted) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`

@@ -14,10 +14,12 @@ session = create_db_session()
 @validate_keys(keys)
 def lambda_handler(event, context):
     try:
-        project = Project(projectcode=event['programCode'], project=event['name'], active=False) # TODO: default active=false on the model
-        validate_user_access(event, project)
+        session.query(Project) \
+            .filter(Project.projectcode == event['programCode']) \
+            .update({ 'project': event['name'] })
+
         program = Program(
-            projectcode = project.projectcode, # we'd eventually switch this to project=project
+            projectcode = event['programCode'], # we'd eventually switch this to project=project
             country = event['country'],
             region = event['region'],
             sustainable_development_goals = event['sdg_goals'],
@@ -35,7 +37,6 @@ def lambda_handler(event, context):
         contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
             for deplo in deployments]
 
-        session.add(project)
         session.flush()
         session.add(program)
         session.flush()
@@ -43,7 +44,7 @@ def lambda_handler(event, context):
         session.flush()
         session.add_all(contents)
         session.commit()
-    except ValueError as err:
+    except BaseException as err:
         return {
             'status': 422,
             'error': str(err)

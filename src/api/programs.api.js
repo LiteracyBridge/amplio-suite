@@ -26,7 +26,15 @@ const getProgram = async (programCode) => {
   return response.data.program
 }
 
-const postProgram = (program) => httpClient().post(END_POINT, program)
+const postProgram = async (program) => {
+  const response = await httpClient().post(END_POINT, program)
+
+  if (response.data.status !== 202) {
+    throw response.data.error
+  }
+
+  return response.data
+}
 
 const putProgram = (program) => httpClient().put(END_POINT, program)
 

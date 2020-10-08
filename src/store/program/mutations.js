@@ -35,6 +35,10 @@ const setProgramName = (state, payload) => {
   state.programName = payload
 }
 
+const setWizardCompleted = (state, payload) => {
+  state.wizardCompleted = payload
+}
+
 export default {
   resetState,
   setDirty,
@@ -45,4 +49,5 @@ export default {
 
   setProgramCode,
   setProgramName,
+  setWizardCompleted,
 }

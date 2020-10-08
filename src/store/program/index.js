@@ -7,6 +7,7 @@ export const getDefaultState = () => ({
   programCode: '',
   programName: '',
   active: false,
+  wizardCompleted: null,
 })
 
 export default {

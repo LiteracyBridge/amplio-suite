@@ -37,9 +37,11 @@ const fetchProgram = async ({ commit, state, rootState }, programCode) => {
   try {
     const program = await getProgram(programCode)
     commit('setProgram', program)
+    commit('setWizardCompleted', true)
     commit('programData/setProgramData', program, { root: true })
   } catch (error) {
     commit('requestError')
+    commit('setWizardCompleted', false)
     commit('programData/setProgramCode', programCode, { root: true })
   }
 }
@@ -52,7 +54,6 @@ const createProgram = async ({ state, rootState, commit }) => {
     commit('requestSuccess')
   } catch (error) {
     commit('requestError')
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
