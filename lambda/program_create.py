@@ -33,6 +33,7 @@ def lambda_handler(event, context):
             partner = event['partner'],
             affiliate = event['affiliate'],
         )
+        validate_user_access(program)
         deployments = program.default_deployments()
         contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
             for deplo in deployments]
