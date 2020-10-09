@@ -4,23 +4,31 @@
     :step="step"
     :next="next"
     nextLabel="Go to program specification"
-    title="Thank you! We automatically updated the Program Specification based
-    on your responses. Please complete the remaining details."
+    :title="title"
   >
-    <router-link
-      v-if="status === 'success'"
-      :to="{ name: 'roadmap', params: { programCode }}"
-      class="pt-5 text-blue text-2xl font-semibold underline"
-    >
-      View launch check list or go to program specification.
-    </router-link>
+    <div v-if="status !== 'loading'">
+      <router-link
+        v-if="status === 'success'"
+        :to="{ name: 'roadmap', params: { programCode }}"
+        class="pt-5 text-blue text-2xl font-semibold underline"
+      >
+        View launch check list or go to program specification.
+      </router-link>
 
-    <p
-      v-if="status === 'error'"
-      class="pt-5 text-2xl font-semibold"
-    >
-      This Wizard can't be stored because there's no related project. Please contact Amplio's staff.
-    </p>
+      <p
+        v-if="status === 'error'"
+        class="pt-5 text-2xl font-semibold"
+      >
+        This Wizard can't be stored because there's no related project. Please contact Amplio's staff.
+      </p>
+    </div>
+    <font-awesome-icon
+      v-else
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20"
+    />
   </box>
 </template>
 
@@ -49,6 +57,10 @@ export default {
     ...mapState('programData', [
       'programCode'
     ]),
+    title () {
+      if (['loading', 'error'].includes(this.status)) return ''
+      else return 'Thank you! We automatically updated the Program Specification based on your responses. Please complete the remaining details.'
+    },
     next () {
       if (['loading', 'error'].includes(this.status)) return ''
       else  return`/programs/${this.programCode}/settings`
