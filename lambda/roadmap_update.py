@@ -12,7 +12,7 @@ def lambda_handler(event, context):
             Roadmap.program_code == event['program_code']
         ).one_or_none()
         if not roadmap:
-            roadmap = Roadmap(**event)
+            roadmap = Roadmap(program_code = event['program_code'], completed = event['completed'])
         
         validate_user_access(event, roadmap)
 
