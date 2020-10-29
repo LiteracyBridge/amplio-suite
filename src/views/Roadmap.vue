@@ -72,13 +72,13 @@ const generalOptions = (programCode) => [
       {
         id: 5,
         label: 'Download ACM, TB Loader and supporting applications',
-        link: '',
+        link: 'https://suite.amplio.org/download',
         completed: false
       },
       {
         id: 6,
         label: 'Record system language prompts in local languages',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=11#section-4',
         completed: false
       }
     ]
@@ -90,13 +90,13 @@ const generalOptions = (programCode) => [
       {
         id: 7,
         label: 'Complete all courses from the learning portal',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       },
       {
         id: 8,
         label: 'Review the Community of Practice discussion forum',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=6',
         completed: false
       }
     ]
@@ -108,13 +108,13 @@ const generalOptions = (programCode) => [
       {
         id: 9,
         label: 'Create audio content outlined in the Program Specification',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=9',
         completed: false
       },
       {
         id: 10,
         label: 'Import audio content into ACM',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=16',
         completed: false
       }
     ]
@@ -126,13 +126,13 @@ const generalOptions = (programCode) => [
       {
         id: 11,
         label: 'Load audio content onto Talking Books using TB Loader',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=17',
         completed: false
       },
       {
         id: 12,
         label: 'Test audio content on Talking Books',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=17#section-5',
         completed: false
       },
       {

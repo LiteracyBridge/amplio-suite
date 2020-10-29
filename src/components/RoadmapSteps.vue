@@ -12,7 +12,7 @@
           >
             {{ step.label }}
           </router-link>
-          <a v-else href="#" target="_blank" class="text-blue text-lg underline">{{ step.label }}</a>
+          <a v-else :href="step.link" target="_blank" class="text-blue text-lg underline">{{ step.label }}</a>
           <div
             class="px-1 border border-black w-6 h-6"
             @click="onClick(step.id)"
