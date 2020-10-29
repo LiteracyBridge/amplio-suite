@@ -72,7 +72,7 @@ const generalOptions = (programCode) => [
       {
         id: 5,
         label: 'Download ACM, TB Loader and supporting applications',
-        link: '',
+        link: 'https://suite.amplio.org/download',
         completed: false
       },
       {
