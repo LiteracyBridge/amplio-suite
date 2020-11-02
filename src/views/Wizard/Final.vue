@@ -12,7 +12,7 @@
         :to="{ name: 'roadmap', params: { programCode }}"
         class="pt-5 text-blue text-2xl font-semibold underline"
       >
-        View launch check list or go to program specification.
+        View launch check list.
       </router-link>
 
       <p
