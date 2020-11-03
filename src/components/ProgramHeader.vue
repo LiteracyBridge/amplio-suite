@@ -18,7 +18,7 @@
         />
 
         <v-button
-          text="Save Change"
+          text="Save Changes"
           :color="canSave ? 'bg-green' : 'bg-gray-400 cursor-not-allowed'"
           class="w-full mt-2"
           @click="onSaveChanges"
