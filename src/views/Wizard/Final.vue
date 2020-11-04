@@ -12,7 +12,7 @@
         :to="{ name: 'roadmap', params: { programCode }}"
         class="pt-5 text-blue text-2xl font-semibold underline"
       >
-        View launch check list or go to program specification.
+        View launch check list.
       </router-link>
 
       <p
@@ -70,11 +70,7 @@ export default {
     if (!this.wizarsIsComplete) {
     this.addCompletedStep(this.step)
       this.setWizardIsCompleted()
-      this.createProgram()
-
-      await this.fetchRoadmap()
-      await this.toggleStep(1)
-      await this.updateRoadmap()
+      await this.createProgram()
     }
   },
   methods: {
@@ -85,11 +81,6 @@ export default {
       setWizardIsCompleted: 'setIsCompleted',
       addCompletedStep: 'addCompletedStep'
     }),
-    ...mapActions('roadmap', [
-      'fetchRoadmap',
-      'updateRoadmap',
-      'toggleStep'
-    ]),
   }
 }
 </script>

@@ -2,6 +2,7 @@ from utils import create_db_session, validate_user_access
 from models.project import Project
 from models.program import Program
 from models.content import Content
+from models.roadmap import Roadmap
 from decorators import validate_keys
 
 
@@ -38,12 +39,19 @@ def lambda_handler(event, context):
         contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
             for deplo in deployments]
 
+        roadmap = Roadmap(
+            program_code = event['programCode'],
+            completed = [1]
+        )
+
         session.flush()
         session.add(program)
         session.flush()
         session.add_all(deployments)
         session.flush()
         session.add_all(contents)
+        session.commit()
+        session.add(roadmap)
         session.commit()
     except BaseException as err:
         return {

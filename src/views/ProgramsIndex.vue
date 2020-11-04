@@ -48,9 +48,8 @@ export default {
   watch: {
     'programs': {
       handler (programs) {
-        if (programs.length == 1) {
-          this.selectProgram(programs[0])
-        }
+        if (!programs) return
+        if (programs.length == 1) this.selectProgram(programs[0])
       },
       immediate: true
     }
