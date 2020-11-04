@@ -323,8 +323,7 @@ export default {
       'fetchListeningModels',
     ]),
     addTag (region) {
-      this.regionOptions.push(region)
-      this.addRegion({ region, step: this.step })
+      this.addRegion(region)
     },
     onLanguageSelected(language) {
       let index = this.languages.length
