@@ -70,11 +70,7 @@ export default {
     if (!this.wizarsIsComplete) {
     this.addCompletedStep(this.step)
       this.setWizardIsCompleted()
-      this.createProgram()
-
-      await this.fetchRoadmap()
-      await this.toggleStep(1)
-      await this.updateRoadmap()
+      await this.createProgram()
     }
   },
   methods: {
@@ -85,11 +81,6 @@ export default {
       setWizardIsCompleted: 'setIsCompleted',
       addCompletedStep: 'addCompletedStep'
     }),
-    ...mapActions('roadmap', [
-      'fetchRoadmap',
-      'updateRoadmap',
-      'toggleStep'
-    ]),
   }
 }
 </script>
