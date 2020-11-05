@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -euo pipefail
 unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
 
@@ -19,6 +19,8 @@ function die() {
 [ -n "$AWS_ACCESS_KEY_ID" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
 [ -n "$AWS_SECRET_ACCESS_KEY" ] || die "Set AWS_ACCESS_KEY_ID in env.local.bash"
 export AWS_DEFAULT_REGION=us-west-2
+
+[ -d ./package ] || die 'You have to first create a `lambda/package` directory and then run `docker-compose build` again in order to fetch the dependencies'
 
 functions_to_deploy=(
 	categories_index
