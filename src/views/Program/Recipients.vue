@@ -20,7 +20,15 @@
             :key="col.key"
             class="px-4 py-2 text-green border-b"
           >
-            {{ col.label }}
+            <button
+              @click="setSortTable(col.key)"
+            >
+              {{ col.label }}
+              <font-awesome-icon
+                v-if="sortTable.by === col.key"
+                :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+              />
+            </button>
           </th>
           <th class="px-4 py-2 text-green border-b">Actions</th>
         </tr>
@@ -186,7 +194,7 @@ const columns = [
   },
   {
     label: '# TBs',
-    key: 'numberTalkingBooks'
+    key: 'numTbs'
   }
 ]
 
@@ -196,6 +204,7 @@ export default {
     ...mapState('recipients', [
       'status',
       'dirty',
+      'sortTable',
       'recipients',
     ]),
     recipient () {
@@ -206,7 +215,7 @@ export default {
 
       const requiredFields = [
         'region', 'district', 'communityName',
-        'language', 'listeningModel', 'numberTalkingBooks',
+        'language', 'model', 'numTbs',
         'deployments', 'directBeneficiaries'
       ]
 
@@ -234,7 +243,7 @@ export default {
       const values = Object.values(this.recipient.directBeneficiariesAdditional)
         .map(val => val > this.recipient.directBeneficiaries)
 
-      const keys = ['households', 'groupSize']
+      const keys = ['numHouseholds', 'groupSize']
       keys.forEach(key => {
         const partial = this.recipient[key] > this.recipient.directBeneficiaries
         values.push(partial)
@@ -273,6 +282,7 @@ export default {
       'fetchDeployments',
     ]),
     ...mapActions('recipients', [
+      'setSortTable',
       'fetchRecipients',
       'updateRecipient',
       'addRecipient',

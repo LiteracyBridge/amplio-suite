@@ -9,15 +9,15 @@ const responseToRecipient = (response) => ({
   country: response.country,
   region: response.region,
   district: response.district,
-  numberTalkingBooks: response.num_tbs,
+  numTbs: response.num_tbs,
   supportEntity: response.support_entity,
   language: response.language,
   agent: response.agent,
   variant: response.variant,
-  households: response.num_households,
+  numHouseholds: response.num_households,
   groupSize: response.group_size,
   deployments: response.deployments,
-  listeningModel: +response.model,
+  model: +response.model,
   agentGender: response.agent_gender,
   directBeneficiaries: response.direct_beneficiaries,
   directBeneficiariesAdditional: response.direct_beneficiaries_additional,
@@ -38,6 +38,11 @@ const requestError = (state) => {
 
 const requestSuccess = (state) => {
   state.status = 'success'
+}
+
+const setSortTable = (state, column) => {
+  state.sortTable.by = column
+  state.sortTable.descending = !state.sortTable.descending
 }
 
 const setRecipients = (state, payload) => {
@@ -114,8 +119,8 @@ const setRecipientLang = (state, payload) => {
 }
 
 const setRecipientListeningModel = (state, payload) => {
-  const { recipientIndex, listeningModel } = payload
-  state.recipients[recipientIndex].listeningModel = listeningModel
+  const { recipientIndex, model } = payload
+  state.recipients[recipientIndex].model = model
 }
 
 const setRecipientAgent = (state, payload) => {
@@ -134,8 +139,8 @@ const setRecipientVariant = (state, payload) => {
 }
 
 const setRecipientHouseholds = (state, payload) => {
-  const { recipientIndex, households } = payload
-  state.recipients[recipientIndex].households = households
+  const { recipientIndex, numHouseholds } = payload
+  state.recipients[recipientIndex].numHouseholds = numHouseholds
 }
 
 const setRecipientGroupSize = (state, payload) => {
@@ -154,8 +159,8 @@ const setRecipientDirectBeneficiaries = (state, payload) => {
 }
 
 const setRecipientNumberTalkingBooks = (state, payload) => {
-  const { recipientIndex, numberTalkingBooks } = payload
-  state.recipients[recipientIndex].numberTalkingBooks = +numberTalkingBooks
+  const { recipientIndex, numTbs } = payload
+  state.recipients[recipientIndex].numTbs = +numTbs
 }
 
 const setRecipientDirectBeneficiariesAdditional = (state, payload) => {
@@ -175,6 +180,7 @@ export default {
   requestInit,
   requestError,
   requestSuccess,
+  setSortTable,
   setRecipients,
   setRecipient,
   addRecipient,

@@ -28,6 +28,12 @@ const recipientTemplate = () => ({
   component: '',
 })
 
+const setSortTable = ({ commit, state, dispatch }, column) => {
+  commit('setDirty', true)
+  commit('setSortTable', column)
+
+  dispatch('fetchRecipients', state.programCode)
+}
 
 const fetchRecipients = async ({ commit, state }, programCode) => {
   if (state.status === 'loading') return
@@ -36,7 +42,12 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
   commit('requestInit')
 
   try {
-    const response = await getRecipients({ program_code: programCode })
+    const params = {
+      program_code: programCode,
+      sort_by: state.sortTable.by,
+      sort_descending: state.sortTable.descending
+    }
+    const response = await getRecipients(params)
     commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
@@ -235,6 +246,7 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 }
 
 export default {
+  setSortTable,
   fetchRecipients,
   updateRecipient,
   addRecipient,
