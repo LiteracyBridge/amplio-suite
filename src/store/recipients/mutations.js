@@ -45,6 +45,16 @@ const setSortTable = (state, column) => {
   state.sortTable.descending = !state.sortTable.descending
 }
 
+const setFilterText = (state, text) => {
+  state.filterText = text
+}
+
+const resetFilter = (state) => {
+  state.filterText = ''
+  state.sortTable.by = ''
+  state.sortTable.descending = false
+}
+
 const setRecipients = (state, payload) => {
   const recipients = payload.recipients
     .map(recipient => responseToRecipient(recipient))
@@ -181,6 +191,8 @@ export default {
   requestError,
   requestSuccess,
   setSortTable,
+  setFilterText,
+  resetFilter,
   setRecipients,
   setRecipient,
   addRecipient,

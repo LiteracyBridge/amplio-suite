@@ -1,15 +1,37 @@
 <template>
   <section class="relative p-6 pt-0">
-    <header>
+    <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">Recipients</h2>
 
       <span
         tabindex="0"
         @click="onAddRecipient"
-        class="block pl-4 py-4 text-left font-semibold text-blue cursor-pointer hover:underline"
+        class="font-semibold text-blue cursor-pointer hover:underline"
       >
         + Add Recipient
       </span>
+
+      <div class="inline-flex">
+        <form v-on:submit.prevent="fetchRecipients(programCode)">
+          <v-input
+            type="text"
+            name="searchColumns"
+            placeholder="Search columns"
+            iconRight="search"
+            mx="mx-0"
+            :value="filterText"
+            @input="setFilterText($event.target.value)"
+          />
+        </form>
+        <button
+          :class="tableIsFilter ? 'text-blue cursor-pointer' : 'text-gray-500 cursor-default'"
+          class="mx-4 hover:underline"
+          :disabled="!tableIsFilter"
+          @click="resetFilters"
+        >
+          Reset filter
+        </button>
+      </div>
     </header>
 
     <table class="w-full table-auto">
@@ -164,6 +186,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
@@ -205,10 +228,14 @@ export default {
       'status',
       'dirty',
       'sortTable',
+      'filterText',
       'recipients',
     ]),
     recipient () {
       return this.recipients[this.selectedRecipientIndex]
+    },
+    tableIsFilter () {
+      return this.sortTable.by !== '' || this.filterText !== ''
     },
     isFormFill () {
       if (!this.recipient) return null
@@ -253,6 +280,7 @@ export default {
     },
   },
   components: {
+    VInput,
     VButton,
     ProgramRecipientsForm,
   },
@@ -283,6 +311,8 @@ export default {
     ]),
     ...mapActions('recipients', [
       'setSortTable',
+      'setFilterText',
+      'resetFilters',
       'fetchRecipients',
       'updateRecipient',
       'addRecipient',

@@ -35,6 +35,17 @@ const setSortTable = ({ commit, state, dispatch }, column) => {
   dispatch('fetchRecipients', state.programCode)
 }
 
+const setFilterText = ({ commit }, text) => {
+  commit('setDirty', true)
+  commit('setFilterText', text)
+}
+
+const resetFilters = ({ commit, state, dispatch }) => {
+  commit('setDirty', true)
+  commit('resetFilter')
+  dispatch('fetchRecipients', state.programCode)
+}
+
 const fetchRecipients = async ({ commit, state }, programCode) => {
   if (state.status === 'loading') return
   if (state.programCode === programCode && !state.dirty) return
@@ -45,7 +56,8 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
     const params = {
       program_code: programCode,
       sort_by: state.sortTable.by,
-      sort_descending: state.sortTable.descending
+      sort_descending: state.sortTable.descending,
+      filter_text: state.filterText
     }
     const response = await getRecipients(params)
     commit('setRecipients', response)
@@ -247,6 +259,8 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 
 export default {
   setSortTable,
+  setFilterText,
+  resetFilters,
   fetchRecipients,
   updateRecipient,
   addRecipient,

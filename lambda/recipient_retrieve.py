@@ -11,6 +11,15 @@ def camel_to_snake(name):
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
 
 
+def contains_text(recipient, text):
+    ignore_keys = ['program_code', 'partner', 'recipient_id',
+        'deployments', 'direct_beneficiaries_additional']
+    search = [True if re.search(text.lower(), str(value), re.I) else False
+              for key, value in recipient.items() if key not in ignore_keys]
+
+    return any(search)
+
+
 @validate_keys(['program_code', 'sort_by', 'sort_descending'])
 def lambda_handler(event, context):
     if 'recipient_id' in event:
@@ -41,6 +50,10 @@ def lambda_handler(event, context):
                 key=lambda recipient: recipient[col],
                 reverse=event['sort_descending']
             )
+
+        if event['filter_text']:
+            recipients = [recipient for recipient in recipients
+                if contains_text(recipient, event['filter_text'])]
 
         if recipients:
             return {
