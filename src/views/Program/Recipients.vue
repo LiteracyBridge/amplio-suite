@@ -42,17 +42,17 @@
             :key="col.key"
             class="px-4 py-2 text-green border-b"
           >
-            <button
-              @click="setSortTable(col.key)"
-            >
-              {{ col.label }}
-              <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Descending': 'Ascending'}`">
-                <font-awesome-icon
-                  v-if="sortTable.by === col.key"
-                  :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
-                />
-              </v-tooltip>
-            </button>
+            <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
+              <button
+                @click="setSortTable(col.key)"
+              >
+                {{ col.label }}
+                  <font-awesome-icon
+                    v-if="sortTable.by === col.key"
+                    :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+                  />
+              </button>
+            </v-tooltip>
           </th>
           <th class="px-4 py-2 text-green border-b">Actions</th>
         </tr>
