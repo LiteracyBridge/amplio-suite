@@ -15,8 +15,8 @@
         <form v-on:submit.prevent="fetchRecipients(programCode)">
           <v-input
             type="text"
-            name="searchColumns"
-            placeholder="Search columns"
+            name="filterColumns"
+            placeholder="Filter columns"
             iconRight="search"
             mx="mx-0"
             :value="filterText"
@@ -46,10 +46,12 @@
               @click="setSortTable(col.key)"
             >
               {{ col.label }}
-              <font-awesome-icon
-                v-if="sortTable.by === col.key"
-                :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
-              />
+              <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Descending': 'Ascending'}`">
+                <font-awesome-icon
+                  v-if="sortTable.by === col.key"
+                  :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+                />
+              </v-tooltip>
             </button>
           </th>
           <th class="px-4 py-2 text-green border-b">Actions</th>
@@ -188,6 +190,7 @@ import { mapState, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
 const columns = [
@@ -282,6 +285,7 @@ export default {
   components: {
     VInput,
     VButton,
+    VTooltip,
     ProgramRecipientsForm,
   },
   created () {

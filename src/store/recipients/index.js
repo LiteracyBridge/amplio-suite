@@ -8,7 +8,7 @@ export const getDefaultState = () => ({
   filterText: '',
   sortTable: {
     by: '',
-    descending: false
+    descending: true
   },
   recipients: [],
 })

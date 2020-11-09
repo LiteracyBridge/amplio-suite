@@ -41,8 +41,12 @@ const requestSuccess = (state) => {
 }
 
 const setSortTable = (state, column) => {
-  state.sortTable.by = column
-  state.sortTable.descending = !state.sortTable.descending
+  if (state.sortTable.by === column) {
+    state.sortTable.descending = !state.sortTable.descending
+  } else {
+    state.sortTable.by = column
+    state.sortTable.descending = false
+  }
 }
 
 const setFilterText = (state, text) => {
