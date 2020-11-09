@@ -87,13 +87,22 @@ def create_db_session():
 
     return session
 
+class TableManager(object):
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if not cls._instance:
+            from amplio.rolemanager import manager
+            manager.open_tables()
+            cls._instance = manager
+        return cls._instance
+
 def user_programs(username):
     if os.getenv('ENV') != 'AWS':
         return ['TEST', 'TEST2', 'My Test Program 8']
     
-    from amplio.rolemanager import manager
-    manager.open_tables()
-    program_items = manager.get_programs_for_user(username).items()
+    program_items = TableManager.get_instance().get_programs_for_user(username).items()
     return [program for program, _role in program_items]
 
 class UnauthorizedAccess(Exception):
