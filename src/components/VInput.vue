@@ -1,7 +1,10 @@
 <template>
   <div :class="[isFocus ? 'focused' : '', mx]"  class="relative w-64 my-2 text-base bg-white field-wrapper">
-    <div v-if="iconLeft" class="absolute pin-l pin-t pl-5 pt-2 pointer-events-none">
+    <div v-if="iconLeft" class="absolute left-0 pl-5 pt-2 pointer-events-none">
       <font-awesome-icon :icon="iconLeft" class="w-6 h-6 text-gray-500" />
+    </div>
+    <div v-if="iconRight" class="absolute right-0 pr-5 pt-2 pointer-events-none">
+      <font-awesome-icon :icon="iconRight" class="w-6 h-6 text-gray-500" />
     </div>
 
     <label
@@ -13,8 +16,8 @@
       {{ label }}
     </label>
     <input
-      :class="iconLeft ? 'pl-12' : 'pl-5'"
-      class="w-full block py-2 pr-5 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+      :class="[iconLeft ? 'pl-12' : 'pl-5', iconRight ? 'pr-12' : 'pr-5']"
+      class="w-full block py-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
       :value="value"
       :name="name === '' ? false : name"
       :id="name === '' ? false : name"
@@ -32,6 +35,10 @@ export default {
   props: {
     value: [String, Number],
     iconLeft: {
+      type: String,
+      default: ''
+    },
+    iconRight: {
       type: String,
       default: ''
     },

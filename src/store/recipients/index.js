@@ -5,6 +5,11 @@ export const getDefaultState = () => ({
   dirty: false,
   status: "",
   programCode: "",
+  filterText: '',
+  sortTable: {
+    by: '',
+    descending: true
+  },
   recipients: [],
 })
 

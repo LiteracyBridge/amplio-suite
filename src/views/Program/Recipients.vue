@@ -1,15 +1,37 @@
 <template>
   <section class="relative p-6 pt-0">
-    <header>
+    <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">Recipients</h2>
 
       <span
         tabindex="0"
         @click="onAddRecipient"
-        class="block pl-4 py-4 text-left font-semibold text-blue cursor-pointer hover:underline"
+        class="font-semibold text-blue cursor-pointer hover:underline"
       >
         + Add Recipient
       </span>
+
+      <div class="inline-flex">
+        <form v-on:submit.prevent="fetchRecipients(programCode)">
+          <v-input
+            type="text"
+            name="filterColumns"
+            placeholder="Filter columns"
+            iconRight="search"
+            mx="mx-0"
+            :value="filterText"
+            @input="setFilterText($event.target.value)"
+          />
+        </form>
+        <button
+          :class="tableIsFilter ? 'text-blue cursor-pointer' : 'text-gray-500 cursor-default'"
+          class="mx-4 hover:underline"
+          :disabled="!tableIsFilter"
+          @click="resetFilters"
+        >
+          Reset filter
+        </button>
+      </div>
     </header>
 
     <table class="w-full table-auto">
@@ -20,7 +42,17 @@
             :key="col.key"
             class="px-4 py-2 text-green border-b"
           >
-            {{ col.label }}
+            <button
+              @click="setSortTable(col.key)"
+            >
+              {{ col.label }}
+              <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Descending': 'Ascending'}`">
+                <font-awesome-icon
+                  v-if="sortTable.by === col.key"
+                  :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+                />
+              </v-tooltip>
+            </button>
           </th>
           <th class="px-4 py-2 text-green border-b">Actions</th>
         </tr>
@@ -156,7 +188,9 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
+import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 
 const columns = [
@@ -186,7 +220,7 @@ const columns = [
   },
   {
     label: '# TBs',
-    key: 'numberTalkingBooks'
+    key: 'numTbs'
   }
 ]
 
@@ -196,17 +230,22 @@ export default {
     ...mapState('recipients', [
       'status',
       'dirty',
+      'sortTable',
+      'filterText',
       'recipients',
     ]),
     recipient () {
       return this.recipients[this.selectedRecipientIndex]
+    },
+    tableIsFilter () {
+      return this.sortTable.by !== '' || this.filterText !== ''
     },
     isFormFill () {
       if (!this.recipient) return null
 
       const requiredFields = [
         'region', 'district', 'communityName',
-        'language', 'listeningModel', 'numberTalkingBooks',
+        'language', 'model', 'numTbs',
         'deployments', 'directBeneficiaries'
       ]
 
@@ -234,7 +273,7 @@ export default {
       const values = Object.values(this.recipient.directBeneficiariesAdditional)
         .map(val => val > this.recipient.directBeneficiaries)
 
-      const keys = ['households', 'groupSize']
+      const keys = ['numHouseholds', 'groupSize']
       keys.forEach(key => {
         const partial = this.recipient[key] > this.recipient.directBeneficiaries
         values.push(partial)
@@ -244,7 +283,9 @@ export default {
     },
   },
   components: {
+    VInput,
     VButton,
+    VTooltip,
     ProgramRecipientsForm,
   },
   created () {
@@ -273,6 +314,9 @@ export default {
       'fetchDeployments',
     ]),
     ...mapActions('recipients', [
+      'setSortTable',
+      'setFilterText',
+      'resetFilters',
       'fetchRecipients',
       'updateRecipient',
       'addRecipient',

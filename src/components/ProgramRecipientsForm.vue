@@ -87,8 +87,8 @@
       name="numTalkingBooks"
       type="number"
       mx="mx-0 w-full"
-      :value="recipient.numberTalkingBooks"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numberTalkingBooks: $event.target.value })"
+      :value="recipient.numTbs"
+      @input="setRecipientNumberTalkingBooks({ recipientIndex, numTbs: $event.target.value })"
     />
 
     <span class="col-span-2" />
@@ -100,8 +100,8 @@
       :value="listeningModelSelected"
       label="label"
       trackBy="label"
-      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
-      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.id })"
+      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, model: listeningModel.id })"
+      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, model: listeningModel.id })"
       placeholder="Select the listening model"
     />
 
@@ -177,9 +177,9 @@
     >
       <beneficiaries-field
         label="Number of Households"
-        :val="recipient.households"
-        :showTooltip="recipient.households > recipient.directBeneficiaries"
-        :input="(val) => setRecipientHouseholds({ recipientIndex, households: +val })"
+        :val="recipient.numHouseholds"
+        :showTooltip="recipient.numHouseholds > recipient.directBeneficiaries"
+        :input="(val) => setRecipientHouseholds({ recipientIndex, numHouseholds: +val })"
       />
 
       <beneficiaries-field
@@ -262,7 +262,7 @@ export default {
         .map(item => item.deploymentnumber)
     },
     listeningModelSelected () {
-      return this.listeningModels.find(opt => opt.id === this.recipient.listeningModel)
+      return this.listeningModels.find(opt => opt.id === this.recipient.model)
     }
   },
   components: {

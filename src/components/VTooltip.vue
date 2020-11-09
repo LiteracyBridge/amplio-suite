@@ -10,8 +10,7 @@
     <span
       :class="[show ? 'visible' : 'invisible', position === 'left' ? '-ml-4' : '']"
       class="absolute z-10 p-2 text-sm text-white text-center bg-gray-600 rounded-lg"
-      style="width: 300px; bottom: 100%;"
-      :style="`transform: ${translate}`"
+      :style="style"
     >
       {{ text }}
     </span>
@@ -31,15 +30,23 @@ export default {
       validator: (value) => {
         return ['left', 'center', 'right'].indexOf(value) !== -1
       }
+    },
+    width: {
+      type: Number,
+      default: 300
     }
   },
   computed: {
-    translate () {
+    style () {
       const amount = this.position === 'left' ? '0'
         : this.position === 'center' ? '-50%'
           : '-100%'
 
-      return `translateX(${amount});`
+      return {
+        transform: `translateX(${amount})`,
+        width: `${this.width}px`,
+        bottom: '100%'
+      }
     },
   },
   data: () => ({

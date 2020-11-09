@@ -12,14 +12,14 @@ const recipientTemplate = () => ({
   groupName: '',
   region: '',
   district: '',
-  numberTalkingBooks: null,
+  numTbs: null,
   supportEntity: '',
   language: '',
   agent: '',
-  households: 0,
+  numHouseholds: 0,
   groupSize: 0,
   deployments: [],
-  listeningModel: '',
+  model: '',
   agentGender: '',
   directBeneficiaries: null,
   directBeneficiariesAdditional: {},
@@ -28,6 +28,23 @@ const recipientTemplate = () => ({
   component: '',
 })
 
+const setSortTable = ({ commit, state, dispatch }, column) => {
+  commit('setDirty', true)
+  commit('setSortTable', column)
+
+  dispatch('fetchRecipients', state.programCode)
+}
+
+const setFilterText = ({ commit }, text) => {
+  commit('setDirty', true)
+  commit('setFilterText', text)
+}
+
+const resetFilters = ({ commit, state, dispatch }) => {
+  commit('setDirty', true)
+  commit('resetFilter')
+  dispatch('fetchRecipients', state.programCode)
+}
 
 const fetchRecipients = async ({ commit, state }, programCode) => {
   if (state.status === 'loading') return
@@ -36,7 +53,13 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
   commit('requestInit')
 
   try {
-    const response = await getRecipients({ program_code: programCode })
+    const params = {
+      program_code: programCode,
+      sort_by: state.sortTable.by,
+      sort_descending: state.sortTable.descending,
+      filter_text: state.filterText
+    }
+    const response = await getRecipients(params)
     commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
@@ -57,10 +80,10 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
     component: recipient.component,
     region: recipient.region,
     district: recipient.district,
-    num_households: recipient.households,
-    num_tbs: recipient.numberTalkingBooks,
+    num_households: recipient.numHouseholds,
+    num_tbs: recipient.numTbs,
     support_entity: recipient.supportEntity,
-    model: recipient.listeningModel,
+    model: recipient.model,
     language: recipient.language,
     agent: recipient.agent,
     deployments: recipient.deployments,
@@ -235,6 +258,9 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 }
 
 export default {
+  setSortTable,
+  setFilterText,
+  resetFilters,
   fetchRecipients,
   updateRecipient,
   addRecipient,
