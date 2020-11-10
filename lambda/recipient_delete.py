@@ -8,9 +8,9 @@ session = create_db_session()
 def lambda_handler(event, context):
     program_code = event['program_code']
 
-    username = event['context']['username']
+    email = event['context']['email']
 
-    if program_code not in user_programs(username): # FIXME: we'd prefer to check with the model rather than the program_code
+    if program_code not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
         raise UnauthorizedAccess()
 
     try:

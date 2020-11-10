@@ -16,7 +16,7 @@ def lambda_handler(event, context):
             }
         }
 
-    email = event['context']['username']
+    email = event['context']['email']
 
     program_items = manager.get_programs_for_user(email).items()
     roles = {}

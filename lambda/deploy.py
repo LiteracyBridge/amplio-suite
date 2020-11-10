@@ -17,9 +17,9 @@ session = create_db_session()
 
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
-    username = event['context']['username']
+    email = event['context']['email']
 
-    if event['program_code'] not in user_programs(username): # FIXME: we'd prefer to check with the model rather than the program_code
+    if event['program_code'] not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
         raise UnauthorizedAccess()
 
 
