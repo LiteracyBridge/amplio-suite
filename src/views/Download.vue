@@ -6,16 +6,9 @@
 
     <section class="p-6 bg-white rounded-lg shadow-box">
       <div class="min-h-200-px py-5 text-left">
-        <p class="text-2xl font-semibold">
-          1. Download and install <a class="underline text-blue" href="https://www.dropbox.com/downloading" target="_blank">Dropbox</a>
-        </p>
 
         <p class="text-2xl font-semibold pt-5">
-          2. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/" target="_blank">Audacity</a>
-        </p>
-
-        <p class="text-2xl font-semibold pt-5">
-          3. Download and install <a class="underline text-blue" href="/ACM_1.0_Installer.exe" download>ACM Bundle</a>. This installer includes:
+          1. Download and install <a class="underline text-blue" href="/ACM_1.0_Installer.exe" download>ACM Bundle</a>. This installer includes:
         </p>
 
         <ul class="pl-10 pt-5 text-2xl">
@@ -39,6 +32,18 @@
           </li>
         </ul>
 
+        <p class="text-2xl font-semibold">
+          2. Download and install <a class="underline text-blue" href="https://www.dropbox.com/downloading" target="_blank">Dropbox</a>
+        </p>
+
+        <p class="text-2xl font-semibold pt-5">
+          3. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/" target="_blank">Audacity</a>
+        </p>
+
+         <p class="text-2xl font-semibold pt-5">
+          4. Download and install <a class="underline text-blue" href="https://www.tableau.com/products/reader" target="_blank">Tableau Reader</a>
+        </p>
+
         <footer class="mt-10 text-center">
           <v-button
             tag="a"
@@ -59,6 +64,6 @@ import VButton from '@/components/Button'
 export default {
  components: {
    VButton
- } 
+ }
 }
 </script>
