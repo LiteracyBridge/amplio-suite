@@ -98,35 +98,25 @@ class TableManager(object):
             cls._instance = manager
         return cls._instance
 
-def user_programs(username):
+def user_programs(email):
     if os.getenv('ENV') != 'AWS':
         return ['TEST', 'TEST2', 'My Test Program 8']
-    
-    program_items = TableManager.get_instance().get_programs_for_user(username).items()
+
+    program_items = TableManager.get_instance().get_programs_for_user(email).items()
     return [program for program, _role in program_items]
 
 class UnauthorizedAccess(Exception):
     pass
 
 def validate_user_access(event, model):
-    # FIXME: there must always be a username in prod - we're allowing a passthrough behaviour here until we deploy
-    username = None
-    if ('context' in event) and ('username' in event['context']):
-        username = event['context']['username']
-    elif 'email' in event:
-        username = event['email']
-    else:
-        print(f"Didn't get a username - skipping model permission validation...")
-        return model
-    # Once in prod, just uncomment this next line
-    # username = event['context']['username']
-    
+    email = event['context']['email']
+
     if not model:
         return None
 
-    if model.program_code not in user_programs(username):
+    if model.program_code not in user_programs(email):
         raise UnauthorizedAccess()
-    
+
     return model
 
 def save_to_csv(text, file_path):
