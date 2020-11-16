@@ -17,7 +17,6 @@
           <th class="px-4 py-2 text-green border-b"># Deployment</th>
           <th class="px-4 py-2 text-green border-b">Start Date</th>
           <th class="px-4 py-2 text-green border-b">End Date</th>
-          <th class="px-4 py-2 text-green border-b">Components</th>
           <th class="px-4 py-2 text-green border-b">Actions</th>
         </tr>
       </thead>
