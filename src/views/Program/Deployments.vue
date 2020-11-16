@@ -53,14 +53,6 @@
             />
           </td>
           <td class="px-4 py-2 border-b">
-            <select
-              :aria-label="`Components of the deployment ${deployment.deploymentname}`"
-              class="w-full my-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-            >
-              <option value="">All</option>
-            </select>
-          </td>
-          <td class="px-4 py-2 border-b">
             <button
               v-if="index === deployments.length - 1"
               @click="handleOpenModal"
@@ -133,7 +125,7 @@ export default {
     this.fetchDeployments(this.programCode)
   },
   data: () => ({
-    description: "You can modify your deployment details here. Enter component details after filling component tab.",
+    description: "You can modify your deployment details here. ",
     modal: {
       show: false
     }
