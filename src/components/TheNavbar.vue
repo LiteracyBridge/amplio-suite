@@ -51,9 +51,9 @@
           </router-link>
 
 
-          <a href="#" class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500">
-            Content Library
-          </a>
+          
+
+
           <a
             target="_blank"
             href="https://forms.gle/DNC5uT9iZFrxCyLH8"
