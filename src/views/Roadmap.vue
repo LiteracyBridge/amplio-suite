@@ -60,13 +60,13 @@ const generalOptions = (programCode) => [
       {
         id: 3,
         label: 'Procure batteries and supporting hardware',
-        link: '',
+        link: 'https://amplio.moodle.school/my/',
         completed: false
       },
       {
         id: 4,
         label: 'Set up user IDs',
-        link: '',
+        link: 'https://amplio.moodle.school/mod/resource/view.php?id=242',
         completed: false
       },
       {
@@ -138,13 +138,13 @@ const generalOptions = (programCode) => [
       {
         id: 13,
         label: 'Deliver Talking Books based on your listening model',
-        link: '',
+        link: 'https://amplio.moodle.school/course/view.php?id=17',
         completed: false
       },
       {
         id: 14,
         label: 'Introduce community members to the program and devices',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       }
     ]
@@ -159,19 +159,19 @@ const launchOptions = [
       {
         id: 15,
         label: 'Collect Talking Book data using smartphones/laptops',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       },
       {
         id: 16,
         label: 'Update Talking Book with next deployment',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       },
       {
         id: 17,
         label: 'Listen and code user feedback recordings',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       }
     ]
@@ -183,19 +183,19 @@ const launchOptions = [
       {
         id: 18,
         label: 'Review and analyze data on Amplio Dashboard',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       },
       {
         id: 19,
         label: 'Participate in quarterly conference calls for further review',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       },
       {
         id: 20,
         label: 'Incorporate learnings into future deployments',
-        link: '',
+        link: 'https://amplio.moodle.school/',
         completed: false
       }
     ]
