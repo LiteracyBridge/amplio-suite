@@ -17,6 +17,9 @@ module.exports = {
         hover: '0 8px 24px 0px rgba(0,0,0,0.5)',
         outline: '0 0 0 3px rgba(71, 92, 170, 0.7)'
       },
+      cursor: {
+        grab: 'grab',
+      },
       colors: {
         label: '#4f5a65',
         green: '#289b6a',
