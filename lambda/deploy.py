@@ -22,7 +22,6 @@ def lambda_handler(event, context):
     if event['program_code'] not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
         raise UnauthorizedAccess()
 
-
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content)
@@ -52,9 +51,12 @@ def lambda_handler(event, context):
 
                 row = {
                     'deployment_num': content.deployment,
-                    'playlist_title': playlist['title'], 'message_title': message['title'],
-                    'key_points': message['key_point'], 'languagecode': message['language'],
-                    'variant': message['variant'], 'default_category': message['default_category'],
+                    'playlist_title': playlist['title'],
+                    'message_title': message['title'],
+                    'key_points': message['key_point'],
+                    'languagecode': ','.join(message['languages']),
+                    'variant': message['variant'],
+                    'default_category': message['default_category'],
                     'sdg_goals': goal, 'sdg_targets': target
                 }
 
