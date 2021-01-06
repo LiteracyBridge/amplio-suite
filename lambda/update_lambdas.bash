@@ -64,7 +64,7 @@ sec_group_id=$(aws ec2 describe-security-groups --group-name 'default' | jq -r '
 
 echo "Zip the python libs: ..."
 mkdir -p python && rm -rf ./python/ && mkdir ./python/
-cp -r ./package/ utils.py decorators.py .env ./migrations alembic.ini ./models ./amplio python/
+cp -r ./package/* ./migrations/ ./models/ ./amplio/ utils.py decorators.py .env alembic.ini python/
 zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done. Uploading layer..."
 

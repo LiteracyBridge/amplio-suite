@@ -13,7 +13,6 @@ services:
 
   proxy:
     image: openresty/openresty
-    restart: always
     volumes:
       - ./proxy/:/etc/nginx/
     ports:
@@ -30,7 +29,6 @@ services:
 
   dynamodb:
     image: amazon/dynamodb-local
-    container_name: dynamodb-local
     # command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
     ports:
       - "8008:8000"
@@ -40,15 +38,10 @@ services:
   python-deps:
     build:
       context: ./lambda
-    env_file: ./lambda/.env
-    environment: 
-      PYTHONPATH: "/opt/python/:/usr/src/app/package"
-    working_dir: /opt/python
     depends_on:
-      - db
+      - lambda-migration
     volumes:
-      - './lambda:/opt/python'
-      - package:/usr/src/app/package
+      - ./lambda:/app
 
   lambda-migration: &base
     image: lambci/lambda:python3.8
@@ -58,8 +51,8 @@ services:
       DOCKER_LAMBDA_STAY_OPEN: 1
       DOCKER_LAMBDA_WATCH: 1
     volumes:
-      - './lambda/site.py:/var/lang/lib/python3.8/site.py'
-      - './lambda:/opt/python:ro,delegated'
+      - ./lambda/site.py:/var/lang/lib/python3.8/site.py
+      - ./lambda:/opt/python:ro,delegated
     depends_on:
       - db
 
@@ -179,9 +172,3 @@ volumes:
   node_modules:
   postgres-data:
   dynamodb_data:
-  package:
-    driver: local
-    driver_opts:
-      type: none
-      device: $PWD/lambda/package
-      o: bind
