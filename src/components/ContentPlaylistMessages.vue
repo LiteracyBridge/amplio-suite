@@ -2,6 +2,7 @@
   <draggable
     v-model="messages"
     :animation="200"
+    handle=".handle"
     ghost-class="moving-item"
     @start="dragging = true"
     @end="dragging = false"
@@ -10,11 +11,14 @@
       v-for="(message, index) in messages"
       :key="index"
       tabindex="0"
-      class="mx-1 cursor-move"
+      class="mx-1"
       data-name="message"
       :data-index="index"
     >
       <div class="flex items-center mt-4">
+        <div class="m-2 p-2 cursor-grab handle">
+          <font-awesome-icon icon="grip-lines" />
+        </div>
         <v-input
           type="text"
           :name="`message ${message.title}`"
@@ -38,7 +42,7 @@
         <span
           tabindex="0"
           :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
-          class="w-48 ml-2 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+          class="w-48 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
           @click="setMessageIndex(index)"
           @keyup.space="setMessageIndex(index)"
         >
