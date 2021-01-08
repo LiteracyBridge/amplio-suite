@@ -44,7 +44,7 @@
           >
             <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
               <button
-                @click="setSortTable(col.key)"
+                @click="setSortByColumn(col.key)"
               >
                 {{ col.label }}
                   <font-awesome-icon
@@ -60,7 +60,7 @@
       <tbody>
         <tr
           v-for="(recipient, index) in recipients"
-          :key="index"
+          :key="recipient.id"
           :class="index % 2 === 0 ? '' : 'bg-gray-200'"
           class="hover:bg-gray-400"
         >
@@ -74,19 +74,19 @@
           <td class="px-4 border-b">
             <button
               class="icon-zoom-xl"
-              @click="onClickEdit(index)"
+              @click="onClickEdit(recipient.id)"
             >
               <font-awesome-icon icon="edit" />
             </button>
             <button
               class="mx-3 icon-zoom-xl"
-              @click="onClickDuplicate(index)"
+              @click="onClickDuplicate(recipient.id)"
             >
               <font-awesome-icon icon="copy" />
             </button>
             <button
               class="text-red-500 icon-zoom-xl"
-              @click="onClickDelete(index)"
+              @click="onClickDelete(recipient.id)"
             >
               <font-awesome-icon icon="trash-alt" />
             </button>
@@ -106,7 +106,6 @@
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
-        :recipientIndex="selectedRecipientIndex"
         :recipient="recipient"
         :invalidConstraint="invalidConstraint"
         :invalidBeneficiaries="invalidBeneficiaries"
@@ -175,7 +174,7 @@
     <portal to="modalFooter" v-if="showModal.mandatory">
       <footer class="flex flex-row-reverse justify-between pt-20">
         <v-button
-          @click="onClickEdit(selectedRecipientIndex)"
+          @click="onClickEdit(selectedRecipientId)"
           color="bg-transparent border border-black"
           textColor="text-black"
           text="Close"
@@ -186,7 +185,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
@@ -232,10 +231,12 @@ export default {
       'dirty',
       'sortTable',
       'filterText',
-      'recipients',
     ]),
+    ...mapGetters('recipients', {
+      recipients: 'filterRecipients',
+    }),
     recipient () {
-      return this.recipients[this.selectedRecipientIndex]
+      return this.recipients.find(reci => reci.id === this.selectedRecipientId)
     },
     tableIsFilter () {
       return this.sortTable.by !== '' || this.filterText !== ''
@@ -292,9 +293,11 @@ export default {
     this.fetchProgram(this.programCode)
     this.fetchRecipients(this.programCode)
     this.fetchDeployments(this.programCode)
+
+    this.scroll()
   },
   data: () => ({
-    selectedRecipientIndex: null,
+    selectedRecipientId: null,
     columns,
     showModal: {
       edit: false,
@@ -313,8 +316,11 @@ export default {
     ...mapActions('deployments', [
       'fetchDeployments',
     ]),
+    ...mapMutations('recipients', [
+      'addRecipientsToShow',
+    ]),
     ...mapActions('recipients', [
-      'setSortTable',
+      'setSortByColumn',
       'setFilterText',
       'resetFilters',
       'fetchRecipients',
@@ -327,42 +333,37 @@ export default {
     scroll () {
       window.onscroll = () => {
         const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
-        if (bottomOfWindow) this.fetchRecipients(this.programCode)
+        if (bottomOfWindow) this.addRecipientsToShow() // this.fetchRecipients(this.programCode)
       }
     },
-    onAddRecipient () {
-      this.addRecipient()
-
-      const index = this.recipients.length - 1
-      this.onClickEdit(index)
+    async onAddRecipient () {
+      const id = await this.addRecipient()
+      this.onClickEdit(id)
     },
-    onClickEdit (index) {
-      this.selectedRecipientIndex = index
+    onClickEdit (recipientId) {
+      this.selectedRecipientId = recipientId
       this.onOpenModal('edit', 'Recipient Details')
     },
-    onClickDuplicate (index) {
-      this.copyRecipient(index)
-
-      index = this.recipients.length - 1
-      this.selectedRecipientIndex = index
+    async onClickDuplicate (recipientId) {
+      this.selectedRecipientId = await this.copyRecipient(recipientId)
       this.onOpenModal('edit', 'Recipient Details')
     },
-    onClickDelete (index) {
-      this.selectedRecipientIndex = index
+    onClickDelete (recipientId) {
+      this.selectedRecipientId = recipientId
       this.onOpenModal('delete', 'Delete Recipient')
     },
     onClickSave () {
       this.onCloseModal()
 
-      if (this.isFormFill) this.updateRecipient(this.selectedRecipientIndex)
+      if (this.isFormFill) this.updateRecipient(this.selectedRecipientId)
       else this.onOpenModal('mandatory', 'Required Fields')
     },
     onClickDiscard () {
       this.onCloseModal()
-      this.discardRecipient(this.selectedRecipientIndex)
+      this.discardRecipient(this.selectedRecipientId)
     },
     onClickDiscardNewRecipient () {
-      this.discardRecipient(this.selectedRecipientIndex)
+      this.discardRecipient(this.selectedRecipientId)
 
       this.showModal.edit = false
       this.showModal.delete = false
@@ -386,7 +387,7 @@ export default {
       }
     },
     confirmDeleteRecipient () {
-      this.removeRecipient(this.selectedRecipientIndex)
+      this.removeRecipient(this.selectedRecipientId)
       this.onCloseModal()
     }
   }

@@ -40,7 +40,7 @@ const requestSuccess = (state) => {
   state.status = 'success'
 }
 
-const setSortTable = (state, column) => {
+const setSortByColumn = (state, column) => {
   if (state.sortTable.by === column) {
     state.sortTable.descending = !state.sortTable.descending
   } else {
@@ -55,8 +55,12 @@ const setFilterText = (state, text) => {
 
 const resetFilter = (state) => {
   state.filterText = ''
-  state.sortTable.by = ''
+  state.sortTable.by = 'region'
   state.sortTable.descending = false
+}
+
+const addRecipientsToShow = (state) => {
+  state.recipientsToShow += 20
 }
 
 const setRecipients = (state, payload) => {
@@ -70,10 +74,13 @@ const setRecipients = (state, payload) => {
 }
 
 const setRecipient = (state, payload) => {
-  const { recipient, recipientIndex } = payload
+  const { recipient, recipientId } = payload
   const recipients = [...state.recipients]
-  recipients[recipientIndex] = responseToRecipient(recipient)
+  const recipientIndex = recipients
+    .map(reci => reci.id)
+    .indexOf(recipientId)
 
+  recipients[recipientIndex] = responseToRecipient(recipient)
   state.recipients = recipients
 }
 
@@ -93,8 +100,12 @@ const removeRecipient = (state, payload) => {
 }
 
 const setRecipientId = (state, payload) => {
-  const { recipientIndex, id } = payload
-  state.recipients[recipientIndex].id = id
+  const { oldId, newId } = payload
+  const recipientIndex = state.recipients
+    .map(reci => reci.id)
+    .indexOf(reci => reci.id === oldId)
+
+  state.recipients[recipientIndex].id = newId
 }
 
 const setRecipientDeployments = (state, payload) => {
@@ -194,9 +205,10 @@ export default {
   requestInit,
   requestError,
   requestSuccess,
-  setSortTable,
+  setSortByColumn,
   setFilterText,
   resetFilter,
+  addRecipientsToShow,
   setRecipients,
   setRecipient,
   addRecipient,

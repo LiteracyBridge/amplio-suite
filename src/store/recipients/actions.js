@@ -28,22 +28,17 @@ const recipientTemplate = () => ({
   component: '',
 })
 
-const setSortTable = ({ commit, state, dispatch }, column) => {
-  commit('setDirty', true)
-  commit('setSortTable', column)
-
-  dispatch('fetchRecipients', state.programCode)
+const setSortByColumn = ({ commit }, column) => {
+  commit('setSortByColumn', column)
 }
 
 const setFilterText = ({ commit }, text) => {
-  commit('setDirty', true)
   commit('setFilterText', text)
 }
 
-const resetFilters = ({ commit, state, dispatch }) => {
+const resetFilters = ({ commit }) => {
   commit('setDirty', true)
   commit('resetFilter')
-  dispatch('fetchRecipients', state.programCode)
 }
 
 const fetchRecipients = async ({ commit, state }, programCode) => {
@@ -53,23 +48,17 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
   commit('requestInit')
 
   try {
-    const params = {
-      program_code: programCode,
-      sort_by: state.sortTable.by,
-      sort_descending: state.sortTable.descending,
-      filter_text: state.filterText
-    }
-    const response = await getRecipients(params)
-    commit('setRecipients', response)
+    const response = await getRecipients(programCode)
+    await commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
-const updateRecipient = async ({ commit, state }, recipientIndex) => {
+const updateRecipient = async ({ commit, state }, id) => {
   const { programCode, recipients } = state
-  const recipient = recipients[recipientIndex]
+  const recipient = recipients.find(reci => reci.id == id)
   let recipientId = recipient.id
 
   const recipientData = {
@@ -105,7 +94,7 @@ const updateRecipient = async ({ commit, state }, recipientIndex) => {
 
     commit('setDirty', false)
     commit('requestSuccess')
-    commit('setRecipientId', { recipientIndex, id: recipientId })
+    commit('setRecipientId', { oldId: recipientId, newId: recipientId })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
@@ -119,18 +108,22 @@ const addRecipient = async ({ commit, rootState }) => {
 
   commit('addRecipient', recipient)
   commit('setDirty', true)
+
+  return recipient.id
 }
 
-const copyRecipient = async ({ commit, state }, recipientIndex) => {
-  const recipient = { ...state.recipients[recipientIndex] }
+const copyRecipient = async ({ commit, state }, recipientId) => {
+  const recipient = { ...state.recipients.find(reci => reci.id === recipientId) }
   recipient.id = null
 
   commit('addRecipient', recipient)
   commit('setDirty', true)
+
+  return recipient.id
 }
 
-const removeRecipient = async ({ commit, state }, recipientIndex) => {
-  const recipient = state.recipients[recipientIndex]
+const removeRecipient = async ({ commit, state }, recipientId) => {
+  const recipient = { ...state.recipients.find(reci => reci.id === recipientId) }
 
   commit('requestInit')
 
@@ -145,8 +138,9 @@ const removeRecipient = async ({ commit, state }, recipientIndex) => {
   }
 }
 
-const discardRecipient = async ({ commit, state }, recipientIndex) => {
-  const recipient = state.recipients[recipientIndex]
+const discardRecipient = async ({ commit, state }, recipientId) => {
+  const { programCode, recipients } = state
+  const recipient = { ...recipients.find(reci => reci.id === recipientId) }
 
   if (!recipient.id) {
     commit('removeRecipient', recipient)
@@ -156,10 +150,10 @@ const discardRecipient = async ({ commit, state }, recipientIndex) => {
   commit('requestInit')
 
   try {
-    const response = await getRecipients({ program_code: state.programCode, recipient_id: recipient.id})
+    const response = await getRecipients(programCode)
     commit('setDirty', false)
     commit('requestSuccess')
-    commit('setRecipient', { recipient: response.recipient, recipientIndex })
+    commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })
@@ -258,7 +252,7 @@ const setRecipientsIndirectBeneficiaries = ({ commit }, payload) => {
 }
 
 export default {
-  setSortTable,
+  setSortByColumn,
   setFilterText,
   resetFilters,
   fetchRecipients,

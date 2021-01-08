@@ -221,10 +221,6 @@ import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries'
 
 export default {
   props: {
-    recipientIndex: {
-      type: Number,
-      required: true
-    },
     recipient: {
       type: Object,
       required: true
@@ -263,6 +259,11 @@ export default {
     },
     listeningModelSelected () {
       return this.listeningModels.find(opt => opt.id === this.recipient.model)
+    },
+    recipientIndex () {
+      return this.$store.state.recipients.recipients
+        .map(reci => reci.id)
+        .indexOf(this.recipient.id)
     }
   },
   components: {
