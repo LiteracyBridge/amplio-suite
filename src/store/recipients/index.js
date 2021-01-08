@@ -7,9 +7,10 @@ export const getDefaultState = () => ({
   programCode: "",
   filterText: '',
   sortTable: {
-    by: '',
+    by: 'region',
     descending: true
   },
+  recipientsToShow: 20,
   recipients: [],
 })
 
@@ -30,5 +31,25 @@ export default {
 
       return Array.from(labels)
     },
+    filterRecipients: (state) => {
+      let recipients = [...state.recipients]
+
+      // Sort
+      const column = state.sortTable.by
+      const direction = state.sortTable.descending ? 1 : -1
+      recipients = recipients.sort((a, b) =>
+        direction * a[column].toString().localeCompare(b[column].toString())
+      )
+
+      // Filter
+      let text = state.filterText
+      recipients = recipients.filter(reci =>
+        Object.values(reci)
+          .filter(val => val !== null)
+          .some(val => val.toString().toLowerCase().includes(text.toLowerCase()))
+      )
+
+      return recipients.slice(0, state.recipientsToShow)
+    }
   }
 }
