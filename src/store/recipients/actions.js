@@ -150,6 +150,7 @@ const discardRecipient = async ({ commit, state }, recipientIndex) => {
 
   if (!recipient.id) {
     commit('removeRecipient', recipient)
+    commit('setDirty', false)
     return
   }
 
