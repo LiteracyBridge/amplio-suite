@@ -40,6 +40,8 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
+import { EventBus } from '@/event-bus'
+
 export default {
   computed: {
     ...mapState('ui', {
@@ -65,6 +67,7 @@ export default {
     ]),
     handlerKeyDown (e) {
       if (e.key === 'Escape' && this.isOpen) {
+        EventBus.$emit('handleEscape')
         this.closeModal()
       }
     }

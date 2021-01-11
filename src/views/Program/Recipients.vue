@@ -191,6 +191,7 @@ import VInput from '@/components/VInput'
 import VButton from '@/components/Button'
 import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
+import { EventBus } from '@/event-bus'
 
 const columns = [
   {
@@ -295,6 +296,10 @@ export default {
     this.fetchDeployments(this.programCode)
 
     this.scroll()
+    EventBus.$on('handleEscape', this.handleModalEscape)
+  },
+  beforeDestroy () {
+    EventBus.$off('handleEscape', this.handleModalEscape)
   },
   data: () => ({
     selectedRecipientId: null,
@@ -389,6 +394,10 @@ export default {
     confirmDeleteRecipient () {
       this.removeRecipient(this.selectedRecipientId)
       this.onCloseModal()
+    },
+    handleModalEscape () {
+      if (this.recipient.id) this.onClickDiscard()
+      else this.onClickDiscardNewRecipient()
     }
   }
 }
