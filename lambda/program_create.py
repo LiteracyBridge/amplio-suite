@@ -15,12 +15,15 @@ session = create_db_session()
 @validate_keys(keys)
 def lambda_handler(event, context):
     try:
-        session.query(Project) \
-            .filter(Project.projectcode == event['programCode']) \
-            .update({ 'project': event['name'] })
+        project = session.query(Project) \
+            .filter(Project.projectcode.ilike(event['programCode'].lower())) \
+            .first()
+
+        project.project = event['name']
+        project.projectcode = event['programCode']
 
         program = Program(
-            projectcode = event['programCode'], # we'd eventually switch this to project=project
+            projectcode = project.projectcode,
             country = event['country'],
             region = event['region'],
             sustainable_development_goals = event['sdg_goals'],
@@ -34,13 +37,13 @@ def lambda_handler(event, context):
             partner = event['partner'],
             affiliate = event['affiliate'],
         )
-        validate_user_access(event, program)
+
         deployments = program.default_deployments()
         contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
             for deplo in deployments]
 
         roadmap = Roadmap(
-            program_code = event['programCode'],
+            program_code = project.projectcode,
             completed = [1]
         )
 
