@@ -94,4 +94,8 @@ label {
   text-transform: capitalize;
   transition: all .2s linear;
 }
+
+input {
+  filter: none;
+}
 </style>
