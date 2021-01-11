@@ -56,10 +56,9 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
   }
 }
 
-const updateRecipient = async ({ commit, state }, id) => {
+const updateRecipient = async ({ commit, state }, recipientId) => {
   const { programCode, recipients } = state
-  const recipient = recipients.find(reci => reci.id == id)
-  let recipientId = recipient.id
+  const recipient = recipients.find(reci => reci.id == recipientId)
 
   const recipientData = {
     program_code: programCode,
@@ -89,12 +88,14 @@ const updateRecipient = async ({ commit, state }, id) => {
   try {
     // Create recipient if this dont have recipientId
     // Else update the recipient
-    if (!recipientId) recipientId = await postRecipient(recipientData)
+    if (!recipientId) {
+      recipientId = await postRecipient(recipientData)
+      commit('setRecipientId', recipientId)
+    }
     else await putRecipient(recipientData)
 
     commit('setDirty', false)
     commit('requestSuccess')
-    commit('setRecipientId', { oldId: recipientId, newId: recipientId })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification',{ type: 'alert', text: error.toString() }, { root: true })

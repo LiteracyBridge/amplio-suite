@@ -99,13 +99,12 @@ const removeRecipient = (state, payload) => {
   }
 }
 
-const setRecipientId = (state, payload) => {
-  const { oldId, newId } = payload
-  const recipientIndex = state.recipients
-    .map(reci => reci.id)
-    .indexOf(reci => reci.id === oldId)
+const setRecipientId = (state, recipientId) => {
+  const recipients = [...state.recipients]
+  const recipientIndex = recipients.findIndex(reci => reci.id === null)
 
-  state.recipients[recipientIndex].id = newId
+  recipients[recipientIndex].id = recipientId
+  state.recipients = recipients
 }
 
 const setRecipientDeployments = (state, payload) => {
