@@ -3,19 +3,10 @@
 ## Setup
 
 ```bash
-$ git clone <this project>
-$ cd amplio-suite
-
-$ mkdir lambda/package
-$ docker-compose up --build
-
-# Run the migrations
-# Once the docker compose finishes loading, run this command in a new terminal window, within the project's directory.
-$ curl -d '{}' http://localhost:9000/migrations
+./dev-setup.sh
 ```
 
 Next time only run `docker-compose up`.
-
 
 ## Front-End
 ### Build
