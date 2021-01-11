@@ -113,12 +113,14 @@ const setDirectBeneficiariesAdditionalLabel = (state, payload) => {
   state.directBeneficiariesAdditionalMap = map
 }
 
-const removeDirectBeneficiariesAdditionalLabel = (state, labelKey) => {
-  const labels = state.directBeneficiariesAdditionalMap
-  const index = labels.findIndex(label => label.key === labelKey)
+const deleteDirectBeneficiariesAdditionalLabel = (state, labelKey) => {
+  const beneficiaries = { ...state.directBeneficiariesAdditionalMap }
+  const index = Object.keys(beneficiaries)
+    .findIndex(key => key === labelKey)
 
   if (index >= 0) {
-    state.directBeneficiariesAdditionalMap.splice(index, 1)
+    delete beneficiaries[labelKey]
+    state.directBeneficiariesAdditionalMap = beneficiaries
   }
 }
 
@@ -148,5 +150,5 @@ export default {
 
   setDirectBeneficiariesLabel,
   setDirectBeneficiariesAdditionalLabel,
-  removeDirectBeneficiariesAdditionalLabel,
+  deleteDirectBeneficiariesAdditionalLabel,
 }
