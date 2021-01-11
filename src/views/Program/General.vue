@@ -158,6 +158,7 @@
               :aria-label="`Delete option field ${opt.value}`"
               :class="labelUsed.includes(opt.key) ? 'text-grey-500' : 'text-red-500'"
               class="w-6 h-6 ml-2 icon-zoom"
+              :disabled="labelUsed.includes(opt.key)"
               @click="deleteDirectBeneficiariesAdditionalLabel(opt.key)"
             >
               <font-awesome-icon icon="trash-alt" />
