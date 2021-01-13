@@ -38,10 +38,13 @@ services:
   python-deps:
     build:
       context: ./lambda
+    environment:
+      PYTHONPATH: "/opt/python/:/usr/src/app/package"
     depends_on:
       - lambda-migration
     volumes:
-      - ./lambda:/app
+      - ./lambda/site.py:/var/lang/lib/python3.8/site.py
+      - ./lambda:/opt/python
 
   lambda-migration: &base
     image: lambci/lambda:python3.8
