@@ -24,20 +24,26 @@ const setDeployments = (state, payload) => {
   state.dirty = false
   state.status = 'success'
   state.programCode = payload.programCode
-  state.items = payload.items
+  state.deployments = payload.deployments
 }
 
 const addDeployment = (state, payload) => {
-  state.items.push(payload)
+  state.deployments.push(payload)
 }
 
 const removeDeployment = (state, payload) => {
-  state.items.splice(payload.index, 1)
+  state.deployments.splice(payload.index, 1)
 }
 
 const setDeploymentDate = (state, payload) => {
-  const { index, what, date } = payload
-  state.items[index][what] = date
+  const { id, what, date } = payload
+  const deployments = [...state.deployments]
+  const index = deployments
+    .map(deplo => deplo.id)
+    .indexOf(id)
+
+  deployments[index][what] = date
+  state.deployments = deployments
 }
 
 export default {

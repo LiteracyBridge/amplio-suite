@@ -102,9 +102,8 @@ const updateRecipient = async ({ commit, state }, recipientId) => {
 }
 
 const addRecipient = async ({ commit, rootState }) => {
-  const deployments = rootState.deployments.items
   const recipient = recipientTemplate()
-  recipient.deployments = deployments.map(deplo => deplo.deploymentnumber)
+  recipient.deployments = rootState.deployments.deployments.map(deplo => deplo.number)
 
   commit('addRecipient', recipient)
   commit('setDirty', true)

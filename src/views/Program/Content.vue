@@ -25,7 +25,7 @@
         v-model="playlists"
         :on-select="(index) => { this.playlistIndex = index }"
         :on-add="onAddPlaylist"
-        :on-remove="removePlaylist"
+        :on-remove="onClickRemovePlaylist"
         :selected-index="playlistIndex"
         :titles="duplicatePlaylists"
       />
@@ -48,7 +48,7 @@
 
          <span
           tabindex="0"
-          @click="() => addNewMessage(playlistIndex)"
+          @click="() => addMessage(playlist.id)"
           class="block mt-4 p-2 text-blue-hover-hunder"
         >
           + Add Message
@@ -99,7 +99,7 @@ export default {
         return this.$store.state.content.playlists
       },
       set (value) {
-        this.setPlaylist(value)
+        this.setPlaylists(value)
       }
     },
     playlist () {
@@ -132,7 +132,7 @@ export default {
       if (Object.keys(this.deployment).length > 0) {
         this.fetchContent({
           programCode: this.programCode,
-          deployment: this.deployment.deploymentname
+          deploymentId: this.deployment.id
         })
       }
     }
@@ -170,10 +170,11 @@ export default {
     ...mapActions('content', [
       'fetchContent',
       'updateContent',
-      'setPlaylist',
+      'setPlaylists',
       'addPlaylist',
       'removePlaylist',
-      'addNewMessage',
+      'addMessage',
+      'removeMessage',
     ]),
     onSaveChanges () {
       if (this.duplicatePlaylists.length !== 0) {
@@ -183,7 +184,7 @@ export default {
         this.modalBody = 'Please rename the duplicate message title for can save.'
         this.onOpenModal('Duplicated Message Title')
       } else if (this.isFormFill) {
-        this.updateContent(this.deployment.deployment)
+        this.updateContent(this.deployment.id)
       } else {
         this.modalBody = 'Please complete all of the mandatory fields.'
         this.onOpenModal('Required Fields')
@@ -201,8 +202,13 @@ export default {
       this.closeModal()
     },
     async onAddPlaylist () {
-      await this.addPlaylist(this.deployment.deploymentname)
+      await this.addPlaylist(this.deployment.id)
       this.playlistIndex = this.playlists.length - 1
+    },
+    async onClickRemovePlaylist (index) {
+      const playlistId = this.playlists[index].id
+      await this.removePlaylist(playlistId)
+      this.playlistIndex = 0
     },
   }
 }

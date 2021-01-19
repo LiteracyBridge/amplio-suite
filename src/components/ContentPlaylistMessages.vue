@@ -130,7 +130,7 @@ export default {
       },
       set (value) {
         this.setMessageIndex(-1)
-        this.setMessages({ playlistIndex: this.playlistIndex, messages: value })
+        this.setMessages({ playlistId: this.playlist.id, messages: value })
       }
     },
     message () {
@@ -181,7 +181,8 @@ export default {
       this.closeModal()
     },
     confirmDeleteMessage() {
-      this.removeMessage({ playlistIndex: this.playlistIndex, messageIndex: this.modal.eleIndex })
+      const message = this.messages[this.modal.eleIndex]
+      this.removeMessage(message.id)
       this.handleCloseModal()
     },
     setMessageIndex (index) {
@@ -218,7 +219,7 @@ export default {
       tmp[newIndex] = tmp[oldIndex]
       tmp[oldIndex] = a
 
-      this.setMessages({ playlistIndex: this.playlistIndex, messages: tmp })
+      this.setMessages({ playlistId: this.playlist.id, messages: tmp })
       this.setMessageIndex(-1)
 
       // Update dashed element

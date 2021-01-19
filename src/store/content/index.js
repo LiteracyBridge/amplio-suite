@@ -6,7 +6,7 @@ export const getDefaultState = () => ({
   dirty: false,
   status: "",
   programCode: "",
-  deploymentName: "",
+  deploymentId: "",
   playlists: [],
 
   duplicatePlaylists: [],

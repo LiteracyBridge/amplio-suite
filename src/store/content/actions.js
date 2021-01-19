@@ -1,21 +1,30 @@
 import {
   getContent,
-  putContent,
-  contentAddPlaylist,
-  contentAddPMessage
 } from '@/api/content.api'
+
+import {
+  postPlaylist,
+  putPlaylist,
+  deletePlaylist,
+} from '@/api/playlist.api'
+
+import {
+  postMessage,
+  putMessage,
+  deleteMessage,
+} from '@/api/message.api'
 
 
 const fetchContent = async ({ state, commit }, payload) => {
-  const { programCode, deployment } = payload
+  const { programCode, deploymentId } = payload
 
   if (state.status === 'loading') return
-  if (state.programCode === programCode && !state.dirty && state.deploymentName === deployment) return
+  if (state.programCode === programCode && !state.dirty && state.deploymentId === deploymentId) return
 
   commit('requestInit')
 
   try {
-    const response = await getContent(programCode, deployment)
+    const response = await getContent(programCode, deploymentId)
     commit('setContent', response)
   } catch (error) {
     commit('requestError')
@@ -23,13 +32,17 @@ const fetchContent = async ({ state, commit }, payload) => {
   }
 }
 
-const updateContent = async ({ state, commit }, deployment) => {
-  const { programCode, playlists } = state
+const updateContent = async ({ state, commit }) => {
+  const { playlists } = state
+  const messages = playlists
+    .map(playlist => playlist.messages)
+    .flat()
 
   commit('requestInit')
 
   try {
-    await putContent({ program_code: programCode, deployment, content: playlists })
+    await putPlaylist({ playlists })
+    await putMessage({ messages })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -38,30 +51,36 @@ const updateContent = async ({ state, commit }, deployment) => {
   }
 }
 
-const addPlaylist = async ({ state, commit }, deployment) => {
-  const { programCode } = state
-
+const setPlaylists = async ({ commit }, payload) => {
+  commit('setPlaylists', payload)
   commit('setDirty', true)
+}
+
+const addPlaylist = async ({ state, commit }, deploymentId) => {
   commit('requestInit')
 
   try {
-    const response = await contentAddPlaylist({ program_code: programCode, deployment})
+    const response = await postPlaylist(state.programCode, deploymentId)
     commit('requestSuccess')
-    commit('addPlaylist', response.data.playlist)
+    commit('addPlaylist', response)
   } catch (error) {
     commit('requestError')
+    console.log('error', error)
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
-const removePlaylist = async ({ commit }, index) => {
-  commit('removePlaylist', index)
-  commit('setDirty', true)
-}
+const removePlaylist = async ({ state, commit, dispatch }, playlistId) => {
+  const { programCode, deploymentId } = state
 
-const setPlaylist = async ({ commit }, payload) => {
-  commit('setPlaylist', payload)
-  commit('setDirty', true)
+  try {
+    commit('setDirty', true)
+    await deletePlaylist(programCode, playlistId)
+    await dispatch('fetchContent', { programCode, deploymentId })
+  } catch (error) {
+    commit('requestError')
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  }
 }
 
 const setPlaylistTitle = ({ commit, state }, payload) => {
@@ -83,25 +102,30 @@ const setMessages = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const addNewMessage = async ({ state, commit }, playlistIndex) => {
-  const { programCode, deploymentName } = state
-
-  commit('setDirty', true)
+const addMessage = async ({ state, commit }, playlistId) => {
   commit('requestInit')
 
   try {
-    const response = await contentAddPMessage({ program_code: programCode, deployment: deploymentName, playlist_index: playlistIndex })
+    const response = await postMessage(state.programCode, playlistId)
     commit('requestSuccess')
-    commit('addNewMessage', { playlistIndex, message: response.data.message })
+    commit('addMessage', response)
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
 }
 
-const removeMessage = async ({ commit }, payload) => {
-  commit('removeMessage', payload)
-  commit('setDirty', true)
+const removeMessage = async ({ state, commit, dispatch }, messageId) => {
+  const { programCode, deploymentId } = state
+
+  try {
+    commit('setDirty', true)
+    await deleteMessage(programCode, messageId)
+    await dispatch('fetchContent', { programCode, deploymentId })
+  } catch (error) {
+    commit('requestError')
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  }
 }
 
 const setMessageTitle = ({ commit, state }, payload) => {
@@ -160,14 +184,14 @@ export default {
   fetchContent,
   updateContent,
 
-  setPlaylist,
+  setPlaylists,
   addPlaylist,
   removePlaylist,
   setPlaylistTitle,
   setPlaylistAudience,
 
   setMessages,
-  addNewMessage,
+  addMessage,
   removeMessage,
   setMessageTitle,
   setMessageVariant,

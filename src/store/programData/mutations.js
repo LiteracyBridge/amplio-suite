@@ -11,7 +11,7 @@ const setDirty = (state, status) => {
 const setProgramData = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.projectcode
+  state.programCode = payload.program_code
 
   state.country = payload.country
   state.region = payload.region
