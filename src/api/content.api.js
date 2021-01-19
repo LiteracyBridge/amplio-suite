@@ -2,31 +2,14 @@ import httpClient from './httpClient'
 
 const END_POINT = '/content'
 
-const getContent = async (programCode, deployment) => {
-  try {
-    const response = await httpClient().get(END_POINT, {
-      params: { program_code: programCode, deployment }
-    })
+const getContent = async (programCode, deploymentId) => {
+    const params = { program_code: programCode, deployment_id: deploymentId }
+    const response = await httpClient().get(END_POINT, { params })
 
-    return {
-      programCode,
-      deployment: response.data.deployment,
-      playlists: response.data.content
-    }
-  } catch (e) {
-    console.log(e)
-  }
+    if (response.status >= 400) throw new Error(response.data.message)
+    else return response.data.content
 }
-
-const putContent = async (body) => httpClient().put(END_POINT, body)
-
-const contentAddPlaylist = async (body) => await httpClient().post('playlist', body)
-
-const contentAddPMessage = async (body) => await httpClient().post('message', body)
 
 export {
   getContent,
-  putContent,
-  contentAddPlaylist,
-  contentAddPMessage
 }
