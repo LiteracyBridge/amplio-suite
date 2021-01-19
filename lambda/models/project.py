@@ -10,10 +10,6 @@ class Project(Base, SerializerMixin):
         UniqueConstraint('projectcode', name='projects_uniqueness_key'),
     )
     id = Column(Integer)
-    projectcode = Column(String(255), primary_key=True, index=True, nullable=False)
-    project = Column(String(255), nullable=False)
+    program_code = Column('projectcode', String(255), primary_key=True, index=True, nullable=False)
+    name = Column('project', String(255), nullable=False)
     active = Column(Boolean)
-    
-    @property
-    def program_code(self):
-        return self.projectcode

@@ -25,16 +25,18 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 from models.base import Base
-from models import program
 from models import project
+from models import program
 from models import deployment
-from models import content
+from models import playlist
+from models import message
+from models import message_langs
+from models import roadmap
+from models import recipient
 from models import language
 from models import category
 from models import sustainable_development
 from models import listening_model
-from models import roadmap
-from models import recipient
 
 target_metadata = Base.metadata
 

@@ -1,0 +1,54 @@
+from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey, ForeignKeyConstraint
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import select, func
+from sqlalchemy_serializer import SerializerMixin
+
+from utils import create_db_session
+from models.base import Base
+from models.message import Message
+
+
+class Playlist(Base, SerializerMixin):
+    __tablename__ = 'playlists'
+    __table_args__ = (
+        UniqueConstraint(
+            'program_code',
+            'deployment_id',
+            'position',
+            name='playlist_uniqueness_key'
+        ),
+        ForeignKeyConstraint(
+            ['program_code', 'deployment_id'],
+            ['deployments.project', 'deployments.deployment'],
+            name='playlist_program_code_fkey',
+            ondelete='CASCADE',
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    program_code = Column(String, primary_key=True, index=True, nullable=False)
+    deployment_id = Column(String, nullable=False)
+    position = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    audience = Column(String)
+
+    messages = relationship(
+        'Message',
+        passive_deletes=True,
+        order_by='Message.position',
+    )
+
+    def __init__(self, **kwargs):
+        """
+        Set default value for position and title
+        """
+        session = create_db_session()
+        query = select([func.coalesce(func.max(Playlist.position), 0)]) \
+            .where(Playlist.program_code == kwargs['program_code']) \
+            .where(Playlist.deployment_id == kwargs['deployment_id'])
+
+        position = session.execute(query).scalar() + 1
+        kwargs['position'] = position
+        kwargs['title'] = f"Playlist {position}"
+
+        super(Playlist, self).__init__(**kwargs)
