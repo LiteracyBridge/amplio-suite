@@ -91,29 +91,29 @@ services:
     <<: *base
     command: content_retrieve.lambda_handler
 
-  lambda-content_create:
-    <<: *base
-    command: content_create.lambda_handler
-
-  lambda-content_update:
-    <<: *base
-    command: content_update.lambda_handler
-
   lambda-playlist_create:
     <<: *base
     command: playlist_create.lambda_handler
 
-  # lambda-playlist_delete:
-  #   <<: *base
-  #   command: playlist_delete.lambda_handler
+  lambda-playlist_update:
+    <<: *base
+    command: playlist_update.lambda_handler
+
+  lambda-playlist_delete:
+    <<: *base
+    command: playlist_delete.lambda_handler
 
   lambda-message_create:
     <<: *base
     command: message_create.lambda_handler
 
-  # lambda-message_delete:
-  #   <<: *base
-  #   command: message_delete.lambda_handler
+  lambda-message_update:
+    <<: *base
+    command: message_update.lambda_handler
+
+  lambda-message_delete:
+    <<: *base
+    command: message_delete.lambda_handler
 
   lambda-recipient_retrieve:
     <<: *base

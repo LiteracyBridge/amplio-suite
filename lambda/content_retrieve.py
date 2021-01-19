@@ -1,29 +1,30 @@
 from utils import create_db_session, validate_user_access
 from decorators import validate_keys
-from models.content import Content
+from models.deployment import Deployment
+from models.playlist import Playlist
 
 session = create_db_session()
 
-@validate_keys(['program_code'])
+
+@validate_keys(['program_code', 'deployment_id'])
 def lambda_handler(event, context):
-    if 'deployment' in event:
-        content = session.query(Content) \
-            .filter(
-                Content.program_code == event['program_code'],
-                Content.deployment == event['deployment']
-            ) \
-            .first()
-    else:
-        content = session.query(Content) \
-            .filter(Content.program_code == event['program_code']) \
-            .first()
+    playlists = session.query(Playlist) \
+        .filter(
+            Playlist.program_code == event['program_code'],
+            Playlist.deployment_id == event['deployment_id'],
+        ) \
+        .all()
 
-    validate_user_access(event, content)
+    playlists = [validate_user_access(event, p).to_dict() for p in playlists]
 
-    if content:
+    if playlists:
         return {
             'status': 200,
-            **content.to_dict()
+            'content': {
+                'program_code': event['program_code'],
+                'deployment_id': event['deployment_id'],
+                'playlists': playlists,
+            },
         }
 
     return {
