@@ -13,11 +13,11 @@
         v-for="(item, index) in value"
         :key="index"
         tabindex="0"
-        class="flex justify-between items-center mx-1 px-1 cursor-move"
+        class="flex justify-between items-center mx-1 px-1 cursor-grab"
         :data-name="name"
         :data-index="index"
       >
-        <font-awesome-icon icon="sort" class="text-black" />
+        <font-awesome-icon icon="grip-lines" class="text-black" />
         <span
           :class="selectedIndex === index ? 'font-semibold text-blue underline' : ''"
           class="py-2 cursor-pointer hover:text-blue hover:font-semibold hover:underline"
