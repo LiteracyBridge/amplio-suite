@@ -5,26 +5,26 @@ from models.deployment import Deployment
 
 session = create_db_session()
 
-@validate_keys(['program_code', 'deployment'])
+@validate_keys(['program_code', 'id'])
 def lambda_handler(event, context):
     try:
         deployment = session.query(Deployment) \
             .filter(
-                Deployment.project == event['program_code'],
-                Deployment.deployment == event['deployment']
+                Deployment.program_code == event['program_code'],
+                Deployment.id == event['id']
             ) \
             .first()
 
         validate_user_access(event, deployment)
 
         program = session.query(Program) \
-            .filter(Program.projectcode == event['program_code']) \
+            .filter(Program.program_code == event['program_code']) \
             .first()
 
         validate_user_access(event, program)
 
         session.query(Program) \
-            .filter(Program.projectcode == event['program_code']) \
+            .filter(Program.program_code == event['program_code']) \
             .update({'deployments_count': program.deployments_count - 1})
 
         session.flush()

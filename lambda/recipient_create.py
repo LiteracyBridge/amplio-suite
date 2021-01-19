@@ -29,7 +29,7 @@ def lambda_handler(event, context):
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
 
     program = session.query(Program) \
-        .filter(Program.projectcode == event['program_code']) \
+        .filter(Program.program_code == event['program_code']) \
         .first()
     
     validate_user_access(event, program)

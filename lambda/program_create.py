@@ -1,9 +1,10 @@
 from utils import create_db_session, validate_user_access
+from decorators import validate_keys
 from models.project import Project
 from models.program import Program
-from models.content import Content
+from models.playlist import Playlist
+from models.message import Message
 from models.roadmap import Roadmap
-from decorators import validate_keys
 
 
 keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
@@ -16,14 +17,15 @@ session = create_db_session()
 def lambda_handler(event, context):
     try:
         project = session.query(Project) \
-            .filter(Project.projectcode.ilike(event['programCode'].lower())) \
+            .filter(Project.program_code.ilike(event['programCode'].lower())) \
             .first()
 
-        project.project = event['name']
-        project.projectcode = event['programCode']
+        project.name = event['name']
+        project.program_code = event['programCode']
+        session.flush()
 
         program = Program(
-            projectcode = project.projectcode,
+            program_code = event['programCode'],
             country = event['country'],
             region = event['region'],
             sustainable_development_goals = event['sdg_goals'],
@@ -37,24 +39,34 @@ def lambda_handler(event, context):
             partner = event['partner'],
             affiliate = event['affiliate'],
         )
-
-        deployments = program.default_deployments()
-        contents = [Content(program_code=deplo.project, deployment=deplo.deployment)
-            for deplo in deployments]
-
-        roadmap = Roadmap(
-            program_code = project.projectcode,
-            completed = [1]
-        )
-
-        session.flush()
         session.add(program)
         session.flush()
+
+        deployments = program.default_deployments()
         session.add_all(deployments)
         session.flush()
-        session.add_all(contents)
-        session.commit()
+
+        playlists = [Playlist(
+            program_code = deplo.program_code,
+            deployment_id = deplo.id,
+        ) for deplo in deployments]
+        session.add_all(playlists)
+        session.flush()
+
+        messages = [Message(
+            program_code = playlist.program_code,
+            playlist_id = playlist.id,
+        ) for playlist in playlists]
+        session.add_all(messages)
+        session.flush()
+
+        roadmap = Roadmap(
+            program_code = project.program_code,
+            completed = [1]
+        )
         session.add(roadmap)
+        session.flush()
+
         session.commit()
     except BaseException as err:
         return {

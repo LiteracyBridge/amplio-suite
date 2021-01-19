@@ -8,13 +8,13 @@ session = create_db_session()
 @validate_keys(['project_code'])
 def lambda_handler(event, context):
     project = session.query(Project) \
-        .filter(Project.projectcode == event['project_code']) \
+        .filter(Project.program_code == event['project_code']) \
         .first()
 
     validate_user_access(event, project)
 
     program = session.query(Program) \
-        .filter(Program.projectcode == event['project_code']) \
+        .filter(Program.program_code == event['project_code']) \
         .first()
 
     validate_user_access(event, program)
@@ -22,7 +22,8 @@ def lambda_handler(event, context):
     if program:
         return {
             'status': 200,
-            'program': { **program.to_dict(), 'name': project.project }
+            'program_code': program.program_code,
+            'program': { **program.to_dict(), 'name': project.name }
         }
 
     return {

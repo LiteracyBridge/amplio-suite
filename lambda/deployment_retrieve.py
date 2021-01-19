@@ -7,10 +7,10 @@ session = create_db_session()
 @validate_keys(['program_code'])
 def lambda_handler(event, context):
     deployments = session.query(Deployment) \
-        .filter(Deployment.project == event['program_code'])
+        .filter(Deployment.program_code == event['program_code'])
 
     deployments = [validate_user_access(event, deplo).to_dict() for deplo in deployments]
-    deployments = sorted(deployments, key=lambda deplo: deplo['deploymentnumber'])
+    deployments = sorted(deployments, key=lambda deplo: deplo['number'])
 
     if deployments:
         return {
