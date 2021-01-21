@@ -37,7 +37,6 @@ const setFilterText = ({ commit }, text) => {
 }
 
 const resetFilters = ({ commit }) => {
-  commit('setDirty', true)
   commit('resetFilter')
 }
 
