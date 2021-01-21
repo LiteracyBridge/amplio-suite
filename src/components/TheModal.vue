@@ -9,7 +9,7 @@
     <div
       tabindex="0"
       class="absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50"
-      @click="closeModal"
+      @click="onClickCloseModal"
     >
       <font-awesome-icon icon="times" />
       <span class="text-sm">(Esc)</span>
@@ -70,6 +70,10 @@ export default {
         EventBus.$emit('handleEscape')
         this.closeModal()
       }
+    },
+    onClickCloseModal () {
+      EventBus.$emit('handleEscape')
+      this.closeModal()
     }
   }
 }
