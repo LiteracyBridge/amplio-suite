@@ -58,27 +58,19 @@
           </a>
         </div>
 
-        <div class="inline-flex">
-          <select
-            v-if="programs && programs.length > 1"
-            aria-label="Select a program"
-            class="px-4 py-1 rounded"
+        <div class="inline-flex items-center">
+          <multiselect
+            id="programSelector"
             :value="programCode"
-            @change="changeProgram"
-          >
-            <option value="">Select a program</option>
-            <option
-              v-for="(name, index) in programs"
-              :key="index"
-              :value="name"
-            >
-              {{ name }}
-            </option>
-          </select>
+            :options="programs"
+            placeholder="Select a program"
+            @select="selectProgramCode"
+          />
 
           <span
             tabindex="0"
-            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded cursor-pointer hover:text-gray-500"
+            class="px-3 text-xl text-white font-bold rounded cursor-pointer hover:text-gray-500"
+            style="white-space: nowrap;"
             @click="handleLogout"
             @keyup.enter="handleLogout"
           >
@@ -92,6 +84,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import Multiselect from 'vue-multiselect'
 
 import DropDown from '@/components/TheNavbarDropDown'
 
@@ -123,7 +116,8 @@ export default {
   components: {
     Bars,
     Close,
-    DropDown
+    DropDown,
+    Multiselect,
   },
   methods: {
     ...mapActions('programs', [
@@ -132,8 +126,7 @@ export default {
     ...mapActions('account', [
       'logout'
     ]),
-    async changeProgram (event) {
-      let programCode = event.target.value
+    async selectProgramCode (programCode) {
       this.$router.push(`/programs/${programCode}`)
     },
     handleLogout () {
