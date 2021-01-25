@@ -85,14 +85,25 @@
     </textarea>
 
     <label for="variant">Variant</label>
-    <v-input
-      name="variant"
-      type="text"
-      mx="mx-0 w-full"
-      class="col-span-3"
-      :value="message.variant"
-      @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
-    />
+    <div class="flex col-span-3">
+      <v-input
+        name="variant"
+        type="text"
+        mx="mx-0"
+        :value="message.variant"
+        @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
+      />
+      <v-tooltip
+        v-if="message.variant.length > 1"
+        text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
+        class="my-auto ml-2"
+      >
+        <font-awesome-icon
+          class="text-orange-600"
+          icon="exclamation-circle"
+        />
+      </v-tooltip>
+    </div>
   </div>
 </template>
 
@@ -102,6 +113,7 @@ import { mapState, mapActions } from 'vuex'
 import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput'
 import LanguagesSelector from '@/components/LanguagesSelector'
+import VTooltip from '@/components/VTooltip'
 
 export default {
   props: {
@@ -150,6 +162,7 @@ export default {
     Multiselect,
     VInput,
     LanguagesSelector,
+    VTooltip,
   },
   data () {
     return {
