@@ -24,7 +24,7 @@ def lambda_handler(event, context):
 
     # Generate the content.csv file
     output =  io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=header_content)
+    writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
     writer.writeheader()
 
     contents = session.query(Content) \
@@ -42,15 +42,15 @@ def lambda_handler(event, context):
                     target = [target for target in goal.targets
                         if target.subsection == message['sdg_target']][0]
 
-                    goal = goal.label
-                    target = target.label
+                    goal = goal.section
+                    target = f"{goal}.{target.subsection}"
 
                 else:
                     goal = ''
                     target = ''
 
                 row = {
-                    'deployment_num': content.deployment,
+                    'deployment_num': int(content.deployment),
                     'playlist_title': playlist['title'],
                     'message_title': message['title'],
                     'key_points': message['key_point'],
