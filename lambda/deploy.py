@@ -35,15 +35,13 @@ def lambda_handler(event, context):
 
     for playlist in playlists:
         for message in playlist.messages:
+            sdg_goal = ''
             if message.sdg_goal_id:
                 sdg_goal = message.sdg_goal.section
-            else:
-                sdg_goal = ''
 
+            sdg_target = ''
             if message.sdg_target_id:
-                sdg_target = f"{goal}.{message.sdg_target.subsection}"
-            else:
-                sdg_target = ''
+                sdg_target = f"{sdg_goal}.{message.sdg_target.subsection}"
 
             row = {
                 'deployment_num': int(playlist.deployment_id),
