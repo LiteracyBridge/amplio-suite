@@ -27,7 +27,7 @@ def lambda_handler(event, context):
 
         return {
             'status': 202,
-            'message': 'successfully create message',
+            'message': 'uccessfully created message',
             'data': message.to_dict(),
         }
     except BaseException as err:

@@ -22,5 +22,5 @@ def lambda_handler(event, context):
 
     return {
         'status': 202,
-        'message': 'successfully delete message'
+        'message': 'successfully deleted message'
     }
