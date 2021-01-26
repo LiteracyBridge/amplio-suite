@@ -94,7 +94,7 @@
         @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
       />
       <v-tooltip
-        v-if="message.variant.length > 1"
+        v-if="message.variant && message.variant.length > 1"
         text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
         class="my-auto ml-2"
       >
