@@ -10,46 +10,42 @@ session = create_db_session()
 
 @validate_keys(['messages'])
 def lambda_handler(event, context):
-    for message in event['messages']:
-        session.query(Message) \
+    for messageIn in event['messages']:
+        message = session.query(Message) \
             .filter(
-                Message.program_code == message['program_code'],
-                Message.id == message['id'],
+                Message.program_code == messageIn['program_code'],
+                Message.id == messageIn['id'],
             ) \
-            .update({
-                'position': message['position'],
-                'title': message['title'],
-                'format': message['format'],
-                'default_category_id': message['default_category_id'],
-                'variant': message['variant'],
-                'sdg_goal_id': message['sdg_goal_id'],
-                'sdg_target_id': message['sdg_target_id'],
-                'key_point': message['key_point'],
-            })
+            .first()
 
-        message_langs = session.query(MessageLanguages) \
-            .filter(MessageLanguages.message_id == message['id']) \
-            .all()
-        message_langs = [lang.language_code for lang in message_langs]
+        message.position = messageIn['position']
+        message.title = messageIn['title']
+        message.format = messageIn['format']
+        message.default_category_id = messageIn['default_category_id']
+        message.variant = messageIn['variant']
+        message.sdg_goal_id = messageIn['sdg_goal_id']
+        message.sdg_target_id = messageIn['sdg_target_id']
+        message.key_point = messageIn['key_point']
+        session.flush()
 
-        message['languages'] = [lang['code'] for lang in message['languages']]
-        new_codes = [lang for lang in message['languages'] if lang not in message_langs]
-        remove_codes = [lang for lang in message_langs if lang not in message['languages']]
+        actual_languages = [language.code for language in message.languages]
+        messageIn['languages'] = [language['code'] for language in messageIn['languages']]
+        new_codes = [language for language in messageIn['languages'] if language not in actual_languages]
+        remove_codes = [language for language in actual_languages if language not in messageIn['languages']]
 
         langs = [MessageLanguages(
-            message_id=message['id'],
+            message_id=messageIn['id'],
             language_code=code,
         ) for code in new_codes]
         session.add_all(langs)
         session.flush()
 
-        for code in remove_codes:
-            session.query(MessageLanguages) \
-                .filter(
-                    MessageLanguages.message_id == message['id'],
-                    MessageLanguages.language_code == code,
-                ) \
-                .delete()
+        session.query(MessageLanguages) \
+            .filter(
+                MessageLanguages.message_id == messageIn['id'],
+                MessageLanguages.language_code.in_(remove_codes),
+            ) \
+            .delete(synchronize_session='fetch')
 
     session.commit()
 
