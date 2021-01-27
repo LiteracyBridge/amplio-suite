@@ -18,32 +18,12 @@
         @change="setFeedbackFrequently({ frequently: $event.target.value, step })"
       >
         <option value="">Select</option>
+        <option value="weekly">Weekly</option>
+        <option value="bi_weekly">Bi-weekly</option>
         <option value="monthly">Monthly</option>
         <option value="quarterly">Quarterly</option>
         <option value="semi_annually">Semi-Annually</option>
         <option value="annually">Annually</option>
-      </select>
-    </div>
-
-    <div class="mt-10">
-      <p id="feedbackFrequentlyOther" class="text-2xl font-semibold">
-        Do you plan to gather user feedback and usage statistics at times other
-        than during content deployments? If yes, how often do you plan to collect
-        this information? If not, select “Not applicable”.
-      </p>
-
-      <select
-        aria-labelledby="feedbackFrequentlyOther"
-        class="w-64 mt-2 px-5 py-2 text-base bg-white rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        :value="feedbackFrequentlyOther"
-        @change="setFeedbackFrequentlyOther({ frequently: $event.target.value, step })"
-      >
-        <option value="">Select</option>
-        <option value="weekly">Weekly</option>
-        <option value="bi_weekly">Bi-Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="quarterly">Quarterly</option>
-        <option value="not_applicable">Not Applicable</option>
       </select>
     </div>
   </Box>
@@ -64,7 +44,6 @@ export default {
   computed: {
     ...mapState('programData', [
       'feedbackFrequently',
-      'feedbackFrequentlyOther'
     ])
   },
   components: {
@@ -76,7 +55,6 @@ export default {
   methods: {
     ...mapActions('wizard', [
       'setFeedbackFrequently',
-      'setFeedbackFrequentlyOther'
     ])
   }
 }
