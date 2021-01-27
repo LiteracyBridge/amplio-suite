@@ -26,9 +26,7 @@ functions_to_deploy=(
 	categories_index
 	cognito_custom_message
 	cognito_pre_sign_up
-	content_create
 	content_retrieve
-	content_update
 	deploy
 	deployment_delete
 	deployment_retrieve
@@ -36,8 +34,12 @@ functions_to_deploy=(
 	languages_index
 	listening_model_index
 	message_create
+	message_delete
+	message_update
 	migrations
 	playlist_create
+	playlist_delete
+	playlist_update
 	program_create
 	program_next_deployment
 	program_retrieve
