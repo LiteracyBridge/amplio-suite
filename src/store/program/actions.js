@@ -16,7 +16,6 @@ const generateProgramData = (state, rootState) => ({
   deployments_count: +rootState.programData.deploymentsCount,
   deployments_first: rootState.programData.deploymentsFirst,
   feedback_frequency: rootState.programData.feedbackFrequently,
-  feedback_frequency_other: rootState.programData.feedbackFrequentlyOther,
   languages: rootState.programData.languages,
   direct_beneficiaries_map: rootState.programData.directBeneficiariesMap,
   direct_beneficiaries_additional_map: rootState.programData.directBeneficiariesAdditionalMap,

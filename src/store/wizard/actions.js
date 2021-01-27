@@ -123,18 +123,8 @@ const setDeploymentsFirst = async ({ dispatch }, payload) => {
 // step-feedback
 const setFeedbackFrequently = async ({ dispatch }, payload) => {
   const { frequently, step } = payload
-  const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
-
   await dispatch('programData/setFeedbackFrequently', frequently, { root: true })
-  await check(attrs, step, dispatch)
-}
-
-const setFeedbackFrequentlyOther = async ({ dispatch }, payload) => {
-  const { frequently, step } = payload
-  const attrs = ['feedbackFrequently', 'feedbackFrequentlyOther']
-
-  await dispatch('programData/setFeedbackFrequentlyOther', frequently, { root: true })
-  await check(attrs, step, dispatch)
+  await check('feedbackFrequently', step, dispatch)
 }
 
 // step-languages
@@ -170,7 +160,6 @@ export default {
   setDeploymentsLength,
   setDeploymentsFirst,
   setFeedbackFrequently,
-  setFeedbackFrequentlyOther,
   setLanguages,
   deleteLanguage,
 }

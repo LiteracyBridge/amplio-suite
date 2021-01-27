@@ -21,7 +21,6 @@ const setProgramData = (state, payload) => {
   state.deploymentsLength = payload.deployments_length
   state.deploymentsFirst = payload.deployments_first
   state.feedbackFrequently = payload.feedback_frequency
-  state.feedbackFrequentlyOther = payload.feedback_frequency_other
   state.languages = payload.languages
   state.partner = payload.partner,
   state.affiliate = payload.affiliate,
@@ -88,10 +87,6 @@ const setFeedbackFrequently = (state, payload) => {
   state.feedbackFrequently = payload
 }
 
-const setFeedbackFrequentlyOther = (state, payload) => {
-  state.feedbackFrequentlyOther = payload
-}
-
 const setPartner = (state, payload) => {
   state.partner = payload
 }
@@ -144,7 +139,6 @@ export default {
   setLanguages,
   deleteLanguage,
   setFeedbackFrequently,
-  setFeedbackFrequentlyOther,
   setPartner,
   setAffiliate,
 

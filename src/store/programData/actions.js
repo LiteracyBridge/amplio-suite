@@ -10,7 +10,6 @@ const isCompleted = ({ state, rootState }, payload) => {
       case 'country':
       case 'deploymentsLength':
       case 'feedbackFrequently':
-      case 'feedbackFrequentlyOther':
       case 'partner':
       case 'affiliate':
         partial = state[attr] !== ''
@@ -95,11 +94,6 @@ const setFeedbackFrequently = async ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const setFeedbackFrequentlyOther = async ({ commit }, payload) => {
-  await commit('setFeedbackFrequentlyOther', payload)
-  commit('setDirty', true)
-}
-
 const setLanguages = async ({ commit }, payload) => {
   await commit('setLanguages', payload)
   commit('setDirty', true)
@@ -153,7 +147,6 @@ export default {
   setDeploymentsLength,
   setDeploymentsFirst,
   setFeedbackFrequently,
-  setFeedbackFrequentlyOther,
   setLanguages,
   deleteLanguage,
   setPartner,
