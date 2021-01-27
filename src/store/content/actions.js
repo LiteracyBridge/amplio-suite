@@ -33,7 +33,7 @@ const fetchContent = async ({ state, commit }, payload) => {
 }
 
 const updateContent = async ({ state, commit }) => {
-  const { playlists } = state
+  const { program_code, playlists } = state
   const messages = playlists
     .map(playlist => playlist.messages)
     .flat()
@@ -41,8 +41,8 @@ const updateContent = async ({ state, commit }) => {
   commit('requestInit')
 
   try {
-    await putPlaylist({ playlists })
-    await putMessage({ messages })
+    await putPlaylist({ program_code, playlists })
+    await putMessage({ program_code, messages })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
