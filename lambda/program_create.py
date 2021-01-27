@@ -9,7 +9,7 @@ from models.roadmap import Roadmap
 
 keys = ['programCode', 'name', 'sdg_goals', 'listening_models',
         'deployments_length', 'deployments_count', 'deployments_first',
-        'feedback_frequency', 'feedback_frequency_other', 'languages']
+        'feedback_frequency', 'languages']
 
 session = create_db_session()
 
@@ -34,7 +34,6 @@ def lambda_handler(event, context):
             deployments_length = event['deployments_length'],
             deployments_first = event['deployments_first'],
             feedback_frequency = event['feedback_frequency'],
-            feedback_frequency_other = event['feedback_frequency_other'],
             languages = event['languages'],
             partner = event['partner'],
             affiliate = event['affiliate'],

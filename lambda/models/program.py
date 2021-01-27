@@ -41,7 +41,6 @@ class Program(Base, SerializerMixin):
     deployments_length = Column(String(50), nullable=False)
     deployments_first = Column(Date, nullable=False)
     feedback_frequency = Column(String(50), nullable=False)
-    feedback_frequency_other = Column(String(50), nullable=False)
     languages = Column(JSON, nullable=False)
     direct_beneficiaries_map = Column(JSON, default=beneficiaries_map)
     direct_beneficiaries_additional_map = Column(JSON, default={})
@@ -64,12 +63,6 @@ class Program(Base, SerializerMixin):
         if feedback_frequency not in time_period:
             raise ValueError("Invalid 'feedback_frequency' argument")
         return feedback_frequency
-
-    @validates('feedback_frequency_other')
-    def validate_feedback_frequency_other(self, key, feedback_frequency_other):
-        if feedback_frequency_other not in time_period:
-            raise ValueError("Invalid 'feedback_frequency_other' argument")
-        return feedback_frequency_other
 
     def default_deployments(self):
         deployments = []
