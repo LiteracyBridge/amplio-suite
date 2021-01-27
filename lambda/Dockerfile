@@ -1,6 +1,6 @@
 FROM python:3.8-buster
 
-WORKDIR /app
+WORKDIR /opt/python
 
 RUN apt update \
   && apt install zip jq groff -y \

@@ -2,11 +2,12 @@ import io
 import csv
 import json
 
-from utils import create_db_session, save_to_csv, user_programs, UnauthorizedAccess
+from utils import create_db_session, validate_user_access, \
+     save_to_csv, user_programs, UnauthorizedAccess
 from decorators import validate_keys
 from models.deployment import Deployment
-from models.content import Content
-from models.sustainable_development import SustainableDevelopmentGoals, SustainableDevelopmentTargets
+from models.playlist import Playlist
+from models.message import Message
 
 
 header_content = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
@@ -27,40 +28,34 @@ def lambda_handler(event, context):
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
     writer.writeheader()
 
-    contents = session.query(Content) \
-        .filter(Content.program_code == event['program_code']) \
+    playlists = session.query(Playlist) \
+        .filter(Playlist.program_code == event['program_code']) \
         .all()
+    playlists = [validate_user_access(event, p) for p in playlists]
 
-    for content in contents:
-        for playlist in content.content:
-            for message in playlist['messages']:
-                if message['sdg_goal']:
-                    goal = session.query(SustainableDevelopmentGoals) \
-                        .filter(SustainableDevelopmentGoals.id == message['sdg_goal']) \
-                        .first()
+    for playlist in playlists:
+        for message in playlist.messages:
+            sdg_goal = ''
+            if message.sdg_goal_id:
+                sdg_goal = message.sdg_goal.section
 
-                    target = [target for target in goal.targets
-                        if target.subsection == message['sdg_target']][0]
+            sdg_target = ''
+            if message.sdg_target_id:
+                sdg_target = f"{sdg_goal}.{message.sdg_target.subsection}"
 
-                    goal = goal.section
-                    target = f"{goal}.{target.subsection}"
+            row = {
+                'deployment_num': int(playlist.deployment_id),
+                'playlist_title': playlist.title,
+                'message_title': message.title,
+                'key_points': message.key_point,
+                'languagecode': ','.join([lang.code for lang in message.languages]),
+                'variant': message.variant,
+                'default_category': message.default_category_id,
+                'sdg_goals': sdg_goal,
+                'sdg_targets': sdg_target,
+            }
 
-                else:
-                    goal = ''
-                    target = ''
-
-                row = {
-                    'deployment_num': int(content.deployment),
-                    'playlist_title': playlist['title'],
-                    'message_title': message['title'],
-                    'key_points': message['key_point'],
-                    'languagecode': ','.join(message['languages']),
-                    'variant': message['variant'],
-                    'default_category': message['default_category'],
-                    'sdg_goals': goal, 'sdg_targets': target
-                }
-
-                writer.writerow(row)
+            writer.writerow(row)
 
     save_to_csv(output.getvalue(), f"{event['program_code']}/content.csv")
 
@@ -70,17 +65,17 @@ def lambda_handler(event, context):
     writer.writeheader()
 
     deployments = session.query(Deployment) \
-        .filter(Deployment.project == event['program_code']) \
+        .filter(Deployment.program_code == event['program_code']) \
         .all()
 
     for deployment in deployments:
         rows = [{
-            'project': event['program_code'],
-            'deployment_num': deployment.deploymentnumber,
-            'startdate': deployment.startdate.isoformat(),
-            'enddate': deployment.enddate.isoformat(),
+            'project': deployment.program_code,
+            'deployment_num': deployment.number,
+            'startdate': deployment.start_date.isoformat(),
+            'enddate': deployment.end_date.isoformat(),
             'component': deployment.component,
-            'name': f"{event['program_code']}-{str(deployment.startdate.year)[2:]}-{deployment.deploymentnumber}"
+            'name': f"{deployment.program_code}-{str(deployment.start_date.year)[2:]}-{deployment.number}"
         } for message in playlist['messages']]
 
         writer.writerows(rows)

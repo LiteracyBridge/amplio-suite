@@ -34,9 +34,9 @@
             <v-input
               type="date"
               iconLeft="calendar-alt"
-              :aria-label="`Start of deployment ${deployment.deploymentname}`"
-              :value="deployment.startdate"
-              @change="setDeploymentDate({ id: deployment.deploymentname, what: 'startdate', date: $event.target.value })"
+              :aria-label="`Start of deployment ${deployment.name}`"
+              :value="deployment.start_date"
+              @change="setDeploymentDate({ id: deployment.id, what: 'start_date', date: $event.target.value })"
               mx="mx-0 w-full"
             />
           </td>
@@ -44,10 +44,10 @@
             <v-input
               type="date"
               iconLeft="calendar-alt"
-              :aria-label="`End of deployment ${deployment.deploymentname}`"
-              :value="deployment.enddate"
-              :min="deployment.startDate"
-              @change="setDeploymentDate({ id: deployment.deploymentname, what: 'enddate', date: $event.target.value })"
+              :aria-label="`End of deployment ${deployment.name}`"
+              :value="deployment.end_date"
+              :min="deployment.start_date"
+              @change="setDeploymentDate({ id: deployment.id, what: 'end_date', date: $event.target.value })"
               mx="mx-0 w-full"
             />
           </td>
@@ -55,7 +55,7 @@
             <button
               v-if="index === deployments.length - 1"
               @click="handleOpenModal"
-              :aria-label="`Delete deployment ${deployment.deploymentname}`"
+              :aria-label="`Delete deployment ${deployment.name}`"
             >
               <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
             </button>
@@ -110,7 +110,7 @@ export default {
     ...mapState('deployments', {
       status: 'status',
       dirty: 'dirty',
-      deployments: state => state.items
+      deployments: 'deployments',
     })
   },
   components: {

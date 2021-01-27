@@ -4,23 +4,25 @@ from models.deployment import Deployment
 
 session = create_db_session()
 
-@validate_keys(['program_code', 'items'])
+@validate_keys(['program_code', 'deployments'])
 def lambda_handler(event, context):
     program_code = event['program_code']
-
     email = event['context']['email']
 
     if program_code not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
         raise UnauthorizedAccess()
 
     try:
-        for deplo in event['items']:
+        for deplo in event['deployments']:
             session.query(Deployment) \
                 .filter(
-                    Deployment.project == program_code,
-                    Deployment.deployment == deplo['deployment']
+                    Deployment.program_code == deplo['program_code'],
+                    Deployment.id == deplo['id']
                 ) \
-                .update({ 'startdate': deplo['startdate'], 'enddate': deplo['enddate'] })
+                .update({
+                    'start_date': deplo['start_date'],
+                    'end_date': deplo['end_date']
+                })
 
         session.commit()
 

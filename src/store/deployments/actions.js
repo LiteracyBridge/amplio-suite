@@ -38,12 +38,12 @@ const createDeployment = async ({ state, commit, dispatch }) => {
 }
 
 const updateDeployment = async ({ state, commit }) => {
-  const { programCode, items } = state
+  const { programCode, deployments } = state
 
   commit('requestInit')
 
   try {
-    await putDeployments({ program_code: programCode, items })
+    await putDeployments({ program_code: programCode, deployments })
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -53,14 +53,14 @@ const updateDeployment = async ({ state, commit }) => {
 }
 
 const removeDeployment = async ({ state, commit, dispatch }) => {
-  const { programCode, items } = state
-  const deployment = items[items.length - 1].deployment
+  const { programCode, deployments } = state
+  const id = deployments[deployments.length - 1].id
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await deleteDeployment({ program_code: programCode, deployment })
+    await deleteDeployment({ program_code: programCode, id })
     commit('requestSuccess')
     await dispatch('fetchDeployments', programCode)
   } catch (error) {
@@ -69,15 +69,9 @@ const removeDeployment = async ({ state, commit, dispatch }) => {
   }
 }
 
-const setDeploymentDate = ({ commit, state }, payload) => {
-  const items = state.items
-    .map((item, index) => ({ deploymentname: item.deploymentname, index }))
-    .filter(item => item.deploymentname === payload.id)
-
-  if (items.length > 0) {
-    commit('setDirty', true)
-    commit('setDeploymentDate', { ...payload, index: items[0].index })
-  }
+const setDeploymentDate = ({ commit }, payload) => {
+  commit('setDirty', true)
+  commit('setDeploymentDate', payload)
 }
 
 export default {

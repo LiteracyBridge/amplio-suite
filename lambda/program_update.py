@@ -32,15 +32,15 @@ def lambda_handler(event, context):
 
     if program_code not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
         raise UnauthorizedAccess()
-    
+
     try:
         session.query(Project) \
-            .filter(Project.projectcode == event['programCode']) \
+            .filter(Project.program_code == event['programCode']) \
             .update({ 'project': event['name']})
         session.flush()
 
         session.query(Program) \
-            .filter(Program.projectcode == event['programCode']) \
+            .filter(Program.program_code == event['programCode']) \
             .update({
                 'country': event['country'],
                 'region': event['region'],

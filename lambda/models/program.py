@@ -6,8 +6,8 @@ from sqlalchemy import Column, Integer, String, Date, JSON, UniqueConstraint, Fo
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 
-from models.deployment import Deployment
 from models.base import Base
+from models.deployment import Deployment
 
 
 time_length = ['one_month', 'one_quarter', 'six_months', 'one_year']
@@ -32,7 +32,7 @@ class Program(Base, SerializerMixin):
         UniqueConstraint('projectcode', name='programs_uniqueness_key'),
     )
     id = Column(Integer, primary_key=True, index=True)
-    projectcode = Column(ForeignKey('projects.projectcode'), index=True, nullable=False)
+    program_code = Column('projectcode', ForeignKey('projects.projectcode'), index=True, nullable=False)
     country = Column(String(50), nullable=False)
     region = Column(JSON, nullable=False)
     sustainable_development_goals = Column(JSON, nullable=False)
@@ -81,12 +81,12 @@ class Program(Base, SerializerMixin):
             end_date = initial_date + relativedelta(months=increment * i)
 
             data = {
-                'project': self.projectcode,
-                'deployment': str(i),
-                'deploymentname': str(i),
-                'deploymentnumber': i,
-                'startdate': start_date,
-                'enddate': end_date,
+                'id': str(i),
+                'program_code': self.program_code,
+                'name': str(i),
+                'number': i,
+                'start_date': start_date,
+                'end_date': end_date,
                 'component': ''
             }
 
@@ -101,20 +101,16 @@ class Program(Base, SerializerMixin):
         end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_count + 1))
 
         data = {
-            'project': self.projectcode,
-            'deployment': str(self.deployments_count + 1),
-            'deploymentname': str(self.deployments_count + 1),
-            'deploymentnumber': self.deployments_count + 1,
-            'startdate': start_date,
-            'enddate': end_date,
+            'id': str(self.deployments_count + 1),
+            'program_code': self.program_code,
+            'name': str(self.deployments_count + 1),
+            'number': self.deployments_count + 1,
+            'start_date': start_date,
+            'end_date': end_date,
             'component': ''
         }
 
         return Deployment(**data)
-    
-    @property
-    def program_code(self):
-        return self.projectcode
 
 
 # should validate_list_input belong to a utils package of some sort?

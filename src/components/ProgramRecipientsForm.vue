@@ -254,8 +254,8 @@ export default {
       'listeningModels',
     ]),
     deployments () {
-      return this.$store.state.deployments.items
-        .map(item => item.deploymentnumber)
+      return this.$store.state.deployments.deployments
+        .map(item => item.number)
     },
     listeningModelSelected () {
       return this.listeningModels.find(opt => opt.id === this.recipient.model)

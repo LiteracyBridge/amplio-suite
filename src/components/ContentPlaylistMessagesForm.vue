@@ -3,9 +3,9 @@
     <span>Language</span>
     <languages-selector
       :options="languages"
-      :languages="message.languages"
-      :onLanguageSelected="({ name, code }) => addMessageLanguage({ playlistIndex, messageIndex, lang: code })"
-      :onLanguageDeleted="({ name, code }) => removeMessageLanguage({ playlistIndex, messageIndex, lang: code })"
+      :languages="messageLanguages"
+      :onLanguageSelected="(lang) => addMessageLanguage({ playlistIndex, messageIndex, lang })"
+      :onLanguageDeleted="(lang) => removeMessageLanguage({ playlistIndex, messageIndex, lang })"
       :multiple="true"
     />
 
@@ -61,7 +61,7 @@
       class="col-span-3"
       :options="targets"
       :value="selectedTarget"
-      :custom-label="(opt) => `${message.sdg_goal}.${opt.subsection} ${opt.label}`"
+      :custom-label="(opt) => `${message.sdg_goal_id}.${opt.subsection} ${opt.label}`"
       :max-height="200"
       track-by="subsection"
       placeholder="Select the target"
@@ -69,7 +69,7 @@
       @remove="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: null })"
     >
       <template slot="option" slot-scope="props">
-        <span>{{ message.sdg_goal }}.{{ props.option.subsection }} {{ props.option.label }}</span>
+        <span>{{ message.sdg_goal_id }}.{{ props.option.subsection }} {{ props.option.label }}</span>
       </template>
     </multiselect>
 
@@ -94,7 +94,7 @@
         @input="(event) => setMessageVariant({ playlistIndex, messageIndex, variant: event.target.value })"
       />
       <v-tooltip
-        v-if="message.variant.length > 1"
+        v-if="message.variant && message.variant.length > 1"
         text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
         class="my-auto ml-2"
       >
@@ -137,25 +137,28 @@ export default {
     ...mapState('sustainableDevelopments', [
       'goals'
     ]),
+    messageLanguages () {
+      return this.message.languages.map(lang => lang.code)
+    },
     categories () {
       return this.$store.state.categories.categories
         .filter(cat => !cat.is_leaf)
     },
     targets () {
       const goal = this.goals
-        .find(goal => goal.section === this.message.sdg_goal)
+        .find(goal => goal.section === this.message.sdg_goal_id)
 
       if (goal) return goal.targets
       else return []
     },
     selectedCategory () {
-      return this.categories.find(cat => cat.code === this.message.default_category)
+      return this.categories.find(cat => cat.code === this.message.default_category_id)
     },
     selectedGoal () {
-      return this.goals.find(goal => goal.section === this.message.sdg_goal)
+      return this.goals.find(goal => goal.section === this.message.sdg_goal_id)
     },
     selectedTarget () {
-      return this.targets.find(target => target.subsection === this.message.sdg_target)
+      return this.targets.find(target => target.subsection === this.message.sdg_target_id)
     }
   },
   components: {

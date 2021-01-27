@@ -7,9 +7,9 @@
       @change="changeDeployment($event.target.value)"
     >
       <option
-        v-for="(item, index) in deployments"
-        :key="item.deployment"
-        :value="item.deploymentname"
+        v-for="(deployment, index) in deployments"
+        :key="deployment.id"
+        :value="deployment.name"
       >
         Deployment {{ index + 1 }}
       </option>
@@ -49,9 +49,9 @@ export default {
     },
   },
   computed: {
-    ...mapState('deployments', {
-      deployments: state => state.items
-    }),
+    ...mapState('deployments', [
+      'deployments',
+    ]),
   },
   created () {
     this.fetchDeployments(this.programCode)
@@ -95,7 +95,7 @@ export default {
         return
       }
 
-      const deployment = this.deployments.find(deplo => deplo.deploymentname === deploymentName)
+      const deployment = this.deployments.find(deployment => deployment.name === deploymentName)
       this.$emit('input', { ...deployment })
     }
   }

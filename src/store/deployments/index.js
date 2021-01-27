@@ -5,7 +5,7 @@ export const getDefaultState = () => ({
   dirty: false,
   status: "",
   programCode: "",
-  items: []
+  deployments: [],
 })
 
 export default {
