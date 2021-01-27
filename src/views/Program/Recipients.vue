@@ -59,7 +59,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="(recipient, index) in recipients"
+          v-for="(recipient, index) in filterRecipients"
           :key="recipient.id"
           :class="index % 2 === 0 ? '' : 'bg-gray-200'"
           class="hover:bg-gray-400"
@@ -232,10 +232,11 @@ export default {
       'dirty',
       'sortTable',
       'filterText',
+      'recipients',
     ]),
-    ...mapGetters('recipients', {
-      recipients: 'filterRecipients',
-    }),
+    ...mapGetters('recipients', [
+      'filterRecipients',
+    ]),
     recipient () {
       return this.recipients.find(reci => reci.id === this.selectedRecipientId)
     },
@@ -338,7 +339,7 @@ export default {
     scroll () {
       window.onscroll = () => {
         const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
-        if (bottomOfWindow) this.addRecipientsToShow() // this.fetchRecipients(this.programCode)
+        if (bottomOfWindow) this.addRecipientsToShow()
       }
     },
     async onAddRecipient () {
