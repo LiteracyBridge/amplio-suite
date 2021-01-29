@@ -68,17 +68,16 @@ def lambda_handler(event, context):
         .filter(Deployment.program_code == event['program_code']) \
         .all()
 
-    for deployment in deployments:
-        rows = [{
-            'project': deployment.program_code,
-            'deployment_num': deployment.number,
-            'startdate': deployment.start_date.isoformat(),
-            'enddate': deployment.end_date.isoformat(),
-            'component': deployment.component,
-            'name': f"{deployment.program_code}-{str(deployment.start_date.year)[2:]}-{deployment.number}"
-        } for message in playlist['messages']]
+    rows = [{
+        'project': deployment.program_code,
+        'deployment_num': deployment.number,
+        'startdate': deployment.start_date.isoformat(),
+        'enddate': deployment.end_date.isoformat(),
+        'component': deployment.component,
+        'name': f"{deployment.program_code}-{str(deployment.start_date.year)[2:]}-{deployment.number}"
+    } for deployment in deployments]
 
-        writer.writerows(rows)
+    writer.writerows(rows)
 
     save_to_csv(output.getvalue(), f"{event['program_code']}/deployment_spec.csv")
 
