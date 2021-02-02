@@ -26,6 +26,7 @@ class Deployment(Base, SerializerMixin):
 
     playlists = relationship(
         'Playlist',
+        cascade="all, delete",
         passive_deletes=True,
         order_by='Playlist.position',
     )
