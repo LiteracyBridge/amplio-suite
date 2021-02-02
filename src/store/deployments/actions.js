@@ -54,13 +54,13 @@ const updateDeployment = async ({ state, commit }) => {
 
 const removeDeployment = async ({ state, commit, dispatch }) => {
   const { programCode, deployments } = state
-  const id = deployments[deployments.length - 1].id
+  const deploymentId = deployments[deployments.length - 1].id
 
   commit('setDirty', true)
   commit('requestInit')
 
   try {
-    await deleteDeployment({ program_code: programCode, id })
+    await deleteDeployment({ program_code: programCode, deployment_id: deploymentId })
     commit('requestSuccess')
     await dispatch('fetchDeployments', programCode)
   } catch (error) {

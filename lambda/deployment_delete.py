@@ -5,13 +5,13 @@ from models.deployment import Deployment
 
 session = create_db_session()
 
-@validate_keys(['program_code', 'id'])
+@validate_keys(['program_code', 'deployment_id'])
 def lambda_handler(event, context):
     try:
         deployment = session.query(Deployment) \
             .filter(
                 Deployment.program_code == event['program_code'],
-                Deployment.id == event['id']
+                Deployment.id == event['deployment_id']
             ) \
             .first()
 
