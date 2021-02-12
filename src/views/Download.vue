@@ -7,11 +7,11 @@
     <section class="p-6 bg-white rounded-lg shadow-box">
       <div class="min-h-200-px py-5 text-left">
 
-        <p class="text-2xl font-semibold pb-5">
+        <p class="text-2xl font-semibold">
           1. Download and install <a class="underline text-blue" href="/AmplioSetup.exe" download>ACM Bundle</a>. This installer includes:
         </p>
 
-        <ul class="pl-10 pt-5 text-2xl">
+        <ul class="pl-10 pb-5 text-2xl">
           <li class="block">
             <span class="inline-flex items-center">
               <font-awesome-icon icon="check" class="w-4 h-4 pr-3 text-gray-500" />
