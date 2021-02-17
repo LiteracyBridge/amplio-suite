@@ -5,7 +5,7 @@ const END_POINT = '/program'
 const getPrograms = async () => {
   try {
     const response = await httpClient().get('programs')
-    return Object.keys(response.data.programs)
+    return Object.keys(response.data.programs).sort()
   }
   catch (e) {
     console.log(e)
