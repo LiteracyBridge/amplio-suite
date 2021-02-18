@@ -4,6 +4,10 @@
 @import './a11y';
 @import './transition';
 
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
 // For vue-multiselect
 .multiselect__tags .multiselect__placeholder {
   @apply text-label;
