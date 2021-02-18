@@ -1,6 +1,8 @@
 <template>
-  <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
-    <p class="col-span-4 text-center text-blue">
+  <div
+    class="grid grid-cols-content-message md:grid-cols-content-message-md row-gap-2 items-center text-left"
+    style="width:80vw;">
+    <p class="col-span-2 md:col-span-4 text-center text-blue">
       All fields with an asterisk are required.The optional fields are recommended for reporting.
     </p>
 
@@ -30,7 +32,7 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <label class="pl-4 mandatory-field" for="district">District/County</label>
+    <label class="md:pl-4 mandatory-field" for="district">District/County</label>
     <v-input
       name="district"
       type="text"
@@ -47,7 +49,7 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4">Group Name</p>
+    <p class="md:pl-4">Group Name</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -63,7 +65,7 @@
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <p class="pl-4">Agent Gender</p>
+    <p class="md:pl-4">Agent Gender</p>
     <multiselect
       :options="['Male', 'Female', 'Other']"
       :value="recipient.agentGender"
@@ -82,7 +84,7 @@
 
     <span class="col-span-2" />
 
-    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
+    <label class="mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
     <v-input
       name="numTalkingBooks"
       type="number"
@@ -107,7 +109,7 @@
 
     <span class="col-span-2" />
 
-    <label class="pl-4 mandatory-field" for="deployments">Deployments</label>
+    <label class="mandatory-field" for="deployments">Deployments</label>
     <multiselect
       id="deployments"
       :options="deployments"
@@ -162,7 +164,7 @@
     <p
       tabindex="0"
       :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+      class="md:w-48 md:ml-2 md:p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
       @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
     >
@@ -173,7 +175,7 @@
 
     <div
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
+      class="col-span-2 md:col-span-4 grid grid-cols-content-message row-gap-2 items-center ml-6"
     >
       <beneficiaries-field
         label="Number of Households"
