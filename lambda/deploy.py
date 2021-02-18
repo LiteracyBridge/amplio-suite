@@ -43,6 +43,10 @@ def lambda_handler(event, context):
             if message.sdg_target_id:
                 sdg_target = f"{sdg_goal}.{message.sdg_target.subsection}"
 
+            category_name = ''
+            if message.category:
+                category_name = message.category.name
+
             row = {
                 'deployment_num': int(playlist.deployment_id),
                 'playlist_title': playlist.title,
@@ -50,7 +54,7 @@ def lambda_handler(event, context):
                 'key_points': message.key_point,
                 'languagecode': ','.join([lang.code for lang in message.languages]),
                 'variant': message.variant,
-                'default_category': message.default_category_id,
+                'default_category': category_name,
                 'sdg_goals': sdg_goal,
                 'sdg_targets': sdg_target,
             }
