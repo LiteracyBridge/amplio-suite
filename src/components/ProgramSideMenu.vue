@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-2 border-r-2">
+  <div class="pt-2 col-span-3 md:col-span-2 border-r-2">
     <draggable
       tag="ul"
       ghost-class="moving-item"

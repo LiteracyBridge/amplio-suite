@@ -1,8 +1,6 @@
 <template>
-  <div
-    class="grid grid-cols-content-message md:grid-cols-content-message-md row-gap-2 items-center text-left"
-    style="width:80vw;">
-    <p class="col-span-2 md:col-span-4 text-center text-blue">
+  <div class="grid grid-cols-form-2 md:grid-cols-from-4 row-gap-2 items-center text-left" style="width:80vw;">
+    <p class="col-span-4 text-center text-blue">
       All fields with an asterisk are required.The optional fields are recommended for reporting.
     </p>
 
@@ -172,7 +170,7 @@
 
     <div
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-      class="col-span-2 md:col-span-4 grid grid-cols-content-message row-gap-2 items-center ml-6"
+      class="col-span-4 grid grid-cols-form-4 row-gap-2 items-center"
     >
       <beneficiaries-field
         label="Number of Households"

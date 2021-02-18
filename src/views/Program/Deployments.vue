@@ -11,58 +11,60 @@
       :onDiscardChanges="() => fetchDeployments(programCode)"
     />
 
-    <table class="w-full table-auto">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 text-green border-b"># Deployment</th>
-          <th class="px-4 py-2 text-green border-b">Start Date</th>
-          <th class="px-4 py-2 text-green border-b">End Date</th>
-          <th class="px-4 py-2 text-green border-b">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(deployment, index) in deployments"
-          :key="index"
-          :class="index % 2 === 0 ? '' : 'bg-gray-200'"
-          class="hover:bg-gray-400"
-        >
-          <td class="px-4 py-2 border-b">
-            Deployment {{ index + 1 }}
-          </td>
-          <td class="px-4 py-2 border-b">
-            <v-input
-              type="date"
-              iconLeft="calendar-alt"
-              :aria-label="`Start of deployment ${deployment.name}`"
-              :value="deployment.start_date"
-              @change="setDeploymentDate({ id: deployment.id, what: 'start_date', date: $event.target.value })"
-              mx="mx-0 w-full"
-            />
-          </td>
-          <td class="px-4 py-2 border-b">
-            <v-input
-              type="date"
-              iconLeft="calendar-alt"
-              :aria-label="`End of deployment ${deployment.name}`"
-              :value="deployment.end_date"
-              :min="deployment.start_date"
-              @change="setDeploymentDate({ id: deployment.id, what: 'end_date', date: $event.target.value })"
-              mx="mx-0 w-full"
-            />
-          </td>
-          <td class="px-4 py-2 border-b">
-            <VButton
-              v-if="index === deployments.length - 1"
-              variant="warning"
-              iconL="trash-alt"
-              :ariaLabel="`Delete deployment ${deployment.name}`"
-              @click="handleOpenModal"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="block overflow-x-auto">
+      <table class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 text-green whitespace-nowrap border-b"># Deployment</th>
+            <th class="px-4 py-2 text-green border-b">Start Date</th>
+            <th class="px-4 py-2 text-green border-b">End Date</th>
+            <th class="px-4 py-2 text-green border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(deployment, index) in deployments"
+            :key="index"
+            :class="index % 2 === 0 ? '' : 'bg-gray-200'"
+            class="hover:bg-gray-400"
+          >
+            <td class="px-4 py-2 border-b">
+              Deployment {{ index + 1 }}
+            </td>
+            <td class="px-4 py-2 border-b">
+              <v-input
+                type="date"
+                iconLeft="calendar-alt"
+                :aria-label="`Start of deployment ${deployment.name}`"
+                :value="deployment.start_date"
+                @change="setDeploymentDate({ id: deployment.id, what: 'start_date', date: $event.target.value })"
+                mx="mx-0 w-full"
+              />
+            </td>
+            <td class="px-4 py-2 border-b">
+              <v-input
+                type="date"
+                iconLeft="calendar-alt"
+                :aria-label="`End of deployment ${deployment.name}`"
+                :value="deployment.end_date"
+                :min="deployment.start_date"
+                @change="setDeploymentDate({ id: deployment.id, what: 'end_date', date: $event.target.value })"
+                mx="mx-0 w-full"
+              />
+            </td>
+            <td class="px-4 py-2 border-b">
+              <VButton
+                v-if="index === deployments.length - 1"
+                variant="warning"
+                iconL="trash-alt"
+                :ariaLabel="`Delete deployment ${deployment.name}`"
+                @click="handleOpenModal"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <VButton
       tag="span"

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="message" class="grid grid-cols-content-message row-gap-2 items-center px-8">
+  <div v-if="message" class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center px-8">
     <span>Language</span>
     <languages-selector
       :options="languages"
@@ -9,7 +9,7 @@
       :multiple="true"
     />
 
-    <label class="pl-4" for="format">Format</label>
+    <label class="md:px-4" for="format">Format</label>
     <multiselect
       id="format"
       :value="message.format"
@@ -22,13 +22,13 @@
     <label for="defaultCat">Default Category</label>
     <multiselect
       id="defaultCat"
+      class="md:col-span-3"
       :options="categories"
       :value="selectedCategory"
       :custom-label="(opt) => `${opt.name} - ${opt.full_name}`"
       :max-height="200"
       track-by="code"
       placeholder="Select the default category"
-      class="col-span-3"
       @select="(opt) => setMessageCategory({ playlistIndex, messageIndex, category: opt.code })"
       @remove="(opt) => setMessageCategory({ playlistIndex, messageIndex, category: null })"
     >
@@ -40,7 +40,7 @@
     <label for="sdgGoals">SDG Goals</label>
     <multiselect
       id="sdgGoals"
-      class="col-span-3"
+      class="md:col-span-3"
       :options="goals"
       :value="selectedGoal"
       :custom-label="(opt) => `${opt.section}. ${opt.goal}`"
@@ -58,7 +58,7 @@
     <label for="sdgTarget">SDG Target</label>
     <multiselect
       id="sdgTarget"
-      class="col-span-3"
+      class="md:col-span-3"
       :options="targets"
       :value="selectedTarget"
       :custom-label="(opt) => `${message.sdg_goal_id}.${opt.subsection} ${opt.label}`"
@@ -78,14 +78,14 @@
       id="keyPoints"
       cols="30"
       rows="3"
-      class="col-start-2 col-end-5 p-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+      class="md:col-span-3 p-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
       :value="message.key_point"
       @input="(event) => setMessageKeyPoints({ playlistIndex, messageIndex, text: event.target.value })"
     >
     </textarea>
 
     <label for="variant">Variant</label>
-    <div class="flex col-span-3">
+    <div class="flex md:col-span-3">
       <v-input
         name="variant"
         type="text"

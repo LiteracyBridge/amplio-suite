@@ -18,7 +18,7 @@
       v-model="deployment"
     />
 
-    <div class="grid" style="grid-template-columns: 1fr 4fr;">
+    <div class="grid grid-cols-10">
       <program-side-menu
         v-if="playlists"
         name="playlist"
@@ -30,7 +30,7 @@
         :titles="duplicatePlaylists"
       />
 
-      <div class="text-left">
+      <div class="text-left col-span-7 md:col-span-8">
         <playlist-header
           v-if="playlist"
           :playlist="playlist"
