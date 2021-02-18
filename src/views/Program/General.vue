@@ -64,6 +64,7 @@
 
         <label class="md:pl-4" for="listeningModel">Listening Model</label>
         <multiselect
+          v-if="listeningModelsOptions.length > 0"
           id="listeningModel"
           :options="listeningModelsOptions"
           :value="listeningModelsSelected"
@@ -77,6 +78,12 @@
           @remove="(model) => toggleListening(model.id)"
           placeholder="Select the listening model"
         />
+        <font-awesome-icon
+          v-else
+          icon="spinner"
+          size="2x"
+          pulse
+          class="block w-10 h-10 mt-2 text-left" />
 
         <label for="partner">Partner</label>
         <v-input
@@ -241,7 +248,7 @@ export default {
         .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
     }),
     ...mapState('listeningModels', {
-      listeningModelsOptions: state => state.listeningModels
+      listeningModelsOptions: 'listeningModels',
     }),
     listeningModelsSelected () {
       return this.listeningModels

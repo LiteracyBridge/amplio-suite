@@ -4,7 +4,14 @@
       Welcome to Amplio, <span class="capitalize">{{ user.name }}</span>!
     </h1>
 
-    <div v-if="programLoaded" class="grid grid-cols-3 gap-10">
+    <font-awesome-icon
+      v-if="!['success', 'error'].includes(programStatus)"
+      icon="spinner"
+      size="4x"
+      pulse
+      class="mx-auto w-20 h-20" />
+
+    <div v-else class="grid grid-cols-3 gap-10">
       <router-link :to="linkTo">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Program Specification">
           Define your requirements and complete/modify the program specification document.
@@ -46,9 +53,6 @@ export default {
       wizardCompleted: 'wizardCompleted',
       programStatus: state => state.status
     }),
-    programLoaded () {
-      return !['loading', ''].includes(this.programStatus)
-    },
     linkTo () {
       if (this.wizardCompleted) {
         return `${this.$route.path}/settings`
