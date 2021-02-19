@@ -3,13 +3,11 @@
     <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">Recipients</h2>
 
-      <span
-        tabindex="0"
+      <VButton
+        tag="span"
+        label="+ Add Recipient"
         @click="onAddRecipient"
-        class="font-semibold text-blue cursor-pointer hover:underline"
-      >
-        + Add Recipient
-      </span>
+      />
 
       <div class="inline-flex">
         <form v-on:submit.prevent="fetchRecipients(programCode)">
@@ -18,19 +16,17 @@
             name="filterColumns"
             placeholder="Filter columns"
             iconRight="search"
-            mx="mx-0"
+            mx="mx-2"
             :value="filterText"
             @input="setFilterText($event.target.value)"
           />
         </form>
-        <button
-          :class="tableIsFilter ? 'text-blue cursor-pointer' : 'text-gray-500 cursor-default'"
-          class="mx-4 hover:underline"
+        <VButton
+          tag="span"
+          label="Reset Filter"
           :disabled="!tableIsFilter"
           @click="resetFilters"
-        >
-          Reset filter
-        </button>
+        />
       </div>
     </header>
 
@@ -45,6 +41,8 @@
             <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
               <button
                 @click="setSortByColumn(col.key)"
+                @keyup.enter="setSortByColumn(col.key)"
+                @keyup.space="setSortByColumn(col.key)"
               >
                 {{ col.label }}
                   <font-awesome-icon
@@ -72,24 +70,24 @@
             {{ recipient[col.key] }}
           </td>
           <td class="px-4 border-b">
-            <button
-              class="icon-zoom-xl"
-              @click="onClickEdit(recipient.id)"
-            >
-              <font-awesome-icon icon="edit" />
-            </button>
-            <button
-              class="mx-3 icon-zoom-xl"
-              @click="onClickDuplicate(recipient.id)"
-            >
-              <font-awesome-icon icon="copy" />
-            </button>
-            <button
-              class="text-red-500 icon-zoom-xl"
-              @click="onClickDelete(recipient.id)"
-            >
-              <font-awesome-icon icon="trash-alt" />
-            </button>
+            <div class="flex gap-1">
+              <VButton
+                iconL="edit"
+                :ariaLabel="`Edit recipient ${recipient.id}`"
+                @click="onClickEdit(recipient.id)"
+              />
+              <VButton
+                iconL="copy"
+                :ariaLabel="`Copy recipient ${recipient.id}`"
+                @click="onClickDuplicate(recipient.id)"
+              />
+              <VButton
+                variant="warning"
+                iconL="trash-alt"
+                :ariaLabel="`Delete recipient ${recipient.id}`"
+                @click="onClickDelete(recipient.id)"
+              />
+            </div>
           </td>
         </tr>
       </tbody>
@@ -114,32 +112,32 @@
 
     <portal to="modalFooter" v-if="showModal.edit">
       <footer v-if="recipient" class="flex justify-end gap-4">
-        <v-button
+        <VButton
           v-if="recipient.id"
+          label="Discard"
+          variant="warning"
+          :disabled="!dirty"
           @click="onClickDiscard"
-          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
-          textColor="text-black"
-          text="Discard"
         />
-        <v-button
+        <VButton
           v-else
+          label="Discard"
+          variant="warning"
+          :disabled="!dirty"
           @click="onClickDiscardNewRecipient"
-          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 text-white'"
-          textColor="text-black"
-          text="Discard"
         />
-        <v-button
+        <VButton
+          type="success"
+          label="Save"
+          :disabled="!dirty || invalidConstraint || invalidBeneficiaries"
           @click="onClickSave"
-          :color="!dirty || invalidConstraint || invalidBeneficiaries ? 'bg-gray-400 text-white' : 'text-white bg-green'"
-          textColor="text-black"
-          text="Save"
         />
-        <v-button
+        <VButton
           v-if="recipient.id"
+          label="Close"
+          variant="success"
+          :disabled="dirty"
           @click="onCloseModal"
-          :color="dirty ? 'bg-gray-400 text-white' : 'bg-transparent border border-black'"
-          textColor="text-black"
-          text="Close"
         />
       </footer>
     </portal>
@@ -151,17 +149,14 @@
 
     <portal to="modalFooter" v-if="showModal.delete">
       <footer class="flex flex-row-reverse justify-between pt-20">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmDeleteRecipient"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="onCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -188,7 +183,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 import { EventBus } from '@/event-bus'

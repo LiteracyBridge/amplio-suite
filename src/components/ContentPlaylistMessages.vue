@@ -39,24 +39,21 @@
           />
         </v-tooltip>
 
-        <span
-          tabindex="0"
-          :class="index === messageIndex ? 'text-blue underline font-semibold' : 'text-black'"
-          class="w-48 p-2 cursor-pointer hover:text-blue hover:underline hover:font-semibold"
+        <VButton
+          tag="span"
+          :active="index === messageIndex"
+          :label="index === messageIndex ? 'Hide Details' : 'Show Details'"
+          :iconR="index === messageIndex ? 'chevron-up' : 'chevron-down'"
           @click="setMessageIndex(index)"
-          @keyup.space="setMessageIndex(index)"
-        >
-          {{ index === messageIndex ? 'Hide Details' : 'Show Details' }}
-          <font-awesome-icon :icon="index === messageIndex ? 'chevron-up' : 'chevron-down'" />
-        </span>
-
-        <button
-          :aria-label="`Delete message ${message.title}`"
-          @click="handleOpenModal(index)"
-          @keyup.space="handleOpenModal(index)"
-        >
-          <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-        </button>
+        />
+        <div class="ml-2">
+          <VButton
+            iconL="trash-alt"
+            variant="warning"
+            :ariaLabel="`Delete message ${message.title}`"
+            @click="handleOpenModal(index)"
+          />
+        </div>
       </div>
 
       <div
@@ -79,17 +76,14 @@
 
     <portal to="modalFooter" v-if="modal.show">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmDeleteMessage"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="handleCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -102,7 +96,7 @@ import { mapState, mapActions } from 'vuex'
 
 import PlaylistMessagesForm from '@/components/ContentPlaylistMessagesForm'
 import VInput from '@/components/VInput'
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VTooltip from '@/components/VTooltip'
 
 export default {

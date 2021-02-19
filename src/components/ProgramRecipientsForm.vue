@@ -159,17 +159,14 @@
       @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
     />
 
-    <p
-      tabindex="0"
-      :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+    <div class="col-span-2 ml-4">
+    <VButton
+      tag="span"
+      :label="`${beneficiariesIsOpen ? 'Hide' : 'Show'} Direct beneficiaries details`"
+      :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
-      @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
-    >
-      {{ beneficiariesIsOpen ? 'Hide' : 'Show' }} Direct beneficiaries details
-      <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </p>
-    <span></span>
+    />
+    </div>
 
     <div
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
@@ -214,6 +211,7 @@
 import { mapState, mapActions } from 'vuex'
 import Multiselect from 'vue-multiselect'
 
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
@@ -267,6 +265,7 @@ export default {
     }
   },
   components: {
+    VButton,
     VInput,
     VTooltip,
     Multiselect,

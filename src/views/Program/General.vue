@@ -100,16 +100,13 @@
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
-        <span class="font-bold">Direct Beneficiaries</span>
-        <span
-          tabindex="0"
-          :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-          class="w-48 ml-2 p-2 text-blue-hover-hunder"
+        <span class="font-bold mr-4">Direct Beneficiaries</span>
+        <VButton
+          tag="span"
+          :label="beneficiariesIsOpen ? 'Hide Details' : 'Show Details'"
+          :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
           @click="beneficiariesIsOpen = !beneficiariesIsOpen"
-        >
-          {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
-          <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
-        </span>
+        />
       </div>
 
       <div
@@ -150,19 +147,17 @@
               type="text"
               :value="opt.value"
               @input="setDirectBeneficiariesAdditionalLabel({ key: opt.key, value: $event.target.value })"
-              mx="mx-0"
+              mx="mx-0 mr-2"
               class="w-full"
             />
 
-            <button
-              :aria-label="`Delete option field ${opt.value}`"
-              :class="labelUsed.includes(opt.key) ? 'text-grey-500' : 'text-red-500'"
-              class="w-6 h-6 ml-2 icon-zoom"
+            <VButton
+              variant="warning"
+              iconL="trash-alt"
               :disabled="labelUsed.includes(opt.key)"
+              :ariaLabel="`Delete option field ${opt.value}`"
               @click="deleteDirectBeneficiariesAdditionalLabel(opt.key)"
-            >
-              <font-awesome-icon icon="trash-alt" />
-            </button>
+            />
 
             <v-tooltip
               v-if="labelUsed.includes(opt.key)"
@@ -178,13 +173,11 @@
         </template>
 
         <div class="col-span-4">
-          <span
-            tabindex="0"
-            class="block mt-4 pr-4 text-blue-hover-hunder"
+          <VButton
+            tag="span"
+            label="+ Add Optional Field"
             @click="addDirectBeneficiariesAdditionalLabel"
-          >
-            + Add Optional Field
-          </span>
+          />
         </div>
       </div>
     </div>
@@ -196,17 +189,14 @@
 
     <portal to="modalFooter" v-if="languageToDelete">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmLanguageDeletion"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="cancelLanguageDeletion"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -217,7 +207,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
@@ -343,6 +333,9 @@ export default {
       this.languageToDelete = null
       this.closeModal()
     },
+    spam () {
+      console.log('nuevo click')
+    }
   }
 }
 </script>

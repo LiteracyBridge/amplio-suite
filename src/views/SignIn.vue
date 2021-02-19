@@ -39,20 +39,18 @@
             @input="token = $event.target.value"
           />
 
-          <div class="mt-2">
+          <div class="mt-2 mb-16">
             <router-link to="/password-reset" class="float-right text-sm text-right text-blue underline">
               Forgot your password?
             </router-link>
           </div>
 
-          <Button
+          <VButton
             type="submit"
-            :iconLeft="status === 'loading' ? 'spinner' : ''"
-            size="2x"
-            :pulse="status === 'loading'"
-            :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
-            text="Sign In"
-            class="w-full mt-8"
+            label="Sign In"
+            variant="success full"
+            :iconL="status === 'loading' ? 'spinner' : ''"
+            :iconLPulse="status === 'loading'"
             @click="handleLogin"
           />
         </form>
@@ -68,12 +66,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import Button from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 
 export default {
   components: {
-    Button,
+    VButton,
     VInput
   },
   computed: {

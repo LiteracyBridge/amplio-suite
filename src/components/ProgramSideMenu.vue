@@ -13,18 +13,17 @@
         v-for="(item, index) in value"
         :key="index"
         tabindex="0"
-        class="flex justify-between items-center mx-1 px-1 cursor-grab"
+        class="flex justify-between items-center mx-1 my-2 cursor-grab"
         :data-name="name"
         :data-index="index"
       >
-        <font-awesome-icon icon="grip-lines" class="text-black" />
-        <span
-          :class="selectedIndex === index ? 'font-semibold text-blue underline' : ''"
-          class="py-2 cursor-pointer hover:text-blue hover:font-semibold hover:underline"
+        <font-awesome-icon icon="grip-lines" />
+        <VButton
+          tag="span"
+          :label="item.title"
+          :active="selectedIndex === index"
           @click="onSelect(index)"
-        >
-          {{ item.title }}
-        </span>
+        />
         <v-tooltip
           v-if="titles.includes(item.title)"
           text="Duplicate playlist title"
@@ -37,23 +36,22 @@
           />
         </v-tooltip>
 
-        <button
-          :aria-label="`Delete ${name} ${item.title}`"
-          class="w-6 h-6 mx-4 text-red-500 icon-zoom-xl"
+        <VButton
+          variant="warning"
+          iconL="trash-alt"
+          :ariaLabel="`Delete ${name} ${item.title}`"
           @click="handleOpenModal(index)"
-        >
-          <font-awesome-icon icon="trash-alt" />
-        </button>
+        />
       </li>
     </draggable>
 
-    <span
-      tabindex="0"
-      class="block mt-4 pr-4 text-blue-hover-hunder"
-      @click="onAdd"
-    >
-      + Add {{ name }}
-    </span>
+    <div class="flex justify-center mt-4 mr-4">
+      <VButton
+        tag="span"
+        :label="`+ Add ${name}`"
+        @click="onAdd"
+      />
+    </div>
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="modal.show">
@@ -62,17 +60,14 @@
 
     <portal to="modalFooter" v-if="modal.show">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmDelete"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="handleCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -84,7 +79,7 @@
 import Draggable from 'vuedraggable'
 import { mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VTooltip from '@/components/VTooltip'
 
 export default {

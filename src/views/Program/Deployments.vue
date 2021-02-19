@@ -52,26 +52,23 @@
             />
           </td>
           <td class="px-4 py-2 border-b">
-            <button
+            <VButton
               v-if="index === deployments.length - 1"
+              variant="warning"
+              iconL="trash-alt"
+              :ariaLabel="`Delete deployment ${deployment.name}`"
               @click="handleOpenModal"
-              :aria-label="`Delete deployment ${deployment.name}`"
-            >
-              <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-            </button>
+            />
           </td>
         </tr>
       </tbody>
     </table>
 
-    <span
-      tabindex="0"
-      class="block p-2 text-left text-blue-hover-hunder"
+    <VButton
+      tag="span"
+      label="+ Add Deployment"
       @click="createDeployment"
-      @keyup.enter="createDeployment"
-    >
-      + Add deployment
-    </span>
+    />
 
     <portal to="modalBody" v-if="modal.show">
       <p>This deployment will be deleted.</p>
@@ -79,17 +76,14 @@
 
     <portal to="modalFooter" v-if="modal.show">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmDeleteDeployment"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="handleCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -99,7 +93,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'

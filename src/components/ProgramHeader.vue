@@ -8,21 +8,18 @@
         <span class="mx-4 text-lg text-blue" v-html="description" />
       </div>
 
-      <div>
-        <v-button
-          text="Discard Changes"
-          :color="dirty ? 'bg-transparent text-red-500 border border-red-500' : 'bg-gray-400 cursor-not-allowed'"
-          class="w-full mt-2"
+      <div class="flex flex-col gap-2">
+        <VButton
+          label="Discard Changes"
+          variant="warning-ligth"
+          :disabled="!dirty"
           @click="onDiscardChanges"
-          :aria-disabled="dirty ? 'false' : 'true'"
         />
-
-        <v-button
-          text="Save Changes"
-          :color="canSave ? 'bg-green' : 'bg-gray-400 cursor-not-allowed'"
-          class="w-full mt-2"
+        <VButton
+          label="Save Changes"
+          variant="success"
+          :disabled="!canSave"
           @click="onSaveChanges"
-          :aria-disabled="canSave ? 'false' : 'true'"
         />
       </div>
     </div>
@@ -30,7 +27,7 @@
 </template>
 
 <script>
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 
 export default {
   props: {
