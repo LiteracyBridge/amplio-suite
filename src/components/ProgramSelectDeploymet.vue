@@ -31,8 +31,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
-
 export default {
   props: {
     value: {
@@ -65,9 +63,6 @@ export default {
         }
       }
     }
-  },
-  components: {
-    VButton,
   },
   data: () => ({
     isModalOpen: false

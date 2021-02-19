@@ -57,13 +57,3 @@
     </section>
   </main>
 </template>
-
-<script>
-import VButton from '@/components/Button'
-
-export default {
- components: {
-   VButton
- }
-}
-</script>
