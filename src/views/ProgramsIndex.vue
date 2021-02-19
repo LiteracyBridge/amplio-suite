@@ -23,6 +23,7 @@
         tabindex="0"
         class="p-6 h-full bg-white rounded-lg shadow-box cursor-pointer hover:shadow-hover"
         @click="selectProgram(codeName)"
+        @keyup.enter="selectProgram(codeName)"
         @keyup.space="selectProgram(codeName)"
       >
         <img class="mx-auto" src="/img/program.png" alt="">
