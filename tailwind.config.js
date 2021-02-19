@@ -12,6 +12,7 @@ module.exports = {
         '3xl': '2rem'
       },
       boxShadow: {
+        button: '0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%)',
         navbar: '0 1px 2px 0 rgba(60,64,67,0.3),0 2px 6px 2px rgba(60,64,67,0.15)',
         box: '0 1px 2px 0 rgba(60,64,67,.3),0 2px 6px 2px rgba(60,64,67,.15)',
         hover: '0 8px 24px 0px rgba(0,0,0,0.5)',
