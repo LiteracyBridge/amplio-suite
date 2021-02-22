@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="col-span-2 grid row-gap-2 items-center"
-    style="grid-template-columns: 0.5fr 1fr"
-  >
+  <div class="grid grid-cols-form-2 items-center col-span-2">
     <div>
       <span>{{ label }}</span>
       <v-tooltip
@@ -21,7 +18,7 @@
       type="number"
       :value="val"
       @input="input($event.target.value)"
-      mx="mx-0"
+      mx="mx-0 w-full"
     />
   </div>
 </template>
