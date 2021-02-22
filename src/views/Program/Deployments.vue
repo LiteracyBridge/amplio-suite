@@ -15,10 +15,10 @@
       <table class="w-full table-auto">
         <thead>
           <tr>
-            <th class="px-4 py-2 text-green whitespace-nowrap border-b"># Deployment</th>
-            <th class="px-4 py-2 text-green border-b">Start Date</th>
-            <th class="px-4 py-2 text-green border-b">End Date</th>
-            <th class="px-4 py-2 text-green border-b">Actions</th>
+            <th># Deployment</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>

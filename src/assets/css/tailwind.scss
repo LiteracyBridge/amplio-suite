@@ -8,6 +8,11 @@
   white-space: nowrap;
 }
 
+table thead th {
+  white-space: nowrap;
+  @apply px-4 py-2 text-green border-b;
+}
+
 // For vue-multiselect
 .multiselect__tags .multiselect__placeholder {
   @apply text-label;
