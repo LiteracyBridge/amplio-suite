@@ -17,7 +17,7 @@
 
     <div
       class="absolute p-6 bg-white text-center shadow-modal rounded-md"
-      style="top: 30rem; left: 50vw; transform: translateX(-50%) translateY(-50%); min-width: calc(640px - (1.5rem * 2));"
+      style="top: 50vh; left: 50vw; transform: translateX(-50%) translateY(-50%); min-width: calc(640px - (1.5rem * 2));"
       role="dialog"
       aria-modal="true"
     >
