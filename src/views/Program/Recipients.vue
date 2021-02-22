@@ -34,7 +34,7 @@
       </div>
     </header>
 
-    <table class="w-full table-auto">
+    <table class="block w-full pt-8 table-auto overflow-x-auto">
       <thead>
         <tr>
           <th
@@ -44,6 +44,8 @@
           >
             <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
               <button
+                class="flex gap-2"
+                style="white-space: nowrap;"
                 @click="setSortByColumn(col.key)"
               >
                 {{ col.label }}
