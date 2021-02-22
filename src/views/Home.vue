@@ -5,7 +5,7 @@
     </h1>
 
     <font-awesome-icon
-      v-if="!['success', 'error'].includes(programStatus)"
+      v-if="programStatus === 'loading'"
       icon="spinner"
       size="4x"
       pulse
