@@ -3,18 +3,18 @@
     <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
-      <div>
-        <v-button
-          text="Submit"
-          :color="canDeploy ? 'bg-blue' : 'bg-gray-400'"
-          :aria-disabled="canDeploy ? 'false' : 'true'"
+      <div class="flex">
+        <VButton
+          label="Submit"
+          variant="submit"
+          :disabled="!canDeploy"
           @click="onSubmit"
         />
         <v-tooltip
           v-if="!canDeploy"
           text="You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
           position="right"
-          class="ml-2"
+          class="my-2 ml-2"
         >
           <font-awesome-icon
             class="text-orange-600"
@@ -54,7 +54,10 @@
 
     <portal to="modalFooter" v-if="isModalOpen">
       <footer class="flex flex-row-reverse justify-between pt-20">
-        <v-button @click="handleCloseModal" text="Ok" />
+        <VButton
+          label="Ok"
+          @click="handleCloseModal"
+        />
       </footer>
     </portal>
   </main>
@@ -63,7 +66,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VTooltip from '@/components/VTooltip'
 import VSnackbars from '@/components/VSnackbars'
 

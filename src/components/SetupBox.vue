@@ -10,21 +10,19 @@
       </div>
 
       <footer class="flex flex-row-reverse justify-between">
-        <Button
+        <VButton
           v-if="next !== ''"
           id="nextStep"
-          :text="nextLabel"
-          type="submit"
-          :aria-disabled="isFill && status !== 'loading' ? 'false' : 'true'"
-          :class="isFill && status !== 'loading' ? '' : 'cursor-not-allowed opacity-25'"
-          class="text-xl font-bold"
+          variant="success"
+          :label="nextLabel"
+          :disabled="isFill && status !== 'loading' ? false : true"
           @click="handleNext"
           />
 
-        <Button
+        <VButton
           v-if="prev !== ''"
-          text="PREV"
-          class="text-xl font-bold"
+          label="PREV"
+          variant="success"
           @click="handlePrev"
         />
       </footer>
@@ -35,7 +33,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import Button from '@/components/Button'
+import VButton from '@/components/VButton'
 
 export default {
   computed: {
@@ -50,7 +48,7 @@ export default {
     }
   },
   components: {
-    Button
+    VButton,
   },
   props: {
     step: {

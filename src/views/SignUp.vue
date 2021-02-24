@@ -47,14 +47,12 @@
             @input="password = $event.target.value"
           />
 
-          <Button
+          <VButton
             type="submit"
-            :iconLeft="status === 'loading' ? 'spinner' : ''"
-            size="2x"
-            :pulse="status === 'loading'"
-            :color="status === 'loading' ? 'bg-gray-500' : 'bg-green'"
-            text="Register"
-            class="w-full"
+            label="Register"
+            variant="success full"
+            :iconL="status === 'loading' ? 'spinner' : ''"
+            :iconLPulse="status === 'loading'"
             @click="handleRegister"
           />
         </form>
@@ -70,12 +68,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import Button from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 
 export default {
   components: {
-    Button,
+    VButton,
     VInput
   },
   computed: {
