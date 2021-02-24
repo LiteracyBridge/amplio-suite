@@ -260,7 +260,7 @@ export default {
         .map(item => item.number)
     },
     listeningModelSelected () {
-      return this.listeningModels.find(opt => opt.id === this.recipient.model)
+      return this.recipient.model
     },
     recipientIndex () {
       return this.$store.state.recipients.recipients
