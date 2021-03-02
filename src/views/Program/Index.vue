@@ -8,6 +8,8 @@
           label="Submit"
           variant="submit"
           :disabled="!canDeploy"
+          :iconL="submitStatus === 'loading' ? 'spinner' : ''"
+          :iconLPulse="submitStatus === 'loading'"
           @click="onSubmit"
         />
         <v-tooltip
