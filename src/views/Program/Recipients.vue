@@ -36,8 +36,8 @@
       <p>Pleace, add a recipient</p>
     </div>
 
-    <div v-if="filterRecipients.length > 0" class="block overflow-x-auto pt-10">
-      <table class="block w-full pt-8 table-auto overflow-x-auto">
+    <div v-if="filterRecipients.length > 0" class="block overflow-x-auto">
+      <table class="w-full pt-8 table-auto overflow-x-auto">
         <thead>
           <tr>
             <th v-for="col in columns" :key="col.key">
