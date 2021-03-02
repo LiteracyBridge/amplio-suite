@@ -108,7 +108,7 @@ export default {
       options: [
         { name: 'Analytics Dashboard', link: 'https://dashboard.amplio.org/', target: '_blank' },
         { name: 'Learning Portal', link: 'https://amplio.moodlecloud.com/', target: '_blank' },
-        { name: 'Program Specification', link: `/programs/${programCode}/settings`, tag: 'router_link'
+        { name: 'Program Specification', link: `/programs/${programCode}/settings`, tag: 'router_link'},
         { name: 'Software Installation', link: '/download', tag: 'router-link' }
       ]
     }
