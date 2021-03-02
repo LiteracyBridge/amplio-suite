@@ -69,8 +69,7 @@
 
           <span
             tabindex="0"
-            class="px-3 text-xl text-white font-bold rounded cursor-pointer hover:text-gray-500"
-            style="white-space: nowrap;"
+            class="px-3 text-xl text-white font-bold whitespace-nowrap rounded cursor-pointer hover:text-gray-500"
             @click="handleLogout"
             @keyup.enter="handleLogout"
           >

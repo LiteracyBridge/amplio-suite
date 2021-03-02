@@ -12,7 +12,7 @@
     />
 
     <div class="min-h-200-px my-5 text-center">
-      <div class="grid grid-cols-content-message row-gap-2 items-center text-left">
+      <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
         <label for="programName">Program Name</label>
         <v-input
           ref="programName"
@@ -37,7 +37,7 @@
           @select="setCountry"
         />
 
-        <label class="pl-4" for="region">Region/State</label>
+        <label class="md:pl-4" for="region">Region/State</label>
         <multiselect
           id="region"
           tag-placeholder="Add this as new region"
@@ -62,8 +62,9 @@
           :onLanguageDeleted="this.onLanguageDeleted"
         />
 
-        <label class="pl-4" for="listeningModel">Listening Model</label>
+        <label class="md:pl-4" for="listeningModel">Listening Model</label>
         <multiselect
+          v-if="listeningModelsOptions.length > 0"
           id="listeningModel"
           :options="listeningModelsOptions"
           :value="listeningModelsSelected"
@@ -77,6 +78,12 @@
           @remove="(model) => toggleListening(model.id)"
           placeholder="Select the listening model"
         />
+        <font-awesome-icon
+          v-else
+          icon="spinner"
+          size="2x"
+          pulse
+          class="block w-10 h-10 mt-2 text-left" />
 
         <label for="partner">Partner</label>
         <v-input
@@ -88,7 +95,7 @@
           @input="setPartner($event.target.value)"
         />
 
-        <label class="pl-4" for="affiliate">Affiliate</label>
+        <label class="md:pl-4" for="affiliate">Affiliate</label>
         <v-input
           name="affiliate"
           type="text"
@@ -111,15 +118,15 @@
 
       <div
         :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-        class="grid grid-cols-content-message row-gap-2 items-center text-left px-6"
+        class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left pl-10"
       >
-        <p class="col-span-4 text-sm text-blue">
+        <p class="col-span-2 md:col-span-4 text-sm text-blue">
           The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
         </p>
         <template v-for="(opt, index) in directBeneficiariesLabels">
           <span
             :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'pl-4' : ''"
+            :class="index % 2 === 1 ? 'md:pl-4' : ''"
           >
             Field {{ index + 1 }}
           </span>
@@ -138,7 +145,7 @@
         <template v-for="(opt, index) in directBeneficiariesAdditionalLabels">
           <span
             :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'pl-4' : ''"
+            :class="index % 2 === 1 ? 'md:pl-4' : ''"
           >
             Additional Field {{ index + 1 }}
           </span>
@@ -241,7 +248,7 @@ export default {
         .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
     }),
     ...mapState('listeningModels', {
-      listeningModelsOptions: state => state.listeningModels
+      listeningModelsOptions: 'listeningModels',
     }),
     listeningModelsSelected () {
       return this.listeningModels

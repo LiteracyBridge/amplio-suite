@@ -43,12 +43,14 @@ module.exports = {
       spacing: {
         68: '17rem',
         82: '20rem',
-        96: '24rem'
+        96: '24rem',
+        104: '28rem',
       },
       gridTemplateColumns: {
         program: 'minmax(100px, auto) 1fr',
         deployments: 'auto repeat(3, 1fr) 50px',
-        'content-message': '0.5fr 1fr 0.5fr 1fr'
+        'form-2': '0.5fr 1fr',
+        'form-4': '0.5fr 1fr 0.5fr 1fr',
       }
     }
   },

@@ -1,5 +1,7 @@
 <template>
-  <section class="relative p-6 pt-0">
+  <section class="relative min-h-200-px p-6 pt-0">
+    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
+
     <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">Recipients</h2>
 
@@ -30,78 +32,72 @@
       </div>
     </header>
 
-    <table class="block w-full pt-8 table-auto overflow-x-auto">
-      <thead>
-        <tr>
-          <th
-            v-for="col in columns"
-            :key="col.key"
-            class="px-4 py-2 text-green border-b"
-          >
-            <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
-              <button
-                class="flex gap-2"
-                style="white-space: nowrap;"
-                @click="setSortByColumn(col.key)"
-                @keyup.enter="setSortByColumn(col.key)"
-                @keyup.space="setSortByColumn(col.key)"
-              >
-                {{ col.label }}
-                  <font-awesome-icon
-                    v-if="sortTable.by === col.key"
-                    :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
-                  />
-              </button>
-            </v-tooltip>
-          </th>
-          <th class="px-4 py-2 text-green border-b">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(recipient, index) in filterRecipients"
-          :key="recipient.id"
-          :class="index % 2 === 0 ? '' : 'bg-gray-200'"
-          class="hover:bg-gray-400"
-        >
-          <td
-            v-for="col in columns"
-            :key="`${index}-${col.key}`"
-            class="px-4 py-2 border-b"
-          >
-            {{ recipient[col.key] }}
-          </td>
-          <td class="px-4 border-b">
-            <div class="flex gap-1">
-              <VButton
-                iconL="edit"
-                :ariaLabel="`Edit recipient ${recipient.id}`"
-                @click="onClickEdit(recipient.id)"
-              />
-              <VButton
-                iconL="copy"
-                :ariaLabel="`Copy recipient ${recipient.id}`"
-                @click="onClickDuplicate(recipient.id)"
-              />
-              <VButton
-                variant="warning"
-                iconL="trash-alt"
-                :ariaLabel="`Delete recipient ${recipient.id}`"
-                @click="onClickDelete(recipient.id)"
-              />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="status !== 'loading' && filterRecipients.length === 0">
+      <p>Pleace, add a recipient</p>
+    </div>
 
-    <font-awesome-icon
-      v-if="status === 'loading'"
-      icon="spinner"
-      size="3x"
-      pulse
-      class="mx-auto w-20 h-20"
-    />
+    <div v-if="filterRecipients.length > 0" class="block overflow-x-auto">
+      <table class="w-full pt-8 table-auto overflow-x-auto">
+        <thead>
+          <tr>
+            <th v-for="col in columns" :key="col.key">
+              <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
+                <button
+                  class="flex gap-2"
+                  style="white-space: nowrap;"
+                  @click="setSortByColumn(col.key)"
+                  @keyup.enter="setSortByColumn(col.key)"
+                  @keyup.space="setSortByColumn(col.key)"
+                >
+                  {{ col.label }}
+                    <font-awesome-icon
+                      v-if="sortTable.by === col.key"
+                      :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+                    />
+                </button>
+              </v-tooltip>
+            </th>
+            <th class="px-4 py-2 text-green border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(recipient, index) in filterRecipients"
+            :key="recipient.id"
+            :class="index % 2 === 0 ? '' : 'bg-gray-200'"
+            class="hover:bg-gray-400"
+          >
+            <td
+              v-for="col in columns"
+              :key="`${index}-${col.key}`"
+              class="px-4 py-2 border-b"
+            >
+              {{ recipient[col.key] }}
+            </td>
+            <td class="px-4 border-b">
+              <div class="flex gap-1">
+                <VButton
+                  iconL="edit"
+                  :ariaLabel="`Edit recipient ${recipient.id}`"
+                  @click="onClickEdit(recipient.id)"
+                />
+                <VButton
+                  iconL="copy"
+                  :ariaLabel="`Copy recipient ${recipient.id}`"
+                  @click="onClickDuplicate(recipient.id)"
+                />
+                <VButton
+                  variant="warning"
+                  iconL="trash-alt"
+                  :ariaLabel="`Delete recipient ${recipient.id}`"
+                  @click="onClickDelete(recipient.id)"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
@@ -186,6 +182,7 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
 import VInput from '@/components/VInput'
 import VButton from '@/components/VButton'
+import Loading from '@/components/Loading'
 import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 import { EventBus } from '@/event-bus'
@@ -285,6 +282,7 @@ export default {
   components: {
     VInput,
     VButton,
+    Loading,
     VTooltip,
     ProgramRecipientsForm,
   },

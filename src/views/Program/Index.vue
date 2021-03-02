@@ -8,6 +8,8 @@
           label="Submit"
           variant="submit"
           :disabled="!canDeploy"
+          :iconL="submitStatus === 'loading' ? 'spinner' : ''"
+          :iconLPulse="submitStatus === 'loading'"
           @click="onSubmit"
         />
         <v-tooltip
@@ -116,7 +118,7 @@ export default {
   data () {
     return {
       sections: ['general', 'deployments', 'content', 'recipients'],
-
+      submitStatus: null,
       transitionName: 'slide-left',
       isModalOpen: false,
       showSnackbar: false,
@@ -169,8 +171,9 @@ export default {
     async onSubmit () {
       if (!this.canDeploy) return
 
-      const result = await this.deployProgram()
-      if (result === 'success') this.showSnackbar = true
+      this.submitStatus = 'loading'
+      this.submitStatus = await this.deployProgram()
+      if (this.submitStatus === 'success') this.showSnackbar = true
     },
     handleOpenModal () {
       this.isModalOpen = true

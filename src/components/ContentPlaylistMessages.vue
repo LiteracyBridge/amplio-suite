@@ -23,7 +23,7 @@
           type="text"
           :name="`message ${message.title}`"
           label="*Message title"
-          mx="w-full px-4 mx-0"
+          mx="w-full mx-0"
           :value="message.title"
           @input="setMessageTitle({ playlistIndex, messageIndex: index, title: $event.target.value })"
         />
@@ -57,7 +57,7 @@
       </div>
 
       <div
-        :class="index === messageIndex ? 'h-96' : 'h-0'"
+        :class="index === messageIndex ? 'h-104 md:h-96' : 'h-0'"
         class="overflow-hidden transition-all duration-700"
       >
         <playlist-messages-form
