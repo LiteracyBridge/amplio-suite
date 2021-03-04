@@ -37,11 +37,11 @@ def lambda_handler(event, context):
         for message in playlist.messages:
             sdg_goal = ''
             if message.sdg_goal_id:
-                sdg_goal = message.sdg_goal.section
+                sdg_goal = message.sdg_goal.label
 
             sdg_target = ''
             if message.sdg_target_id:
-                sdg_target = f"{sdg_goal}.{message.sdg_target.subsection}"
+                sdg_target = message.sdg_target.label
 
             category_name = ''
             if message.category:
