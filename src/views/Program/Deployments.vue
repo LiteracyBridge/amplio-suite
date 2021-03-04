@@ -11,67 +11,66 @@
       :onDiscardChanges="() => fetchDeployments(programCode)"
     />
 
-    <table class="w-full table-auto">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 text-green border-b"># Deployment</th>
-          <th class="px-4 py-2 text-green border-b">Start Date</th>
-          <th class="px-4 py-2 text-green border-b">End Date</th>
-          <th class="px-4 py-2 text-green border-b">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(deployment, index) in deployments"
-          :key="index"
-          :class="index % 2 === 0 ? '' : 'bg-gray-200'"
-          class="hover:bg-gray-400"
-        >
-          <td class="px-4 py-2 border-b">
-            Deployment {{ index + 1 }}
-          </td>
-          <td class="px-4 py-2 border-b">
-            <v-input
-              type="date"
-              iconLeft="calendar-alt"
-              :aria-label="`Start of deployment ${deployment.name}`"
-              :value="deployment.start_date"
-              @change="setDeploymentDate({ id: deployment.id, what: 'start_date', date: $event.target.value })"
-              mx="mx-0 w-full"
-            />
-          </td>
-          <td class="px-4 py-2 border-b">
-            <v-input
-              type="date"
-              iconLeft="calendar-alt"
-              :aria-label="`End of deployment ${deployment.name}`"
-              :value="deployment.end_date"
-              :min="deployment.start_date"
-              @change="setDeploymentDate({ id: deployment.id, what: 'end_date', date: $event.target.value })"
-              mx="mx-0 w-full"
-            />
-          </td>
-          <td class="px-4 py-2 border-b">
-            <button
-              v-if="index === deployments.length - 1"
-              @click="handleOpenModal"
-              :aria-label="`Delete deployment ${deployment.name}`"
-            >
-              <font-awesome-icon icon="trash-alt" class="w-6 h-6 mx-4 text-red-500" />
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="block overflow-x-auto">
+      <table class="w-full table-auto">
+        <thead>
+          <tr>
+            <th># Deployment</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(deployment, index) in deployments"
+            :key="index"
+            :class="index % 2 === 0 ? '' : 'bg-gray-200'"
+            class="hover:bg-gray-400"
+          >
+            <td class="px-4 py-2 border-b">
+              Deployment {{ index + 1 }}
+            </td>
+            <td class="px-4 py-2 border-b">
+              <v-input
+                type="date"
+                iconLeft="calendar-alt"
+                :aria-label="`Start of deployment ${deployment.name}`"
+                :value="deployment.start_date"
+                @change="setDeploymentDate({ id: deployment.id, what: 'start_date', date: $event.target.value })"
+                mx="mx-0 w-full"
+              />
+            </td>
+            <td class="px-4 py-2 border-b">
+              <v-input
+                type="date"
+                iconLeft="calendar-alt"
+                :aria-label="`End of deployment ${deployment.name}`"
+                :value="deployment.end_date"
+                :min="deployment.start_date"
+                @change="setDeploymentDate({ id: deployment.id, what: 'end_date', date: $event.target.value })"
+                mx="mx-0 w-full"
+              />
+            </td>
+            <td class="px-4 py-2 border-b">
+              <VButton
+                v-if="index === deployments.length - 1"
+                variant="warning"
+                iconL="trash-alt"
+                :ariaLabel="`Delete deployment ${deployment.name}`"
+                @click="handleOpenModal"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <span
-      tabindex="0"
-      class="block p-2 text-left text-blue-hover-hunder"
+    <VButton
+      tag="span"
+      label="+ Add Deployment"
       @click="createDeployment"
-      @keyup.enter="createDeployment"
-    >
-      + Add deployment
-    </span>
+    />
 
     <portal to="modalBody" v-if="modal.show">
       <p>This deployment will be deleted.</p>
@@ -79,17 +78,14 @@
 
     <portal to="modalFooter" v-if="modal.show">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmDeleteDeployment"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="handleCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -99,7 +95,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'

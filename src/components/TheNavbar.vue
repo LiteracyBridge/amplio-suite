@@ -69,8 +69,7 @@
 
           <span
             tabindex="0"
-            class="px-3 text-xl text-white font-bold rounded cursor-pointer hover:text-gray-500"
-            style="white-space: nowrap;"
+            class="px-3 text-xl text-white font-bold whitespace-nowrap rounded cursor-pointer hover:text-gray-500"
             @click="handleLogout"
             @keyup.enter="handleLogout"
           >
@@ -107,8 +106,8 @@ export default {
     return {
       isOpen: false,
       options: [
-        { name: 'Learning Portal', link: 'https://amplio.moodlecloud.com/', target: '_blank' },
         { name: 'Analytics Dashboard', link: 'https://dashboard.amplio.org/', target: '_blank' },
+        { name: 'Learning Portal', link: 'https://amplio.moodlecloud.com/', target: '_blank' },
         { name: 'Software Installation', link: '/download', tag: 'router-link' }
       ]
     }

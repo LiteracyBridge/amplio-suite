@@ -1,6 +1,6 @@
 <template>
   <main class="container mx-auto text-center">
-    <header class="py-20 text-blue font-semibold">
+    <header class="py-16 text-blue font-semibold">
       <h1 class="text-4xl">
         Welcome to Amplio <span class="capitalize">{{ user.name }}</span>!
       </h1>
@@ -16,13 +16,14 @@
       pulse
       class="mx-auto w-20 h-20" />
 
-    <div class="grid grid-cols-4 gap-10">
+    <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pb-16">
       <div
         v-for="(codeName, index) in programs"
         :key="index"
         tabindex="0"
         class="p-6 h-full bg-white rounded-lg shadow-box cursor-pointer hover:shadow-hover"
         @click="selectProgram(codeName)"
+        @keyup.enter="selectProgram(codeName)"
         @keyup.space="selectProgram(codeName)"
       >
         <img class="mx-auto" src="/img/program.png" alt="">

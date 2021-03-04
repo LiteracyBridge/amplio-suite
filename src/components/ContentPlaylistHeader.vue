@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-content-message items-center p-4 pt-6">
+  <div class="grid grid-cols-form-2 items-center p-4 pt-6">
     <div class="flex items-center">
       <span class="mandatory-field" id="title">
         Playlist Title

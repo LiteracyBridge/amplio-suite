@@ -1,12 +1,12 @@
 <template>
-  <div class="grid grid-cols-content-message row-gap-2 items-center text-left" style="width:80vw;">
-    <p class="col-span-4 text-center text-blue">
+  <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 col-gap-4 items-center text-left" style="width:80vw;">
+    <p class="col-span-2 md:col-span-4 text-center text-blue">
       All fields with an asterisk are required.The optional fields are recommended for reporting.
     </p>
 
     <p
       v-if="invalidConstraint"
-      class="col-span-4 text-center text-red-500"
+      class="col-span-2 md:col-span-4 text-center text-red-500"
     >
       <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
       Community, Group Name and Agent combination must be unique.
@@ -14,7 +14,7 @@
 
     <p
       v-if="invalidBeneficiaries"
-      class="col-span-4 text-center text-red-500"
+      class="col-span-2 md:col-span-4 text-center text-red-500"
     >
       <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
       Invalid Direct Beneficiaries details
@@ -30,7 +30,7 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <label class="pl-4 mandatory-field" for="district">District/County</label>
+    <label class="mandatory-field" for="district">District/County</label>
     <v-input
       name="district"
       type="text"
@@ -47,7 +47,7 @@
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p class="pl-4">Group Name</p>
+    <p>Group Name</p>
     <v-input
       type="text"
       mx="mx-0 w-full"
@@ -63,7 +63,7 @@
       @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
     />
 
-    <p class="pl-4">Agent Gender</p>
+    <p>Agent Gender</p>
     <multiselect
       :options="['Male', 'Female', 'Other']"
       :value="recipient.agentGender"
@@ -82,7 +82,7 @@
 
     <span class="col-span-2" />
 
-    <label class="pl-4 mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
+    <label class="mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
     <v-input
       name="numTalkingBooks"
       type="number"
@@ -107,7 +107,7 @@
 
     <span class="col-span-2" />
 
-    <label class="pl-4 mandatory-field" for="deployments">Deployments</label>
+    <label class="mandatory-field" for="deployments">Deployments</label>
     <multiselect
       id="deployments"
       :options="deployments"
@@ -159,21 +159,18 @@
       @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
     />
 
-    <p
-      tabindex="0"
-      :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-      class="w-48 ml-2 p-2 text-blue cursor-pointer hover:underline hover:font-semibold"
+    <div class="col-span-2 ml-4">
+    <VButton
+      tag="span"
+      :label="`${beneficiariesIsOpen ? 'Hide' : 'Show'} Direct beneficiaries details`"
+      :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
       @click="beneficiariesIsOpen = !beneficiariesIsOpen"
-      @keyup.enter="beneficiariesIsOpen = !beneficiariesIsOpen"
-    >
-      {{ beneficiariesIsOpen ? 'Hide' : 'Show' }} Direct beneficiaries details
-      <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
-    </p>
-    <span></span>
+    />
+    </div>
 
     <div
       :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-      class="col-span-4 grid grid-cols-content-message row-gap-2 items-center"
+      class="ml-6 grid grid-cols-form-2 md:grid-cols-form-4 col-gap-4 col-span-2 md:col-span-4 items-center"
     >
       <beneficiaries-field
         label="Number of Households"
@@ -214,6 +211,7 @@
 import { mapState, mapActions } from 'vuex'
 import Multiselect from 'vue-multiselect'
 
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
@@ -267,6 +265,7 @@ export default {
     }
   },
   components: {
+    VButton,
     VInput,
     VTooltip,
     Multiselect,

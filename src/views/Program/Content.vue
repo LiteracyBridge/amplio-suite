@@ -18,7 +18,7 @@
       v-model="deployment"
     />
 
-    <div class="grid" style="grid-template-columns: 1fr 4fr;">
+    <div class="grid grid-cols-10">
       <program-side-menu
         v-if="playlists"
         name="playlist"
@@ -30,7 +30,7 @@
         :titles="duplicatePlaylists"
       />
 
-      <div class="text-left">
+      <div class="text-left col-span-7 md:col-span-8">
         <playlist-header
           v-if="playlist"
           :playlist="playlist"
@@ -46,13 +46,13 @@
           :playlistIndex="playlistIndex"
          />
 
-         <span
-          tabindex="0"
-          @click="() => addMessage(playlist.id)"
-          class="block mt-4 p-2 text-blue-hover-hunder"
-        >
-          + Add Message
-        </span>
+        <div class="mt-4 ml-4">
+          <VButton
+            tag="span"
+            label="+ Add Message"
+            @click="addMessage(playlist.id)"
+          />
+        </div>
       </div>
     </div>
 
@@ -63,11 +63,9 @@
 
     <portal to="modalFooter" v-if="showModal">
       <footer class="flex flex-row-reverse justify-between pt-20">
-        <v-button
+        <VButton
+          label="Close"
           @click="onCloseModal"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Close"
         />
       </footer>
     </portal>
@@ -77,7 +75,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 import ProgramSideMenu from '@/components/ProgramSideMenu'

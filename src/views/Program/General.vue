@@ -12,7 +12,7 @@
     />
 
     <div class="min-h-200-px my-5 text-center">
-      <div class="grid grid-cols-content-message row-gap-2 items-center text-left">
+      <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
         <label for="programName">Program Name</label>
         <v-input
           ref="programName"
@@ -37,7 +37,7 @@
           @select="setCountry"
         />
 
-        <label class="pl-4" for="region">Region/State</label>
+        <label class="md:pl-4" for="region">Region/State</label>
         <multiselect
           id="region"
           tag-placeholder="Add this as new region"
@@ -62,8 +62,9 @@
           :onLanguageDeleted="this.onLanguageDeleted"
         />
 
-        <label class="pl-4" for="listeningModel">Listening Model</label>
+        <label class="md:pl-4" for="listeningModel">Listening Model</label>
         <multiselect
+          v-if="listeningModelsOptions.length > 0"
           id="listeningModel"
           :options="listeningModelsOptions"
           :value="listeningModelsSelected"
@@ -77,6 +78,12 @@
           @remove="(model) => toggleListening(model.id)"
           placeholder="Select the listening model"
         />
+        <font-awesome-icon
+          v-else
+          icon="spinner"
+          size="2x"
+          pulse
+          class="block w-10 h-10 mt-2 text-left" />
 
         <label for="partner">Partner</label>
         <v-input
@@ -88,7 +95,7 @@
           @input="setPartner($event.target.value)"
         />
 
-        <label class="pl-4" for="affiliate">Affiliate</label>
+        <label class="md:pl-4" for="affiliate">Affiliate</label>
         <v-input
           name="affiliate"
           type="text"
@@ -100,29 +107,26 @@
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
-        <span class="font-bold">Direct Beneficiaries</span>
-        <span
-          tabindex="0"
-          :class="beneficiariesIsOpen ? 'underline font-semibold' : ''"
-          class="w-48 ml-2 p-2 text-blue-hover-hunder"
+        <span class="font-bold mr-4">Direct Beneficiaries</span>
+        <VButton
+          tag="span"
+          :label="beneficiariesIsOpen ? 'Hide Details' : 'Show Details'"
+          :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
           @click="beneficiariesIsOpen = !beneficiariesIsOpen"
-        >
-          {{ beneficiariesIsOpen ? 'Hide Details' : 'Show Details' }}
-          <font-awesome-icon :icon="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'" />
-        </span>
+        />
       </div>
 
       <div
         :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-        class="grid grid-cols-content-message row-gap-2 items-center text-left px-6"
+        class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left pl-10"
       >
-        <p class="col-span-4 text-sm text-blue">
+        <p class="col-span-2 md:col-span-4 text-sm text-blue">
           The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
         </p>
         <template v-for="(opt, index) in directBeneficiariesLabels">
           <span
             :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'pl-4' : ''"
+            :class="index % 2 === 1 ? 'md:pl-4' : ''"
           >
             Field {{ index + 1 }}
           </span>
@@ -141,7 +145,7 @@
         <template v-for="(opt, index) in directBeneficiariesAdditionalLabels">
           <span
             :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'pl-4' : ''"
+            :class="index % 2 === 1 ? 'md:pl-4' : ''"
           >
             Additional Field {{ index + 1 }}
           </span>
@@ -150,19 +154,17 @@
               type="text"
               :value="opt.value"
               @input="setDirectBeneficiariesAdditionalLabel({ key: opt.key, value: $event.target.value })"
-              mx="mx-0"
+              mx="mx-0 mr-2"
               class="w-full"
             />
 
-            <button
-              :aria-label="`Delete option field ${opt.value}`"
-              :class="labelUsed.includes(opt.key) ? 'text-grey-500' : 'text-red-500'"
-              class="w-6 h-6 ml-2 icon-zoom"
+            <VButton
+              variant="warning"
+              iconL="trash-alt"
               :disabled="labelUsed.includes(opt.key)"
+              :ariaLabel="`Delete option field ${opt.value}`"
               @click="deleteDirectBeneficiariesAdditionalLabel(opt.key)"
-            >
-              <font-awesome-icon icon="trash-alt" />
-            </button>
+            />
 
             <v-tooltip
               v-if="labelUsed.includes(opt.key)"
@@ -178,13 +180,11 @@
         </template>
 
         <div class="col-span-4">
-          <span
-            tabindex="0"
-            class="block mt-4 pr-4 text-blue-hover-hunder"
+          <VButton
+            tag="span"
+            label="+ Add Optional Field"
             @click="addDirectBeneficiariesAdditionalLabel"
-          >
-            + Add Optional Field
-          </span>
+          />
         </div>
       </div>
     </div>
@@ -196,17 +196,14 @@
 
     <portal to="modalFooter" v-if="languageToDelete">
       <footer class="flex flex-row-reverse justify-between">
-        <v-button
+        <VButton
+          label="Confirm"
+          variant="warning"
           @click="confirmLanguageDeletion"
-          color="bg-red-500 border border-red-500"
-          textColor="text-white"
-          text="Confirm"
         />
-        <v-button
+        <VButton
+          label="Cancel"
           @click="cancelLanguageDeletion"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Cancel"
         />
       </footer>
     </portal>
@@ -217,7 +214,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
-import VButton from '@/components/Button'
+import VButton from '@/components/VButton'
 import VInput from '@/components/VInput'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
@@ -251,7 +248,7 @@ export default {
         .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
     }),
     ...mapState('listeningModels', {
-      listeningModelsOptions: state => state.listeningModels
+      listeningModelsOptions: 'listeningModels',
     }),
     listeningModelsSelected () {
       return this.listeningModels
@@ -343,6 +340,9 @@ export default {
       this.languageToDelete = null
       this.closeModal()
     },
+    spam () {
+      console.log('nuevo click')
+    }
   }
 }
 </script>

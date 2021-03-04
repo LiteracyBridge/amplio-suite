@@ -82,6 +82,10 @@ class Message(Base, SerializerMixin):
         "Message.sdg_target_id==SustainableDevelopmentTargets.subsection)"
     )
 
+    category = relationship(
+        'Category'
+    )
+
     def __init__(self, **kwargs):
         """
         Set default value for position and title

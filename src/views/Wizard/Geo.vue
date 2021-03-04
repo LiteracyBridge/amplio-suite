@@ -31,9 +31,12 @@
       :multiple="true"
       :taggable="true"
       @tag="addTag"
-      @select="addRegion"
+      @select="(region) => addRegion({ region, step })"
       @remove="(region) => removeRegion({ region, step })"
     >
+      <template slot="noResult">
+        No match found
+      </template>
       <template slot="noOptions">
         Region/State
       </template>
