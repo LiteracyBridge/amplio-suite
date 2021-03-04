@@ -36,8 +36,8 @@
       <p>Pleace, add a recipient</p>
     </div>
 
-    <div v-if="filterRecipients.length > 0" class="block overflow-x-auto">
-      <table class="w-full pt-8 table-auto overflow-x-auto">
+    <div v-if="filterRecipients.length > 0" class="block pt-8 overflow-x-auto">
+      <table class="w-full table-auto overflow-x-auto">
         <thead>
           <tr>
             <th v-for="col in columns" :key="col.key">
@@ -166,11 +166,9 @@
 
     <portal to="modalFooter" v-if="showModal.mandatory">
       <footer class="flex flex-row-reverse justify-between pt-20">
-        <v-button
+        <VButton
+          label="Close"
           @click="onClickEdit(selectedRecipientId)"
-          color="bg-transparent border border-black"
-          textColor="text-black"
-          text="Close"
         />
       </footer>
     </portal>
