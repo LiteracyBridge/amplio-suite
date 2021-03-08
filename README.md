@@ -28,6 +28,17 @@ Cd amplio-suite
 ./dev-setup.sh
 ```
 
+If necessary, the one time setup can be undone by running these commnands:
+```cd amplio-suite
+docker-compose down -v
+
+docker volume ls
+docker volume rm python-deps # Si existe en el comando anterior
+
+docker image ls
+docker image rm (id de amplio-suite-vue_python-deps)
+```
+
 ### 1.2. Starting your local serve
 
 ```bash
