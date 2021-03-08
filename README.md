@@ -33,10 +33,10 @@ If necessary, the one time setup can be undone by running these commnands:
 docker-compose down -v
 
 docker volume ls
-docker volume rm python-deps # Si existe en el comando anterior
+docker volume rm python-deps # Only if python-deps is listed in the previous command
 
 docker image ls
-docker image rm (id de amplio-suite-vue_python-deps)
+docker image rm <id> # Replace "<id>" by the corresponding id for amplio-suite-vue_python-deps
 ```
 
 ### 1.2. Starting your local serve
