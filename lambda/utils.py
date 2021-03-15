@@ -105,19 +105,6 @@ def user_programs(email):
     program_items = TableManager.get_instance().get_programs_for_user(email).items()
     return [program for program, _role in program_items]
 
-class UnauthorizedAccess(Exception):
-    pass
-
-def validate_user_access(event, model):
-    email = event['context']['email']
-
-    if not model:
-        return None
-
-    if model.program_code not in user_programs(email):
-        raise UnauthorizedAccess()
-
-    return model
 
 def save_to_csv(text, file_path):
     bucket_info = get_secret('Suite.Lambda')
