@@ -1,11 +1,8 @@
 import {
-  getContent,
-} from '@/api/content.api'
-
-import {
   postPlaylist,
-  putPlaylist,
   deletePlaylist,
+  getPlaylists,
+  putPlaylists,
 } from '@/api/playlist.api'
 
 import {
@@ -24,7 +21,7 @@ const fetchContent = async ({ state, commit }, payload) => {
   commit('requestInit')
 
   try {
-    const response = await getContent(programCode, deploymentId)
+    const response = await getPlaylists(programCode, deploymentId)
     commit('setContent', response)
   } catch (error) {
     commit('requestError')
@@ -41,7 +38,7 @@ const updateContent = async ({ state, commit }) => {
   commit('requestInit')
 
   try {
-    await putPlaylist({ program_code, playlists })
+    await putPlaylists({ program_code, playlists })
     await putMessage({ program_code, messages })
     commit('setDirty', false)
     commit('requestSuccess')

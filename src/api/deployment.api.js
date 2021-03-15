@@ -9,7 +9,7 @@ const getDeployments = async (programCode) => {
     })
     return {
       programCode,
-      deployments: response.data.deployments
+      deployments: response.data
     }
   } catch (e) {
     console.log(e)

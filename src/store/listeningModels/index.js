@@ -29,7 +29,7 @@ export default {
 
       try {
         const response = await getListeningModels()
-        await commit('getListeningModelsSuccess', response.data)
+        await commit('getListeningModelsSuccess', response)
       } catch {
         commit('getListeningModelsError')
       }

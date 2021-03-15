@@ -28,8 +28,8 @@ export default {
       commit('getSustainableDevelopmentsRequest')
 
       try {
-        const response = await getSustainableDevelopments()
-        await commit('getSustainableDevelopmentsSuccess', response.data)
+        const goals = await getSustainableDevelopments()
+        await commit('getSustainableDevelopmentsSuccess', goals)
       } catch {
         commit('getSustainableDevelopmentsError')
       }

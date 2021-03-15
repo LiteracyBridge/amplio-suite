@@ -23,7 +23,7 @@
         @keyup.enter="clickOnButton"
       >
         <img
-          :src="opt.img_url"
+          :src="opt.imgUrl"
           :alt="opt.label"
           :class="listeningModels.includes(opt.id) ? 'opacity-25' : ''"
           class="block w-full"

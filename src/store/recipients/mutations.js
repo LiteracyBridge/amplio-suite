@@ -1,6 +1,6 @@
 // Map db model to store model
 const responseToRecipient = (response) => ({
-  id: response.recipient_id,
+  id: response.id,
   partner: response.partner,
   communityName: response.community_name,
   groupName: response.group_name,

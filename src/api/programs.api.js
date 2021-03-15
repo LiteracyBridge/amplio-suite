@@ -3,36 +3,23 @@ import httpClient from './httpClient'
 const END_POINT = '/program'
 
 const getPrograms = async () => {
-  try {
-    const response = await httpClient().get('programs')
-    return Object.keys(response.data.programs).sort()
-  }
-  catch (e) {
-    console.log(e)
-  }
+  const response = await httpClient().get('programs')
+  return Object.keys(response.data).sort()
 }
 
 const getProgram = async (programCode) => {
-  const response = await httpClient().get(END_POINT, {
-    params: {
-      project_code: programCode
-    }
-  })
+  const params = { program_code: programCode }
+  const response = await httpClient().get(END_POINT, { params })
 
-  if (response.data.status !== 200) {
+  if ("error" in response.data) {
     throw response.data.error
   }
 
-  return response.data.program
+  return response.data
 }
 
 const postProgram = async (program) => {
   const response = await httpClient().post(END_POINT, program)
-
-  if (response.data.status !== 202) {
-    throw response.data.error
-  }
-
   return response.data
 }
 

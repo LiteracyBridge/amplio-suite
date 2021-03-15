@@ -23,8 +23,8 @@ const requestSuccess = (state) => {
 const setContent = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.program_code
-  state.deploymentId = payload.deployment_id
+  state.programCode = payload.programCode
+  state.deploymentId = payload.deploymentId
   state.playlists = payload.playlists
 }
 
