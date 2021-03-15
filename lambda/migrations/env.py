@@ -21,24 +21,21 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-# target_metadata = None
-from models.base import Base
-from models import project
-from models import program
-from models import deployment
-from models import playlist
-from models import message
-from models import message_langs
-from models import roadmap
-from models import recipient
-from models import language
-from models import category
-from models import sustainable_development
-from models import listening_model
+from db import BaseModel
+from projects import models
+from programs import models
+from deployments import models
+from playlists import models
+from messages import models
+from recipient import models
+from roadmaps import models
+from languages import models
+from supported_categories import models
+from sustainable_developments import models
+from listening_models import models
 
-target_metadata = Base.metadata
+
+target_metadata = BaseModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
