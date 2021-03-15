@@ -2,36 +2,32 @@ import io
 import csv
 import json
 
-from utils import create_db_session, validate_user_access, \
-     save_to_csv, user_programs, UnauthorizedAccess
-from decorators import validate_keys
-from models.deployment import Deployment
-from models.playlist import Playlist
-from models.message import Message
+from sqlalchemy.orm import Session
+
+from db import get_db
+from core.decorators import check_user_access, format_request_response
+from utils import save_to_csv, user_programs
+from deployments.controller import crud as deployments_crud
+from playlists.controller import crud as playlists_crud
 
 
 header_content = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
     'languagecode',	'variant', 'default_category', 'sdg_goals',	'sdg_targets']
 header_deplo = ['project', 'deployment_num', 'startdate', 'enddate', 'component', 'name']
 
-session = create_db_session()
 
-@validate_keys(['program_code'])
-def lambda_handler(event, context):
-    email = event['context']['email']
-
-    if event['program_code'] not in user_programs(email): # FIXME: we'd prefer to check with the model rather than the program_code
-        raise UnauthorizedAccess()
-
+@get_db()
+@check_user_access()
+@format_request_response(request_model=["program_code"])
+def lambda_handler(event, context, db: Session):
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
     writer.writeheader()
 
-    playlists = session.query(Playlist) \
-        .filter(Playlist.program_code == event['program_code']) \
-        .all()
-    playlists = [validate_user_access(event, p) for p in playlists]
+    playlists = playlists_crud.get_multi_by_program_code(
+        db=db, program_code=event["program_code"]
+    )
 
     for playlist in playlists:
         for message in playlist.messages:
@@ -68,9 +64,9 @@ def lambda_handler(event, context):
     writer = csv.DictWriter(output, fieldnames=header_deplo)
     writer.writeheader()
 
-    deployments = session.query(Deployment) \
-        .filter(Deployment.program_code == event['program_code']) \
-        .all()
+    deployments = deployments_crud.get_multi_by_program_code(
+        db=db, program_code=event["program_code"]
+    )
 
     rows = [{
         'project': deployment.program_code,
@@ -82,7 +78,6 @@ def lambda_handler(event, context):
     } for deployment in deployments]
 
     writer.writerows(rows)
-
     save_to_csv(output.getvalue(), f"{event['program_code']}/deployment_spec.csv")
 
     return {
