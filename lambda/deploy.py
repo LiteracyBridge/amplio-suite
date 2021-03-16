@@ -1,6 +1,7 @@
 import io
 import csv
 import json
+from typing import Final
 
 from sqlalchemy.orm import Session
 
@@ -12,9 +13,25 @@ from deployments.controller import crud as deployments_crud
 from playlists.controller import crud as playlists_crud
 
 
-header_content = ['deployment_num',	'playlist_title', 'message_title', 'key_points',
-    'languagecode',	'variant', 'default_category', 'sdg_goals',	'sdg_targets']
-header_deplo = ['project', 'deployment_num', 'startdate', 'enddate', 'component', 'name']
+header_content: Final = [
+    'deployment_num',
+    'playlist_title',
+    'message_title',
+    'key_points',
+    'languagecode',
+    'variant',
+    'default_category',
+    'sdg_goals',
+    'sdg_targets',
+]
+header_deplo: Final = [
+    'project',
+    'deployment_num',
+    'startdate',
+    'enddate',
+    'component',
+    'name',
+]
 
 
 @get_db()

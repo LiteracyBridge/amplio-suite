@@ -1,3 +1,5 @@
+from typing import Final
+
 from sqlalchemy.orm import Session
 
 from db import get_db
@@ -8,7 +10,7 @@ from programs.controller import crud
 from projects.controller import crud as projects_crud
 
 
-keys = [
+keys: Final = [
     'program_code',
     'name',
     'country',

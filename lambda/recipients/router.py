@@ -1,4 +1,5 @@
 import random
+from typing import Final
 from string import ascii_lowercase, digits
 
 from sqlalchemy.orm import Session
@@ -11,7 +12,7 @@ from recipients.controller import crud
 from programs.controller import crud as program_crud
 
 
-keys = [
+keys: Final = [
     'program_code',
     'community_name',
     'group_name',
