@@ -27,7 +27,7 @@ from programs import models
 from deployments import models
 from playlists import models
 from messages import models
-from recipient import models
+from recipients import models
 from roadmaps import models
 from languages import models
 from supported_categories import models
