@@ -2,11 +2,12 @@ version: '3.3'
 
 services:
   web:
-    build: .
+    build:
+      context: ./frontend
     command: yarn serve
     working_dir: /usr/app
     volumes:
-      - .:/usr/app
+      - ./frontend:/usr/app
       - node_modules:/usr/app/node_modules
     ports:
       - '8080:8080'
@@ -146,8 +147,6 @@ services:
   lambda-recipients_retrieve_by_program:
     <<: *base
     command: recipients.router.get_recipients_by_program
-
-
 
   lambda-deploy:
     <<: *base
