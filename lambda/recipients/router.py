@@ -4,6 +4,7 @@ from string import ascii_lowercase, digits
 from sqlalchemy.orm import Session
 
 from db import get_db
+from core.types import LambdaDict, LambdaContext
 from core.exceptions import NotFoundException
 from core.decorators import check_user_access, format_request_response
 from recipients.controller import crud
@@ -30,7 +31,7 @@ keys = [
 @get_db()
 @check_user_access()
 @format_request_response(request_model=keys)
-def create_recipient(event, context, db: Session):
+def create_recipient(event: LambdaDict, context: LambdaContext, db: Session):
     del event["recipient_id"]
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
 
@@ -52,14 +53,14 @@ def create_recipient(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["recipient_id"])
-def get_recipient(event, context, db: Session):
+def get_recipient(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.get(db=db, id=event["recipient_id"])
 
 
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["recipient_id", *keys])
-def update_recipient(event, context, db: Session):
+def update_recipient(event: LambdaDict, context: LambdaContext, db: Session):
     recipient = crud.get(db=db, id=event["recipient_id"])
     if not recipient:
         return NotFoundException("Recipient not found")
@@ -73,7 +74,7 @@ def update_recipient(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "recipient_id"])
-def delete_recipient(event, context, db: Session):
+def delete_recipient(event: LambdaDict, context: LambdaContext, db: Session):
     recipient = crud.get(db=db, id=event["recipient_id"])
     if not recipient:
         return NotFoundException("Recipient not found")
@@ -84,7 +85,7 @@ def delete_recipient(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code"])
-def get_recipients_by_program(event, context, db: Session):
+def get_recipients_by_program(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.get_multi_by_program_code(
         db=db, program_code=event["program_code"]
     )

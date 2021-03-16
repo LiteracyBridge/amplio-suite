@@ -1,16 +1,17 @@
 from sqlalchemy.orm import Session
 
+from db import get_db
 from utils import TableManager
+from core.types import LambdaDict, LambdaContext
 from core.decorators import check_user_access, format_request_response
 from core.config import settings, Environment
-from db import get_db
 from projects.controller import crud
 
 
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["name", "program_code"])
-def create_project(event, context, db):
+def create_project(event: LambdaDict, context: LambdaContext, db):
     obj_in = {
         "program_code": event["program_code"],
         "name": event["name"],
@@ -21,7 +22,7 @@ def create_project(event, context, db):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code"])
-def get_project(event, context, db: Session):
+def get_project(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.get_by_program_code(db=db, program_code=event["program_code"])
 
 

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from db import get_db
+from core.types import LambdaDict, LambdaContext
 from core.exceptions import NotFoundException
 from core.decorators import check_user_access, format_request_response
 from playlists.controller import crud
@@ -10,7 +11,7 @@ from deployments.controller import crud as deployment_crud
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "deployment_id"])
-def create_playlist(event, context, db: Session):
+def create_playlist(event: LambdaDict, context: LambdaContext, db: Session):
     deployment = deployment_crud.get(db=db, id=event["deployment_id"])
     if not deployment:
         return NotFoundException("Deployment not found")
@@ -26,7 +27,7 @@ def create_playlist(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "playlist_id"])
-def delete_playlist(event, context, db: Session):
+def delete_playlist(event: LambdaDict, context: LambdaContext, db: Session):
     playlist = crud.get(db=db, id=event["playlist_id"])
     if not playlist:
         return NotFoundException("PLaylist not found")
@@ -41,7 +42,7 @@ def delete_playlist(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=['program_code', 'deployment_id'])
-def get_multi_playlists(event, context, db: Session):
+def get_multi_playlists(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.get_multi_playlists(
         db=db,
         program_code=event["program_code"],
@@ -52,7 +53,7 @@ def get_multi_playlists(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=['playlists'])
-def update_multi_playlists(event, context, db: Session):
+def update_multi_playlists(event: LambdaDict, context: LambdaContext, db: Session):
     results = []
     for playlist in event["playlists"]:
         db_playlist = crud.get(db=db, id=playlist["id"])

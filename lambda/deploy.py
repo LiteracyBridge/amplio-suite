@@ -5,8 +5,9 @@ import json
 from sqlalchemy.orm import Session
 
 from db import get_db
-from core.decorators import check_user_access, format_request_response
 from utils import save_to_csv, user_programs
+from core.types import LambdaDict, LambdaContext
+from core.decorators import check_user_access, format_request_response
 from deployments.controller import crud as deployments_crud
 from playlists.controller import crud as playlists_crud
 
@@ -19,7 +20,7 @@ header_deplo = ['project', 'deployment_num', 'startdate', 'enddate', 'component'
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code"])
-def lambda_handler(event, context, db: Session):
+def lambda_handler(event: LambdaDict, context: LambdaContext, db: Session):
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)

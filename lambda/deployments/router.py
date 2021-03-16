@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from db import get_db
+from core.types import LambdaDict, LambdaContext
 from core.exceptions import NotFoundException
 from core.decorators import check_user_access, format_request_response
 from deployments.controller import crud
@@ -11,7 +12,7 @@ from playlists.models import Playlist
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "deployment_id"])
-def delete_deployment(event, context, db: Session):
+def delete_deployment(event: LambdaDict, context: LambdaContext, db: Session):
     deployment = crud.get_by_multi(
         db=db, id=event["deployment_id"], program_code=event["program_code"]
     )
@@ -37,7 +38,7 @@ def delete_deployment(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code"])
-def get_multi_deployments(event, context, db: Session):
+def get_multi_deployments(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.get_multi_by_program_code(
         db=db, program_code=event["program_code"], order=["number"]
     )
@@ -46,7 +47,7 @@ def get_multi_deployments(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "deployments"])
-def update_multi_deployment(event, context, db: Session):
+def update_multi_deployment(event: LambdaDict, context: LambdaContext, db: Session):
     results = []
 
     for deployment in event["deployments"]:

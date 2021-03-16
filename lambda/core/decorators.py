@@ -2,16 +2,17 @@ import functools
 from typing import List
 
 from db import BaseModel, BaseSchema
+from utils import TableManager
+from core.types import LambdaDict, LambdaContext, HandlerT
 from core.config import settings, Environment
 from core.exceptions import UnauthorizedAccess
-from utils import TableManager
 
 
-def check_user_access():
+def check_user_access() -> HandlerT:
     ""
-    def decorator(handler):
+    def decorator(handler: HandlerT) -> HandlerT:
         @functools.wraps(handler)
-        def wrapper(event, context, *args):
+        def wrapper(event: LambdaDict, context: LambdaContext, *args):
             if settings.ENVIRONMENT != Environment.DEVELOPMENT:
                 email = event['context']['email']
                 programs = TableManager.get_instance().get_programs_for_user(email).keys()
@@ -23,13 +24,16 @@ def check_user_access():
     return decorator
 
 
-def format_request_response(request_model: List = [], response_model: BaseSchema  =None):
+def format_request_response(
+    request_model: List = [],
+    response_model: BaseSchema = None,
+) -> HandlerT:
     """
     Format input and output using pydantic models
     """
-    def decorator(handler):
+    def decorator(handler: HandlerT) -> HandlerT:
         @functools.wraps(handler)
-        def wrapper(event, context, *args):
+        def wrapper(event: LambdaDict, context: LambdaContext, *args):
             # Request
             for key in request_model:
                 if key not in event:
@@ -39,7 +43,6 @@ def format_request_response(request_model: List = [], response_model: BaseSchema
                     }
 
             result = handler(event, context, *args)
-
 
             # Response
             if not result:

@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 
+from db import get_db
+from core.types import LambdaDict, LambdaContext
 from core.decorators import check_user_access, format_request_response
 from core.exceptions import NotFoundException
-from db import get_db
 from messages.controller import crud
 from programs.controller import crud as programs_crud
 from playlists.controller import crud as playlist_crud
@@ -12,7 +13,7 @@ from deployments.models import Deployment
 @get_db()
 @check_user_access()
 @format_request_response(request_model=['program_code', 'playlist_id'])
-def create_message(event, context, db: Session):
+def create_message(event: LambdaDict, context: LambdaContext, db: Session):
     program = programs_crud.get_by_program_code(
         db=db, program_code=event["program_code"]
     )
@@ -32,7 +33,7 @@ def create_message(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["program_code", "message_id"])
-def delete_message(event, context, db: Session):
+def delete_message(event: LambdaDict, context: LambdaContext, db: Session):
     return crud.remove_by_id_and_code(
         db=db,
         id=event["message_id"],
@@ -43,7 +44,7 @@ def delete_message(event, context, db: Session):
 @get_db()
 @check_user_access()
 @format_request_response(request_model=["messages"])
-def update_multi_messages(event, context, db: Session):
+def update_multi_messages(event: LambdaDict, context: LambdaContext, db: Session):
     results = []
 
     for message in event["messages"]:

@@ -21,7 +21,7 @@ beneficiaries_map = {
 }
 
 
-class DeploymentFreq(Enum):
+class DeploymentInterval(Enum):
     one_month = 1
     one_quarter = 3
     six_months = 6
@@ -68,8 +68,7 @@ class Program(BaseModel, SerializerMixin):
 
     def default_deployments(self):
         deployments = []
-        increment = DeploymentFreq[self.deployments_length].value
-        # initial_date = datetime.strptime(self.deployments_first, '%Y-%m-%d')
+        increment = DeploymentInterval[self.deployments_length].value
 
         for i in range(1, self.deployments_count + 1):
             start_date = self.deployments_first + relativedelta(months=increment * (i - 1))
@@ -90,7 +89,7 @@ class Program(BaseModel, SerializerMixin):
         return deployments
 
     def next_deployment(self):
-        increment = DeploymentFreq[self.deployments_length].value
+        increment = DeploymentInterval[self.deployments_length].value
 
         start_date = self.deployments_first + relativedelta(months=increment * self.deployments_count)
         end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_count + 1))
