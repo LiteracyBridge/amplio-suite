@@ -38,7 +38,8 @@ const fetchProgram = async ({ commit, state, rootState }, programCode) => {
     commit('setProgram', program)
     commit('setWizardCompleted', true)
     commit('programData/setProgramData', program, { root: true })
-  } catch (error) {
+  } catch (err) {
+    console.log('ERROR', err.response)
     commit('requestError')
     commit('setWizardCompleted', false)
     commit('programData/setProgramCode', programCode, { root: true })

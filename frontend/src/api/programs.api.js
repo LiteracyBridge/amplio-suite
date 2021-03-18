@@ -3,31 +3,27 @@ import httpClient from './httpClient'
 const END_POINT = '/program'
 
 const getPrograms = async () => {
-  const response = await httpClient().get('programs')
-  return Object.keys(response.data).sort()
+  const response = (await httpClient()
+    .get('/programs'))
+    .data
+  return Object.keys(response).sort()
 }
 
-const getProgram = async (programCode) => {
-  const params = { program_code: programCode }
-  const response = await httpClient().get(END_POINT, { params })
+const getProgram = async (programCode) => (await httpClient()
+  .get(END_POINT, { params: { programCode }}))
+  .data
 
-  if ("error" in response.data) {
-    throw response.data.error
-  }
+const postProgram = async (program) => (await httpClient()
+  .post(END_POINT, program))
+  .data
 
-  return response.data
-}
+const putProgram = async (program) => (await httpClient()
+  .put(END_POINT, program))
+  .data
 
-const postProgram = async (program) => {
-  const response = await httpClient().post(END_POINT, program)
-  return response.data
-}
-
-const putProgram = (program) => httpClient().put(END_POINT, program)
-
-const postProgramNewDeployment = (data) => {
-  return httpClient().post('program-next-deployment', data)
-}
+const postProgramNewDeployment = async (programCode) => (await httpClient()
+  .post('program-next-deployment', { programCode }))
+  .data
 
 export {
   getPrograms,

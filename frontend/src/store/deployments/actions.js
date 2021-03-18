@@ -13,8 +13,8 @@ const fetchDeployments = async ({ state, commit }, programCode) => {
   commit('requestInit')
 
   try {
-    const response = await getDeployments(programCode)
-    commit('setDeployments', response)
+    const deployments = await getDeployments(programCode)
+    commit('setDeployments', { programCode, deployments })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -28,7 +28,7 @@ const createDeployment = async ({ state, commit, dispatch }) => {
   commit('requestInit')
 
   try {
-    await postProgramNewDeployment({ program_code: programCode })
+    await postProgramNewDeployment(programCode)
     commit('requestSuccess')
     await dispatch('fetchDeployments', programCode)
   } catch (error) {

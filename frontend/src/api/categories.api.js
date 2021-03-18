@@ -1,9 +1,11 @@
 import httpClient from './httpClient'
 
-const getCategories = async () => {
-  const response = await httpClient().get('/categories')
-  return response.data
-}
+const END_POINT = '/categories'
+
+const getCategories = async () => (await httpClient()
+  .get(END_POINT))
+  .data
+
 
 export {
   getCategories

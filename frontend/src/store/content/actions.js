@@ -21,8 +21,8 @@ const fetchContent = async ({ state, commit }, payload) => {
   commit('requestInit')
 
   try {
-    const response = await getPlaylists(programCode, deploymentId)
-    commit('setContent', response)
+    const playlists = await getPlaylists(programCode, deploymentId)
+    commit('setContent', { programCode, deploymentId, playlists })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', {type: 'alert', text: error.toString() }, { root: true })
@@ -30,7 +30,7 @@ const fetchContent = async ({ state, commit }, payload) => {
 }
 
 const updateContent = async ({ state, commit }) => {
-  const { program_code, playlists } = state
+  const { programCode, playlists } = state
   const messages = playlists
     .map(playlist => playlist.messages)
     .flat()
@@ -38,8 +38,8 @@ const updateContent = async ({ state, commit }) => {
   commit('requestInit')
 
   try {
-    await putPlaylists({ program_code, playlists })
-    await putMessage({ program_code, messages })
+    await putPlaylists(programCode, playlists)
+    await putMessage(programCode, messages)
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {

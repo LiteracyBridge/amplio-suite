@@ -2,29 +2,35 @@ import httpClient from './httpClient'
 
 const END_POINT = '/recipient'
 
-const getRecipient = async (program_code) => {
-  const response = await httpClient().get(END_POINT, { params: { program_code } })
-  return response.data
-}
+const getRecipient = async (programCode) => (await httpClient()
+  .get(END_POINT, { params: { programCode }}))
+  .data
 
-const postRecipient = async (recipient) => {
-  const response = await httpClient().post(END_POINT, recipient)
-  return response.data.id
-}
+const postRecipient = async (recipient) => (await httpClient()
+  .post(END_POINT, { recipient }))
+  .data.id
 
-const putRecipient = async (recipient) => await httpClient().put(END_POINT, recipient)
+const putRecipient = async (recipient) => (await httpClient()
+  .put(END_POINT, recipient))
+  .data
 
-const deleteRecipient = async (programCode, recipientId) => await httpClient().delete(END_POINT, {
-  params: { program_code: programCode, recipient_id: recipientId }
-})
+const deleteRecipient = async (programCode, recipientId) => (await httpClient()
+  .delete(END_POINT, { params: { programCode, recipientId }}))
+  .data
 
-const getRecipients = async (program_code) => {
-  const response = await httpClient().get("/recipients", { params: { program_code } })
-  const recipients = Array.isArray(response.data) ? response.data : []
+const getRecipients = async (programCode) => {
+  let recipients
+  try {
+    recipients = (await httpClient()
+      .get('/recipients', { params: { programCode }}))
+      .data
+  } catch (err) {
+    recipients = []
+  }
 
   return {
-    program_code,
-    recipients,
+    programCode,
+    recipients: recipients
   }
 }
 

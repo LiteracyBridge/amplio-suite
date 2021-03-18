@@ -1,10 +1,11 @@
 import httpClient from './httpClient'
 
-const getSustainableDevelopments = async () => {
-  const response = await httpClient().get('/sustainable-developments')
-  return response.data
-}
+const END_POINT = '/sustainable-developments'
+
+const getSustainableDevelopments = async () => (await httpClient()
+  .get(END_POINT))
+  .data
 
 export {
-  getSustainableDevelopments
+  getSustainableDevelopments,
 }
