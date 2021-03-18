@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
 
-from core.decorators import format_request_response
 from db import get_db
+from core import router
 from listening_models import controller, schemas
 
 
-@get_db()
-@format_request_response(response_model=schemas.ListeningModel)
-def get_listening_models(even, context, db: Session):
+@router(response_model=schemas.ListeningModel)
+def get_listening_models(db: Session = get_db()):
     return controller.get_multi(db=db)

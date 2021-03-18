@@ -1,23 +1,32 @@
 from sqlalchemy.orm import Session
 
+from core import (
+    router,
+    get_current_user,
+    check_user_access,
+    Body,
+    QueryString,
+    NotFoundException,
+)
 from db import get_db
-from core.types import LambdaDict, LambdaContext
-from core.decorators import check_user_access, format_request_response
-from core.exceptions import NotFoundException
 from messages.controller import crud
 from programs.controller import crud as programs_crud
 from playlists.controller import crud as playlist_crud
 from deployments.models import Deployment
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=['program_code', 'playlist_id'])
-def create_message(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def create_message(
+    program_code: Body,
+    playlist_id: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     program = programs_crud.get_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )
-    playlist = playlist_crud.get(db=db, id=event["playlist_id"])
+    playlist = playlist_crud.get(db=db, id=playlist_id)
     if not playlist:
         raise NotFoundException(message="Playlist not found")
 
@@ -30,24 +39,31 @@ def create_message(event: LambdaDict, context: LambdaContext, db: Session):
     )
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code", "message_id"])
-def delete_message(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def delete_message(
+    program_code: QueryString,
+    message_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     return crud.remove_by_id_and_code(
         db=db,
-        id=event["message_id"],
-        program_code=event["program_code"],
+        id=message_id,
+        program_code=program_code,
     )
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["messages"])
-def update_multi_messages(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def update_multi_messages(
+    program_code: Body,
+    messages: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
     results = []
 
-    for message in event["messages"]:
+    for message in messages:
         db_message = crud.get(db=db, id=message["id"])
         if not message:
             continue

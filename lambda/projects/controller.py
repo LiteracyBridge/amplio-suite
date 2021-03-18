@@ -11,7 +11,7 @@ class CRUDProject(CRUDBase[models.Project, schemas.ProjectCreate, schemas.Projec
         project = (
             db.query(models.Project)
             .filter(
-                models.Project.program_code.ilike(obj_in['program_code'].lower())
+                models.Project.program_code.ilike(obj_in.program_code.lower())
             )
             .first()
         )

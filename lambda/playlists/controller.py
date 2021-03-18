@@ -9,7 +9,7 @@ from messages.controller import crud as message_crud
 
 class CRUDPlaylist(CRUDBase[models.Playlist, schemas.PlaylistCreate, schemas.PlaylistUpdate]):
     def create_playlist(
-        self, db: Session, obj_in: schemas.PlaylistCreate
+        self, db: Session, obj_in: schemas.PlaylistCreate, languages_codes: List[str]
     ) -> models.Playlist:
         playlist = crud.create(db=db, obj_in=obj_in)
 
@@ -17,7 +17,7 @@ class CRUDPlaylist(CRUDBase[models.Playlist, schemas.PlaylistCreate, schemas.Pla
             "program_code": playlist.program_code,
             "playlist_id": playlist.id,
         }
-        message_crud.create(db=db, obj_in=message)
+        message_crud.create_message(db=db, obj_in=message, languages_codes=languages_codes)
 
         return playlist
 

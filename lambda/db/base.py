@@ -15,21 +15,19 @@ from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 
+from utils import snake_to_camel
+
 
 # The declarative base has to be shared between all models for the
 # relationships between them to work
 BaseModel = declarative_base()
 
-# Base schema with map from camelCase to snake_case
-def to_camel(string: str) -> str:
-    words = string.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
-
 
 class BaseSchema(PydanticBaseModel):
+    "BaseSchema with map from camelCase to snake_case"
     class Config:
         orm_mode = True
-        alias_generator = to_camel
+        alias_generator = snake_to_camel
         allow_population_by_field_name = True
 
 

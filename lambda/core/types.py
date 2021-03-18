@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, TypeVar
-
+from typing import Any, Dict
 
 LambdaDict = Dict[str, Any]
 
@@ -39,4 +38,8 @@ class LambdaContext(object):
         return 0
 
 
-HandlerT = TypeVar('HandlerT', bound=Callable[[LambdaDict, LambdaContext, Any], Any])
+class QueryString():
+    pass
+
+class Body():
+    pass

@@ -1,18 +1,31 @@
 from sqlalchemy.orm import Session
 
+from core import (
+    router,
+    get_current_user,
+    check_user_access,
+    Body,
+    QueryString,
+    NotFoundException,
+)
 from db import get_db
-from core.types import LambdaDict, LambdaContext
-from core.exceptions import NotFoundException
-from core.decorators import check_user_access, format_request_response
 from playlists.controller import crud
+from programs.controller import crud as programs_crud
 from deployments.controller import crud as deployment_crud
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code", "deployment_id"])
-def create_playlist(event: LambdaDict, context: LambdaContext, db: Session):
-    deployment = deployment_crud.get(db=db, id=event["deployment_id"])
+@router()
+def create_playlist(
+    program_code: Body,
+    deployment_id: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db()
+):
+    check_user_access(user_email, program_code)
+    program = programs_crud.get_by_program_code(
+        db=db, program_code=program_code
+    )
+    deployment = deployment_crud.get(db=db, id=deployment_id)
     if not deployment:
         return NotFoundException("Deployment not found")
 
@@ -21,41 +34,55 @@ def create_playlist(event: LambdaDict, context: LambdaContext, db: Session):
         "deployment_id": deployment.id,
     }
 
-    return crud.create_playlist(db=db, obj_in=playlist)
+    return crud.create_playlist(
+        db=db, obj_in=playlist, languages_codes=program.languages
+    )
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code", "playlist_id"])
-def delete_playlist(event: LambdaDict, context: LambdaContext, db: Session):
-    playlist = crud.get(db=db, id=event["playlist_id"])
+@router()
+def delete_playlist(
+    program_code: QueryString,
+    playlist_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
+    playlist = crud.get(db=db, id=playlist_id)
     if not playlist:
         return NotFoundException("PLaylist not found")
 
     return crud.remove_by_id_and_code(
         db=db,
-        id=event["playlist_id"],
-        program_code=event["program_code"],
+        id=playlist_id,
+        program_code=program_code,
     )
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=['program_code', 'deployment_id'])
-def get_multi_playlists(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def get_multi_playlists(
+    program_code: QueryString,
+    deployment_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     return crud.get_multi_playlists(
         db=db,
-        program_code=event["program_code"],
-        deployment_id=event["deployment_id"],
+        program_code=program_code,
+        deployment_id=deployment_id,
     )
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=['playlists'])
-def update_multi_playlists(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def update_multi_playlists(
+    program_code: Body,
+    playlists: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     results = []
-    for playlist in event["playlists"]:
+    for playlist in playlists:
         db_playlist = crud.get(db=db, id=playlist["id"])
         if not db_playlist:
             continue

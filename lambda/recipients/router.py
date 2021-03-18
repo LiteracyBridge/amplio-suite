@@ -1,92 +1,96 @@
 import random
-from typing import Final
 from string import ascii_lowercase, digits
 
 from sqlalchemy.orm import Session
 
 from db import get_db
-from core.types import LambdaDict, LambdaContext
-from core.exceptions import NotFoundException
-from core.decorators import check_user_access, format_request_response
+from core import (
+    router,
+    get_current_user,
+    check_user_access,
+    Body,
+    QueryString,
+    NotFoundException,
+)
+from recipients import schemas
 from recipients.controller import crud
 from programs.controller import crud as program_crud
 
 
-keys: Final = [
-    'program_code',
-    'community_name',
-    'group_name',
-    'component',
-    'region',
-    'district',
-    'num_households',
-    'num_tbs',
-    'support_entity',
-    'model',
-    'language',
-    'agent',
-    'group_size',
-]
 
-
-@get_db()
-@check_user_access()
-@format_request_response(request_model=keys)
-def create_recipient(event: LambdaDict, context: LambdaContext, db: Session):
-    del event["recipient_id"]
+@router()
+def create_recipient(
+    recipient: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, recipient)
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
 
     program = program_crud.get_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=recipient["program_code"]
     )
+
+    del recipient["recipient_id"]
 
     recipient = {
         "id": recipient_id,
         "partner": program.partner,
         "affiliate": program.affiliate,
         "country": program.country,
-        **event
+        **recipient,
     }
 
     return crud.create(db=db, obj_in=recipient)
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["recipient_id"])
-def get_recipient(event: LambdaDict, context: LambdaContext, db: Session):
-    return crud.get(db=db, id=event["recipient_id"])
+@router()
+def get_recipient(
+    program_code: QueryString,
+    recipient_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
+    return crud.get(db=db, id=recipient_id)
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["recipient_id", *keys])
-def update_recipient(event: LambdaDict, context: LambdaContext, db: Session):
-    recipient = crud.get(db=db, id=event["recipient_id"])
+@router()
+def update_recipient(
+    recipient: schemas.RecipientUpdate,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, recipient)
+    db_recipient = crud.get(db=db, id=recipient.id)
     if not recipient:
         return NotFoundException("Recipient not found")
 
-    del event["recipient_id"]
-    del event["program_code"]
-
-    return crud.update(db=db, db_obj=recipient, obj_in=event)
+    return crud.update(db=db, db_obj=db_recipient, obj_in=recipient)
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code", "recipient_id"])
-def delete_recipient(event: LambdaDict, context: LambdaContext, db: Session):
-    recipient = crud.get(db=db, id=event["recipient_id"])
+@router()
+def delete_recipient(
+    program_code: QueryString,
+    recipient_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    recipient = crud.get(db=db, id=recipient_id)
+    check_user_access(user_email, recipient)
     if not recipient:
         return NotFoundException("Recipient not found")
 
-    return crud.remove(db=db, id=event["recipient_id"])
+    return crud.remove(db=db, id=recipient_id)
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code"])
-def get_recipients_by_program(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def get_recipients_by_program(
+    program_code: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     return crud.get_multi_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )

@@ -26,7 +26,7 @@ class MessageLanguages(BaseModel):
 
     id = Column(Integer, primary_key=True, index=True)
     message_id = Column(Integer, ForeignKey('messages.id'), nullable=False)
-    language_code = Column(String, ForeignKey('supportedlanguages.languagecode'), nullable=False)
+    language_code = Column(String, ForeignKey('supportedlanguages.languagecode', ondelete='CASCADE'), nullable=False)
 
 
 class Message(BaseModel, SerializerMixin):

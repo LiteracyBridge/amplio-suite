@@ -2,8 +2,8 @@ from db import BaseSchema
 
 
 class ProjectBase(BaseSchema):
-    pass
-
+    name: str
+    program_code: str
 
 class ProjectCreate(ProjectBase):
     pass
@@ -14,4 +14,5 @@ class ProjectUpdate(ProjectBase):
 
 
 class Project(ProjectBase):
-    pass
+    id: int
+    active: bool

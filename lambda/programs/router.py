@@ -1,58 +1,50 @@
-from typing import Final
-
 from sqlalchemy.orm import Session
 
+from core import (
+    router,
+    get_current_user,
+    check_user_access,
+    Body,
+    QueryString,
+    NotFoundException,
+)
 from db import get_db
-from core.types import LambdaDict, LambdaContext
-from core.exceptions import NotFoundException
-from core.decorators import check_user_access, format_request_response
+from programs import schemas
 from programs.controller import crud
-from projects.controller import crud as projects_crud
+from projects import (
+    schemas as projects_schemas,
+    controller as projects_controller,
+
+)
 
 
-keys: Final = [
-    'program_code',
-    'name',
-    'country',
-    'region',
-    'sustainable_development_goals',
-    'listening_models',
-    'deployments_count',
-    'deployments_length',
-    'deployments_first',
-    'feedback_frequency',
-    'languages',
-    'partner',
-    'affiliate',
-]
-
-@get_db()
-@check_user_access()
-@format_request_response(request_model=keys)
-def create_program(event: LambdaDict, context: LambdaContext, db: Session):
-    project_obj = {
-        "name": event["name"],
-        "program_code": event["program_code"],
-    }
-    projects_crud.create_project(
-        db=db, obj_in=project_obj
+@router()
+def create_program(
+    program: schemas.ProgramCreate,
+    project: projects_schemas.ProjectCreate,
+    user_email: str = get_current_user,
+    db: Session = get_db()
+):
+    check_user_access(user_email, program)
+    project = projects_controller.crud.create_project(
+        db=db, obj_in=project
     )
-    del event["name"]
+    program = crud.create_program(db=db, obj_in=program)
 
-    return crud.create_program(
-        db=db, obj_in=event
-    )
+    return {**program.to_dict(), "name": project.name}
 
-
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code"])
-def get_program(event: LambdaDict, context: LambdaContext, db: Session):
-    project = projects_crud.get_by_program_code(
-        db=db, program_code=event["program_code"]
+@router()
+def get_program(
+    program_code: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
+    project = projects_controller.crud.get_by_program_code(
+        db=db, program_code=program_code
     )
     program = crud.get_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )
     if not program:
         return NotFoundException("Program not found")
@@ -60,25 +52,32 @@ def get_program(event: LambdaDict, context: LambdaContext, db: Session):
     return {**program.to_dict(), 'name': project.name}
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=keys)
-def update_program(event: LambdaDict, context: LambdaContext, db: Session):
-    project = projects_crud.get_by_program_code(
-        db=db, program_code=event["program_code"]
+@router()
+def update_program(
+    program: schemas.ProgramUpdate,
+    project: projects_schemas.ProjectUpdate,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program)
+    db_project = projects_controller.crud.get_by_program_code(
+        db=db, program_code=project.program_code
     )
-    project = projects_crud.update(
-        db=db, db_obj=project, obj_in={"name": event["name"]}
+    project = projects_controller.crud.update(
+        db=db, db_obj=db_project, obj_in=project
     )
-    del event["name"]
 
-    return crud.update_program(db=db, obj_in=event)
+    db_program = crud.update_program(db=db, obj_in=program)
+    return {**db_program.to_dict(), 'name': db_project.name}
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code"])
-def next_deployment(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def next_deployment(
+    program_code: Body,
+    user_email: str = get_current_user,
+    db: Session = get_db(),
+):
+    check_user_access(user_email, program_code)
     return crud.create_next_deployment(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )

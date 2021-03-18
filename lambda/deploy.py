@@ -5,10 +5,14 @@ from typing import Final
 
 from sqlalchemy.orm import Session
 
+from core import (
+    router,
+    get_current_user,
+    check_user_access,
+    QueryString,
+)
 from db import get_db
 from utils import save_to_csv, user_programs
-from core.types import LambdaDict, LambdaContext
-from core.decorators import check_user_access, format_request_response
 from deployments.controller import crud as deployments_crud
 from playlists.controller import crud as playlists_crud
 
@@ -34,17 +38,21 @@ header_deplo: Final = [
 ]
 
 
-@get_db()
-@check_user_access()
-@format_request_response(request_model=["program_code"])
-def lambda_handler(event: LambdaDict, context: LambdaContext, db: Session):
+@router()
+def lambda_handler(
+    program_code: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db()
+):
+    check_user_access(user_email, program_code)
+
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
     writer.writeheader()
 
     playlists = playlists_crud.get_multi_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )
 
     for playlist in playlists:
@@ -75,7 +83,7 @@ def lambda_handler(event: LambdaDict, context: LambdaContext, db: Session):
 
             writer.writerow(row)
 
-    save_to_csv(output.getvalue(), f"{event['program_code']}/content.csv")
+    save_to_csv(output.getvalue(), f"{program_code}/content.csv")
 
     # Generate the deployment_spec.csv file
     output =  io.StringIO()
@@ -83,7 +91,7 @@ def lambda_handler(event: LambdaDict, context: LambdaContext, db: Session):
     writer.writeheader()
 
     deployments = deployments_crud.get_multi_by_program_code(
-        db=db, program_code=event["program_code"]
+        db=db, program_code=program_code
     )
 
     rows = [{
@@ -96,9 +104,6 @@ def lambda_handler(event: LambdaDict, context: LambdaContext, db: Session):
     } for deployment in deployments]
 
     writer.writerows(rows)
-    save_to_csv(output.getvalue(), f"{event['program_code']}/deployment_spec.csv")
+    save_to_csv(output.getvalue(), f"{program_code}/deployment_spec.csv")
 
-    return {
-        'status': 200,
-        'message': 'Success'
-    }
+    return {'message': 'Success'}

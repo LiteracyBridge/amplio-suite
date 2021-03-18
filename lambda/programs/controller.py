@@ -13,9 +13,6 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
     ) -> models.Program:
         program = self.create(db=db, obj_in=obj_in)
 
-        print(f"ENTRO {program.to_dict()}")
-        print(f"DD {program.default_deployments()}")
-
         for deployments_obj in program.default_deployments():
             deployments_crud.create_deployment(db=db, obj_in=deployments_obj)
 
@@ -33,7 +30,7 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
         self, db: Session, obj_in: schemas.ProgramUpdate
     ) -> models.Program:
         program = self.get_by_program_code(
-            db=db, program_code=obj_in["program_code"]
+            db=db, program_code=obj_in.program_code
         )
         program = self.update(db=db, db_obj=program, obj_in=obj_in)
 
@@ -44,6 +41,8 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
                 "partner": program.partner,
                 "affiliate": program.affiliate,
             })
+
+        return program
 
 
     def create_next_deployment(
