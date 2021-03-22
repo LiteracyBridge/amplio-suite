@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Integer, String, Date, JSON, CheckConstraint, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Date,
+    JSON,
+    CheckConstraint,
+    UniqueConstraint,
+    ForeignKeyConstraint,
+)
 from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
 from sqlalchemy_serializer import SerializerMixin
 
@@ -10,10 +19,31 @@ class Recipient(BaseModel, SerializerMixin):
     __tablename__ = "recipients"
     __table_args__ = (
         CheckConstraint('(((recipientid)::text = lower((recipientid)::text)))', name='lowercase_recipientid_check'),
-        UniqueConstraint('partner', 'project', 'communityname', 'groupname', 'agent', name='recipients_uniqueness_key'),
+        UniqueConstraint(
+            'project',
+            'partner',
+            'communityname',
+            'groupname',
+            'agent',
+            name='recipients_uniqueness_key',
+        ),
+        ForeignKeyConstraint(
+            ['project'],
+            ['projects.projectcode'],
+            name='deployment_program_code_fkey',
+        ),
     )
-    id = Column('recipientid', String, primary_key=True, nullable=False)
-    program_code = Column('project', String, nullable=False)
+    id = Column(
+        'recipientid',
+        String,
+        primary_key=True,
+        index=True,
+        nullable=False,
+        autoincrement=True,
+    )
+    program_code = Column(
+        'project', String, primary_key=True, index=True, nullable=False
+    )
     partner = Column(String, nullable=False)
     community_name = Column('communityname', String, nullable=False)
     group_name = Column('groupname', String, nullable=False)
@@ -25,7 +55,7 @@ class Recipient(BaseModel, SerializerMixin):
     num_households = Column('numhouseholds', Integer, nullable=False)
     num_tbs = Column('numtbs', Integer, nullable=False)
     support_entity = Column('supportentity', String, nullable=False)
-    model = Column(String, nullable=False)
+    listening_model = Column(String, nullable=False)
     language = Column(String, nullable=False)
     coordinates = Column(PGPoint)
     agent = Column(String, nullable=False)

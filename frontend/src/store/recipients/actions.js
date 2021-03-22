@@ -19,7 +19,7 @@ const recipientTemplate = () => ({
   numHouseholds: 0,
   groupSize: 0,
   deployments: [],
-  model: '',
+  listeningModel: '',
   agentGender: '',
   directBeneficiaries: null,
   directBeneficiariesAdditional: {},
@@ -70,7 +70,7 @@ const updateRecipient = async ({ commit, state }, recipientId) => {
     num_households: recipient.numHouseholds,
     num_tbs: recipient.numTbs,
     support_entity: recipient.supportEntity,
-    model: recipient.model,
+    listening_model: recipient.listeningModel,
     language: recipient.language,
     agent: recipient.agent,
     deployments: recipient.deployments,
@@ -103,7 +103,7 @@ const updateRecipient = async ({ commit, state }, recipientId) => {
 
 const addRecipient = async ({ commit, rootState }) => {
   const recipient = recipientTemplate()
-  recipient.deployments = rootState.deployments.deployments.map(deplo => deplo.number)
+  recipient.deployments = rootState.deployments.deployments.map(deplo => deplo.id)
 
   commit('addRecipient', recipient)
   commit('setDirty', true)

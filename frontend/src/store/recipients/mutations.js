@@ -17,7 +17,7 @@ const responseToRecipient = (response) => ({
   numHouseholds: response.num_households,
   groupSize: response.group_size,
   deployments: response.deployments,
-  model: +response.model,
+  listeningModel: response.listening_model,
   agentGender: response.agent_gender,
   directBeneficiaries: response.direct_beneficiaries,
   directBeneficiariesAdditional: response.direct_beneficiaries_additional,
@@ -143,8 +143,8 @@ const setRecipientLang = (state, payload) => {
 }
 
 const setRecipientListeningModel = (state, payload) => {
-  const { recipientIndex, model } = payload
-  state.recipients[recipientIndex].model = model
+  const { recipientIndex, listeningModel } = payload
+  state.recipients[recipientIndex].listeningModel = listeningModel
 }
 
 const setRecipientAgent = (state, payload) => {
