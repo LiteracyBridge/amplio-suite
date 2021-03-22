@@ -25,8 +25,22 @@ class MessageLanguages(BaseModel):
     __tablename__ = 'message_languages'
 
     id = Column(Integer, primary_key=True, index=True)
-    message_id = Column(Integer, ForeignKey('messages.id'), nullable=False)
-    language_code = Column(String, ForeignKey('supportedlanguages.languagecode', ondelete='CASCADE'), nullable=False)
+    message_id = Column(
+        Integer,
+        ForeignKey(
+            'messages.id',
+            name='message_languages_message_id_fkey',
+            ondelete='CASCADE',
+        ),
+        nullable=False,
+    )
+    language_code = Column(
+        String, ForeignKey(
+            'supportedlanguages.languagecode',
+            name='message_languages_language_code_fkey',
+            ),
+        nullable=False,
+    )
 
 
 class Message(BaseModel, SerializerMixin):
@@ -37,6 +51,12 @@ class Message(BaseModel, SerializerMixin):
             'playlist_id',
             'position',
             name='message_uniqueness_key'
+        ),
+        UniqueConstraint(
+            'program_code',
+            'playlist_id',
+            'title',
+            name='message_title_uniqueness_key'
         ),
         ForeignKeyConstraint(
             ['program_code', 'playlist_id'],
@@ -68,10 +88,12 @@ class Message(BaseModel, SerializerMixin):
         Integer,
         primary_key=True,
         index=True,
+        nullable=False,
         autoincrement=True,
-        nullable=False
     )
-    program_code = Column(String, index=True, nullable=False)
+    program_code = Column(
+        String, primary_key=True, index=True, nullable=False
+    )
     playlist_id = Column(Integer, nullable=False)
     position = Column(Integer, nullable=False)
     title = Column(String, nullable=False)
@@ -80,7 +102,7 @@ class Message(BaseModel, SerializerMixin):
     variant = Column(String)
     sdg_goal_id = Column(Integer)
     sdg_target_id = Column(Integer)
-    key_point = Column(String)
+    key_points = Column(String)
 
     languages = relationship(
         'Language',
