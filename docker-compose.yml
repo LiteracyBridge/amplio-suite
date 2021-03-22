@@ -49,7 +49,7 @@ services:
 
   lambda-migration: &base
     image: lambci/lambda:python3.8
-    command: migrations.lambda_handler
+    command: db-migrations.lambda_handler
     environment:
       # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
