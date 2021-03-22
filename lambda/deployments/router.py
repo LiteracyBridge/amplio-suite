@@ -52,7 +52,7 @@ def get_multi_deployments(
 ):
     check_user_access(user_email, program_code)
     return crud.get_multi_by_program_code(
-        db=db, program_code=program_code, order=["number"]
+        db=db, program_code=program_code, order=["id"]
     )
 
 

@@ -17,17 +17,31 @@ class Playlist(BaseModel, SerializerMixin):
             'position',
             name='playlist_uniqueness_key'
         ),
+        UniqueConstraint(
+            'program_code',
+            'deployment_id',
+            'title',
+            name='playlist_title_uniqueness_key',
+        ),
         ForeignKeyConstraint(
             ['program_code', 'deployment_id'],
-            ['deployments.project', 'deployments.deployment'],
+            ['deployments.project', 'deployments.deploymentnumber'],
             name='playlist_program_code_fkey',
             ondelete='CASCADE',
         ),
     )
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
-    program_code = Column(String, primary_key=True, index=True, nullable=False)
-    deployment_id = Column(String, nullable=False)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True,
+        nullable=False,
+        autoincrement=True,
+    )
+    program_code = Column(
+        String, primary_key=True, index=True, nullable=False
+    )
+    deployment_id = Column(Integer, nullable=False)
     position = Column(Integer, nullable=False)
     title = Column(String, nullable=False)
     audience = Column(String)

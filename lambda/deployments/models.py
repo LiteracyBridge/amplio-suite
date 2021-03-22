@@ -1,4 +1,11 @@
-from sqlalchemy import Column, Integer, String, Date, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Date,
+    Integer,
+    String,
+    ForeignKeyConstraint,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import validates, relationship
 from sqlalchemy_serializer import SerializerMixin
 
@@ -9,14 +16,28 @@ class Deployment(BaseModel, SerializerMixin):
     __table_args__ = (
         UniqueConstraint(
             'project',
-            'deployment',
+            'deploymentnumber',
             name='deployments_uniqueness_key',
         ),
+        ForeignKeyConstraint(
+            ['project'],
+            ['projects.projectcode'],
+            name='deployment_program_code_fkey',
+        ),
     )
-    id = Column('deployment', String(255), primary_key=True)
-    program_code = Column('project', String(255), primary_key=True)
+    id = Column(
+        'deploymentnumber',
+        Integer,
+        primary_key=True,
+        index=True,
+        nullable=False,
+        autoincrement=True,
+    )
+    program_code = Column(
+        'project', String(255), primary_key=True, index=True, nullable=False
+    )
     name = Column('deploymentname', String(255))
-    number = Column('deploymentnumber', Integer)
+    deployment = Column('deployment', String(255))
     start_date = Column('startdate', Date)
     end_date = Column('enddate', Date)
     distribution = Column(String(255))
