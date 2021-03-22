@@ -1,3 +1,4 @@
+import re
 import os
 import json
 import base64
@@ -10,8 +11,20 @@ if os.getenv('ENV') == 'AWS':
     import boto3
     from botocore.exceptions import ClientError
 
+
 # Load .env file
 load_dotenv()
+
+
+def camel_to_snake(string: str) -> str:
+    string = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', string)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', string).lower()
+
+
+def snake_to_camel(string: str) -> str:
+    words = string.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
+
 
 def get_secret(secret_name, region_name='us-west-2'):
     """
@@ -105,19 +118,6 @@ def user_programs(email):
     program_items = TableManager.get_instance().get_programs_for_user(email).items()
     return [program for program, _role in program_items]
 
-class UnauthorizedAccess(Exception):
-    pass
-
-def validate_user_access(event, model):
-    email = event['context']['email']
-
-    if not model:
-        return None
-
-    if model.program_code not in user_programs(email):
-        raise UnauthorizedAccess()
-
-    return model
 
 def save_to_csv(text, file_path):
     bucket_info = get_secret('Suite.Lambda')

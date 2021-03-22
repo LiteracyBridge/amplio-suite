@@ -2,11 +2,12 @@ version: '3.3'
 
 services:
   web:
-    build: .
+    build:
+      context: ./frontend
     command: yarn serve
     working_dir: /usr/app
     volumes:
-      - .:/usr/app
+      - ./frontend:/usr/app
       - node_modules:/usr/app/node_modules
     ports:
       - '8080:8080'
@@ -55,121 +56,130 @@ services:
       DOCKER_LAMBDA_WATCH: 1
     volumes:
       - ./lambda/site.py:/var/lang/lib/python3.8/site.py
-      - ./lambda:/opt/python:ro,delegated
+      - ./lambda:/opt/python:ro
     depends_on:
       - db
 
-  lambda-programs_index:
+  lambda-project_create:
     <<: *base
-    command: programs_index.lambda_handler
+    command: projects.router.create_project
 
-  lambda-program_retrieve:
+  lambda-project_get:
     <<: *base
-    command: program_retrieve.lambda_handler
+    command: projects.router.get_project
+
+  lambda-projects_get_by_user:
+    <<: *base
+    command: projects.router.get_projects_by_user
 
   lambda-program_create:
     <<: *base
-    command: program_create.lambda_handler
+    command: programs.router.create_program
+
+  lambda-program_get:
+    <<: *base
+    command: programs.router.get_program
 
   lambda-program_update:
     <<: *base
-    command: program_update.lambda_handler
+    command: programs.router.update_program
 
   lambda-program_next_deployment:
     <<: *base
-    command: program_next_deployment.lambda_handler
-
-  lambda-project_retrieve:
-    <<: *base
-    command: project_retrieve.lambda_handler
-
-  lambda-project_create:
-    <<: *base
-    command: project_create.lambda_handler
-
-  lambda-content_retrieve:
-    <<: *base
-    command: content_retrieve.lambda_handler
-
-  lambda-playlist_create:
-    <<: *base
-    command: playlist_create.lambda_handler
-
-  lambda-playlist_update:
-    <<: *base
-    command: playlist_update.lambda_handler
-
-  lambda-playlist_delete:
-    <<: *base
-    command: playlist_delete.lambda_handler
-
-  lambda-message_create:
-    <<: *base
-    command: message_create.lambda_handler
-
-  lambda-message_update:
-    <<: *base
-    command: message_update.lambda_handler
-
-  lambda-message_delete:
-    <<: *base
-    command: message_delete.lambda_handler
-
-  lambda-recipient_retrieve:
-    <<: *base
-    command: recipient_retrieve.lambda_handler
-
-  lambda-recipient_create:
-    <<: *base
-    command: recipient_create.lambda_handler
-
-  lambda-recipient_update:
-    <<: *base
-    command: recipient_update.lambda_handler
-
-  lambda-recipient_delete:
-    <<: *base
-    command: recipient_delete.lambda_handler
-
-  lambda-deployment_retrieve:
-    <<: *base
-    command: deployment_retrieve.lambda_handler
-
-  lambda-deployment_update:
-    <<: *base
-    command: deployment_update.lambda_handler
+    command: programs.router.next_deployment
 
   lambda-deployment_delete:
     <<: *base
-    command: deployment_delete.lambda_handler
+    command: deployments.router.delete_deployment
 
-  lambda-categories_index:
+  lambda-deployments_get_multi:
     <<: *base
-    command: categories_index.lambda_handler
+    command: deployments.router.get_multi_deployments
 
-  lambda-languages_index:
+  lambda-deployments_update_multi:
     <<: *base
-    command: languages_index.lambda_handler
+    command: deployments.router.update_multi_deployment
 
-  lambda-sustainable_developments_index:
+  lambda-playlist_create:
     <<: *base
-    command: sustainable_developments_index.lambda_handler
+    command: playlists.router.create_playlist
 
-  lambda-listening_model_index:
+  lambda-playlist_delete:
     <<: *base
-    command: listening_model_index.lambda_handler
+    command: playlists.router.delete_playlist
 
-  lambda-roadmap_index:
+  lambda-playlists_get_multi:
     <<: *base
-    command: roadmap_index.lambda_handler
+    command: playlists.router.get_multi_playlists
 
-  lambda-roadmap_update:
+  lambda-playlists_update_multi:
     <<: *base
-    command: roadmap_update.lambda_handler
+    command: playlists.router.update_multi_playlists
+
+  lambda-message_create:
+    <<: *base
+    command: messages.router.create_message
+
+  lambda-message_delete:
+    <<: *base
+    command: messages.router.delete_message
+
+  lambda-messages_update_multi:
+    <<: *base
+    command: messages.router.update_multi_messages
+
+  lambda-recipient_create:
+    <<: *base
+    command: recipients.router.create_recipient
+
+  lambda-recipient_get:
+    <<: *base
+    command: recipients.router.get_recipient
+
+  lambda-recipient_update:
+    <<: *base
+    command: recipients.router.update_recipient
+
+  lambda-recipient_delete:
+    <<: *base
+    command: recipients.router.delete_recipient
+
+  lambda-recipients_retrieve_by_program:
+    <<: *base
+    command: recipients.router.get_recipients_by_program
 
   lambda-deploy:
     <<: *base
     command: deploy.lambda_handler
+
+  lambda-roadmap_get:
+    <<: *base
+    command: roadmaps.router.get_roadmap
+
+  lambda-roadmap_update:
+    <<: *base
+    command: roadmaps.router.update_roadmap
+
+  lambda-languages_index:
+    <<: *base
+    command: languages.router.get_languages
+
+  lambda-listening_model_index:
+    <<: *base
+    command: listening_models.router.get_listening_models
+
+  lambda-supported_categories_index:
+    <<: *base
+    command: supported_categories.router.get_supported_categories
+
+  lambda-sustainable_developments_index:
+    <<: *base
+    command: sustainable_developments.router.get_sustainable_developments
+
+  adminer:
+    image: adminer
+    ports:
+      - 8081:8080
 
 volumes:
   node_modules:

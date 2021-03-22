@@ -8,5 +8,9 @@ RUN apt update \
   && unzip awscliv2.zip \
   && ./aws/install
 
+RUN curl -LJ https://codeload.github.com/jkehler/awslambda-psycopg2/zip/master -o /tmp/awslambda-psycopg2-master.zip \
+  && unzip /tmp/awslambda-psycopg2-master.zip -d /tmp/ \
+  && mv /tmp/awslambda-psycopg2-master/psycopg2-3.8 /usr/local/lib/python3.8/site-packages/psycopg2
+
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt

@@ -8,7 +8,8 @@ Create Date: 2020-09-01 18:26:54.516331
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from models.utils.pgpoint import PGPoint
+
+from db.utils import PGPoint
 
 # revision identifiers, used by Alembic.
 revision = 'adef6ba0325f'
