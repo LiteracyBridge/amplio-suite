@@ -142,7 +142,7 @@
 
     <!-- Delete modal -->
     <portal to="modalBody" v-if="showModal.delete">
-      <p class="text-xl">This recipient will be deleted.</p>
+      <p class="text-xl">This recipient will be not receive any future deployments. Do you want to proceed?</p>
     </portal>
 
     <portal to="modalFooter" v-if="showModal.delete">

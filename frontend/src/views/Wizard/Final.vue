@@ -19,7 +19,7 @@
         v-if="status === 'error'"
         class="pt-5 text-2xl font-semibold"
       >
-        This Wizard can't be stored because there's no related project. Please contact Amplio's staff.
+        Your changes cannot be saved to this project. Please contact Amplio's staff at support@amplio.org.
       </p>
     </div>
     <font-awesome-icon
