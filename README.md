@@ -2,14 +2,13 @@
 
 - [Amplio Suite](#amplio-suite)
   - [1. Local](#1-local)
-    - [1.1 One-time setup](#11-one-time-setup)
-    - [1.2. Starting your local serve](#12-starting-your-local-serve)
-    - [1.3. Migrations](#13-migrations)
+    - [1.1. Starting your local serve](#11-starting-your-local-serve)
+    - [1.2. Run Migrations](#12-run-migrations)
   - [2. Stg](#2-stg)
-    - [2.1. Migrations](#21-migrations)
+    - [2.1. Run Migrations](#21-run-migrations)
     - [2.2. Deploy](#22-deploy)
   - [3. Production](#3-production)
-    - [3.1. Migration](#31-migration)
+    - [3.1. Run Migration](#31-run-migration)
     - [3.2. Deploy](#32-deploy)
   - [4. Tailwind convention](#4-tailwind-convention)
   - [5. Auto-generate migration](#5-auto-generate-migration)
@@ -20,16 +19,16 @@
 
 ## 1. Local
 
-### 1.1 One-time setup
+### 1.1. Starting your local serve
 
 ```bash
-Git clone https://github.com/instedd/amplio-suite.git
-Cd amplio-suite
 ./dev-setup.sh
 ```
 
 If necessary, the one time setup can be undone by running these commnands:
-```cd amplio-suite
+
+```bash
+cd amplio-suite
 docker-compose down -v
 
 docker volume ls
@@ -39,13 +38,7 @@ docker image ls
 docker image rm <id> # Replace "<id>" by the corresponding id for amplio-suite-vue_python-deps
 ```
 
-### 1.2. Starting your local serve
-
-```bash
-docker-compose up
-```
-
-### 1.3. Migrations
+### 1.2. Run Migrations
 
 After generating a new migration version with alembic, we execute
 
@@ -55,7 +48,7 @@ docker-compose run --rm python-deps alembic upgrade head
 
 ## 2. Stg
 
-### 2.1. Migrations
+### 2.1. Run Migrations
 
 In local and stg environments we have a lambda function with alembic to handle migrations.
 To run the migration, go to this [lambda]( https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions/migrations) and run the test with the `Migration` event
@@ -72,7 +65,7 @@ docker-compose run --rm python-deps update_lambdas.bash
 
 ## 3. Production
 
-### 3.1. Migration
+### 3.1. Run Migration
 
 In production we don’t have configured alembic to run the migration. In the local environment, we are going to generate sql migrations using alembic and then run this sql files.
 
