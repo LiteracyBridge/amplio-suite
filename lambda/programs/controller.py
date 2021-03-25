@@ -14,7 +14,9 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
         program = self.create(db=db, obj_in=obj_in)
 
         for deployments_obj in program.default_deployments():
-            deployments_crud.create_deployment(db=db, obj_in=deployments_obj)
+            deployments_crud.create_deployment(
+                db=db, obj_in=deployments_obj, languages_codes=program.languages
+            )
 
         roadmap_obj = {
             "program_code": program.program_code,

@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 
 from db import CRUDBase
@@ -6,7 +7,7 @@ from playlists.controller import crud as playlists_crud
 
 class CRUDDeployment(CRUDBase[models.Deployment, schemas.DeploymentCreate, schemas.DeploymentCreate]):
     def create_deployment(
-        self, db: Session, obj_in: schemas.DeploymentCreate
+        self, db: Session, obj_in: schemas.DeploymentCreate, languages_codes: List[str]
     ) -> models.Deployment:
         deployment = self.create(db=db, obj_in=obj_in)
 
@@ -15,7 +16,7 @@ class CRUDDeployment(CRUDBase[models.Deployment, schemas.DeploymentCreate, schem
             "deployment_id": deployment.id,
         }
         playlists_crud.create_playlist(
-            db=db, obj_in=playlist_in
+            db=db, obj_in=playlist_in, languages_codes=languages_codes
         )
 
         db.refresh(deployment)
