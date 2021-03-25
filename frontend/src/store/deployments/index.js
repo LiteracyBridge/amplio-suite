@@ -6,6 +6,8 @@ export const getDefaultState = () => ({
   status: "",
   programCode: "",
   deployments: [],
+  toCreate: [],
+  toDelete: [],
 })
 
 export default {

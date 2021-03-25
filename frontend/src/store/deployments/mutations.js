@@ -18,6 +18,8 @@ const requestError = (state) => {
 
 const requestSuccess = (state) => {
   state.status = 'success'
+  state.toCreate = []
+  state.toDelete = []
 }
 
 const setDeployments = (state, payload) => {
@@ -28,11 +30,14 @@ const setDeployments = (state, payload) => {
 }
 
 const addDeployment = (state, payload) => {
-  state.deployments.push(payload)
+  state.toCreate = [...state.toCreate, payload]
+  state.deployments = [...state.deployments, payload]
 }
 
-const removeDeployment = (state, payload) => {
-  state.deployments.splice(payload.index, 1)
+const removeDeployment = (state) => {
+  const oldDeployment = state.deployments.pop()
+  state.toDelete = [...state.toDelete, oldDeployment.id]
+  state.deployments = [...state.deployments]
 }
 
 const setDeploymentDate = (state, payload) => {
