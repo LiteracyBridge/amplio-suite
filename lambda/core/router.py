@@ -65,11 +65,14 @@ def router(response_model : BaseSchema = None) -> Any:
             query_params = []
             model_params = []
             callable_params = []
+            generator_params = []
             for param_name, param in signature_params.items():
                 if (str(param.annotation) == "<class 'core.types.Body'>"):
                     body_params.append(param)
                 elif (str(param.annotation) == "<class 'core.types.QueryString'>"):
                     query_params.append(param)
+                elif inspect.isgeneratorfunction(param.default):
+                    generator_params.append(param)
                 elif inspect.isfunction(param.default):
                     callable_params.append(param)
                 elif isinstance(param.annotation, ModelMetaclass):
@@ -87,6 +90,7 @@ def router(response_model : BaseSchema = None) -> Any:
                     )
 
             event = {camel_to_snake(key): val for key, val in event.items()}
+
             body_params = {param.name: event[param.name]
                 for param in body_params}
             query_params = {param.name: input_query_params[param.name]
@@ -95,9 +99,15 @@ def router(response_model : BaseSchema = None) -> Any:
                 for param in callable_params}
             model_params = {param.name: param.annotation.parse_obj(event)
                 for param in model_params}
+            generator_params = {param.name: next(param.default())
+                for param in generator_params}
 
             result = handler(
-                **body_params, **query_params, **model_params, **callable_params
+                **body_params,
+                **query_params,
+                **model_params,
+                **callable_params,
+                **generator_params,
             )
 
             # Response

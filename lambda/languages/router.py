@@ -6,5 +6,5 @@ from languages import controller, schemas
 
 
 @router(response_model=schemas.Language)
-def get_languages(db: Session = get_db()):
+def get_languages(db: Session = get_db):
     return controller.get_multi(db=db)

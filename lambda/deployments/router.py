@@ -19,7 +19,7 @@ def delete_deployment(
     program_code: QueryString,
     deployment_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     deployment = crud.get_by_multi(
@@ -48,7 +48,7 @@ def delete_deployment(
 def get_multi_deployments(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.get_multi_by_program_code(
@@ -61,7 +61,7 @@ def update_multi_deployment(
     program_code: Body,
     deployments: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     results = []

@@ -23,8 +23,9 @@ def create_program(
     program: schemas.ProgramCreate,
     project: projects_schemas.ProjectCreate,
     user_email: str = get_current_user,
-    db: Session = get_db()
+    db: Session = get_db,
 ):
+    print(f"DENTRO {project} -- {type(project)}")
     check_user_access(user_email, program)
     project = projects_controller.crud.create_project(
         db=db, obj_in=project
@@ -37,7 +38,7 @@ def create_program(
 def get_program(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     project = projects_controller.crud.get_by_program_code(
@@ -57,7 +58,7 @@ def update_program(
     program: schemas.ProgramUpdate,
     project: projects_schemas.ProjectUpdate,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program)
     db_project = projects_controller.crud.get_by_program_code(
@@ -75,7 +76,7 @@ def update_program(
 def next_deployment(
     program_code: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.create_next_deployment(

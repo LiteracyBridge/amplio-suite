@@ -17,7 +17,7 @@ from projects.controller import crud
 def create_project(
     project: schemas.ProjectCreate,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, project)
     return crud.create(db=db, obj_in=project)
@@ -27,7 +27,7 @@ def create_project(
 def get_project(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.get_by_program_code(

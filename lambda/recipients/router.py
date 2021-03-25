@@ -22,7 +22,7 @@ from programs.controller import crud as program_crud
 def create_recipient(
     recipient: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, recipient)
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
@@ -49,7 +49,7 @@ def get_recipient(
     program_code: QueryString,
     recipient_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.get(db=db, id=recipient_id)
@@ -59,7 +59,7 @@ def get_recipient(
 def update_recipient(
     recipient: schemas.RecipientUpdate,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, recipient)
     db_recipient = crud.get(db=db, id=recipient.id)
@@ -74,7 +74,7 @@ def delete_recipient(
     program_code: QueryString,
     recipient_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     recipient = crud.get(db=db, id=recipient_id)
     check_user_access(user_email, recipient)
@@ -88,7 +88,7 @@ def delete_recipient(
 def get_recipients_by_program(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.get_multi_by_program_code(

@@ -19,7 +19,7 @@ def create_playlist(
     program_code: Body,
     deployment_id: Body,
     user_email: str = get_current_user,
-    db: Session = get_db()
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     program = programs_crud.get_by_program_code(
@@ -44,7 +44,7 @@ def delete_playlist(
     program_code: QueryString,
     playlist_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     playlist = crud.get(db=db, id=playlist_id)
@@ -63,7 +63,7 @@ def get_multi_playlists(
     program_code: QueryString,
     deployment_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.get_multi_playlists(
@@ -78,7 +78,7 @@ def update_multi_playlists(
     program_code: Body,
     playlists: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     results = []

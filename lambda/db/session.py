@@ -1,16 +1,17 @@
+from typing import Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from utils import get_db_url
 
 
-def get_db() -> Session:
+def get_db() -> Generator:
     try:
         DATABASE_URL: str = get_db_url()
         engine = create_engine(DATABASE_URL)
-        db = sessionmaker(bind=engine)()
-
-        return db
+        db: Session = sessionmaker(bind=engine)()
+        yield db
     except:
         db.rollback()
         raise

@@ -20,7 +20,7 @@ def create_message(
     program_code: Body,
     playlist_id: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     program = programs_crud.get_by_program_code(
@@ -44,7 +44,7 @@ def delete_message(
     program_code: QueryString,
     message_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     return crud.remove_by_id_and_code(
@@ -59,7 +59,7 @@ def update_multi_messages(
     program_code: Body,
     messages: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     results = []
 

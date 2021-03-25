@@ -42,7 +42,7 @@ header_deplo: Final = [
 def lambda_handler(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db()
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
 

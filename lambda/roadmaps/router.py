@@ -16,7 +16,7 @@ from roadmaps.controller import crud
 def get_roadmap(
     program_code: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db()
+    db: Session = get_db
 ):
     check_user_access(user_email, program_code)
     return crud.get_by_program_code(
@@ -29,7 +29,7 @@ def update_roadmap(
     program_code: Body,
     complted: Body,
     user_email: str = get_current_user,
-    db: Session = get_db(),
+    db: Session = get_db,
 ):
     check_user_access(user_email, program_code)
     db_roadmap = crud.get_by_program_code(
