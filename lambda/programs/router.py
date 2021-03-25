@@ -70,15 +70,3 @@ def update_program(
 
     db_program = crud.update_program(db=db, obj_in=program)
     return {**db_program.to_dict(), 'name': db_project.name}
-
-
-@router()
-def next_deployment(
-    program_code: Body,
-    user_email: str = get_current_user,
-    db: Session = get_db,
-):
-    check_user_access(user_email, program_code)
-    return crud.create_next_deployment(
-        db=db, program_code=program_code
-    )

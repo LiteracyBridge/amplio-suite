@@ -47,15 +47,4 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
         return program
 
 
-    def create_next_deployment(
-        self, db: Session, program_code: str
-    ) -> models.Program:
-        program = self.get_by_program_code(db=db, program_code=program_code)
-        deployment_obj = program.next_deployment()
-
-        return deployments_crud.create_deployment(
-            db=db, obj_in=deployment_obj, languages_codes=program.languages
-        )
-
-
 crud = CURDProgram(models.Program)
