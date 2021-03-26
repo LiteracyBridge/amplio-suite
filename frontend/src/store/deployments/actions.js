@@ -27,17 +27,21 @@ const updateDeployments = async ({ state, commit }) => {
   commit('requestInit')
 
   // Create new deployments
-  try {
-    await postDeployments(toCreate)
-  } catch (error) {
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  if (toCreate.length > 0) {
+    try {
+      await postDeployments(toCreate)
+    } catch (error) {
+      commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+    }
   }
 
   // Delete deployments
-  try {
-    await deleteDeployments(programCode, toDelete)
-  } catch (error) {
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  if (toDelete.length > 0) {
+    try {
+      await deleteDeployments(programCode, toDelete)
+    } catch (error) {
+      commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+    }
   }
 
   // Update deployments
@@ -66,10 +70,11 @@ const createDeployment = async ({ rootState, commit }) => {
   )
 
   const newDeployment = {
-    id: (deployments.length + 1).toString(),
+    id: deployments.length + 1,
     program_code: program.programCode,
     name: (deployments.length + 1).toString(),
-    number: deployments.length + 1,
+    deployment: `${program.programCode}-${date.getFullYear().toString().slice(2, 4)
+    }-${deployments.length + 1}`,
     start_date: calcInterval(date, 0),
     end_date: calcInterval(date, interval),
     component: '',
