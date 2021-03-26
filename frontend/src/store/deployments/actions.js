@@ -4,7 +4,6 @@ import {
   postDeployments,
   deleteDeployments,
 } from '@/api/deployment.api'
-// import { postProgramNewDeployment } from '@/api/programs.api'
 import { DeploymentInterval } from '@/utils'
 
 const fetchDeployments = async ({ state, commit }, programCode) => {
