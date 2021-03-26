@@ -100,8 +100,8 @@
       :value="listeningModelSelected"
       label="label"
       trackBy="label"
-      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, model: listeningModel.id })"
-      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, model: listeningModel.id })"
+      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.label })"
+      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.label })"
       placeholder="Select the listening model"
     />
 
@@ -256,7 +256,7 @@ export default {
         .map(item => item.number)
     },
     listeningModelSelected () {
-      return this.listeningModels.find(opt => opt.id === this.recipient.model)
+      return this.listeningModels.find(opt => opt.label === this.recipient.listeningModel)
     },
     recipientIndex () {
       return this.$store.state.recipients.recipients

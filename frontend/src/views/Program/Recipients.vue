@@ -240,7 +240,7 @@ export default {
 
       const requiredFields = [
         'region', 'district', 'communityName',
-        'language', 'model', 'numTbs',
+        'language', 'listeningModel', 'numTbs',
         'deployments', 'directBeneficiaries'
       ]
 

@@ -79,7 +79,7 @@
       cols="30"
       rows="3"
       class="md:col-span-3 p-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-      :value="message.key_point"
+      :value="message.key_points"
       @input="(event) => setMessageKeyPoints({ playlistIndex, messageIndex, text: event.target.value })"
     >
     </textarea>

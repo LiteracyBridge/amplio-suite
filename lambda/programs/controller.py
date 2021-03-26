@@ -54,7 +54,7 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
         deployment_obj = program.next_deployment()
 
         return deployments_crud.create_deployment(
-            db=db, obj_in=deployment_obj
+            db=db, obj_in=deployment_obj, languages_codes=program.languages
         )
 
 

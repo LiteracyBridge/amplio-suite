@@ -131,7 +131,7 @@ const setMessageSDGTarget = (state, payload) => {
 
 const setMessageKeyPoints = (state, payload) => {
   const { playlistIndex, messageIndex, text } = payload
-  state.playlists[playlistIndex].messages[messageIndex].key_point = text
+  state.playlists[playlistIndex].messages[messageIndex].key_points = text
 }
 
 const removeMessage = (state, payload) => {
