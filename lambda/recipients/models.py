@@ -39,7 +39,7 @@ class Recipient(BaseModel, SerializerMixin):
         primary_key=True,
         index=True,
         nullable=False,
-        autoincrement=True,
+        autoincrement=False,
     )
     program_code = Column(
         'project', String, primary_key=True, index=True, nullable=False

@@ -34,7 +34,7 @@ def upgrade():
     op.alter_column(
         'deployments',
         'deploymentnumber',
-        autoincrement=True,
+        autoincrement=False,
         nullable=False,
     )
     op.alter_column(
@@ -133,7 +133,7 @@ def upgrade():
     op.alter_column(
         'recipients',
         'recipientid',
-        autoincrement=True,
+        autoincrement=False,
         nullable=False,
     )
     op.alter_column(
