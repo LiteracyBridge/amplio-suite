@@ -15,37 +15,37 @@ from playlists.models import Playlist
 
 
 @router()
-def delete_deployment(
-    program_code: QueryString,
-    deployment_id: QueryString,
+def create_deployments(
+    deployments: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    deployment = crud.get_by_multi(
-        db=db, id=deployment_id, program_code=program_code
-    )
-    if not deployment:
-        return NotFoundException("Deployment not found")
+    for deployment in deployments:
+        check_user_access(user_email, deployment)
 
-    program = programs_crud.get_by_program_code(
-        db=db, program_code=program_code
-    )
-    programs_crud.update(
-        db=db,
-        db_obj=program,
-        obj_in={'deployments_count': program.deployments_count - 1}
-    )
+    results = []
+    for deployment in deployments:
+        program = programs_crud.get_by_program_code(
+            db=db, program_code=deployment["program_code"]
+        )
+        programs_crud.update(
+            db=db,
+            db_obj=program,
+            obj_in={'deployments_count': program.deployments_count + 1}
+        )
 
-    return crud.remove_by_id_and_code(
-        db=db,
-        id=deployment_id,
-        program_code=program_code,
-    )
+        db_deployment = crud.create_deployment(
+            db=db,
+            obj_in=deployment,
+            languages_codes=program.languages,
+        )
+        results.append(db_deployment)
+
+    return results
 
 
 @router()
-def get_multi_deployments(
+def get_deployments(
     program_code: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
@@ -57,18 +57,18 @@ def get_multi_deployments(
 
 
 @router()
-def update_multi_deployment(
-    program_code: Body,
+def update_deployments(
     deployments: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    results = []
+    for deployment in deployments:
+        check_user_access(user_email, deployment)
 
+    results = []
     for deployment in deployments:
         db_deployment = crud.get_by_multi(
-            db=db, id=deployment["id"], program_code=program_code
+            db=db, id=deployment["id"], program_code=deployment["program_code"]
         )
         if not db_deployment:
             continue
@@ -77,3 +77,43 @@ def update_multi_deployment(
         results.append(deployment_updated)
 
     return results
+
+
+@router()
+def delete_deployments(
+    program_code: QueryString,
+    deployments_id: QueryString,
+    user_email: str = get_current_user,
+    db: Session = get_db,
+):
+    check_user_access(user_email, program_code)
+
+    ids = []
+    if deployments_id:
+        ids = deployments_id.split(';')
+
+    result = []
+    for id in ids:
+        deployment = crud.get_by_multi(
+            db=db, id=id, program_code=program_code
+        )
+        if not deployment:
+            return NotFoundException("Deployment not found")
+
+        program = programs_crud.get_by_program_code(
+            db=db, program_code=program_code
+        )
+        programs_crud.update(
+            db=db,
+            db_obj=program,
+            obj_in={'deployments_count': program.deployments_count - 1}
+        )
+
+        deployment_remove = crud.remove_by_id_and_code(
+            db=db,
+            id=id,
+            program_code=program_code,
+        )
+        result.append(deployment_remove)
+
+    return result

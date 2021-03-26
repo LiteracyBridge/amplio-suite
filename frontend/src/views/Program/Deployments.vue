@@ -7,7 +7,7 @@
       :dirty="dirty"
       :canSave="dirty"
       :description="description"
-      :onSaveChanges="updateDeployment"
+      :onSaveChanges="updateDeployments"
       :onDiscardChanges="() => fetchDeployments(programCode)"
     />
 
@@ -135,7 +135,7 @@ export default {
     ]),
     ...mapActions('deployments', [
       'fetchDeployments',
-      'updateDeployment',
+      'updateDeployments',
       'createDeployment',
       'removeDeployment',
       'setDeploymentDate',

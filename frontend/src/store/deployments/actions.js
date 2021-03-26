@@ -1,10 +1,10 @@
 import {
   getDeployments,
   putDeployments,
-  deleteDeployment
+  postDeployments,
+  deleteDeployments,
 } from '@/api/deployment.api'
-import { postProgramNewDeployment } from '@/api/programs.api'
-
+import { DeploymentInterval } from '@/utils'
 
 const fetchDeployments = async ({ state, commit }, programCode) => {
   if (state.status === 'loading') return
@@ -21,29 +21,32 @@ const fetchDeployments = async ({ state, commit }, programCode) => {
   }
 }
 
-const createDeployment = async ({ state, commit, dispatch }) => {
-  const { programCode } = state
+const updateDeployments = async ({ state, commit }) => {
+  const { programCode, deployments, toCreate, toDelete } = state
 
-  commit('setDirty', true)
   commit('requestInit')
 
-  try {
-    await postProgramNewDeployment(programCode)
-    commit('requestSuccess')
-    await dispatch('fetchDeployments', programCode)
-  } catch (error) {
-    commit('requestError')
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  // Create new deployments
+  if (toCreate.length > 0) {
+    try {
+      await postDeployments(toCreate)
+    } catch (error) {
+      commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+    }
   }
-}
 
-const updateDeployment = async ({ state, commit }) => {
-  const { programCode, deployments } = state
+  // Delete deployments
+  if (toDelete.length > 0) {
+    try {
+      await deleteDeployments(programCode, toDelete)
+    } catch (error) {
+      commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+    }
+  }
 
-  commit('requestInit')
-
+  // Update deployments
   try {
-    await putDeployments({ program_code: programCode, deployments })
+    await putDeployments(deployments)
     commit('setDirty', false)
     commit('requestSuccess')
   } catch (error) {
@@ -52,21 +55,38 @@ const updateDeployment = async ({ state, commit }) => {
   }
 }
 
-const removeDeployment = async ({ state, commit, dispatch }) => {
-  const { programCode, deployments } = state
-  const deploymentId = deployments[deployments.length - 1].id
+const createDeployment = async ({ rootState, commit }) => {
+  const program  = rootState.programData
+  const deployments = rootState.deployments.deployments
+  const lastDeployment = deployments[deployments.length - 1]
+  const date = new Date(`${lastDeployment.end_date}T00:00:00`)
+  const interval = DeploymentInterval[program.deploymentsLength]
+
+  const calcInterval = (date, interval) => (
+    new Date(
+      date.setMonth(date.getMonth() + interval)
+    )
+    .toISOString().split('T')[0]
+  )
+
+  const newDeployment = {
+    id: deployments.length + 1,
+    program_code: program.programCode,
+    name: (deployments.length + 1).toString(),
+    deployment: `${program.programCode}-${date.getFullYear().toString().slice(2, 4)
+    }-${deployments.length + 1}`,
+    start_date: calcInterval(date, 0),
+    end_date: calcInterval(date, interval),
+    component: '',
+  }
 
   commit('setDirty', true)
-  commit('requestInit')
+  commit('addDeployment', newDeployment)
+}
 
-  try {
-    await deleteDeployment({ program_code: programCode, deployment_id: deploymentId })
-    commit('requestSuccess')
-    await dispatch('fetchDeployments', programCode)
-  } catch (error) {
-    commit('requestError')
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
-  }
+const removeDeployment = async ({ commit }) => {
+  commit('setDirty', true)
+  commit('removeDeployment')
 }
 
 const setDeploymentDate = ({ commit }, payload) => {
@@ -76,8 +96,8 @@ const setDeploymentDate = ({ commit }, payload) => {
 
 export default {
   fetchDeployments,
+  updateDeployments,
   createDeployment,
-  updateDeployment,
   removeDeployment,
 
   setDeploymentDate

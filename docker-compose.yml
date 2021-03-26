@@ -84,21 +84,21 @@ services:
     <<: *base
     command: programs.router.update_program
 
-  lambda-program_next_deployment:
+  lambda-deployments_create:
     <<: *base
-    command: programs.router.next_deployment
+    command: deployments.router.create_deployments
 
-  lambda-deployment_delete:
+  lambda-deployments_get:
     <<: *base
-    command: deployments.router.delete_deployment
+    command: deployments.router.get_deployments
 
-  lambda-deployments_get_multi:
+  lambda-deployments_update:
     <<: *base
-    command: deployments.router.get_multi_deployments
+    command: deployments.router.update_deployments
 
-  lambda-deployments_update_multi:
+  lambda-deployments_delete:
     <<: *base
-    command: deployments.router.update_multi_deployment
+    command: deployments.router.delete_deployments
 
   lambda-playlist_create:
     <<: *base
