@@ -72,15 +72,6 @@ def upgrade():
         ['project'],
         ['projectcode'],
     )
-    op.execute(
-        'ALTER TABLE deployments '
-        'DROP CONSTRAINT deployments_uniqueness_key CASCADE'
-    )
-    op.create_unique_constraint(
-        'deployments_uniqueness_key',
-        'deployments',
-        ['project', 'deploymentnumber'],
-    )
 
     # Playlsits table
     op.execute(
@@ -274,14 +265,6 @@ def downgrade():
         'deployment_program_code_fkey',
         'deployments',
         type_='foreignkey'
-    )
-    op.execute(
-        'ALTER TABLE deployments '
-        'DROP CONSTRAINT deployments_uniqueness_key CASCADE')
-    op.create_unique_constraint(
-        'deployments_uniqueness_key',
-        'deployments',
-        ['project', 'deployment'],
     )
     op.drop_constraint(
         'deployments_pkey', 'deployments', type_='primary'

@@ -16,7 +16,7 @@ class Deployment(BaseModel, SerializerMixin):
     __table_args__ = (
         UniqueConstraint(
             'project',
-            'deploymentname',
+            'deployment',
             name='deployments_uniqueness_key',
         ),
         ForeignKeyConstraint(
