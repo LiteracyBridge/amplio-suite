@@ -76,6 +76,10 @@ def upgrade():
     # Playlsits table
     op.execute(
         'ALTER TABLE playlists '
+        'DROP CONSTRAINT playlist_program_code_fkey CASCADE'
+    )
+    op.execute(
+        'ALTER TABLE playlists '
         'ALTER COLUMN deployment_id TYPE INT '
         'USING deployment_id::integer'
     )
