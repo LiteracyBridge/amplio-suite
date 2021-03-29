@@ -33,8 +33,10 @@ if original_method == "GET" or original_method == "DELETE" then
   body = body .. "}}"
 elseif original_method == "POST" or original_method == "PUT" then
   ngx.req.read_body()
-  body = ngx.req.get_body_data()
+  body = '{"body": ' .. ngx.req.get_body_data() .. '}'
 end
+
+ngx.log(ngx.ERR, body)
 
 -- Use "local DNS" resolver
 local ok, line, stderr, reason, status =
@@ -54,6 +56,8 @@ local res, err = httpc:request_uri(url, {
 ngx.status = ngx.HTTP_OK
 ngx.header.content_type = "application/json; charset=utf-8"
 ngx.header["Access-Control-Allow-Origin"] = "*"
+
+ngx.log(ngx.ERR, res.body)
 
 if (res.body) then
   local response = cjson.decode(res.body)

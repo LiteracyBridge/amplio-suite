@@ -94,15 +94,21 @@ def router(response_model : BaseSchema = None) -> Any:
                         442, f"{param} must be specified"
                     )
 
+            body = {}
+            if "body" in event and event["body"]:
+                if isinstance(event["body"], str):
+                    body = json.loads(event["body"])
+                else:
+                    body = event["body"]
             event = {camel_to_snake(key): val for key, val in event.items()}
 
-            body_params = {param.name: event[param.name]
+            body_params = {param.name: body[param.name]
                 for param in body_params}
             query_params = {param.name: input_query_params[param.name]
                 for param in query_params}
             callable_params = {param.name: param.default(event, context)
                 for param in callable_params}
-            model_params = {param.name: param.annotation.parse_obj(event)
+            model_params = {param.name: param.annotation.parse_obj(body)
                 for param in model_params}
             generator_params = {param.name: next(param.default())
                 for param in generator_params}
