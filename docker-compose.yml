@@ -49,7 +49,7 @@ services:
 
   lambda-migration: &base
     image: lambci/lambda:python3.8
-    command: db-migrations.lambda_handler
+    command: db_migrations.router.lambda_handler
     environment:
       # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
@@ -150,7 +150,7 @@ services:
 
   lambda-deploy:
     <<: *base
-    command: deploy.lambda_handler
+    command: deploy.router.lambda_handler
 
   lambda-roadmap_get:
     <<: *base
