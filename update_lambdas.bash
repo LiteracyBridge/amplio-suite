@@ -93,8 +93,7 @@ zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done."
 
 echo "Uploading layer..."
-# layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
-layer_arn="arn:aws:lambda:us-west-2:261167734304:layer:base-layer:69"
+layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
 echo "The layer ARN is: ${layer_arn}"
 rm -rf partial.zip ./python/
 set +e
@@ -115,8 +114,8 @@ done < "functions.txt"
 echo "Create/Update aditionals functions"
 for fun_name in "${functions_to_deploy[@]}"
 do
-	echo "\nProcessing function ${fun_name}"
-	echo "\tMaking the zip"
+	echo -e "\nProcessing function ${fun_name}"
+	echo -e "\tMaking the zip"
 	zip -q ${fun_name}.zip ./lambda/${fun_name}.py
 
 	create_or_update_lambda ${fun_name} ${fun_name}.zip ${fun_name}.lambda_handler
