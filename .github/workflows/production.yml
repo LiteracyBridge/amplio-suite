@@ -29,13 +29,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    - name: Yarn Install
+    - name: Build frontend
       run: |
+        cd frontend
         yarn install
-
-    - name: Production Build
-      run: |
         yarn production-build
+        cd ..
 
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master

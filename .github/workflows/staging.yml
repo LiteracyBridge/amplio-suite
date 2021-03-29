@@ -29,13 +29,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    - name: Yarn Install
+    - name: Build frontend
       run: |
+        cd frontend
         yarn install
-
-    - name: Staging Build
-      run: |
         yarn staging-build
+        cd ..
 
     # - name: Unit Tests
     #   run: |
