@@ -86,12 +86,12 @@
                   :ariaLabel="`Copy recipient ${recipient.id}`"
                   @click="onClickDuplicate(recipient.id)"
                 />
-                <VButton
+                <!-- <VButton
                   variant="warning"
                   iconL="trash-alt"
                   :ariaLabel="`Delete recipient ${recipient.id}`"
                   @click="onClickDelete(recipient.id)"
-                />
+                /> -->
               </div>
             </td>
           </tr>
