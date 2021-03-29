@@ -5,7 +5,7 @@ from core.types import LambdaDict, LambdaContext
 
 def get_current_user(event: LambdaDict, context: LambdaContext) -> str:
     if settings.ENVIRONMENT != Environment.DEVELOPMENT:
-        return event['context']['email']
+        return event['request_context']['authorizer']['claims']['email']
     return "admin@amplio.org"
 
 

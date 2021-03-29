@@ -7,12 +7,17 @@ from pydantic.main import ModelMetaclass
 
 from db import BaseModel, BaseSchema
 from utils import TableManager, camel_to_snake
+from core.config import settings
 from core.types import QueryString, LambdaDict, LambdaContext
 
 
 def response(status_code: int, body: Dict) -> Dict:
     return {
         "statusCode": status_code,
+        "headers": {
+            "Access-Control-Allow-Origin": str(settings.BACKEND_CORS_ORIGINS),
+            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+        },
         "body": json.dumps(body)
     }
 
@@ -80,7 +85,7 @@ def router(response_model : BaseSchema = None) -> Any:
 
             # Validate required query params
             input_query_params = {}
-            if 'queryStringParameters' in event:
+            if 'queryStringParameters' in event and event['queryStringParameters']:
                 input_query_params = {camel_to_snake(key): val
                     for key, val in event['queryStringParameters'].items()}
             for param in query_params:
