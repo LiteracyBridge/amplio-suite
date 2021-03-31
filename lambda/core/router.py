@@ -83,24 +83,31 @@ def router(response_model : BaseSchema = None) -> Any:
                 elif isinstance(param.annotation, ModelMetaclass):
                     model_params.append(param)
 
-            # Validate required query params
-            input_query_params = {}
-            if 'queryStringParameters' in event and event['queryStringParameters']:
-                input_query_params = {camel_to_snake(key): val
-                    for key, val in event['queryStringParameters'].items()}
-            for param in query_params:
-                if param.name not in input_query_params:
-                    return response(
-                        442, f"{param} must be specified"
-                    )
-
+            # Parse query params and body
             body = {}
+            input_query_params = {}
             if "body" in event and event["body"]:
                 if isinstance(event["body"], str):
                     body = json.loads(event["body"])
                 else:
                     body = event["body"]
+
+            if 'queryStringParameters' in event and event['queryStringParameters']:
+                input_query_params = event['queryStringParameters']
+
+            # Map camelCase to snake_cases
+            body = {camel_to_snake(key): val for key, val in body.items()}
             event = {camel_to_snake(key): val for key, val in event.items()}
+            input_query_params = {
+                camel_to_snake(key): val for key, val in input_query_params.items()
+            }
+
+            # Validate required query params
+            for param in query_params:
+                if param.name not in input_query_params:
+                    return response(
+                        442, f"{param} must be specified"
+                    )
 
             body_params = {param.name: body[param.name]
                 for param in body_params}
