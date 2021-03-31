@@ -25,7 +25,9 @@ def create_playlist(
     program = programs_crud.get_by_program_code(
         db=db, program_code=program_code
     )
-    deployment = deployment_crud.get(db=db, id=deployment_id)
+    deployment = deployment_crud.get_by_multi(
+        db=db, id=deployment_id, program_code=program_code
+    )
     if not deployment:
         return NotFoundException("Deployment not found")
 
