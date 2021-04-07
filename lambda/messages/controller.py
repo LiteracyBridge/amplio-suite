@@ -34,16 +34,17 @@ class CRUDMessage(CRUDBase[models.Message, schemas.MessageCreate, schemas.Messag
             db=db, db_obj=db_obj, obj_in=obj_in
         )
 
-        db_langs_codes = [lang.code for lang in message.languages]
-        obj_in['languages'] = [lang['code'] for lang in obj_in['languages']]
-        new_codes = [lang for lang in obj_in['languages'] if lang not in db_langs_codes]
-        remove_codes = [lang for lang in db_langs_codes if lang not in obj_in['languages']]
+        obj_db_codes = [lang.code for lang in message.languages]
+        obj_in_codes = [lang['code'] for lang in obj_in['languages']]
+        new_codes = [code for code in obj_in_codes if code not in obj_db_codes]
+        remove_codes = [code for code in obj_db_codes if code not in obj_in_codes]
 
         message_langs = [models.MessageLanguages(
             message_id=message.id,
             language_code=code,
         ) for code in new_codes]
         db.add_all(message_langs)
+        db.commit()
 
         db.query(models.MessageLanguages) \
             .filter(
@@ -51,6 +52,7 @@ class CRUDMessage(CRUDBase[models.Message, schemas.MessageCreate, schemas.Messag
                 models.MessageLanguages.language_code.in_(remove_codes),
             ) \
             .delete(synchronize_session='fetch')
+        db.commit()
 
         return message
 
