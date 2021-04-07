@@ -9,6 +9,9 @@ docker volume rm python_packages
 # Run the migration
 docker-compose run --rm python-deps alembic upgrade head
 
+# Seed the DB
+docker-compose run --rm python-deps python seed_db.py
+
 docker-compose up -d
 
 # Create the local lambdas containers ip resolver
