@@ -43,7 +43,7 @@
       class="md:col-span-3"
       :options="goals"
       :value="selectedGoal"
-      :custom-label="(opt) => `${opt.section}. ${opt.goal}`"
+      :custom-label="(opt) => `${opt.section}. ${opt.label}`"
       :max-height="200"
       track-by="section"
       placeholder="Select the goal"
@@ -51,7 +51,7 @@
       @remove="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: null })"
     >
       <template slot="option" slot-scope="props">
-        <span>{{ props.option.section }}. {{ props.option.goal }}</span>
+        <span>{{ props.option.section }}. {{ props.option.label }}</span>
       </template>
     </multiselect>
 
