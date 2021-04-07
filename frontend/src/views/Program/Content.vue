@@ -189,7 +189,7 @@ export default {
       }
     },
     onDiscardChanges () {
-      this.fetchContent({ programCode: this.programCode, deployment: this.deployment.deployment})
+      this.fetchContent({ programCode: this.programCode, deploymentId: this.deployment.id})
     },
     onOpenModal (title) {
       this.showModal = true
