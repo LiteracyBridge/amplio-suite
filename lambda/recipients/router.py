@@ -62,7 +62,7 @@ def update_recipient(
     db: Session = get_db,
 ):
     check_user_access(user_email, recipient)
-    db_recipient = crud.get(db=db, id=recipient["id"])
+    db_recipient = crud.get(db=db, id=recipient["recipient_id"])
     if not recipient:
         return NotFoundException("Recipient not found")
 
