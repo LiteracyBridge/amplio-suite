@@ -1,10 +1,8 @@
-import os
-
 from alembic.config import Config
 from alembic import command
 
 
-alembic_cfg = Config(os.getenv('/opt/python/alembic.ini'))
+alembic_cfg = Config('/opt/python/alembic.ini')
 
 def lambda_handler(event, context):
     """
