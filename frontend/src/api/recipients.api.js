@@ -11,7 +11,7 @@ const postRecipient = async (recipient) => (await httpClient()
   .data.id
 
 const putRecipient = async (recipient) => (await httpClient()
-  .put(END_POINT, recipient))
+  .put(END_POINT, { recipient }))
   .data
 
 const deleteRecipient = async (programCode, recipientId) => (await httpClient()

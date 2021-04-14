@@ -57,12 +57,12 @@ def get_recipient(
 
 @router()
 def update_recipient(
-    recipient: schemas.RecipientUpdate,
+    recipient: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
     check_user_access(user_email, recipient)
-    db_recipient = crud.get(db=db, id=recipient.id)
+    db_recipient = crud.get(db=db, id=recipient["id"])
     if not recipient:
         return NotFoundException("Recipient not found")
 
