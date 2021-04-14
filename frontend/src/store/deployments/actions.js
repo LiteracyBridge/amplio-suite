@@ -70,11 +70,11 @@ const createDeployment = async ({ rootState, commit }) => {
   )
 
   const newDeployment = {
-    id: deployments.length + 1,
+    id: lastDeployment.id + 1,
     program_code: program.programCode,
-    name: (deployments.length + 1).toString(),
+    name: (lastDeployment.id + 1).toString(),
     deployment: `${program.programCode}-${date.getFullYear().toString().slice(2, 4)
-    }-${deployments.length + 1}`,
+    }-${lastDeployment.id + 1}`,
     start_date: calcInterval(date, 0),
     end_date: calcInterval(date, interval),
     component: '',
