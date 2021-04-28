@@ -6,8 +6,8 @@ const getRoadmap = async (programCode) => (await httpClient()
   .get(END_POINT, { params: { programCode }}))
   .data
 
-const putRoadmap = async (data) => (await httpClient()
-  .put(END_POINT, data))
+const putRoadmap = async (programCode, complted) => (await httpClient()
+  .put(END_POINT, { programCode, complted }))
   .data
 
 export {
