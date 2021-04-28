@@ -22,6 +22,13 @@
 
       <nav aria-label="Primary" :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
         <div class="inline-flex">
+          <router-link
+            :to="wizardCompleted ? `/programs/${programCode}/settings` : `/programs/${programCode}/wizard`"
+            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
+          >
+            Program Specification
+          </router-link>
+
           <DropDown :options="options" class="hidden md:block">
             <span class="block px-3 text-xl text-white font-bold rounded hover:text-gray-500">Products</span>
           </DropDown>
@@ -96,7 +103,8 @@ export default {
   },
   computed: {
     ...mapState('program', [
-      'programCode'
+      'programCode',
+      'wizardCompleted',
     ]),
     ...mapState('programs', [
       'programs'
