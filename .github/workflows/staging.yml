@@ -29,13 +29,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-yarn-
 
-    - name: Yarn Install
+    - name: Build frontend
       run: |
+        cd frontend
         yarn install
-
-    - name: Staging Build
-      run: |
         yarn staging-build
+        cd ..
 
     # - name: Unit Tests
     #   run: |
@@ -50,4 +49,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-west-2'
-        SOURCE_DIR: 'dist'
+        SOURCE_DIR: 'frontend/dist'

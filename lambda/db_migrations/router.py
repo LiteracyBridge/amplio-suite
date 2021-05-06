@@ -1,0 +1,44 @@
+from alembic.config import Config
+from alembic import command
+
+
+alembic_cfg = Config('/opt/python/alembic.ini')
+
+def lambda_handler(event, context):
+    """
+    Run db migrations using alembic
+
+    HTTP
+    ----
+    method: POST
+    auth: True
+    enpoint:
+
+    Parameters
+    ----------
+    operation: string
+        Must be 'upgrade' or 'downgrade'
+    version: string, opt
+        Next version. By default is 'head' for upgrade and '-1' to downgrade
+    """
+    if ('operation' in event and event['operation'] == 'downgrade'):
+        # Downgrade the db
+        if ('version' in event):
+            version = event['version']
+        else:
+            version = '-1'
+
+        command.downgrade(alembic_cfg, version)
+    else:
+        # Upgrade the db
+        if ('version' in event):
+            version = event['version']
+        else:
+            version = 'head'
+
+        command.upgrade(alembic_cfg, version)
+
+    return {
+        'status': 200,
+        'body': 'Migrations done'
+    }
