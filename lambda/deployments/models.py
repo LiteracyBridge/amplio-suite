@@ -25,19 +25,12 @@ class Deployment(BaseModel, SerializerMixin):
             name='deployment_program_code_fkey',
         ),
     )
-    id = Column(
-        'deploymentnumber',
-        Integer,
-        primary_key=True,
-        index=True,
-        nullable=False,
-        autoincrement=False,
-    )
-    program_code = Column(
-        'project', String(255), primary_key=True, index=True, nullable=False
-    )
-    name = Column('deploymentname', String(255))
-    deployment = Column('deployment', String(255))
+
+    id = Column(Integer, primary_key=True)
+    program_code = Column('project', String(255), index=True, nullable=False)
+    name = Column('deploymentname', String(255), nullable=False)
+    number = Column('deploymentnumber', Integer, nullable=False)
+    deployment = Column('deployment', String(255), nullable=False)
     start_date = Column('startdate', Date)
     end_date = Column('enddate', Date)
     distribution = Column(String(255))

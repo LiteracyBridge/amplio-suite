@@ -22,7 +22,7 @@ const fetchDeployments = async ({ state, commit }, programCode) => {
 }
 
 const updateDeployments = async ({ state, commit }) => {
-  const { programCode, deployments, toCreate, toDelete } = state
+  const { programCode, toCreate, toDelete } = state
 
   commit('requestInit')
 
@@ -44,8 +44,17 @@ const updateDeployments = async ({ state, commit }) => {
     }
   }
 
+  // Fetch the deployemnt with the new fields
+  try {
+    const deployments = await getDeployments(programCode)
+    commit('setDeployments', { programCode, deployments })
+  } catch (error) {
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  }
+
   // Update deployments
   try {
+    const { deployments } = state
     await putDeployments(deployments)
     commit('setDirty', false)
     commit('requestSuccess')
@@ -70,11 +79,11 @@ const createDeployment = async ({ rootState, commit }) => {
   )
 
   const newDeployment = {
-    id: lastDeployment.id + 1,
     program_code: program.programCode,
-    name: (lastDeployment.id + 1).toString(),
+    name: (deployments.length + 1).toString(),
     deployment: `${program.programCode}-${date.getFullYear().toString().slice(2, 4)
-    }-${lastDeployment.id + 1}`,
+    }-${deployments.length + 1}`,
+    number: deployments.length + 1,
     start_date: calcInterval(date, 0),
     end_date: calcInterval(date, interval),
     component: '',
