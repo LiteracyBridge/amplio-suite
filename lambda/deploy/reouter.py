@@ -55,6 +55,8 @@ def lambda_handler(
         db=db, program_code=program_code
     )
 
+    deployment = deployments_crud.get(db=db, id=playlist.deployment_id)
+
     for playlist in playlists:
         for message in playlist.messages:
             sdg_goal = ''
@@ -70,7 +72,7 @@ def lambda_handler(
                 category_name = message.category.name
 
             row = {
-                'deployment_num': int(playlist.deployment_id),
+                'deployment_num': deployment.number,
                 'playlist_title': playlist.title,
                 'message_title': message.title,
                 'key_points': message.key_point,
