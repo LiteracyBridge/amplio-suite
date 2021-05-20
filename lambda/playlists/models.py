@@ -24,9 +24,14 @@ class Playlist(BaseModel, SerializerMixin):
             name='playlist_title_uniqueness_key',
         ),
         ForeignKeyConstraint(
-            ['program_code', 'deployment_id'],
-            ['deployments.project', 'deployments.deploymentnumber'],
+            ['program_code'],
+            ['projects.projectcode'],
             name='playlist_program_code_fkey',
+        ),
+        ForeignKeyConstraint(
+            ['deployment_id'],
+            ['deployments.id'],
+            name='playlist_deployment_fkey',
             ondelete='CASCADE',
         ),
     )
