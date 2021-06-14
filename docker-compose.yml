@@ -41,15 +41,13 @@ services:
       context: ./lambda
     environment:
       PYTHONPATH: "/opt/python/:/usr/src/app/package"
-    depends_on:
-      - lambda-migration
     volumes:
       - ./lambda/site.py:/var/lang/lib/python3.8/site.py
       - ./lambda:/opt/python
 
-  lambda-migration: &base
+  lambda-project_create:  &base
     image: lambci/lambda:python3.8
-    command: db_migrations.router.lambda_handler
+    command: projects.router.create_project
     environment:
       # Funtions with hot reload
       DOCKER_LAMBDA_STAY_OPEN: 1
@@ -59,10 +57,6 @@ services:
       - ./lambda:/opt/python:ro
     depends_on:
       - db
-
-  lambda-project_create:
-    <<: *base
-    command: projects.router.create_project
 
   lambda-project_get:
     <<: *base

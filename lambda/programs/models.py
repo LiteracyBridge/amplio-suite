@@ -75,9 +75,9 @@ class Program(BaseModel, SerializerMixin):
             end_date = self.deployments_first + relativedelta(months=increment * i)
 
             deployment = {
-                'id': i,
                 'program_code': self.program_code,
                 'name': str(i),
+                'number': i,
                 'deployment': f"{self.program_code}-{str(start_date.year)[2:]}-{i}",
                 'start_date': start_date,
                 'end_date': end_date,
@@ -95,9 +95,9 @@ class Program(BaseModel, SerializerMixin):
         end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_count + 1))
 
         return {
-            'id': self.deployments_count + 1,
             'program_code': self.program_code,
             'name': str(self.deployments_count + 1),
+            'number': self.deployments_count + 1,
             'deployment': f"{self.program_code}-{str(start_date.year)[2:]}-{self.deployments_count + 1}",
             'start_date': start_date,
             'end_date': end_date,

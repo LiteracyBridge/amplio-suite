@@ -204,6 +204,29 @@
       :value="recipient.indirectBeneficiaries"
       @input="setRecipientsIndirectBeneficiaries({ recipientIndex, indirectBeneficiaries: $event.target.value })"
     />
+
+    <span class="col-span-2" />
+
+    <label for="variant">Variant</label>
+    <div class="flex md:col-span-3">
+      <v-input
+        name="variant"
+        type="text"
+        mx="mx-0"
+        :value="recipient.variant"
+        @input="setRecipientVariant({ recipientIndex, variant: $event.target.value })"
+      />
+      <v-tooltip
+        v-if="recipient.variant && recipient.variant.length > 1"
+        text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
+        class="my-auto ml-2"
+      >
+        <font-awesome-icon
+          class="text-orange-600"
+          icon="exclamation-circle"
+        />
+      </v-tooltip>
+    </div>
   </div>
 </template>
 
@@ -312,6 +335,7 @@ export default {
       'setRecipientDirectBeneficiaries',
       'setRecipientDirectBeneficiariesAdditional',
       'setRecipientsIndirectBeneficiaries',
+      'setRecipientVariant',
     ]),
   }
 }

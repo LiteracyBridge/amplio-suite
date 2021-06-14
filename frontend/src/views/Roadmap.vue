@@ -41,7 +41,7 @@ const generalOptions = (programCode) => [
       {
         id: 1,
         label: 'Complete introductory questions',
-        link: '',
+        link: `/programs/${programCode}/wizard`,
         completed: false
       },
       {
@@ -221,9 +221,9 @@ export default {
       launchOptions,
     }
   },
-  async mounted () {
-    await this.fetchProgram(this.programCode)
-    this.fetchRoadmap()
+  created () {
+    this.fetchProgram(this.programCode)
+    this.fetchRoadmap(this.programCode)
   },
   beforeRouteLeave (to, from, next) {
     this.updateRoadmap()
