@@ -21,7 +21,7 @@ export default {
     getRoadmapSuccess (state, payload) {
       state.status = 'success'
       state.dirty = false
-      state.roadmap = payload.roadmap
+      state.roadmap = payload.completed
       state.programCode = payload.program_code
     },
     getRoadmapError (state) {
@@ -36,8 +36,7 @@ export default {
   },
 
   actions: {
-    async fetchRoadmap ({ commit, state, rootState }) {
-      const { programCode } = rootState.program
+    async fetchRoadmap ({ commit, state }, programCode) {
       if (state.status == 'loading') return
       if (state.programCode === programCode && !state.dirty) return
 
@@ -52,13 +51,9 @@ export default {
     },
     async updateRoadmap ({ commit, state }) {
       const { programCode, roadmap } = state
-      const data = {
-        program_code: programCode,
-        completed: roadmap
-      }
 
       try {
-        await putRoadmap(data)
+        await putRoadmap(programCode, roadmap)
         commit('setDirty', false)
       } catch (error) {
         commit('requestError')
