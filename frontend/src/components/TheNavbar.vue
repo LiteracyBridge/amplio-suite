@@ -22,13 +22,6 @@
 
       <nav aria-label="Primary" :class="isOpen ? 'block' : 'hidden'" class="w-full md:ml-5 md:flex md:items-center md:justify-between">
         <div class="inline-flex">
-          <router-link
-            :to="wizardCompleted ? `/programs/${programCode}/settings` : `/programs/${programCode}/wizard`"
-            class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
-          >
-            Program Specification
-          </router-link>
-
           <DropDown :options="options" class="hidden md:block">
             <span class="block px-3 text-xl text-white font-bold rounded hover:text-gray-500">Products</span>
           </DropDown>
@@ -109,15 +102,40 @@ export default {
     ...mapState('programs', [
       'programs'
     ]),
+    options() {
+      let opts = [
+        {
+          name: 'Analytics Dashboard',
+          link: 'https://dashboard.amplio.org/',
+          target: '_blank'
+        },
+        {
+          name: 'Learning Portal',
+          link: 'https://amplio.moodlecloud.com/',
+          target: '_blank'
+        },
+        {
+          name: 'Software Installation',
+          link: '/download',
+          tag: 'router-link'
+        }
+      ]
+
+      if (this.programCode) {
+        const opt = {
+          name: 'Program Specification',
+          link: this.wizardCompleted ? `/programs/${this.programCode}/settings` : `/programs/${this.programCode}/wizard`,
+          tag: 'router-link'
+        }
+        opts = [...opts.slice(0, 2), opt, ...opts.slice(2)]
+      }
+
+      return opts
+    },
   },
   data () {
     return {
       isOpen: false,
-      options: [
-        { name: 'Analytics Dashboard', link: 'https://dashboard.amplio.org/', target: '_blank' },
-        { name: 'Learning Portal', link: 'https://amplio.moodlecloud.com/', target: '_blank' },
-        { name: 'Software Installation', link: '/download', tag: 'router-link' }
-      ]
     }
   },
   components: {
