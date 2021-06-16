@@ -44,14 +44,6 @@ const updateDeployments = async ({ state, commit }) => {
     }
   }
 
-  // Fetch the deployemnt with the new fields
-  try {
-    const deployments = await getDeployments(programCode)
-    commit('setDeployments', { programCode, deployments })
-  } catch (error) {
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
-  }
-
   // Update deployments
   try {
     const { deployments } = state
