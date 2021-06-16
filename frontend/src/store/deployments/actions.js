@@ -50,7 +50,7 @@ const updateDeployments = async ({ state, commit }) => {
     const newDeployments = await getDeployments(programCode)
     const mergeDeployments = []
     for (let i=0; i < newDeployments.length; i++) {
-      mergeDeployments.push({ ...deployments[i], ...newDeployments[i] })
+      mergeDeployments.push({ ...newDeployments[i], ...deployments[i] })
     }
     commit('setDeployments', { programCode, deployments: mergeDeployments })
   } catch (error) {
