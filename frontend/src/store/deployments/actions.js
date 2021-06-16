@@ -52,7 +52,7 @@ const updateDeployments = async ({ state, commit }) => {
     for (let i=0; i < newDeployments.length; i++) {
       mergeDeployments.push({ ...deployments[i], ...newDeployments[i] })
     }
-    commit('setDeployments', { programCode, mergeDeployments })
+    commit('setDeployments', { programCode, deployments: mergeDeployments })
   } catch (error) {
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
