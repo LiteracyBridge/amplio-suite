@@ -44,6 +44,19 @@ const updateDeployments = async ({ state, commit }) => {
     }
   }
 
+  // Fetch the deployemnt with the new fields
+  try {
+    const { deployments } = state
+    const newDeployments = await getDeployments(programCode)
+    const mergeDeployments = []
+    for (let i=0; i < newDeployments.length; i++) {
+      mergeDeployments.push({ ...deployments[i], ...newDeployments[i] })
+    }
+    commit('setDeployments', { programCode, mergeDeployments })
+  } catch (error) {
+    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
+  }
+
   // Update deployments
   try {
     const { deployments } = state
