@@ -9,12 +9,13 @@ from core import (
     router,
     get_current_user,
     check_user_access,
-    QueryString,
+    Body,
 )
 from db import get_db
 from utils import save_to_csv, user_programs
 from deployments.controller import crud as deployments_crud
 from playlists.controller import crud as playlists_crud
+from projects.models import Project
 
 
 header_content: Final = [
@@ -40,7 +41,7 @@ header_deplo: Final = [
 
 @router()
 def lambda_handler(
-    program_code: QueryString,
+    program_code: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
@@ -55,9 +56,8 @@ def lambda_handler(
         db=db, program_code=program_code
     )
 
-    deployment = deployments_crud.get(db=db, id=playlist.deployment_id)
-
     for playlist in playlists:
+        deployment = deployments_crud.get(db=db, id=playlist.deployment_id)
         for message in playlist.messages:
             sdg_goal = ''
             if message.sdg_goal_id:
@@ -75,7 +75,7 @@ def lambda_handler(
                 'deployment_num': deployment.number,
                 'playlist_title': playlist.title,
                 'message_title': message.title,
-                'key_points': message.key_point,
+                'key_points': message.key_points,
                 'languagecode': ','.join([lang.code for lang in message.languages]),
                 'variant': message.variant,
                 'default_category': category_name,
