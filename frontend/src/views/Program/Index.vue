@@ -87,6 +87,9 @@ export default {
     ...mapState('content', [
       'playlists',
     ]),
+    ...mapState('deployments', [
+      'deployments',
+    ]),
     ...mapState('recipients', [
       'recipients',
     ]),
@@ -125,7 +128,7 @@ export default {
     }
   },
   created () {
-    // this.fetchContent({ programCode: this.programCode })
+    this.fetchDeployments(this.programCode)
     this.fetchRecipients(this.programCode)
   },
   beforeRouteUpdate (to, from, next) {
@@ -154,6 +157,16 @@ export default {
       next()
     }
   },
+  watch: {
+    deployments () {
+      if (this.deployments.length > 0) {
+        this.fetchContent({
+          programCode: this.programCode,
+          deploymentId: this.deployments[0].id
+        })
+      }
+    }
+  },
   methods: {
     ...mapActions('ui', [
       'setModal',
@@ -164,6 +177,9 @@ export default {
     ]),
     ...mapActions('content', [
       'fetchContent',
+    ]),
+    ...mapActions('deployments', [
+      'fetchDeployments',
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',
