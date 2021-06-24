@@ -28,6 +28,7 @@ header_content: Final = [
     'default_category',
     'sdg_goals',
     'sdg_targets',
+    'format',
 ]
 header_deplo: Final = [
     'project',
@@ -61,11 +62,11 @@ def lambda_handler(
         for message in playlist.messages:
             sdg_goal = ''
             if message.sdg_goal_id:
-                sdg_goal = message.sdg_goal.label
+                sdg_goal = message.sdg_goal.section
 
             sdg_target = ''
             if message.sdg_target_id:
-                sdg_target = message.sdg_target.label
+                sdg_target = f"{sdg_goal}-{message.sdg_target.subsection}"
 
             category_name = ''
             if message.category:
@@ -81,6 +82,7 @@ def lambda_handler(
                 'default_category': category_name,
                 'sdg_goals': sdg_goal,
                 'sdg_targets': sdg_target,
+                'format': message.format,
             }
 
             writer.writerow(row)
