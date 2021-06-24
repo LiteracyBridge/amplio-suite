@@ -22,8 +22,20 @@
           tag="span"
           :label="item.title"
           :active="selectedIndex === index"
+          :disabled="value.length === 0"
           @click="onSelect(index)"
         />
+        <v-tooltip
+          v-if="value.length === 0"
+          text="You must have at least one playlist"
+          position="center"
+          class="ml-2"
+        >
+          <font-awesome-icon
+            class="text-orange-600"
+            icon="exclamation-circle"
+          />
+        </v-tooltip>
         <v-tooltip
           v-if="titles.includes(item.title)"
           text="Duplicate playlist title"
