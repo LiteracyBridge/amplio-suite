@@ -3,7 +3,7 @@ docker-compose build
 
 # Copy the python deps to the lambdas
 CID=$(docker-compose run -d -v python_packages:/usr/local/lib/python3.8/site-packages python-deps true)
-docker cp $CID:/usr/local/lib/python3.8/site-packages ./lambda/package
+docker cp $CID:/usr/local/lib/python3.8/site-packages/. ./lambda/package/
 docker rm $CID
 docker volume rm python_packages
 
