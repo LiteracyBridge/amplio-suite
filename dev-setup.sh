@@ -1,3 +1,4 @@
+set -e # halt the setup if any command fails
 docker-compose build
 
 # Copy the python deps to the lambdas
@@ -16,8 +17,8 @@ docker-compose up -d
 
 # Create the local lambdas containers ip resolver
 sleep 10
-containers=$(docker ps -a | grep -E 'amplio-suite(-vue)?_lambda' | awk '{print $11}' | sort -k1)
-docker inspect --format "{{.Name}} {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{index .Config.Cmd 0}}" $containers | column -t -s' ' > proxy/resolver
+containers=$(docker ps -a -q --filter network="amplio-suite_default" --filter name=_lambda)
+docker inspect --format '{{.Name}} {{(index .NetworkSettings.Networks "amplio-suite_default").IPAddress}} {{index .Config.Cmd 0}}' $containers | column -t -s' ' > proxy/resolver
 docker-compose restart proxy
 
 docker-compose logs -f
