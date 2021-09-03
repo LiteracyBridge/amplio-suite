@@ -57,9 +57,13 @@ ngx.status = ngx.HTTP_OK
 ngx.header.content_type = "application/json; charset=utf-8"
 ngx.header["Access-Control-Allow-Origin"] = "*"
 
-ngx.log(ngx.ERR, res.body)
+if (err) then
+  ngx.log(ngx.ERR, "An error occurred forwarding the request to ", url, " - ", err)
+end
 
-if (res.body) then
+if (res and res.body) then
+  ngx.log(ngx.ERR, res.body)
+
   local response = cjson.decode(res.body)
   ngx.status = response["statusCode"]
   ngx.say(response["body"])
