@@ -18,7 +18,7 @@ docker-compose up -d
 # Create the local lambdas containers ip resolver
 sleep 10
 containers=$(docker ps -a -q --filter network="amplio-suite_default" --filter name=_lambda)
-docker inspect --format '{{.Name}} {{(index .NetworkSettings.Networks "amplio-suite_default").IPAddress}} {{index .Config.Cmd 0}}' $containers | column -t -s' ' > proxy/resolver
+docker inspect --format '{{.Name}} {{index .Config.Cmd 0}}' $containers | column -t -s' ' > proxy/resolver
 docker-compose restart proxy
 
 docker-compose logs -f

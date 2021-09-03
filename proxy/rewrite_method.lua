@@ -42,11 +42,11 @@ ngx.log(ngx.ERR, body)
 local ok, line, stderr, reason, status =
   shell.run({'grep', ngx.var.lambda, '/etc/nginx/resolver'}, stdin)
 
-local lambda_name, ip, cmd = split(line, "%S+")
-local _, __, handler = split(cmd, ".")
+local _, cmd = split(line, "%S+")
+local handler = split(cmd, "[^%.]+$")
 
 -- Post to lambda
-local url = "http://" .. ip .. ":9001/2015-03-31/functions/" .. handler .. "/invocations"
+local url = "http://" .. ngx.var.lambda .. ":9001/2015-03-31/functions/" .. handler .. "/invocations"
 local res, err = httpc:request_uri(url, {
     method = "POST",
     body = body,
