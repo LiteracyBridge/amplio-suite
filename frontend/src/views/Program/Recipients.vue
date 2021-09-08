@@ -33,7 +33,7 @@
     </header>
 
     <div v-if="status !== 'loading' && filterRecipients.length === 0">
-      <p>Pleace, add a recipient</p>
+      <p>Please, add a recipient</p>
     </div>
 
     <div v-if="filterRecipients.length > 0" class="block pt-8 overflow-x-auto">
