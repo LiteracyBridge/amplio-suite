@@ -83,7 +83,7 @@ def lambda_handler(
     writer.writeheader()
 
     playlists = playlists_crud.get_multi_by_program_code(
-        db=db, program_code=program_code
+        db=db, program_code=program_code, order=['deployment_id','position']
     )
 
     for playlist in playlists:
