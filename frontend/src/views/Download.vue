@@ -8,7 +8,7 @@
       <div class="min-h-200-px py-5 text-left">
 
         <p class="text-2xl font-semibold">
-          1. Download and install <a class="underline text-blue" href="https://downloads.amplio.org/software/index.html " download>ACM Bundle</a>. This installer includes:
+          1. Download and install <a class="underline text-blue" href="https://downloads.amplio.org/software/AmplioSetup.exe " download>Amplio Software</a>. This installer includes:
         </p>
 
         <ul class="pl-10 pb-5 text-2xl">

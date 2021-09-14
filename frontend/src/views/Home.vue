@@ -32,8 +32,8 @@
     </div>
 
     <p class="mt-10 text-lg">
-      <router-link to="/download" class="underline text-blue">Click here</router-link>
-      to download required tools and supporting applications.
+      <a class="underline text-blue" href="https://downloads.amplio.org/software9/index.html" Click here> </a>
+      to download Amplio Software. Go to <router-link to="/download" class="underline text-blue">downloads </router-link> page to view other supporting applications.
     </p>
   </main>
 </template>
