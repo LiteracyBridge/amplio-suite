@@ -12,6 +12,8 @@ function die() {
 function warn_no_env_local_bash() {
 	echo 'export AWS_ACCESS_KEY_ID=""' > lambda/env.local.bash
 	echo 'export AWS_SECRET_ACCESS_KEY=""' >> lambda/env.local.bash
+	echo 'export BACKEND_CORS_ORIGINS=""' >> lambda/env.local.bash
+	echo 'export ENVIRONMENT=""' >> lambda/env.local.bash
 	echo "*** Please fill lambda/env.local.bash with your AWS credentials"
 	exit 1
 }
@@ -54,7 +56,7 @@ function create_or_update_lambda() {
 [ -n "$ENVIRONMENT" ] || die "Set ENVIRONMENT in lambda/env.local.bash"
 export AWS_DEFAULT_REGION=us-west-2
 
-[ -d ./lambda/package ] || die "The directory `lambda/package` don't exist. Pleace first run `./dev-setrup` in order to fetch the python dependencies"
+[ -d ./lambda/package ] || die "The directory \`lambda/package\` doesn't exist. Please run \`./dev-setup.sh\` first in order to fetch the Python dependencies"
 
 # Function to deploy not defined in the docker-compose.yml
 functions_to_deploy=(
@@ -68,7 +70,7 @@ echo "Reading function to deploy from docker-compose: ..."
 containers=$(docker ps -a --format '{{ .Names }}' | grep -E 'amplio-suite(-vue)?_lambda' | sort -k1)
 docker inspect --format '{{ .Name }} {{ index .Config.Cmd 0 }} {{ index .Config.Cmd 0 }}' $containers | column -t -s' ' > functions_tmp.txt
 
-sed -r -e 's/^\/amplio-suite(-vue)?_lambda-(.*)_1/\2 /'g \
+sed -E -e 's/^\/amplio-suite(-vue)?_lambda-(.*)_1/\2 /'g \
    -e 's/ (\w+).\w+.\w+ / \1 /'g \
    -e 's/ \w+.(\w+.\w+)$/\1/'g functions_tmp.txt | column -t > functions.txt
 echo "Reading function to deploy from docker-compose: Done"
@@ -88,7 +90,7 @@ echo "Getting the functions already deployed: Done"
 echo "Zip the python libs: ..."
 mkdir -p python && rm -rf ./python/ && mkdir ./python/
 cp -r ./lambda/* ./lambda/package/* python/
-rm -r python/package
+rm -r python/package python/env.local.bash
 zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done."
 
