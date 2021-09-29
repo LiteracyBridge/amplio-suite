@@ -32,7 +32,7 @@
     </div>
 
     <p class="mt-10 text-lg">
-      <a class="underline text-blue" href="https://downloads.amplio.org/software9/index.html" Click here> </a>
+      <a class="underline text-blue" href="https://downloads.amplio.org/software/index.html" Click here> </a>
       to download Amplio Software. Go to <router-link to="/download" class="underline text-blue">downloads </router-link> page to view other supporting applications.
     </p>
   </main>
