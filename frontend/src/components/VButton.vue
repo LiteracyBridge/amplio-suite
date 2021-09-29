@@ -17,6 +17,7 @@
       :icon="iconL"
       :pulse="iconLPulse"
       :class="[label ? 'mr-2' : '']"
+      :color="color"
       class="w-6 h-6"
     />
     {{ label }}
@@ -70,6 +71,10 @@ export default {
       default: false,
     },
     iconR: {
+      type: String,
+      default: '',
+    },
+    color: {
       type: String,
       default: '',
     },
