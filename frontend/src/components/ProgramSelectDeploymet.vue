@@ -17,7 +17,7 @@
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="isModalOpen">
-      <p>Save or discard the change before continue.</p>
+      <p>Save or discard the change before continuing.</p>
     </portal>
 
     <portal to="modalFooter" v-if="isModalOpen">

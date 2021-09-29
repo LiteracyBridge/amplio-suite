@@ -48,12 +48,18 @@
           />
         </v-tooltip>
 
+        <div class="ml-2 delete-button-wrapper">
+        <v-tooltip :width="125" :text="`${value.length <= 1 ? 'Can not delete the only playlist.' : 'Delete playlist.'}`">
         <VButton
           variant="warning"
+          :color="`${value.length <= 1 ? 'gray':''}`"
           iconL="trash-alt"
+          :disabled="value.length <= 1"
           :ariaLabel="`Delete ${name} ${item.title}`"
           @click="handleOpenModal(index)"
         />
+        </v-tooltip>
+        </div>
       </li>
     </draggable>
 
@@ -86,6 +92,12 @@
   </div>
 </template>
 
+<style scoped>
+/* Remove the underline from the "delete' icon */
+.delete-button-wrapper div {
+  border: none;
+}
+</style>
 
 <script>
 import Draggable from 'vuedraggable'
