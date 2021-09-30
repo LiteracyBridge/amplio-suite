@@ -33,6 +33,11 @@ const setNotificationAlert = (state, payload) => {
   state.notification.type = 'alert'
 }
 
+const setNotification = (state, payload) => {
+  state.notification.text = payload.text
+  state.notification.type = payload.type
+}
+
 export default {
   openModal,
   closeModal,
@@ -42,4 +47,5 @@ export default {
   closeNotification,
   setNotificationNotice,
   setNotificationAlert,
+  setNotification
 }
