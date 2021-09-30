@@ -1,3 +1,5 @@
+import boto3
+
 from sqlalchemy.orm import Session
 
 from core import (
@@ -16,6 +18,11 @@ from projects import (
     controller as projects_controller,
 
 )
+
+REGION_NAME = 'us-west-2'
+PROGRAMS_TABLE_NAME = 'programs'
+dynamodb = None
+programs_table = None
 
 
 @router()
@@ -64,9 +71,37 @@ def update_program(
     db_project = projects_controller.crud.get_by_program_code(
         db=db, program_code=project.program_code
     )
+    # Update the program name as cached in dynamodb.
+    try:
+        update_dynamo_name(programid=project.program_code, name=project.name)
+    except Exception as ex:
+        print(f'Exception setting program name: {str(ex)}')
+
     project = projects_controller.crud.update(
         db=db, db_obj=db_project, obj_in=project
     )
 
     db_program = crud.update_program(db=db, obj_in=program)
     return {**db_program.to_dict(), 'name': db_project.name}
+
+
+def update_dynamo_name(programid: str, name: str) -> None:
+    global dynamodb, programs_table
+    if dynamodb is None:
+        dynamodb = boto3.resource('dynamodb', region_name=REGION_NAME)
+        programs_table = dynamodb.Table(PROGRAMS_TABLE_NAME)
+
+    update_expr = 'SET program_name = :n'
+    expr_values = {
+        ':n': name
+    }
+
+    try:
+        programs_table.update_item(
+            Key={'program': programid},
+            UpdateExpression=update_expr,
+            ExpressionAttributeValues=expr_values
+        )
+    except Exception as err:
+        print(f'exception creating or updating record: {err}')
+        return

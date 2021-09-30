@@ -15,6 +15,7 @@ from db import get_db
 from utils import save_to_csv, user_programs
 from deployments.controller import crud as deployments_crud
 from playlists.controller import crud as playlists_crud
+from recipients.controller import crud as recipients_crud
 from projects.models import Project
 
 
@@ -38,6 +39,34 @@ header_deplo: Final = [
     'component',
     'name',
 ]
+header_recipients: Final = [
+    'recipientid',
+    'project',
+    'partner',
+    'communityname',
+    'groupname',
+    'affiliate',
+    'component',
+    'country',
+    'region',
+    'district',
+    'numhouseholds',
+    'numtbs',
+    'supportentity',
+    'listening_model',
+    'language',
+    'coordinates',
+    'agent',
+    'latitude',
+    'longitude',
+    'variant',
+    'group_size',
+    'deployments',
+    'agent_gender',
+    'direct_beneficiaries',
+    'direct_beneficiaries_additional',
+    'indirect_beneficiaries'
+]
 
 
 @router()
@@ -54,7 +83,7 @@ def lambda_handler(
     writer.writeheader()
 
     playlists = playlists_crud.get_multi_by_program_code(
-        db=db, program_code=program_code
+        db=db, program_code=program_code, order=['deployment_id','position']
     )
 
     for playlist in playlists:
@@ -109,5 +138,43 @@ def lambda_handler(
 
     writer.writerows(rows)
     save_to_csv(output.getvalue(), f"{program_code}/deployment_spec.csv")
+
+    # Generate the recipients.csv object in S3
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=header_recipients)
+    writer.writeheader()
+
+    recipients = recipients_crud.get_multi_by_program_code(db=db, program_code=program_code)
+    rows = [{
+        'recipientid' : recipient.id,
+        'project' : recipient.program_code,
+        'partner' : recipient.partner,
+        'communityname' : recipient.community_name,
+        'groupname' : recipient.group_name,
+        'affiliate' : recipient.affiliate,
+        'component' : recipient.component,
+        'country' : recipient.country,
+        'region' : recipient.region,
+        'district' : recipient.district,
+        'numhouseholds' : recipient.num_households,
+        'numtbs' : recipient.num_tbs,
+        'supportentity' : recipient.support_entity,
+        'listening_model' : recipient.listening_model,
+        'language' : recipient.language,
+        'coordinates' : recipient.coordinates,
+        'agent' : recipient.agent,
+        'latitude' : recipient.latitude,
+        'longitude' : recipient.longitude,
+        'variant' : recipient.variant,
+        'group_size' : recipient.group_size,
+        'deployments' : recipient.deployments,
+        'agent_gender' : recipient.agent_gender,
+        'direct_beneficiaries' : recipient.direct_beneficiaries,
+        'direct_beneficiaries_additional' : recipient.direct_beneficiaries_additional,
+        'indirect_beneficiaries' : recipient.indirect_beneficiaries
+    } for recipient in recipients]
+
+    writer.writerows(rows)
+    save_to_csv(output.getvalue(), f"{program_code}/recipients.csv")
 
     return {'message': 'Success'}

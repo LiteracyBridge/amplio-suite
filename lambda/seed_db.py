@@ -3,7 +3,11 @@ from projects.models import Project
 
 session = next(get_db())
 
-sample_projects = ["TEST", "TEST2", "My Test Program 8"]
+if session.query(Project).count() > 0:
+  print("Skiping seeding sample projects because there already exist some projects")
+  exit()
+
+sample_projects = ["TEST", "TEST2", "MY-TEST-8"]
 PROJECTS = [Project(id=1, program_code=code, name=code)
             for i, code in enumerate(sample_projects)]
 

@@ -46,13 +46,18 @@
           :iconR="index === messageIndex ? 'chevron-up' : 'chevron-down'"
           @click="setMessageIndex(index)"
         />
-        <div class="ml-2">
+        <div class="ml-2 delete-button-wrapper">
+          <v-tooltip :width="125" :text="`${dirty ? 'Please Save Changes to delete.' : 'Delete message.'}`">
           <VButton
             iconL="trash-alt"
             variant="warning"
+            :color="`${dirty ? 'gray':''}`"
+            :disabled="dirty"
             :ariaLabel="`Delete message ${message.title}`"
             @click="handleOpenModal(index)"
           />
+          </v-tooltip>
+
         </div>
       </div>
 
@@ -90,6 +95,13 @@
   </draggable>
 </template>
 
+<style scoped>
+  /* Remove the underline from the "delete' icon */
+  .delete-button-wrapper div {
+    border: none;
+  }
+</style>
+
 <script>
 import Draggable from 'vuedraggable'
 import { mapState, mapActions } from 'vuex'
@@ -113,6 +125,11 @@ export default {
       type: Number,
       required: true
     },
+    dirty: {
+      type: Boolean,
+      required: true
+    },
+
   },
   computed: {
     ...mapState('content', [
@@ -167,7 +184,7 @@ export default {
     handleOpenModal (index) {
       this.modal.show = true
       this.modal.eleIndex = index
-      this.setModal('Delet Message')
+      this.setModal('Delete Message')
     },
     handleCloseModal () {
       this.modal.show = false

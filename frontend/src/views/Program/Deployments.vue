@@ -142,7 +142,7 @@ export default {
     ]),
     handleOpenModal () {
       this.modal.show = true
-      this.setModal('Delet Deployment')
+      this.setModal('Delete Deployment')
     },
     handleCloseModal () {
       this.modal.show = false

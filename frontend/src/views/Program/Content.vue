@@ -31,7 +31,7 @@
       />
 
       <div class="text-left col-span-7 md:col-span-8">
-        <playlist-header
+        <content-playlist-header
           v-if="playlist"
           :playlist="playlist"
           :playlistIndex="playlistIndex"
@@ -39,11 +39,12 @@
 
         <p class="p-4 text-xl bg-gray-400">Messages</p>
 
-        <playlist-messages
+        <content-playlist-messages
           v-if="playlist"
           :deployment="deployment"
           :playlist="playlist"
           :playlistIndex="playlistIndex"
+          :dirty="dirty"
          />
 
         <div class="mt-4 ml-4">
@@ -80,8 +81,8 @@ import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 import ProgramSideMenu from '@/components/ProgramSideMenu'
 import ProgramSelectDeploymet from '@/components/ProgramSelectDeploymet'
-import PlaylistHeader from '@/components/ContentPlaylistHeader'
-import PlaylistMessages from '@/components/ContentPlaylistMessages'
+import ContentPlaylistHeader from '@/components/ContentPlaylistHeader'
+import ContentPlaylistMessages from '@/components/ContentPlaylistMessages'
 
 export default {
   props: ['programCode'],
@@ -144,8 +145,8 @@ export default {
     ProgramHeader,
     ProgramSideMenu,
     ProgramSelectDeploymet,
-    PlaylistHeader,
-    PlaylistMessages,
+    ContentPlaylistHeader,
+    ContentPlaylistMessages,
   },
   data () {
     return {

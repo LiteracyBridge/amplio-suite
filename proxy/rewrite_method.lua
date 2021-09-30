@@ -42,11 +42,11 @@ ngx.log(ngx.ERR, body)
 local ok, line, stderr, reason, status =
   shell.run({'grep', ngx.var.lambda, '/etc/nginx/resolver'}, stdin)
 
-local lambda_name, ip, cmd = split(line, "%S+")
-local _, __, handler = split(cmd, ".")
+local _, cmd = split(line, "%S+")
+local handler = split(cmd, "[^%.]+$")
 
 -- Post to lambda
-local url = "http://" .. ip .. ":9001/2015-03-31/functions/" .. handler .. "/invocations"
+local url = "http://" .. ngx.var.lambda .. ":9001/2015-03-31/functions/" .. handler .. "/invocations"
 local res, err = httpc:request_uri(url, {
     method = "POST",
     body = body,
@@ -57,9 +57,13 @@ ngx.status = ngx.HTTP_OK
 ngx.header.content_type = "application/json; charset=utf-8"
 ngx.header["Access-Control-Allow-Origin"] = "*"
 
-ngx.log(ngx.ERR, res.body)
+if (err) then
+  ngx.log(ngx.ERR, "An error occurred forwarding the request to ", url, " - ", err)
+end
 
-if (res.body) then
+if (res and res.body) then
+  ngx.log(ngx.ERR, res.body)
+
   local response = cjson.decode(res.body)
   ngx.status = response["statusCode"]
   ngx.say(response["body"])
