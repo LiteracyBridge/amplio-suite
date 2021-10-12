@@ -11,30 +11,30 @@
     </p>
 
     <div
-       v-if="options.length > 0"
+      v-if="options.length > 0"
       aria-labelledby="sdg"
       class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
         v-for="goal in options"
-        :key="goal.section"
+        :key="goal.goalId"
         role="checkbox"
         tabindex="0"
-        :aria-checked="goals.includes(goal.section) ? 'true': 'false'"
-        :aria-describedby="`goal-${goal.section}`"
+        :aria-checked="goals.includes(goal.goalId) ? 'true': 'false'"
+        :aria-describedby="`goal-${goal.goalId}`"
         class="relative s"
-        @click="toggleGoal({ goal: goal.section, step })"
-        @keyup.space="toggleGoal({ goal: goal.section, step })"
-        @keyup.enter="clickOnButton"
+        @click="toggleGoal({ goal: goal.goalId, step })"
+        @keyup.space="toggleGoal({ goal: goal.goalId, step })"
+        @keyup.enter="onEnterPressed"
       >
         <img
           :src="goal.imgUrl"
           :alt="goal.goal"
-          :class="goals.includes(goal.section) ? 'opacity-25' : ''"
+          :class="goals.includes(goal.goalId) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
         >
-        <p :id="`goal-${goal.section}`" class="visually_hidden">{{ goal.goal }}</p>
+        <p :id="`goal-${goal.goalId}`" class="visually_hidden">{{ goal.goal }}</p>
         <Check
-          v-if="goals.includes(goal.section)"
+          v-if="goals.includes(goal.goalId)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
@@ -44,15 +44,16 @@
       icon="spinner"
       size="4x"
       pulse
-      class="mx-auto w-20 h-20" />
+      class="mx-auto w-20 h-20"/>
   </Box>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 import Box from '@/components/SetupBox'
 import Check from '@/assets/svg/check-circle.svg'
+import sustainableDevelopmentGoals from '@/data/sustainableDevelopmentGoals.json'
 
 export default {
   props: {
@@ -61,29 +62,26 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      options: sustainableDevelopmentGoals,
+    }
+  },
   computed: {
+    // The selected goals are placed here.
     ...mapState('programData', [
       'goals'
     ]),
-    ...mapState('sustainableDevelopments', {
-      options: state => state.goals
-    }),
-  },
-  mounted () {
-    this.fetchSustainableDevelopments()
   },
   components: {
     Box,
     Check
   },
   methods: {
-    ...mapActions('sustainableDevelopments', [
-      'fetchSustainableDevelopments'
-    ]),
     ...mapActions('wizard', [
       'toggleGoal'
     ]),
-    clickOnButton () {
+    onEnterPressed() {
       document.getElementById('nextStep').click()
     }
   }

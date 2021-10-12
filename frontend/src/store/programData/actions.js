@@ -17,6 +17,7 @@ const isCompleted = ({ state, rootState }, payload) => {
       case 'region':
       case 'goals':
       case 'listeningModels':
+        // This is the program's listening models, not the global list of listening models.
         partial = state[attr].length > 0
         break
       case 'deploymentsCount':
@@ -66,6 +67,7 @@ const toggleGoal = ({ commit, state }, goal) => {
 }
 
 const toggleListening = ({ commit, state }, model) => {
+  // This is the program's listening models, not the global list of listening models.
   const index = state.listeningModels.indexOf(model)
 
   if (index > -1) commit('removeListeningModel', index)

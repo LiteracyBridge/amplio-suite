@@ -83,9 +83,15 @@ export default {
       if (!this.languages || this.languages === '') {
         return []
       }
-
-      const langs = Array.isArray(this.languages) ? this.languages : [this.languages]
-      return langs.map(langCode => this.supportedLanguages.find(lang => lang.code === langCode))
+      let result = []
+      try {
+        const langs = Array.isArray(this.languages) ? this.languages : [this.languages]
+        result = langs.map(langCode => this.supportedLanguages.find(lang => lang.code === langCode))
+        if (result.len === 0) result = []
+      } catch (ignored) {
+        result = []
+      }
+      return result;
     }
   },
   mounted() {

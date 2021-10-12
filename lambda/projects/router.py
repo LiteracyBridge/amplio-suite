@@ -38,10 +38,11 @@ def get_project(
 @router()
 def get_projects_by_user(user_email: str = get_current_user):
     if settings.ENVIRONMENT == Environment.DEVELOPMENT:
+        print('Returning canned projects "TEST","TEST2","MY-TEST-8"')
         return {
             'TEST': 'AD,PM,CO,FO',
             'TEST2': 'AD,PM,CO,FO',
-            'My Test Program 8': 'AD,PM,CO,FO'
+            'MY-TEST-8': 'AD,PM,CO,FO'
         }
 
     manager = TableManager.get_instance()
@@ -50,4 +51,5 @@ def get_projects_by_user(user_email: str = get_current_user):
     for program, role in program_items:
         roles[program] = role
 
+    print(f'Roles for {user_email} are {roles}')
     return roles

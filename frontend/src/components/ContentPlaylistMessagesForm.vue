@@ -43,15 +43,15 @@
       class="md:col-span-3"
       :options="goals"
       :value="selectedGoal"
-      :custom-label="(opt) => `${opt.section}. ${opt.label}`"
+      :custom-label="(opt) => `${opt.goalId}. ${opt.label}`"
       :max-height="200"
       track-by="section"
       placeholder="Select the goal"
-      @select="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: opt.section })"
+      @select="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: opt.goalId })"
       @remove="(opt) => setMessageSDGGoal({ playlistIndex, messageIndex, goal: null })"
     >
       <template slot="option" slot-scope="props">
-        <span>{{ props.option.section }}. {{ props.option.label }}</span>
+        <span>{{ props.option.goalId }}. {{ props.option.label }}</span>
       </template>
     </multiselect>
 
@@ -61,15 +61,15 @@
       class="md:col-span-3"
       :options="targets"
       :value="selectedTarget"
-      :custom-label="(opt) => `${message.sdg_goal_id}.${opt.subsection} ${opt.label}`"
+      :custom-label="(opt) => `${message.sdg_goal_id}.${opt.targetId} ${opt.label}`"
       :max-height="200"
       track-by="subsection"
       placeholder="Select the target"
-      @select="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: opt.subsection })"
+      @select="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: opt.targetId })"
       @remove="(opt) => setMessageSDGTarget({ playlistIndex, messageIndex, target: null })"
     >
       <template slot="option" slot-scope="props">
-        <span>{{ message.sdg_goal_id }}.{{ props.option.subsection }} {{ props.option.label }}</span>
+        <span>{{ message.sdg_goal_id }}.{{ props.option.targetId }} {{ props.option.label }}</span>
       </template>
     </multiselect>
 
@@ -114,6 +114,7 @@ import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput'
 import LanguagesSelector from '@/components/LanguagesSelector'
 import VTooltip from '@/components/VTooltip'
+import sustainableDevelopmentGoals from '@/data/sustainableDevelopmentGoals.json'
 
 export default {
   props: {
@@ -131,11 +132,9 @@ export default {
     },
   },
   computed: {
+    // The program's configured languages.
     ...mapState('programData', [
       'languages'
-    ]),
-    ...mapState('sustainableDevelopments', [
-      'goals'
     ]),
     messageLanguages () {
       return this.message.languages.map(lang => lang.code)
@@ -146,7 +145,7 @@ export default {
     },
     targets () {
       const goal = this.goals
-        .find(goal => goal.section === this.message.sdg_goal_id)
+        .find(goal => goal.goalId === this.message.sdg_goal_id)
 
       if (goal) return goal.targets
       else return []
@@ -155,10 +154,10 @@ export default {
       return this.categories.find(cat => cat.code === this.message.default_category_id)
     },
     selectedGoal () {
-      return this.goals.find(goal => goal.section === this.message.sdg_goal_id)
+      return this.goals.find(goal => goal.goalId === this.message.sdg_goal_id)
     },
     selectedTarget () {
-      return this.targets.find(target => target.subsection === this.message.sdg_target_id)
+      return this.targets.find(target => target.targetId === this.message.sdg_target_id)
     }
   },
   components: {
@@ -177,18 +176,15 @@ export default {
         'Song',
         'Other',
       ],
+      goals: sustainableDevelopmentGoals,
     }
   },
   created () {
     this.fetchCategories()
-    this.fetchSustainableDevelopments()
   },
   methods: {
     ...mapActions('categories', [
       'fetchCategories'
-    ]),
-    ...mapActions('sustainableDevelopments', [
-      'fetchSustainableDevelopments'
     ]),
     ...mapActions('content', [
       'setMessageVariant',

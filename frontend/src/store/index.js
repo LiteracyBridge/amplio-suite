@@ -13,9 +13,8 @@ import content from './content'
 import recipients from './recipients'
 import languages from './languages'
 import categories from './categories'
-import sustainableDevelopments from './sustainableDevelopments'
-import listeningModels from './listeningModels'
 import roadmap from './roadmap'
+// import listeningModels from './listeningModels'
 
 Vue.use(Vuex)
 
@@ -35,8 +34,7 @@ export default new Vuex.Store({
     recipients,
     languages,
     categories,
-    sustainableDevelopments,
-    listeningModels,
+    // listeningModels,
     roadmap,
   }
 })

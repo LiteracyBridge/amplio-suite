@@ -88,7 +88,7 @@ const toggleGoal = async ({ dispatch }, payload) => {
   await check('goals', step, dispatch)
 }
 
-// steep-listening-models
+// step-listening-models
 const toggleListening = async ({ dispatch }, payload) => {
   const { listeningMode, step } = payload
   await dispatch('programData/toggleListening', listeningMode, { root: true })

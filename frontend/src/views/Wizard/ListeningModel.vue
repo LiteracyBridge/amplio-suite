@@ -12,27 +12,27 @@
     <div v-if="options.length > 0" class="grid grid-cols-5 gap-4 max-w-screen-lg mx-auto mt-4">
       <div
         v-for="opt in options"
-        :key="opt.id"
+        :key="opt.label"
         role="checkbox"
         tabindex="0"
-        :aria-checked="listeningModels.includes(opt.id) ? 'true': 'false'"
-        :aria-describedby="`listeningModels-${opt.id}`"
+        :aria-checked="listeningModels.includes(opt.label) ? 'true': 'false'"
+        :aria-describedby="`listeningModels-${opt.label}`"
         class="relative cursor-pointer rounded border border-gray-500 s"
-        @click="toggleListening({ listeningMode: opt.id, step })"
-        @keyup.space="toggleListening({ listeningMode: opt.id, step })"
+        @click="toggleListening({ listeningMode: opt.label, step })"
+        @keyup.space="toggleListening({ listeningMode: opt.label, step })"
         @keyup.enter="clickOnButton"
       >
         <img
           :src="opt.imgUrl"
           :alt="opt.label"
-          :class="listeningModels.includes(opt.id) ? 'opacity-25' : ''"
+          :class="listeningModels.includes(opt.label) ? 'opacity-25' : ''"
           class="block w-full"
         >
-        <p :id="`listeningModels-${opt.id}`" class="text-blue">
+        <p :id="`listeningModels-${opt.label}`" class="text-blue">
           {{ opt.label }}
         </p>
         <Check
-          v-if="listeningModels.includes(opt.id)"
+          v-if="listeningModels.includes(opt.label)"
           class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
         />
       </div>
@@ -76,6 +76,7 @@ import { mapActions, mapState } from 'vuex'
 
 import Box from '@/components/SetupBox'
 import Check from '@/assets/svg/check-circle.svg'
+import listeningModels from '@/data/listeningModels.json'
 
 export default {
   props: {
@@ -85,24 +86,21 @@ export default {
     }
   },
   computed: {
+    // The program's listening models
     ...mapState('programData', [
       'listeningModels'
     ]),
-    ...mapState('listeningModels', {
-      options: state => state.listeningModels
-    }),
+  },
+  data: function() {
+    return {
+      options: listeningModels
+    }
   },
   components: {
     Box,
     Check
   },
-  mounted () {
-    this.fetchListeningModels()
-  },
   methods: {
-    ...mapActions('listeningModels', [
-      'fetchListeningModels'
-    ]),
     ...mapActions('wizard', [
       'toggleListening'
     ]),

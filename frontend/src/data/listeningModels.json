@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "label": "Households",
+    "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Households.png"
+  },
+  {
+    "id": 2,
+    "label": "Groups",
+    "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Groups.png"
+  },
+  {
+    "id": 3,
+    "label": "Community Workers",
+    "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Community Workers.png"
+  },
+  {
+    "id": 4,
+    "label": "Place-based",
+    "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Place-based.png"
+  },
+  {
+    "id": 5,
+    "label": "Other",
+    "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png"
+  }
+]

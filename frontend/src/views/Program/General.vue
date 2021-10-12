@@ -74,8 +74,8 @@
           :close-on-select="false"
           :clear-on-select="false"
           :preserve-search="true"
-          @select="(model) => toggleListening(model.id)"
-          @remove="(model) => toggleListening(model.id)"
+          @select="(model) => toggleListening(model.label)"
+          @remove="(model) => toggleListening(model.label)"
           placeholder="Select the listening model"
         />
         <font-awesome-icon
@@ -222,6 +222,7 @@ import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 
 import countries from '@/data/countries.json'
+import listeningModels from '@/data/listeningModels.json'
 
 export default {
   props: ['programCode'],
@@ -247,12 +248,12 @@ export default {
       directBeneficiariesAdditionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
         .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
     }),
-    ...mapState('listeningModels', {
-      listeningModelsOptions: 'listeningModels',
-    }),
+    listeningModelsOptions() {
+      return listeningModels;
+    },
     listeningModelsSelected () {
       return this.listeningModels
-        .map(id => this.listeningModelsOptions.find(opt => opt.id === id))
+        .map(label => this.listeningModelsOptions.find(opt => opt.label === label))
     },
     dirty () {
       return this.$store.state.program.dirty || this.$store.state.programData.dirty
@@ -270,7 +271,6 @@ export default {
   created () {
     this.fetchProgram(this.programCode)
     this.fetchRecipients(this.programCode)
-    this.fetchListeningModels()
   },
   watch: {
     region: {
@@ -316,9 +316,6 @@ export default {
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',
-    ]),
-    ...mapActions('listeningModels', [
-      'fetchListeningModels',
     ]),
     addTag (region) {
       this.addRegion(region)

@@ -240,6 +240,8 @@ import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
 import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries'
 
+import listeningModels from '@/data/listeningModels.json'
+
 export default {
   props: {
     recipient: {
@@ -270,9 +272,6 @@ export default {
     ...mapState('programData', [
       'region',
       'languages',
-    ]),
-    ...mapState('listeningModels', [
-      'listeningModels',
     ]),
     deployments () {
       return this.$store.state.deployments.deployments
@@ -308,14 +307,12 @@ export default {
   data: () => ({
     regionsOptions: [],
     beneficiariesIsOpen: false,
+    listeningModels: listeningModels,
   }),
   mounted () {
     this.fetchListeningModels()
   },
   methods: {
-    ...mapActions('listeningModels', [
-      'fetchListeningModels'
-    ]),
     ...mapActions('recipients', [
       'setRecipientDeployments',
       'addRecipientRegion',
