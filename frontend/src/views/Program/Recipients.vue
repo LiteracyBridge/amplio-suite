@@ -76,16 +76,20 @@
             </td>
             <td class="px-4 border-b">
               <div class="flex gap-1">
+                <v-tooltip :width="100" :text="`Edit`">
                 <VButton
                   iconL="edit"
                   :ariaLabel="`Edit recipient ${recipient.id}`"
                   @click="onClickEdit(recipient.id)"
                 />
+                </v-tooltip>
+                <v-tooltip :width="100" :text="`Copy`">
                 <VButton
                   iconL="copy"
                   :ariaLabel="`Copy recipient ${recipient.id}`"
                   @click="onClickDuplicate(recipient.id)"
                 />
+                </v-tooltip>
                 <!-- <VButton
                   variant="warning"
                   iconL="trash-alt"
