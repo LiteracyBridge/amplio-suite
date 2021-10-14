@@ -159,19 +159,19 @@ const launchOptions = [
       {
         id: 15,
         label: 'Collect Talking Book data using smartphones/laptops',
-        link: 'https://amplio.moodle.school/',
+        link: 'https://amplio.moodle.school/course/view.php?id=13',
         completed: false
       },
       {
         id: 16,
         label: 'Update Talking Book with next deployment',
-        link: 'https://amplio.moodle.school/',
+        link: 'https://amplio.moodle.school/course/view.php?id=13',
         completed: false
       },
       {
         id: 17,
         label: 'Listen and code user feedback recordings',
-        link: 'https://amplio.moodle.school/',
+        link: 'https://amplio.moodle.school/course/view.php?id=13',
         completed: false
       }
     ]
@@ -183,7 +183,7 @@ const launchOptions = [
       {
         id: 18,
         label: 'Review and analyze data on Amplio Dashboard',
-        link: 'https://amplio.moodle.school/',
+        link: 'https://amplio.moodle.school/course/view.php?id=14',
         completed: false
       },
       {
