@@ -17,8 +17,14 @@ docker-compose up -d
 
 # Create the local lambdas containers ip resolver
 sleep 10
+set -x
+# The containers created by 'docker-compose build', above, will be named with current directory as a prefix.
 current_dir=$(basename `pwd`)
-containers=$(docker ps -a -q --filter network="${current_dir}_default" --filter name=_lambda)
+# Find the lambda simulating containers. The format of the generated container names appears to have
+# recently changed from workingdir_container ==> workingdir-container, though I can't find that documented
+# anywhere. Anyway, that's obviously a breaking change if one were filtering on, say, "_lambda", which
+# this was. 
+containers=$(docker ps -a -q --filter network="${current_dir}_default" --filter name=lambda)
 docker inspect --format '{{.Name}} {{index .Config.Cmd 0}}' $containers | column -t -s' ' > proxy/resolver
 docker-compose restart proxy
 
