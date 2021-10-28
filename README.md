@@ -2,8 +2,8 @@
 
 - [Amplio Suite](#amplio-suite)
   - [1. Local](#1-local)
-    - [1.1. Starting your local serve](#11-starting-your-local-serve)
-    - [1.2. Run Migrations](#12-run-migrations)
+    - [1.1. Providing a PostgreSQL database](#11-providing-a-postgresql-database)
+    - [1.2. Starting your local serve](#12-starting-your-local-serve)
   - [2. Stg](#2-stg)
     - [2.1. Run Migrations](#21-run-migrations)
     - [2.2. Deploy](#22-deploy)
@@ -19,16 +19,26 @@
 
 ## 1. Local
 
-### 1.1. Starting your local serve
+### 1.1. Providing a PostgreSQL database
+
+You will need to provide a PostgreSQL database for the test environment. It is convenient
+to provide one on your local machine. After the PostgreSQL is up and running, export the
+connect string for SQL Alchemy. On MacOS that string will look something like this:
+
+```
+export DATABASE_URL=postgresql+psycopg2://MyTestUser:MySecretPassword@docker.for.mac.host.internal:5432/dashboard
+```
+For other OSes, see the Docker documentation to determine the equivalent of "docker.for.mac.host.internal".
+
+### 1.2. Starting your local serveer
+Once the PostgreSQL database has been set up, run this script:
 
 ```bash
 ./dev-setup.sh
 ```
-
-If necessary, the one time setup can be undone by running these commnands:
-
+When you are finished with your test environment, use ```Ctrl+C``` to kill the web server and then
+run these comands:
 ```bash
-cd amplio-suite
 docker-compose down -v
 
 docker volume ls
@@ -37,23 +47,18 @@ docker volume rm python-deps # Only if python-deps is listed in the previous com
 docker image ls
 docker image rm <id> # Replace "<id>" by the corresponding id for amplio-suite-vue_python-deps
 ```
-
-### 1.2. Run Migrations
-
-After generating a new migration version with alembic, we execute
-
-```bash
-docker-compose run --rm python-deps alembic upgrade head
-```
-
 ## 2. Stg
+
 
 ### 2.1. Run Migrations
 
-In local and stg environments we have a lambda function with alembic to handle migrations.
-To run the migration, go to this [lambda]( https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions/migrations) and run the test with the `Migration` event
+~~In local and stg environments we have a lambda function with alembic to handle migrations.
+To run the migration, go to this [lambda]( https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions/migrations) and run the test with the `Migration` event~~
 
-The `migration lambda` can do an upgrade or downgrade to a specific version. For more info, see the lambda doc.
+~~The `migration lambda` can do an upgrade or downgrade to a specific version. For more info, see the lambda doc.~~
+
+Any data migrations must be handled outside of this project, because it will need to be coordinated
+across multiple applications, scripts, and so forth.
 
 ### 2.2. Deploy
 
@@ -69,6 +74,8 @@ docker-compose run --rm python-deps update_lambdas.bash
 
 In production we don’t have configured alembic to run the migration. In the local environment, we are going to generate sql migrations using alembic and then run this sql files.
 
+__See 2.1 above__
+
 ```bash
 # Use the version id to generate the migration file
 docker-compose run --rm python-deps alembic upgrade b33dbd8685c6 --sql > migrations.sql
@@ -77,10 +84,10 @@ docker-compose run --rm python-deps alembic upgrade b33dbd8685c6 --sql > migrati
 docker-compose run --rm python-deps alembic upgrade 10b0848a46f0:b33dbd8685c6 --sql > migrations.sql
 ```
 
-For more examples and documentation read [alembic offline mode](https://alembic.sqlalchemy.org/en/latest/offline.html)
+~~For more examples and documentation read~~ [alembic offline mode](https://alembic.sqlalchemy.org/en/latest/offline.html)
 
-In the new sql file, remove the line that updates the `alembic_version` table. We don’t have this table in production.
-Now we can run this file in the DB using psql or adminer.
+~~In the new sql file, remove the line that updates the `alembic_version` table. We don’t have this table in production.
+Now we can run this file in the DB using psql or adminer.~~
 
 ### 3.2. Deploy
 
@@ -88,20 +95,23 @@ See [stg deploy](#22-deploy) doc
 
 ## 4. Tailwind convention
 
-We will use tailwind css for styling and the classes will be applied in the following order:
+tl;dr:
+"Tailwind" was used for the initial project. (Do not ask me why; it makes no sense to me.) It
+is not to used in any further development.
 
-- spacing will be only top and left
-- classes will be listed in the order: layout/flex/position, spacing, text style, colors, decorations/borders/shadows/etc and lastly the pseudo state modifiers (ej. :hover, :focus)
+####Details:
+Tailwind is based on the premise that "CSS is hard." However, their solution is to throw out
+CSS and apply styling directly to every element. CSS is hard, and very poorly thought out, but
+throwing the baby out with the bath is not the solution.
+
+~~We will use tailwind css for styling and the classes will be applied in the following order:~~
+
+- ~~spacing will be only top and left~~
+- ~~classes will be listed in the order: layout/flex/position, spacing, text style, colors, decorations/borders/shadows/etc and lastly the pseudo state modifiers (ej. :hover, :focus)~~
 
 ## 5. Auto-generate migration
 
-If you make modifications to the database structure, this command will generate the corresponding migration, after updating the models class on `lambda/models` run:
-
-```bash
-docker-compose run --rm python-deps alembic revision --autogenerate -m "Migration name"
-```
-
-If you create a new table class, add this class in `lambda/migrations/env.py`
+_This section intentionally blank._
 
 ## 6. API gateway
 

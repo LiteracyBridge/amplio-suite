@@ -19,14 +19,14 @@ services:
     ports:
       - '9000:80'
 
-  db:
-    image: postgres:13.0
-    environment:
-      POSTGRES_USER: amplio
-      POSTGRES_PASSWORD: fooFaBar
-      POSTGRES_DB: ampliosuite
-    volumes:
-      - 'postgres-data:/var/lib/postgresql/data'
+  # db:
+  #   image: postgres:13.0
+  #   environment:
+  #     POSTGRES_USER: amplio
+  #     POSTGRES_PASSWORD: fooFaBar
+  #     POSTGRES_DB: ampliosuite
+  #   volumes:
+  #     - 'postgres-data:/var/lib/postgresql/data'
 
   dynamodb:
     image: amazon/dynamodb-local
@@ -44,21 +44,22 @@ services:
     volumes:
       - ./lambda/site.py:/var/lang/lib/python3.8/site.py
       - ./lambda:/opt/python
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
 
   lambda-project_create:  &base
     image: lambci/lambda:python3.8
     command: projects.router.create_project
     environment:
       # Funtions with hot reload
-      DOCKER_LAMBDA_STAY_OPEN: 1
-      DOCKER_LAMBDA_WATCH: 1
+      - DOCKER_LAMBDA_STAY_OPEN=1
+      - DOCKER_LAMBDA_WATCH=1
+      - DATABASE_URL
     volumes:
       - ./lambda/site.py:/var/lang/lib/python3.8/site.py
       - ./lambda:/opt/python:ro
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
 
   lambda-project_get:
     <<: *base
