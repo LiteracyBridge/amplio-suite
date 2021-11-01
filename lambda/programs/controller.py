@@ -19,7 +19,7 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
             )
 
         roadmap_obj = {
-            "program_code": program.program_code,
+            "program_id": program.program_id,
             "completed": [1],
         }
         roadmaps_crud.create(db=db, obj_in=roadmap_obj)
@@ -31,13 +31,13 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
     def update_program(
         self, db: Session, obj_in: schemas.ProgramUpdate
     ) -> models.Program:
-        program = self.get_by_program_code(
-            db=db, program_code=obj_in.program_code
+        program = self.get_by_program_id(
+            db=db, program_id=obj_in.program_id
         )
         program = self.update(db=db, db_obj=program, obj_in=obj_in)
 
         db.query(recipients_models.Recipient) \
-            .filter(recipients_models.Recipient == program.program_code) \
+            .filter(recipients_models.Recipient == program.program_id) \
             .update({
                 "country": program.country,
                 "partner": program.partner,

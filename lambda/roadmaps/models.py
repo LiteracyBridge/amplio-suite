@@ -7,9 +7,9 @@ from db import BaseModel
 class Roadmap(BaseModel, SerializerMixin):
     __tablename__ = 'roadmap'
     __table_args__ = (
-        UniqueConstraint('program_code', name='roadmap_program_code_uniqueness_key'),
+        UniqueConstraint('program_id', name='roadmap_program_code_uniqueness_key'),
     )
 
     id = Column(Integer, primary_key=True)
-    program_code = Column(String, nullable=False)
+    program_id = Column(String, nullable=False)
     completed = Column(JSON, nullable=False)

@@ -6,7 +6,7 @@ import {
 import { postDeploy } from '@/api/deploy.api'
 
 const generateProgramData = (state, rootState) => ({
-  program_code: state.programCode,
+  program_id: state.programId,
   name: state.programName,
   country: rootState.programData.country,
   region: rootState.programData.region,
@@ -23,18 +23,18 @@ const generateProgramData = (state, rootState) => ({
   affiliate: rootState.programData.affiliate,
 })
 
-const fetchProgram = async ({ commit, state, rootState }, programCode) => {
+const fetchProgram = async ({ commit, state, rootState }, programId) => {
   if (state.status == 'loading') return
-  if (state.programCode === programCode && !state.dirty && !rootState.programData.dirty) return
+  if (state.programId === programId && !state.dirty && !rootState.programData.dirty) return
 
   commit('resetState')
   commit('requestInit')
-  commit('setProgramCode', programCode)
+  commit('setprogramId', programId)
   commit('wizard/resetState', null, { root: true })
   commit('programData/resetState', null, { root: true })
 
   try {
-    const program = await getProgram(programCode)
+    const program = await getProgram(programId)
     commit('setProgram', program)
     commit('setWizardCompleted', true)
     commit('programData/setProgramData', program, { root: true })
@@ -42,7 +42,7 @@ const fetchProgram = async ({ commit, state, rootState }, programCode) => {
     console.log('ERROR', err.response)
     commit('requestError')
     commit('setWizardCompleted', false)
-    commit('programData/setProgramCode', programCode, { root: true })
+    commit('programData/setprogramId', programId, { root: true })
   }
 }
 
@@ -78,7 +78,7 @@ const setProgramName = ({ commit }, payload) => {
 
 const deployProgram = async ({ state }) => {
   try {
-    await postDeploy(state.programCode)
+    await postDeploy(state.programId)
     return 'success'
   } catch (error) {
     console.log(error)

@@ -9,7 +9,7 @@
     <div v-if="status !== 'loading'">
       <router-link
         v-if="status === 'success'"
-        :to="{ name: 'roadmap', params: { programCode }}"
+        :to="{ name: 'roadmap', params: { programId }}"
         class="pt-5 text-blue text-2xl font-semibold underline"
       >
         View launch check list.
@@ -55,7 +55,7 @@ export default {
       'status'
     ]),
     ...mapState('programData', [
-      'programCode'
+      'programId'
     ]),
     title () {
       if (['loading', 'error'].includes(this.status)) return ''
@@ -63,7 +63,7 @@ export default {
     },
     next () {
       if (['loading', 'error'].includes(this.status)) return ''
-      else  return`/programs/${this.programCode}/settings`
+      else  return`/programs/${this.programId}/settings`
     }
   },
   async created () {

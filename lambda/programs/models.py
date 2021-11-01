@@ -31,10 +31,10 @@ class DeploymentInterval(Enum):
 class Program(BaseModel, SerializerMixin):
     __tablename__ = "programs"
     __table_args__ = (
-        UniqueConstraint('projectcode', name='programs_uniqueness_key'),
+        UniqueConstraint('program_id', name='programs_uniqueness_key'),
     )
     id = Column(Integer, primary_key=True, index=True)
-    program_code = Column('projectcode', ForeignKey('projects.projectcode'), index=True, nullable=False)
+    program_id = Column('program_id', ForeignKey('projects.projectcode'), index=True, nullable=False)
     country = Column(String(50), nullable=False)
     region = Column(JSON, nullable=False)
     sustainable_development_goals = Column(JSON, nullable=False)
@@ -75,10 +75,10 @@ class Program(BaseModel, SerializerMixin):
             end_date = self.deployments_first + relativedelta(months=increment * i)
 
             deployment = {
-                'program_code': self.program_code,
+                'program_id': self.program_id,
                 'name': str(i),
                 'number': i,
-                'deployment': f"{self.program_code}-{str(start_date.year)[2:]}-{i}",
+                'deployment': f"{self.program_id}-{str(start_date.year)[2:]}-{i}",
                 'start_date': start_date,
                 'end_date': end_date,
                 'component': ''
@@ -95,10 +95,10 @@ class Program(BaseModel, SerializerMixin):
         end_date = self.deployments_first + relativedelta(months=increment * (self.deployments_count + 1))
 
         return {
-            'program_code': self.program_code,
+            'program_id': self.program_id,
             'name': str(self.deployments_count + 1),
             'number': self.deployments_count + 1,
-            'deployment': f"{self.program_code}-{str(start_date.year)[2:]}-{self.deployments_count + 1}",
+            'deployment': f"{self.program_id}-{str(start_date.year)[2:]}-{self.deployments_count + 1}",
             'start_date': start_date,
             'end_date': end_date,
             'component': ''

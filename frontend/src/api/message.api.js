@@ -2,16 +2,16 @@ import httpClient from './httpClient'
 
 const END_POINT = '/message'
 
-const postMessage = async (programCode, playlistId) => (await httpClient()
-    .post(END_POINT, { programCode, playlistId }))
+const postMessage = async (programId, playlistId) => (await httpClient()
+    .post(END_POINT, { programId, playlistId }))
     .data
 
-const putMessage = async (programCode, messages) => (await httpClient()
-    .put(END_POINT, { programCode, messages }))
+const putMessage = async (programId, messages) => (await httpClient()
+    .put(END_POINT, { programId, messages }))
     .data
 
-const deleteMessage = async (programCode, messageId) => (await httpClient()
-    .delete(END_POINT, { params: { programCode, messageId }}))
+const deleteMessage = async (programId, messageId) => (await httpClient()
+    .delete(END_POINT, { params: { programId, messageId }}))
     .data
 
 export {

@@ -25,8 +25,8 @@ def create_deployments(
 
     results = []
     for deployment in deployments:
-        program = programs_crud.get_by_program_code(
-            db=db, program_code=deployment["program_code"]
+        program = programs_crud.get_by_program_id(
+            db=db, program_id=deployment["program_id"]
         )
         programs_crud.update(
             db=db,
@@ -46,13 +46,13 @@ def create_deployments(
 
 @router()
 def get_deployments(
-    program_code: QueryString,
+    program_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    return crud.get_multi_by_program_code(
-        db=db, program_code=program_code, order=["id"]
+    check_user_access(user_email, program_id)
+    return crud.get_multi_by_program_id(
+        db=db, program_id=program_id, order=["id"]
     )
 
 
@@ -68,7 +68,7 @@ def update_deployments(
     results = []
     for deployment in deployments:
         db_deployment = crud.get_by_multi(
-            db=db, id=deployment["id"], program_code=deployment["program_code"]
+            db=db, id=deployment["id"], program_id=deployment["program_id"]
         )
         if not db_deployment:
             continue
@@ -81,12 +81,12 @@ def update_deployments(
 
 @router()
 def delete_deployments(
-    program_code: QueryString,
+    program_id: QueryString,
     deployments_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
+    check_user_access(user_email, program_id)
 
     ids = []
     if deployments_id:
@@ -95,13 +95,13 @@ def delete_deployments(
     result = []
     for id in ids:
         deployment = crud.get_by_multi(
-            db=db, id=id, program_code=program_code
+            db=db, id=id, program_id=program_id
         )
         if not deployment:
             return NotFoundException("Deployment not found")
 
-        program = programs_crud.get_by_program_code(
-            db=db, program_code=program_code
+        program = programs_crud.get_by_program_id(
+            db=db, program_id=program_id
         )
         programs_crud.update(
             db=db,
@@ -112,7 +112,7 @@ def delete_deployments(
         deployment_remove = crud.remove_by_id_and_code(
             db=db,
             id=id,
-            program_code=program_code,
+            program_id=program_id,
         )
         result.append(deployment_remove)
 

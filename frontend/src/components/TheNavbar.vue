@@ -3,7 +3,7 @@
     <div class="container mx-auto md:flex md:justify-start md:items-center">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link :to="`/programs/${programCode}`" class="text-white">
+        <router-link :to="`/programs/${programId}`" class="text-white">
           <span class="px-4 text-3xl tracking-tight">AMPLIO</span>
         </router-link>
 
@@ -44,7 +44,7 @@
           </div>
 
           <router-link
-            :to="{ name: 'roadmap', params: { programCode } }"
+            :to="{ name: 'roadmap', params: { programId } }"
             class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
           >
             Roadmap
@@ -61,10 +61,10 @@
         <div class="inline-flex items-center">
           <multiselect
             id="programSelector"
-            :value="programCode"
+            :value="programId"
             :options="programs"
             placeholder="Select a program"
-            @select="selectProgramCode"
+            @select="selectprogramId"
           />
 
           <span
@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     ...mapState('program', [
-      'programCode',
+      'programId',
       'wizardCompleted',
     ]),
     ...mapState('programs', [
@@ -121,10 +121,10 @@ export default {
         }
       ]
 
-      if (this.programCode) {
+      if (this.programId) {
         const opt = {
           name: 'Program Specification',
-          link: this.wizardCompleted ? `/programs/${this.programCode}/settings` : `/programs/${this.programCode}/wizard`,
+          link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
           tag: 'router-link'
         }
         opts = [...opts.slice(0, 2), opt, ...opts.slice(2)]
@@ -151,8 +151,8 @@ export default {
     ...mapActions('account', [
       'logout'
     ]),
-    async selectProgramCode (programCode) {
-      this.$router.push(`/programs/${programCode}`)
+    async selectprogramId (programId) {
+      this.$router.push(`/programs/${programId}`)
     },
     handleLogout () {
       this.logout()

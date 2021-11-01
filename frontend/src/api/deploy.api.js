@@ -2,8 +2,8 @@ import httpClient from './httpClient'
 
 const END_POINT = '/deploy'
 
-const postDeploy = async (programCode) => (await httpClient()
-  .post(END_POINT, { programCode }))
+const postDeploy = async (programId) => (await httpClient()
+  .post(END_POINT, { programId }))
   .data
 
 

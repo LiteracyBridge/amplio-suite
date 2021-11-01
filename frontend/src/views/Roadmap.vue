@@ -33,7 +33,7 @@ import { mapState, mapActions } from 'vuex'
 
 import Steps from '@/components/RoadmapSteps'
 
-const generalOptions = (programCode) => [
+const generalOptions = (programId) => [
   {
     title: 'Plan',
     img: 'plan.png',
@@ -41,14 +41,14 @@ const generalOptions = (programCode) => [
       {
         id: 1,
         label: 'Complete introductory questions',
-        link: `/programs/${programCode}/wizard`,
+        link: `/programs/${programId}/wizard`,
         completed: false
       },
       {
         id: 2,
         type: 'router',
         label: 'Complete Program Specification',
-        to: `/programs/${programCode}/settings`,
+        to: `/programs/${programId}/settings`,
         completed: false
       }
     ]
@@ -203,7 +203,7 @@ const launchOptions = [
 ]
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('program', [
       'programName',
@@ -217,13 +217,13 @@ export default {
   },
   data () {
     return {
-      generalOptions: generalOptions(this.programCode),
+      generalOptions: generalOptions(this.programId),
       launchOptions,
     }
   },
   created () {
-    this.fetchProgram(this.programCode)
-    this.fetchRoadmap(this.programCode)
+    this.fetchProgram(this.programId)
+    this.fetchRoadmap(this.programId)
   },
   beforeRouteLeave (to, from, next) {
     this.updateRoadmap()

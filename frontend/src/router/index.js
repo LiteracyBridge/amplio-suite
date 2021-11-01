@@ -43,20 +43,20 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
-    path: '/programs/:programCode',
+    path: '/programs/:programId',
     props: true,
     component: Home,
     beforeEnter: requireAuth
   },
   {
-    path: '/programs/:programCode/roadmap',
+    path: '/programs/:programId/roadmap',
     name: 'roadmap',
     props: true,
     component: () => import(/* webpackChunkName: "roadmap" */ '../views/Roadmap.vue'),
     beforeEnter: requireAuth
   },
   {
-    path: '/programs/:programCode/wizard',
+    path: '/programs/:programId/wizard',
     redirect: { name: 'step-program-name' },
     props: true,
     component: () => import(/* webpackChunkName: "wizard" */ '../views/Wizard/Index.vue'),
@@ -113,8 +113,8 @@ const routes = [
     ]
   },
   {
-    path: '/programs/:programCode/settings',
-    redirect: { path: '/programs/:programCode/settings/general' },
+    path: '/programs/:programId/settings',
+    redirect: { path: '/programs/:programId/settings/general' },
     props: true,
     component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
     beforeEnter: requireAuth,

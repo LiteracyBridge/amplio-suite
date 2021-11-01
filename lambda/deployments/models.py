@@ -27,7 +27,7 @@ class Deployment(BaseModel, SerializerMixin):
     )
 
     id = Column(Integer, primary_key=True)
-    program_code = Column('project', String(255), index=True, nullable=False)
+    program_id = Column('project', String(255), index=True, nullable=False)
     name = Column('deploymentname', String(255), nullable=False)
     number = Column('deploymentnumber', Integer, nullable=False)
     deployment = Column('deployment', String(255), nullable=False)

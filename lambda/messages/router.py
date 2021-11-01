@@ -17,21 +17,21 @@ from deployments.models import Deployment
 
 @router()
 def create_message(
-    program_code: Body,
+    program_id: Body,
     playlist_id: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    program = programs_crud.get_by_program_code(
-        db=db, program_code=program_code
+    check_user_access(user_email, program_id)
+    program = programs_crud.get_by_program_id(
+        db=db, program_id=program_id
     )
     playlist = playlist_crud.get(db=db, id=playlist_id)
     if not playlist:
         raise NotFoundException(message="Playlist not found")
 
     message = {
-        "program_code": playlist.program_code,
+        "program_id": playlist.program_id,
         "playlist_id": playlist.id,
     }
     return crud.create_message(
@@ -41,22 +41,22 @@ def create_message(
 
 @router()
 def delete_message(
-    program_code: QueryString,
+    program_id: QueryString,
     message_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
+    check_user_access(user_email, program_id)
     return crud.remove_by_id_and_code(
         db=db,
         id=message_id,
-        program_code=program_code,
+        program_id=program_id,
     )
 
 
 @router()
 def update_multi_messages(
-    program_code: Body,
+    program_id: Body,
     messages: Body,
     user_email: str = get_current_user,
     db: Session = get_db,

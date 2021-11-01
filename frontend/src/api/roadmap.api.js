@@ -2,12 +2,12 @@ import httpClient from './httpClient'
 
 const END_POINT = '/roadmap'
 
-const getRoadmap = async (programCode) => (await httpClient()
-  .get(END_POINT, { params: { programCode }}))
+const getRoadmap = async (programId) => (await httpClient()
+  .get(END_POINT, { params: { programId }}))
   .data
 
-const putRoadmap = async (programCode, complted) => (await httpClient()
-  .put(END_POINT, { programCode, complted }))
+const putRoadmap = async (programId, complted) => (await httpClient()
+  .put(END_POINT, { programId, complted }))
   .data
 
 export {

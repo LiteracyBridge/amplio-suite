@@ -4,11 +4,11 @@ from db import BaseSchema
 
 
 class ProgramBase(BaseSchema):
-    program_code: str
+    program_id: str
     country: str
     region: List[str]
     sustainable_development_goals: List[int]
-    listening_models: List[int]
+    listening_models: List[str]
     deployments_count:int
     deployments_length: str
     deployments_first: str

@@ -2,20 +2,20 @@ import httpClient from './httpClient'
 
 const END_POINT = '/playlist'
 
-const postPlaylist = async (programCode, deploymentId) => (await httpClient()
-    .post(END_POINT, { programCode, deploymentId }))
+const postPlaylist = async (programId, deploymentId) => (await httpClient()
+    .post(END_POINT, { programId, deploymentId }))
     .data
 
-const deletePlaylist = async (programCode, playlistId) => (await httpClient()
-    .delete(END_POINT, { params: { programCode, playlistId }}))
+const deletePlaylist = async (programId, playlistId) => (await httpClient()
+    .delete(END_POINT, { params: { programId, playlistId }}))
     .data
 
-const getPlaylists = async (programCode, deploymentId) => (await httpClient()
-    .get(END_POINT, { params: { programCode, deploymentId }}))
+const getPlaylists = async (programId, deploymentId) => (await httpClient()
+    .get(END_POINT, { params: { programId, deploymentId }}))
     .data
 
-const putPlaylists = async (programCode, playlists) => (await httpClient()
-    .put(END_POINT, { programCode, playlists }))
+const putPlaylists = async (programId, playlists) => (await httpClient()
+    .put(END_POINT, { programId, playlists }))
     .data
 
 

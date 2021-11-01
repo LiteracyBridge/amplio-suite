@@ -43,21 +43,23 @@ def create_program(
 
 @router()
 def get_program(
-    program_code: QueryString,
+    program_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    project = projects_controller.crud.get_by_program_code(
-        db=db, program_code=program_code
+    check_user_access(user_email, program_id)
+    project = projects_controller.crud.get_by_program_id(
+        db=db, program_id=program_id
     )
-    program = crud.get_by_program_code(
-        db=db, program_code=program_code
+    program = crud.get_by_program_id(
+        db=db, program_id=program_id
     )
     if not program:
         return NotFoundException("Program not found")
 
-    return {**program.to_dict(), 'name': project.name}
+    result = {**program.to_dict(), 'name': project.name}
+    print(f'\nget_program({program_id}): {str(result)}\n')
+    return result
 
 
 @router()
@@ -68,12 +70,12 @@ def update_program(
     db: Session = get_db,
 ):
     check_user_access(user_email, program)
-    db_project = projects_controller.crud.get_by_program_code(
-        db=db, program_code=project.program_code
+    db_project = projects_controller.crud.get_by_program_id(
+        db=db, program_id=project.program_id
     )
     # Update the program name as cached in dynamodb.
     try:
-        update_dynamo_name(programid=project.program_code, name=project.name)
+        update_dynamo_name(programid=project.program_id, name=project.name)
     except Exception as ex:
         print(f'Exception setting program name: {str(ex)}')
 

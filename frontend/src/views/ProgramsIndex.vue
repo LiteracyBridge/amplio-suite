@@ -66,8 +66,8 @@ export default {
     ...mapActions('programs', [
       'getAllPrograms'
     ]),
-    async selectProgram (programCode) {
-      this.$router.push(`/programs/${programCode}`)
+    async selectProgram (programId) {
+      this.$router.push(`/programs/${programId}`)
     }
   }
 }

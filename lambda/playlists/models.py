@@ -12,19 +12,19 @@ class Playlist(BaseModel, SerializerMixin):
     __tablename__ = 'playlists'
     __table_args__ = (
         UniqueConstraint(
-            'program_code',
+            'program_id',
             'deployment_id',
             'position',
             name='playlist_uniqueness_key'
         ),
         UniqueConstraint(
-            'program_code',
+            'program_id',
             'deployment_id',
             'title',
             name='playlist_title_uniqueness_key',
         ),
         ForeignKeyConstraint(
-            ['program_code'],
+            ['program_id'],
             ['projects.projectcode'],
             name='playlist_program_code_fkey',
         ),
@@ -43,7 +43,7 @@ class Playlist(BaseModel, SerializerMixin):
         nullable=False,
         autoincrement=True,
     )
-    program_code = Column(
+    program_id = Column(
         String, primary_key=True, index=True, nullable=False
     )
     deployment_id = Column(Integer, nullable=False)
@@ -63,7 +63,7 @@ class Playlist(BaseModel, SerializerMixin):
         """
         session = create_db_session()
         query = select([func.coalesce(func.max(Playlist.position), 0)]) \
-            .where(Playlist.program_code == kwargs['program_code']) \
+            .where(Playlist.program_id == kwargs['program_id']) \
             .where(Playlist.deployment_id == kwargs['deployment_id'])
 
         position = session.execute(query).scalar() + 1

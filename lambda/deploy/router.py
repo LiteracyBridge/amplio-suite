@@ -71,19 +71,19 @@ header_recipients: Final = [
 
 @router()
 def lambda_handler(
-    program_code: Body,
+    program_id: Body,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
+    check_user_access(user_email, program_id)
 
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
     writer.writeheader()
 
-    playlists = playlists_crud.get_multi_by_program_code(
-        db=db, program_code=program_code, order=['deployment_id','position']
+    playlists = playlists_crud.get_multi_by_program_id(
+        db=db, program_id=program_id, order=['deployment_id','position']
     )
 
     for playlist in playlists:
@@ -116,38 +116,38 @@ def lambda_handler(
 
             writer.writerow(row)
 
-    save_to_csv(output.getvalue(), f"{program_code}/content.csv")
+    save_to_csv(output.getvalue(), f"{program_id}/content.csv")
 
     # Generate the deployment_spec.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_deplo)
     writer.writeheader()
 
-    deployments = deployments_crud.get_multi_by_program_code(
-        db=db, program_code=program_code
+    deployments = deployments_crud.get_multi_by_program_id(
+        db=db, program_id=program_id
     )
 
     rows = [{
-        'project': deployment.program_code,
+        'project': deployment.program_id,
         'deployment_num': deployment.number,
         'startdate': deployment.start_date.isoformat(),
         'enddate': deployment.end_date.isoformat(),
         'component': deployment.component,
-        'name': f"{deployment.program_code}-{str(deployment.start_date.year)[2:]}-{deployment.number}"
+        'name': f"{deployment.program_id}-{str(deployment.start_date.year)[2:]}-{deployment.number}"
     } for deployment in deployments]
 
     writer.writerows(rows)
-    save_to_csv(output.getvalue(), f"{program_code}/deployment_spec.csv")
+    save_to_csv(output.getvalue(), f"{program_id}/deployment_spec.csv")
 
     # Generate the recipients.csv object in S3
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_recipients)
     writer.writeheader()
 
-    recipients = recipients_crud.get_multi_by_program_code(db=db, program_code=program_code)
+    recipients = recipients_crud.get_multi_by_program_id(db=db, program_id=program_id)
     rows = [{
         'recipientid' : recipient.id,
-        'project' : recipient.program_code,
+        'project' : recipient.program_id,
         'partner' : recipient.partner,
         'communityname' : recipient.community_name,
         'groupname' : recipient.group_name,
@@ -175,6 +175,6 @@ def lambda_handler(
     } for recipient in recipients]
 
     writer.writerows(rows)
-    save_to_csv(output.getvalue(), f"{program_code}/recipients.csv")
+    save_to_csv(output.getvalue(), f"{program_id}/recipients.csv")
 
     return {'message': 'Success'}

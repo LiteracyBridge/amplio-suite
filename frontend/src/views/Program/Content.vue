@@ -13,7 +13,7 @@
     />
 
     <program-select-deploymet
-      :programCode="programCode"
+      :programId="programId"
       :dirty="dirty"
       v-model="deployment"
     />
@@ -85,7 +85,7 @@ import ContentPlaylistHeader from '@/components/ContentPlaylistHeader'
 import ContentPlaylistMessages from '@/components/ContentPlaylistMessages'
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('content', [
       'status',
@@ -130,14 +130,14 @@ export default {
     deployment () {
       if (Object.keys(this.deployment).length > 0) {
         this.fetchContent({
-          programCode: this.programCode,
+          programId: this.programId,
           deploymentId: this.deployment.id
         })
       }
     }
   },
   created () {
-    this.fetchProgram(this.programCode)
+    this.fetchProgram(this.programId)
   },
   components: {
     VButton,
@@ -190,7 +190,7 @@ export default {
       }
     },
     onDiscardChanges () {
-      this.fetchContent({ programCode: this.programCode, deploymentId: this.deployment.id})
+      this.fetchContent({ programId: this.programId, deploymentId: this.deployment.id})
     },
     onOpenModal (title) {
       this.showModal = true

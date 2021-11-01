@@ -6,15 +6,15 @@ import {
 } from '@/api/deployment.api'
 import { DeploymentInterval } from '@/utils'
 
-const fetchDeployments = async ({ state, commit }, programCode) => {
+const fetchDeployments = async ({ state, commit }, programId) => {
   if (state.status === 'loading') return
-  if (state.programCode === programCode && !state.dirty) return
+  if (state.programId === programId && !state.dirty) return
 
   commit('requestInit')
 
   try {
-    const deployments = await getDeployments(programCode)
-    commit('setDeployments', { programCode, deployments })
+    const deployments = await getDeployments(programId)
+    commit('setDeployments', { programId, deployments })
   } catch (error) {
     commit('requestError')
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -22,7 +22,7 @@ const fetchDeployments = async ({ state, commit }, programCode) => {
 }
 
 const updateDeployments = async ({ state, commit }) => {
-  const { programCode, toCreate, toDelete } = state
+  const { programId, toCreate, toDelete } = state
 
   commit('requestInit')
 
@@ -38,7 +38,7 @@ const updateDeployments = async ({ state, commit }) => {
   // Delete deployments
   if (toDelete.length > 0) {
     try {
-      await deleteDeployments(programCode, toDelete)
+      await deleteDeployments(programId, toDelete)
     } catch (error) {
       commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
     }
@@ -47,12 +47,12 @@ const updateDeployments = async ({ state, commit }) => {
   // Fetch the deployemnt with the new fields
   try {
     const { deployments } = state
-    const newDeployments = await getDeployments(programCode)
+    const newDeployments = await getDeployments(programId)
     const mergeDeployments = []
     for (let i=0; i < newDeployments.length; i++) {
       mergeDeployments.push({ ...newDeployments[i], ...deployments[i] })
     }
-    commit('setDeployments', { programCode, deployments: mergeDeployments })
+    commit('setDeployments', { programId, deployments: mergeDeployments })
   } catch (error) {
     commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
   }
@@ -84,9 +84,9 @@ const createDeployment = async ({ rootState, commit }) => {
   )
 
   const newDeployment = {
-    program_code: program.programCode,
+    program_id: program.programId,
     name: (deployments.length + 1).toString(),
-    deployment: `${program.programCode}-${date.getFullYear().toString().slice(2, 4)
+    deployment: `${program.programId}-${date.getFullYear().toString().slice(2, 4)
     }-${deployments.length + 1}`,
     number: deployments.length + 1,
     start_date: calcInterval(date, 0),

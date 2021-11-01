@@ -25,7 +25,7 @@ const requestSuccess = (state) => {
 const setDeployments = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.programCode
+  state.programId = payload.programId
   state.deployments = payload.deployments
 }
 

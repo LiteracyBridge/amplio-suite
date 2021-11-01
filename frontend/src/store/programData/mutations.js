@@ -11,7 +11,7 @@ const setDirty = (state, status) => {
 const setProgramData = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.program_code
+  state.programId = payload.program_code || payload.program_id
 
   state.country = payload.country
   state.region = payload.region
@@ -28,8 +28,8 @@ const setProgramData = (state, payload) => {
   state.directBeneficiariesAdditionalMap = payload.direct_beneficiaries_additional_map
 }
 
-const setProgramCode = (state, payload) => {
-  state.programCode = payload
+const setprogramId = (state, payload) => {
+  state.programId = payload
 }
 
 const setCountry = (state, payload) => {
@@ -125,7 +125,7 @@ export default {
   setDirty,
   setProgramData,
 
-  setProgramCode,
+  setprogramId,
   addRegion,
   removeRegion,
   setCountry,

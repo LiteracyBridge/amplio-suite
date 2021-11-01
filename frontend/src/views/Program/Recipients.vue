@@ -12,7 +12,7 @@
       />
 
       <div class="inline-flex">
-        <form v-on:submit.prevent="fetchRecipients(programCode)">
+        <form v-on:submit.prevent="fetchRecipients(programId)">
           <v-input
             type="text"
             name="filterColumns"
@@ -221,7 +221,7 @@ const columns = [
 ]
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('recipients', [
       'status',
@@ -289,9 +289,9 @@ export default {
     ProgramRecipientsForm,
   },
   created () {
-    this.fetchProgram(this.programCode)
-    this.fetchRecipients(this.programCode)
-    this.fetchDeployments(this.programCode)
+    this.fetchProgram(this.programId)
+    this.fetchRecipients(this.programId)
+    this.fetchDeployments(this.programId)
 
     this.scroll()
     EventBus.$on('handleEscape', this.handleModalEscape)

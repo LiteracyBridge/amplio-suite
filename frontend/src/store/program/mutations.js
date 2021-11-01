@@ -23,12 +23,12 @@ const requestSuccess = (state) => {
 const setProgram = (state, payload) => {
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.program_code
+  state.programId = payload.program_code || payload.program_id
   state.programName = payload.name
 }
 
-const setProgramCode = (state, payload) => {
-  state.programCode = payload
+const setprogramId = (state, payload) => {
+  state.programId = payload
 }
 
 const setProgramName = (state, payload) => {
@@ -47,7 +47,7 @@ export default {
   requestSuccess,
   setProgram,
 
-  setProgramCode,
+  setprogramId,
   setProgramName,
   setWizardCompleted,
 }

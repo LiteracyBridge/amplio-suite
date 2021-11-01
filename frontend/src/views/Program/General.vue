@@ -8,7 +8,7 @@
       :canSave="dirty"
       :description="description"
       :onSaveChanges="updateProgram"
-      :onDiscardChanges="() => fetchProgram(this.programCode)"
+      :onDiscardChanges="() => fetchProgram(this.programId)"
     />
 
     <div class="min-h-200-px my-5 text-center">
@@ -225,7 +225,7 @@ import countries from '@/data/countries.json'
 import listeningModels from '@/data/listeningModels.json'
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('program', [
       'status',
@@ -269,8 +269,8 @@ export default {
     ProgramHeader,
   },
   created () {
-    this.fetchProgram(this.programCode)
-    this.fetchRecipients(this.programCode)
+    this.fetchProgram(this.programId)
+    this.fetchRecipients(this.programId)
   },
   watch: {
     region: {

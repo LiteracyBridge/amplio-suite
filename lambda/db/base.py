@@ -49,10 +49,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         return db.query(self.model).filter(self.model.id == id).first()
 
-    def get_by_program_code(self, db: Session, program_code: str) -> Optional[ModelType]:
+    def get_by_program_id(self, db: Session, program_id: str) -> Optional[ModelType]:
         return (
             db.query(self.model)
-            .filter(self.model.program_code == program_code)
+            .filter(self.model.program_id == program_id)
             .one_or_none()
         )
 
@@ -72,18 +72,18 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             .all()
         )
 
-    def get_multi_by_program_code(
+    def get_multi_by_program_id(
         self,
         db: Session,
         *,
-        program_code: str,
+        program_id: str,
         order: List[str] = ["id"],
         skip: int = 0,
         limit: int = 100,
     ) -> List[ModelType]:
         return (
             db.query(self.model)
-            .filter(self.model.program_code == program_code)
+            .filter(self.model.program_id == program_id)
             .order_by(*get_ordering_for_model(self.model, order))
             .offset(skip)
             .limit(limit)
@@ -128,13 +128,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return obj
 
     def remove_by_id_and_code(
-        self, db: Session, *, id: int, program_code: str
+        self, db: Session, *, id: int, program_id: str
     ) -> Dict[str, str]:
         obj = (
             db.query(self.model)
             .filter(
                 self.model.id == id,
-                self.model.program_code == program_code,
+                self.model.program_id == program_id,
             )
             .one()
         )

@@ -20,7 +20,7 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'Setup',
-  props: ['programCode'],
+  props: ['programId'],
   computed: mapState('wizard', [
     'actualStep'
   ]),

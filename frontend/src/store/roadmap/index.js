@@ -6,7 +6,7 @@ export default {
   state: () => ({
     dirty: false,
     status: '',
-    programCode: '',
+    programId: '',
 
     roadmap: []
   }),
@@ -22,7 +22,7 @@ export default {
       state.status = 'success'
       state.dirty = false
       state.roadmap = payload.completed
-      state.programCode = payload.program_code
+      state.programId = payload.program_code || payload.program_id
     },
     getRoadmapError (state) {
       state.status = 'error'
@@ -36,24 +36,24 @@ export default {
   },
 
   actions: {
-    async fetchRoadmap ({ commit, state }, programCode) {
+    async fetchRoadmap ({ commit, state }, programId) {
       if (state.status == 'loading') return
-      if (state.programCode === programCode && !state.dirty) return
+      if (state.programId === programId && !state.dirty) return
 
       commit('getRoadmapRequest')
 
       try {
-        const response = await getRoadmap(programCode)
+        const response = await getRoadmap(programId)
         await commit('getRoadmapSuccess', response)
       } catch {
         commit('getRoadmapError')
       }
     },
     async updateRoadmap ({ commit, state }) {
-      const { programCode, roadmap } = state
+      const { programId, roadmap } = state
 
       try {
-        await putRoadmap(programCode, roadmap)
+        await putRoadmap(programId, roadmap)
         commit('setDirty', false)
       } catch (error) {
         commit('requestError')

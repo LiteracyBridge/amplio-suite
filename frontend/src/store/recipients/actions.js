@@ -40,14 +40,14 @@ const resetFilters = ({ commit }) => {
   commit('resetFilter')
 }
 
-const fetchRecipients = async ({ commit, state }, programCode) => {
+const fetchRecipients = async ({ commit, state }, programId) => {
   if (state.status === 'loading') return
-  if (state.programCode === programCode && !state.dirty) return
+  if (state.programId === programId && !state.dirty) return
 
   commit('requestInit')
 
   try {
-    const response = await getRecipients(programCode)
+    const response = await getRecipients(programId)
     await commit('setRecipients', response)
   } catch (error) {
     commit('requestError')
@@ -56,11 +56,11 @@ const fetchRecipients = async ({ commit, state }, programCode) => {
 }
 
 const updateRecipient = async ({ commit, state }, recipientId) => {
-  const { programCode, recipients } = state
+  const { programId, recipients } = state
   const recipient = recipients.find(reci => reci.id == recipientId)
 
   const recipientData = {
-    program_code: programCode,
+    program_id: programId,
     recipient_id: recipientId,
     community_name: recipient.communityName,
     group_name: recipient.groupName,
@@ -127,7 +127,7 @@ const removeRecipient = async ({ commit, state }, recipientId) => {
   commit('requestInit')
 
   try {
-    await deleteRecipient(state.programCode, recipient.id)
+    await deleteRecipient(state.programId, recipient.id)
     commit('setDirty', false)
     commit('requestSuccess')
     commit('removeRecipient', recipient)
@@ -138,7 +138,7 @@ const removeRecipient = async ({ commit, state }, recipientId) => {
 }
 
 const discardRecipient = async ({ commit, state }, recipientId) => {
-  const { programCode, recipients } = state
+  const { programId, recipients } = state
   const recipient = { ...recipients.find(reci => reci.id === recipientId) }
 
   if (!recipient.id) {
@@ -150,7 +150,7 @@ const discardRecipient = async ({ commit, state }, recipientId) => {
   commit('requestInit')
 
   try {
-    const response = await getRecipients(programCode)
+    const response = await getRecipients(programId)
     commit('setDirty', false)
     commit('requestSuccess')
     commit('setRecipients', response)

@@ -41,7 +41,7 @@ export default {
       type: Boolean,
       required: true
     },
-    programCode: {
+    programId: {
       type: String,
       required: true
     },
@@ -52,7 +52,7 @@ export default {
     ]),
   },
   created () {
-    this.fetchDeployments(this.programCode)
+    this.fetchDeployments(this.programId)
   },
   watch: {
     deployments: {

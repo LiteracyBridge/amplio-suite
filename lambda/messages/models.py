@@ -47,38 +47,38 @@ class Message(BaseModel, SerializerMixin):
     __tablename__ = 'messages'
     __table_args__ = (
         UniqueConstraint(
-            'program_code',
+            'program_id',
             'playlist_id',
             'position',
             name='message_uniqueness_key'
         ),
         UniqueConstraint(
-            'program_code',
+            'program_id',
             'playlist_id',
             'title',
             name='message_title_uniqueness_key'
         ),
         ForeignKeyConstraint(
-            ['program_code', 'playlist_id'],
-            ['playlists.program_code', 'playlists.id'],
-            name='message_program_code_fkey',
+            ['program_id', 'playlist_id'],
+            ['playlists.program_id', 'playlists.id'],
+            name='message_program_id_fkey',
             ondelete='CASCADE',
         ),
         ForeignKeyConstraint(
-            ['default_category_id'],
+            ['default_category_code'],
             ['supportedcategories.categorycode'],
             name='message_category_fkey',
         ),
         ForeignKeyConstraint(
             ['sdg_goal_id'],
-            ['sustainable_development_goals.section'],
+            ['sdg_goals.sdg_goal_id'],
             name='message_sdg_goal_fkey',
         ),
         ForeignKeyConstraint(
-            ['sdg_goal_id', 'sdg_target_id'],
+            ['sdg_goal_id', 'sdg_target'],
             [
-                'sustainable_development_targets.goal_id',
-                'sustainable_development_targets.subsection',
+                'sdg_targets.sdg_goal_id',
+                'sdg_targets.sdg_target',
             ],
             name='message_sdg_target_fkey',
         )
@@ -91,17 +91,17 @@ class Message(BaseModel, SerializerMixin):
         nullable=False,
         autoincrement=True,
     )
-    program_code = Column(
+    program_id = Column(
         String, primary_key=True, index=True, nullable=False
     )
     playlist_id = Column(Integer, nullable=False)
     position = Column(Integer, nullable=False)
     title = Column(String, nullable=False)
     format = Column(String)
-    default_category_id = Column(String)
+    default_category_code = Column(String)
     variant = Column(String)
-    sdg_goal_id = Column(Integer)
-    sdg_target_id = Column(Integer)
+    sdg_goal_id = Column(Integer, ForeignKey('sdg_goals.sdg_goal_id'))
+    sdg_target_id = Column('sdg_target', String)
     key_points = Column(String)
 
     languages = relationship(
@@ -111,15 +111,15 @@ class Message(BaseModel, SerializerMixin):
         order_by='Language.name',
     )
 
-    sdg_goal = relationship(
-        'SustainableDevelopmentGoals'
-    )
-    sdg_target = relationship(
-        'SustainableDevelopmentTargets',
-        viewonly=True,
-        primaryjoin="and_ (Message.sdg_goal_id==SustainableDevelopmentTargets.goal_id,"
-        "Message.sdg_target_id==SustainableDevelopmentTargets.subsection)"
-    )
+    # sdg_goal_id_rel = relationship(
+    #     'SustainableDevelopmentGoals'
+    # )
+    # sdg_target_rel = relationship(
+    #     'SustainableDevelopmentTargets',
+    #     viewonly=True,
+    #     primaryjoin="and_ (Message.sdg_goal_id==sdg_targets.sdg_goal_id,"
+    #     "Message.sdg_target_id==sdg_targets.sdg_target)"
+    # )
 
     category = relationship(
         'SupportedCategory'
@@ -131,7 +131,7 @@ class Message(BaseModel, SerializerMixin):
         """
         session = create_db_session()
         query = select([func.coalesce(func.max(Message.position), 0)]) \
-            .where(Message.program_code == kwargs['program_code']) \
+            .where(Message.program_id == kwargs['program_id']) \
             .where(Message.playlist_id == kwargs['playlist_id'])
 
         position = session.execute(query).scalar() + 1

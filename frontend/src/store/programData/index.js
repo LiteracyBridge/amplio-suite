@@ -5,7 +5,7 @@ import mutations from './mutations'
 export const getDefaultState = () => ({
   dirty: false,
   status: '',
-  programCode: '',
+  programId: '',
 
   country: '',
   region: [],

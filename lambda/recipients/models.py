@@ -17,6 +17,7 @@ from db.utils import PGPoint
 
 class Recipient(BaseModel, SerializerMixin):
     __tablename__ = "recipients"
+    # Note that we're not yet changing the name of the "project" column in the recipients table.
     __table_args__ = (
         CheckConstraint('(((recipientid)::text = lower((recipientid)::text)))', name='lowercase_recipientid_check'),
         UniqueConstraint(
@@ -41,7 +42,7 @@ class Recipient(BaseModel, SerializerMixin):
         nullable=False,
         autoincrement=False,
     )
-    program_code = Column(
+    program_id = Column(
         'project', String, primary_key=True, index=True, nullable=False
     )
     partner = Column(String, nullable=False)

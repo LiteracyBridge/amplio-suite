@@ -27,8 +27,8 @@ def create_recipient(
     check_user_access(user_email, recipient)
     recipient_id = ''.join(random.choices(ascii_lowercase + digits, k=16))
 
-    program = program_crud.get_by_program_code(
-        db=db, program_code=recipient["program_code"]
+    program = program_crud.get_by_program_id(
+        db=db, program_id=recipient["program_id"]
     )
 
     del recipient["recipient_id"]
@@ -46,12 +46,12 @@ def create_recipient(
 
 @router()
 def get_recipient(
-    program_code: QueryString,
+    program_id: QueryString,
     recipient_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
+    check_user_access(user_email, program_id)
     return crud.get(db=db, id=recipient_id)
 
 
@@ -71,7 +71,7 @@ def update_recipient(
 
 @router()
 def delete_recipient(
-    program_code: QueryString,
+    program_id: QueryString,
     recipient_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
@@ -86,11 +86,11 @@ def delete_recipient(
 
 @router()
 def get_recipients_by_program(
-    program_code: QueryString,
+    program_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    return crud.get_multi_by_program_code(
-        db=db, program_code=program_code
+    check_user_access(user_email, program_id)
+    return crud.get_multi_by_program_id(
+        db=db, program_id=program_id
     )

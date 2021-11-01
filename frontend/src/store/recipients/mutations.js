@@ -69,7 +69,7 @@ const setRecipients = (state, payload) => {
 
   state.dirty = false
   state.status = 'success'
-  state.programCode = payload.programCode
+  state.programId = payload.programId
   state.recipients = recipients
 }
 

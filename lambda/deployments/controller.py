@@ -13,7 +13,7 @@ class CRUDDeployment(CRUDBase[models.Deployment, schemas.DeploymentCreate, schem
         deployment = self.create(db=db, obj_in=obj_in)
 
         playlist_in = {
-            "program_code": deployment.program_code,
+            "program_id": deployment.program_id,
             "deployment_id": deployment.id,
         }
         playlists_crud.create_playlist(
@@ -24,12 +24,12 @@ class CRUDDeployment(CRUDBase[models.Deployment, schemas.DeploymentCreate, schem
         return deployment
 
     def get_by_multi(
-        self, db: Session, id: str, program_code: str
+        self, db: Session, id: str, program_id: str
     ) -> models.Deployment:
         return (
             db.query(self.model)
             .filter(self.model.id == id)
-            .filter(self.model.program_code == program_code)
+            .filter(self.model.program_id == program_id)
             .first()
         )
 

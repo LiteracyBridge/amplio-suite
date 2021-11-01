@@ -25,13 +25,13 @@ def create_project(
 
 @router()
 def get_project(
-    program_code: QueryString,
+    program_id: QueryString,
     user_email: str = get_current_user,
     db: Session = get_db,
 ):
-    check_user_access(user_email, program_code)
-    return crud.get_by_program_code(
-        db=db, program_code=program_code
+    check_user_access(user_email, program_id)
+    return crud.get_by_program_id(
+        db=db, program_id=program_id
     )
 
 

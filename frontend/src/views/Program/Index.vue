@@ -1,5 +1,5 @@
 <template>
-  <main class="container mx-auto text-center">
+  <main class="container mx-auto">
     <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
@@ -31,7 +31,7 @@
         <router-link
           v-for="(section, index) in sections"
           :key="section"
-          :to="`/programs/${programCode}/settings/${section}`"
+          :to="`/programs/${programId}/settings/${section}`"
           :class="[$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black', index === 0 ? 'rounded-tl-lg' : '']"
           class="p-4 text-lg uppercase hover:bg-green hover:text-white">
           {{ section }}
@@ -74,7 +74,7 @@ import VSnackbars from '@/components/VSnackbars'
 
 export default {
   name: 'Program',
-  props: ['programCode'],
+  props: ['programId'],
   components: {
     VButton,
     VTooltip,
@@ -128,8 +128,8 @@ export default {
     }
   },
   created () {
-    this.fetchDeployments(this.programCode)
-    this.fetchRecipients(this.programCode)
+    this.fetchDeployments(this.programId)
+    this.fetchRecipients(this.programId)
   },
   beforeRouteUpdate (to, from, next) {
     const sTo = to.path.split('/')
@@ -161,7 +161,7 @@ export default {
     deployments () {
       if (this.deployments.length > 0) {
         this.fetchContent({
-          programCode: this.programCode,
+          programId: this.programId,
           deploymentId: this.deployments[0].id
         })
       }

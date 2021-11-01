@@ -9,8 +9,8 @@ const getPrograms = async () => {
   return Object.keys(response).sort()
 }
 
-const getProgram = async (programCode) => (await httpClient()
-  .get(END_POINT, { params: { programCode }}))
+const getProgram = async (programId) => (await httpClient()
+  .get(END_POINT, { params: { programId }}))
   .data
 
 const postProgram = async (program) => (await httpClient()
@@ -21,8 +21,8 @@ const putProgram = async (program) => (await httpClient()
   .put(END_POINT, program))
   .data
 
-const postProgramNewDeployment = async (programCode) => (await httpClient()
-  .post('program-next-deployment', { programCode }))
+const postProgramNewDeployment = async (programId) => (await httpClient()
+  .post('program-next-deployment', { programId }))
   .data
 
 export {

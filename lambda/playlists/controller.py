@@ -14,7 +14,7 @@ class CRUDPlaylist(CRUDBase[models.Playlist, schemas.PlaylistCreate, schemas.Pla
         playlist = crud.create(db=db, obj_in=obj_in)
 
         message = {
-            "program_code": playlist.program_code,
+            "program_id": playlist.program_id,
             "playlist_id": playlist.id,
         }
         message_crud.create_message(db=db, obj_in=message, languages_codes=languages_codes)
@@ -22,12 +22,12 @@ class CRUDPlaylist(CRUDBase[models.Playlist, schemas.PlaylistCreate, schemas.Pla
         return playlist
 
     def get_multi_playlists(
-        self, db: Session, program_code: str, deployment_id: str
+        self, db: Session, program_id: str, deployment_id: str
     ) -> List[models.Playlist]:
         return (
             db.query(self.model)
             .filter(
-                self.model.program_code == program_code,
+                self.model.program_id == program_id,
                 self.model.deployment_id == deployment_id,
             )
             .all()

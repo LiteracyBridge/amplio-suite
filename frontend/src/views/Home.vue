@@ -44,7 +44,7 @@ import { mapState, mapActions } from 'vuex'
 import HomeBox from '@/components/HomeBox'
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('account', [
       'user'
@@ -66,11 +66,11 @@ export default {
   },
   watch: {
     '$route' () {
-      this.fetchProgram(this.programCode)
+      this.fetchProgram(this.programId)
     }
   },
   created () {
-    this.fetchProgram(this.programCode)
+    this.fetchProgram(this.programId)
   },
   methods: {
     ...mapActions('program', [

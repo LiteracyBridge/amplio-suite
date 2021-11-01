@@ -8,7 +8,7 @@
       :canSave="dirty"
       :description="description"
       :onSaveChanges="updateDeployments"
-      :onDiscardChanges="() => fetchDeployments(programCode)"
+      :onDiscardChanges="() => fetchDeployments(programId)"
     />
 
     <div class="block overflow-x-auto">
@@ -101,7 +101,7 @@ import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
 
 export default {
-  props: ['programCode'],
+  props: ['programId'],
   computed: {
     ...mapState('deployments', {
       status: 'status',
@@ -116,8 +116,8 @@ export default {
     ProgramHeader,
   },
   created () {
-    this.fetchProgram(this.programCode)
-    this.fetchDeployments(this.programCode)
+    this.fetchProgram(this.programId)
+    this.fetchDeployments(this.programId)
   },
   data: () => ({
     description: "You can modify your deployment details here. ",
