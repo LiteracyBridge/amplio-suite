@@ -97,9 +97,10 @@ rm -r python/package python/env.local.bash
 zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done."
 
-echo "Uploading layer..."layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
+echo "Uploading layer..."
+layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
 echo "The layer ARN is: ${layer_arn}"
-rm -rf partial.zip ./python/
+# rm -rf partial.zip ./python/
 set +e
 
 # Create/update functions defined in the docker-compose

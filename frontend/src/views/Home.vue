@@ -54,7 +54,7 @@ export default {
       programStatus: state => state.status
     }),
     linkTo () {
-      if (this.wizardCompleted) {
+      if (this.wizardCompleted || true) {
         return `${this.$route.path}/settings`
       } else {
         return `${this.$route.path}/wizard`

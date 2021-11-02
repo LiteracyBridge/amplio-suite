@@ -33,3 +33,6 @@ proxy/resolver
 *.sw?
 .DS_Store
 .suiteEnv/
+output
+partial.zip
+python/
