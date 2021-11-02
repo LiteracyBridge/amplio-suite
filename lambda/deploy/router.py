@@ -77,6 +77,8 @@ def lambda_handler(
 ):
     check_user_access(user_email, program_id)
 
+    print(f'deploy for {program_id}')
+
     # Generate the content.csv file
     output =  io.StringIO()
     writer = csv.DictWriter(output, fieldnames=header_content, quoting=csv.QUOTE_NONNUMERIC)
@@ -91,11 +93,11 @@ def lambda_handler(
         for message in playlist.messages:
             sdg_goal = ''
             if message.sdg_goal_id:
-                sdg_goal = message.sdg_goal.section
+                sdg_goal = message.sdg_goal_id
 
             sdg_target = ''
             if message.sdg_target_id:
-                sdg_target = f"{sdg_goal}-{message.sdg_target.subsection}"
+                sdg_target = f"{sdg_goal}-{message.sdg_target_id}"
 
             category_name = ''
             if message.category:
