@@ -54,11 +54,11 @@ export default {
       programStatus: state => state.status
     }),
     linkTo () {
-      // if (this.wizardCompleted) {
+      if (this.wizardCompleted) {
         return `${this.$route.path}/settings`
-      // } else {
-      //   return `${this.$route.path}/wizard`
-      // }
+      } else {
+        return `${this.$route.path}/wizard`
+      }
     }
   },
   components: {
