@@ -1,8 +1,11 @@
 #!/bin/bash
 set -eo pipefail
-
+set -x	
 unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
+
+BACKEND_CORS_ORIGINS=https://suite.amplio.org
+ENVIRONMENT=production
 
 function die() {
 	echo $1
@@ -65,22 +68,22 @@ functions_to_deploy=(
 )
 
 # Create a tsv with the functions to deploy with the form
-# function_name dir_name handle
-echo "Reading function to deploy from docker-compose: ..."
-containers=$(docker ps -a --format '{{ .Names }}' | grep -E 'amplio-suite(-vue)?_lambda' | sort -k1)
-docker inspect --format '{{ .Name }} {{ index .Config.Cmd 0 }} {{ index .Config.Cmd 0 }}' $containers | column -t -s' ' > functions_tmp.txt
+# function_name dir_name handler
+# echo "Reading function to deploy from docker-compose: ..."
+# containers=$(docker ps -a --format '{{ .Names }}' | grep -E 'amplio-suite(-vue)?_lambda' | sort -k1)
+# docker inspect --format '{{ .Name }} {{ index .Config.Cmd 0 }} {{ index .Config.Cmd 0 }}' $containers | column -t -s' ' > functions_tmp.txt
 
-sed -E -e 's/^\/amplio-suite(-vue)?_lambda-(.*)_1/\2 /'g \
-   -e 's/ (\w+).\w+.\w+ / \1 /'g \
-   -e 's/ \w+.(\w+.\w+)$/\1/'g functions_tmp.txt | column -t > functions.txt
-echo "Reading function to deploy from docker-compose: Done"
+# sed -E -e 's/^\/amplio-suite(-vue)?_lambda-(.*)_1/\2 /'g \
+#    -e 's/ (\w+).\w+.\w+ / \1 /'g \
+#    -e 's/ \w+.(\w+.\w+)$/\1/'g functions_tmp.txt | column -t > functions.txt
+# echo "Reading function to deploy from docker-compose: Done"
 
 # Lambda role
 echo "Getting the lambda role: ..."
 role_arn=$(aws iam get-role --role-name AmplioSuiteLambda | jq -r '.Role.Arn')
 echo "Getting the lambda role: Done"
 
-# Read config form AWS
+# Read config from AWS
 echo "Getting the functions already deployed: ..."
 functions=$(aws lambda list-functions | jq '[.Functions[].FunctionName] | join(" ")')
 subnet_ids=$(aws ec2 describe-subnets | jq -r '[.Subnets[].SubnetId] | join(",")')
@@ -94,8 +97,7 @@ rm -r python/package python/env.local.bash
 zip -r9 -q partial.zip ./python
 echo "Zip the python libs: Done."
 
-echo "Uploading layer..."
-layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
+echo "Uploading layer..."layer_arn=$(aws lambda publish-layer-version --layer-name base-layer --description "Suite shared dependencies and codebase" --compatible-runtimes python3.8 --zip-file fileb://partial.zip | jq -r '.LayerVersionArn')
 echo "The layer ARN is: ${layer_arn}"
 rm -rf partial.zip ./python/
 set +e
@@ -111,19 +113,19 @@ do
 
   # Remove zip
 	rm ${fun_dir}.zip
-done < "functions.txt"
+done < "lambdas-list.txt"
 
-echo "Create/Update aditionals functions"
-for fun_name in "${functions_to_deploy[@]}"
-do
-	echo -e "\nProcessing function ${fun_name}"
-	echo -e "\tMaking the zip"
-	zip -q ${fun_name}.zip ./lambda/${fun_name}.py
+# echo "Create/Update aditionals functions"
+# for fun_name in "${functions_to_deploy[@]}"
+# do
+# 	echo -e "\nProcessing function ${fun_name}"
+# 	echo -e "\tMaking the zip"
+# 	zip -q ${fun_name}.zip ./lambda/${fun_name}.py
 
-	create_or_update_lambda ${fun_name} ${fun_name}.zip ${fun_name}.lambda_handler
+# 	create_or_update_lambda ${fun_name} ${fun_name}.zip ${fun_name}.lambda_handler
 
-  # Remove zip
-	rm ${fun_name}.zip
-done
+#   # Remove zip
+# 	rm ${fun_name}.zip
+# done
 
-rm functions_tmp.txt functions.txt
+#rm functions_tmp.txt functions.txt
