@@ -10,9 +10,11 @@ from core import (
 )
 from db import get_db
 from messages.controller import crud
+from sqlalchemy import create_engine, text
 from programs.controller import crud as programs_crud
 from playlists.controller import crud as playlist_crud
 from deployments.models import Deployment
+from utils import get_db_url
 
 
 @router()
@@ -44,14 +46,21 @@ def delete_message(
     program_id: QueryString,
     message_id: QueryString,
     user_email: str = get_current_user,
-    db: Session = get_db,
+    # db: Session = get_db,
 ):
     check_user_access(user_email, program_id)
-    return crud.remove_by_id_and_code(
-        db=db,
-        id=message_id,
-        program_id=program_id,
-    )
+    DATABASE_URL = get_db_url()
+    engine = create_engine(DATABASE_URL, echo=True)
+    try:
+        with engine.connect() as conn:
+            conn.execute(text('DELETE FROM message_languages WHERE message_id = :message_id;'), {'message_id':message_id})
+            conn.execute(text('DELETE FROM messages WHERE id = :message_id;'), {'message_id':message_id})
+            conn.commit()
+        return { "message": "Successfully delete" }
+    except Exception as ex:
+        return {"failure": str(ex)}
+
+
 
 
 @router()

@@ -13,18 +13,20 @@
         v-for="(item, index) in value"
         :key="index"
         tabindex="0"
-        class="flex justify-between items-center mx-1 my-2 cursor-grab"
+        class="flex justify-between mx-1 my-2 cursor-grab"
         :data-name="name"
         :data-index="index"
       >
         <font-awesome-icon icon="grip-lines" />
-        <VButton
+        <v-tooltip :text="`${item.title}`">
+        <VButton class="sidebar-playlist-title"
           tag="span"
           :label="item.title"
           :active="selectedIndex === index"
           :disabled="value.length === 0"
           @click="onSelect(index)"
         />
+        </v-tooltip>
         <v-tooltip
           v-if="value.length === 0"
           text="You must have at least one playlist"
@@ -96,6 +98,10 @@
 /* Remove the underline from the "delete' icon */
 .delete-button-wrapper div {
   border: none;
+}
+.sidebar-playlist-title {
+  overflow: hidden;
+  max-width:10em;
 }
 </style>
 
