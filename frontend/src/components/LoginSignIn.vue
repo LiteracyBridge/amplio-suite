@@ -32,7 +32,7 @@
       variant="success full"
       :iconL="status === 'loading' ? 'spinner' : ''"
       :iconLPulse="status === 'loading'"
-      @click="handleLogin"
+      @click="doLogin"
     />
   </form>
 </template>
@@ -69,7 +69,7 @@ export default {
     ...mapActions('account', [
       'login'
     ]),
-    async handleLogin () {
+    async doLogin () {
       try {
         await this.login({ email: this.email, password: this.password })
         this.$router.push('/programs')
@@ -77,7 +77,7 @@ export default {
       catch {
         this.email = ''
         this.password = ''
-        this.setNotification({ type: 'alert', 'Invalid Login or password' })
+        this.setNotification({ type: 'alert', text: 'Incorrect email or password' })
 
         this.$refs.user.$el.children[1].focus()
       }

@@ -2,7 +2,7 @@
   <main class="container mx-auto pt-4 text-center">
     <slot />
 
-    <h1 class="visually_hidden">Sign In into Amplio-Suite</h1>
+    <h1 class="visually_hidden">Log In into Amplio-Suite</h1>
 
     <div class="mx-auto pt-20" style="max-width:300px;">
       <img src="/img/logo.png" alt="Amplio logo" class="mx-auto">
@@ -51,7 +51,7 @@
             variant="success full"
             :iconL="status === 'loading' ? 'spinner' : ''"
             :iconLPulse="status === 'loading'"
-            @click="handleLogin"
+            @click="tryLogin"
           />
         </form>
       </div>
@@ -99,7 +99,7 @@ export default {
     ...mapActions('account', [
       'login'
     ]),
-    async handleLogin () {
+    async tryLogin () {
       try {
         await this.login({ email: this.email, password: this.password, token: this.token })
         this.$router.push('/programs')
@@ -107,7 +107,7 @@ export default {
       catch {
         this.email = ''
         this.password = ''
-        this.setNotification({ type: 'alert', text: 'Invalid Login or password' })
+        this.setNotification({ type: 'alert', text: 'Incorrect email or password' })
 
         this.$refs.user.$el.children[1].focus()
       }

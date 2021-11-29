@@ -171,16 +171,20 @@ function stepIsCompleted (to, from, next) {
 function requireAuth (to, from, next) {
   store.dispatch('account/requireAuth')
     .then(() => next())
-    .catch(() => next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    }))
+    .catch(() => {
+      return next({
+        path: '/login',
+        query: {redirect: to.fullPath}
+      });
+    })
 }
 
 function checkAuth(to, from, next) {
   store.dispatch('account/requireAuth')
     .then(() => next({ path: '/programs' }))
-    .catch(() => next())
+    .catch(() => {
+      return next();
+    })
 }
 
 export default router
