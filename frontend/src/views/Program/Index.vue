@@ -5,15 +5,15 @@
 
       <div class="flex">
         <VButton
-          label="Submit"
+          label="Publish"
           variant="submit"
-          :disabled="!canDeploy"
-          :iconL="submitStatus === 'loading' ? 'spinner' : ''"
-          :iconLPulse="submitStatus === 'loading'"
-          @click="onSubmit"
+          :disabled="!canPublish"
+          :iconL="publishStatus === 'loading' ? 'spinner' : ''"
+          :iconLPulse="publishStatus === 'loading'"
+          @click="onPublish"
         />
         <v-tooltip
-          v-if="!canDeploy"
+          v-if="!canPublish"
           text="You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
           position="right"
           class="my-2 ml-2"
@@ -47,7 +47,7 @@
       Need help? Contact us on <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
     </footer>
 
-    <v-snackbars :show.sync="showSnackbar" label="The program was successfully deployed" />
+    <v-snackbars :show.sync="showSnackbar" label="The program specification was successfully published to the ACM." />
 
     <!-- For modal components -->
     <portal to="modalBody" v-if="isModalOpen">
@@ -104,7 +104,7 @@ export default {
 
       return partial.some(Boolean)
     },
-    canDeploy () {
+    canPublish () {
       if (!this.playlists) return false
 
       const hasOneMessage = (this.playlists
@@ -121,7 +121,7 @@ export default {
   data () {
     return {
       sections: ['general', 'deployments', 'content', 'recipients'],
-      submitStatus: null,
+      publishStatus: null,
       transitionName: 'slide-left',
       isModalOpen: false,
       showSnackbar: false,
@@ -173,7 +173,7 @@ export default {
       'closeModal'
     ]),
     ...mapActions('program', [
-      'deployProgram',
+      'publishProgram',
     ]),
     ...mapActions('content', [
       'fetchContent',
@@ -184,12 +184,12 @@ export default {
     ...mapActions('recipients', [
       'fetchRecipients',
     ]),
-    async onSubmit () {
-      if (!this.canDeploy) return
+    async onPublish () {
+      if (!this.canPublish) return
 
-      this.submitStatus = 'loading'
-      this.submitStatus = await this.deployProgram()
-      if (this.submitStatus === 'success') this.showSnackbar = true
+      this.publishStatus = 'loading'
+      this.publishStatus = await this.publishProgram()
+      if (this.publishStatus === 'success') this.showSnackbar = true
     },
     handleOpenModal () {
       this.isModalOpen = true

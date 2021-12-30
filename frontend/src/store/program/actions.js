@@ -3,7 +3,7 @@ import {
   postProgram,
   putProgram
 } from '@/api/programs.api'
-import { postDeploy } from '@/api/deploy.api'
+import { publish } from '@/api/deploy.api'
 
 const generateProgramData = (state, rootState) => ({
   program_id: state.programId,
@@ -76,9 +76,10 @@ const setProgramName = ({ commit }, payload) => {
   commit('setDirty', true)
 }
 
-const deployProgram = async ({ state }) => {
+const publishProgram = async ({ state }) => {
   try {
-    await postDeploy(state.programId)
+    console.log(`Calling publish(${state.programId}).`)
+    await publish(state.programId)
     return 'success'
   } catch (error) {
     console.log(error)
@@ -91,5 +92,5 @@ export default {
   updateProgram,
   setProgramName,
 
-  deployProgram
+  publishProgram
 }
