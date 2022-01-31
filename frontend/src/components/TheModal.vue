@@ -22,7 +22,7 @@
       aria-modal="true"
     >
       <section>
-        <header v-if="title" class="my-4 pb-2 border-b-2 b-gray-600">
+        <header v-if="title" class="mb-4 pb-2 border-b-2 b-gray-600">
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 

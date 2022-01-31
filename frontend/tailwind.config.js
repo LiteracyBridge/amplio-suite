@@ -32,7 +32,9 @@ module.exports = {
       minHeight: {
         '200-px': '200px',
         banner: 'calc(100vh - 104px)', // rest the footer
-        'banner-header': 'calc(100vh - 104px - 56px)' // rest the footer and the header
+        // Assumes 104 px footer and 56px header. +1 so scroll bar is always present, to avoid visually
+        // distracting re-layout as deployments, playlists, recipients, etc. are expanded or collapsed.
+        'with-footer-header': 'calc(100.25vh - 104px - 56px + 1px)' // rest the footer and the header
       },
       zIndex: {
         1000: '1000',

@@ -3,7 +3,7 @@
     <TheNavbar />
     <TheNotification />
 
-    <router-view class="min-h-banner-header" />
+    <router-view class="min-h-with-footer-header" />
 
     <TheFooter />
     <TheModal />

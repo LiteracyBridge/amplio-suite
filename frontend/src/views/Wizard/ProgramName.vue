@@ -20,23 +20,6 @@
       @input="setProgramName({ name: $event.target.value, step })"
     />
 
-    <v-input
-      type="text"
-      name="partner"
-      label="Partner"
-      :value="partner"
-      mx="mx-auto my-4"
-      @input="setPartner({ partner: $event.target.value, step })"
-    />
-
-    <v-input
-      type="text"
-      name="affiliate"
-      label="Affiliate"
-      :value="affiliate"
-      mx="mx-auto my-4"
-      @input="setAffiliate({ affiliate: $event.target.value, step })"
-    />
   </Box>
 </template>
 
@@ -72,8 +55,8 @@ export default {
   methods: {
     ...mapActions('wizard', [
       'setProgramName',
-      'setPartner',
-      'setAffiliate',
+      // 'setPartner',
+      // 'setAffiliate',
     ])
   }
 }

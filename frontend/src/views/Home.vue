@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
-      Welcome to Amplio, <span class="capitalize">{{ user.name }}</span>!
+      Hello, <span class="capitalize">{{ user.name }}</span>, Welcome to the Amplio Suite!
     </h1>
 
     <font-awesome-icon

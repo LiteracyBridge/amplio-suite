@@ -4,18 +4,21 @@
       Select { multiple ? 'multiple' : 'one'} language
     </label>
 
+    <!-- :value = initially selected values
+         :options = set of all selectable values -->
     <multiselect
-      v-if="supportedLanguages.length > 0"
+      v-if="this.supportedLanguages.length > 0"
       id="language_input"
       ref="languages"
       :value="selectedLanguages"
-      :options="filterLanguages"
+      :options="filteredLanguageOptions"
       :multiple="multiple"
       :close-on-select="!multiple"
       :clear-on-select="true"
       :preserve-search="false"
       :internal-search="false"
-      :custom-label="(opt) => opt[labelBy]"
+      :custom-label="(opt) => opt.name||opt.code||opt"
+      label="name"
       track-by="code"
       placeholder="Type a language to add"
       @select="onLanguageSelected"
@@ -32,25 +35,24 @@
       icon="spinner"
       size="2x"
       pulse
-      class="block w-10 h-10 mt-2 text-left" />
+      class="block w-10 h-10 mt-2 text-left"/>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import {mapState} from 'vuex'
 
 import Multiselect from 'vue-multiselect'
 
 export default {
-  components: {
-    Multiselect
-  },
   props: {
     options: {
+      // A list of language codes: ['en', 'fr'].
       type: Array,
       default: null
     },
     languages: {
+      // The initially selected language codes: ['en']
       required: true,
       type: [Array, String],
     },
@@ -75,67 +77,76 @@ export default {
       default: true
     }
   },
+
+  components: {
+    Multiselect
+  },
+
   computed: {
     ...mapState('languages', {
+      // List of  [{code:'en', comment:'Popular language', name:'English'}, {code:'zed', comment:'End of the line', name:'Zebra'}]
       supportedLanguages: state => state.languages,
     }),
-    selectedLanguages () {
+
+    selectedLanguages() {
+      // List of initially selected languages, expanded to 'supportedLanguages' format, [{code:'en', comment:...}]
       if (!this.languages || this.languages === '') {
         return []
       }
       let result = []
       try {
-        const langs = Array.isArray(this.languages) ? this.languages : [this.languages]
-        result = langs.map(langCode => this.supportedLanguages.find(lang => lang.code === langCode))
+        const languageCodes = Array.isArray(this.languages) ? this.languages : [this.languages]
+        // map from codes to full info.
+        result = this.mapLanguageCodesToInfo(languageCodes);
         if (result.len === 0) result = []
       } catch (ignored) {
         result = []
       }
       return result;
-    }
+    },
   },
-  mounted() {
-    this.fetchLanguages()
-  },
+
   watch: {
     supportedLanguages: {
       immediate: true,
-      handler () {
+      handler() {
         if (this.supportedLanguages.length === 0) return
-
         if (this.autofocus && this.supportedLanguages.length > 0) {
           this.$nextTick(() => {
             this.$refs.languages.$refs.search.focus()
           });
         }
-
+        // Is there an options property? (list of language codes from which user can select)
         if (this.options) {
-          this.allOptions = this.options.map(langCode => this.supportedLanguages.find(lang => lang.code === langCode))
-          this.filterLanguages = [...this.allOptions]
-        }
-        else  {
+          this.allOptions = this.mapLanguageCodesToInfo(this.options);
+          this.filteredLanguageOptions = [...this.allOptions]
+        } else {
           this.allOptions = [...this.supportedLanguages]
-          this.filterLanguages = [...this.supportedLanguages]
+          this.filteredLanguageOptions = [...this.supportedLanguages]
         }
       }
     }
   },
-  data () {
+
+  data() {
     return {
       allOptions: [],
-      filterLanguages: []
+      filteredLanguageOptions: [],
     }
   },
+
   methods: {
-    ...mapActions('languages', [
-      'fetchLanguages',
-    ]),
-    onSearch (query) {
+    onSearch(query) {
       query = query.trim().toLowerCase()
 
-      this.filterLanguages = this.allOptions
+      this.filteredLanguageOptions = this.allOptions
         .filter(lang => lang.name.toLowerCase().includes(query))
-    }
+    },
+
+    mapLanguageCodesToInfo(codes) {
+      return codes.map(lc => this.supportedLanguages.find(languageInfo => languageInfo.code === lc));
+    },
+
   },
 }
 </script>

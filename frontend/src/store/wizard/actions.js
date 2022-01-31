@@ -34,25 +34,9 @@ const check = async (attrs, step, dispatch) => {
 // step-program-name
 const setProgramName = async ({ dispatch }, payload) => {
   const { name, step } = payload
-  const attrs = ['programName', 'partner', 'affiliate']
+  const attrs = ['programName']
 
   await dispatch('program/setProgramName', name, { root: true })
-  await check(attrs, step, dispatch)
-}
-
-const setPartner = async ({ dispatch }, payload) => {
-  const { partner, step } = payload
-  const attrs = ['programName', 'partner', 'affiliate']
-
-  await dispatch('programData/setPartner', partner, { root: true })
-  await check(attrs, step, dispatch)
-}
-
-const setAffiliate = async ({ dispatch }, payload) => {
-  const { affiliate, step } = payload
-  const attrs = ['programName', 'partner', 'affiliate']
-
-  await dispatch('programData/setAffiliate', affiliate, { root: true })
   await check(attrs, step, dispatch)
 }
 
@@ -152,8 +136,6 @@ export default {
   setCountry,
   addRegion,
   removeRegion,
-  setPartner,
-  setAffiliate,
   toggleGoal,
   toggleListening,
   setDeploymentsCount,

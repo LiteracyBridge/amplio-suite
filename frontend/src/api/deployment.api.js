@@ -3,9 +3,11 @@ import httpClient from './httpClient'
 const END_POINT = '/deployments'
 
 const getDeployments = async (programId) => {
-  return (await httpClient()
-    .get(END_POINT, {params: {programId}}))
-    .data;
+  const result = await httpClient()
+    .get(END_POINT, {params: {programId}});
+  let data = result.data
+  console.log(data);
+  return data;
 }
 
 const putDeployments = async (deployments) => {

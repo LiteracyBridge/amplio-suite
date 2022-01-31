@@ -11,7 +11,7 @@
       <div class="flex flex-col gap-2">
         <VButton
           label="Discard Changes"
-          variant="warning-ligth"
+          variant="warning-light"
           :disabled="!dirty"
           @click="onDiscardChanges"
         />

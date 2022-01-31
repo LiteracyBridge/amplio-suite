@@ -15,6 +15,7 @@
     >
       {{ label }}
     </label>
+    <!-- remove the 'focus:...' properties to make focus more standard. -->
     <input
       :class="[iconLeft ? 'pl-12' : 'pl-5', iconRight ? 'pr-12' : 'pr-5']"
       class="w-full block py-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
@@ -79,7 +80,7 @@ export default {
 
 <style scoped>
 .field-wrapper.focused label {
-  top: -20px;
+  top: -18px;
   font-size: 0.8rem;
   color: black;
   transition: all .2s linear;

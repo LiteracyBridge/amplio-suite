@@ -85,6 +85,7 @@ export default {
   },
   computed: {
     baseClass () {
+      // What the hell is this supposed to do?
       return this.label === '' ? 'icon'
         : this.tag === 'button' ? 'button'
           : 'link'

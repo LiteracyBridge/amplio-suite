@@ -1,10 +1,8 @@
 // Map db model to store model
 const responseToRecipient = (response) => ({
   id: response.id,
-  partner: response.partner,
   communityName: response.community_name,
   groupName: response.group_name,
-  affiliate: response.affiliate,
   component: response.component,
   country: response.country,
   region: response.region,

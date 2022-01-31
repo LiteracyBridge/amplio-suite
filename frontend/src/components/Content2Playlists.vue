@@ -1,0 +1,66 @@
+<template>
+  <div class="tag-deployment">
+
+    <draggable
+      v-model="playlists"
+      :animation="200"
+      handle=".pl-handle"
+      group="playlists"
+      ghost-class="moving-item"
+      @start="dragging = true"
+      @end="dragging = false">
+
+      <div v-for="playlist in playlists" :key="playlist.position">
+        <content2-playlist :deployment="deployment" :playlist="playlist"/>
+      </div>
+
+    </draggable>
+
+  </div>
+</template>
+
+<script>
+import { mapState, mapActions } from 'vuex'
+
+import content2Playlist from '@/components/Content2Playlist.vue'
+import Draggable from 'vuedraggable'
+
+export default {
+  props: {
+    deployment: {
+      type: Object,
+      required: true
+    },
+
+  },
+
+  components: {
+    content2Playlist,
+    Draggable,
+  },
+
+  computed: {
+    ...mapState('content2', [
+      'deployments'
+    ]),
+
+    playlists: {
+      get() {
+        return this.deployment.playlists;
+      },
+
+      set(newValue) {
+        this.setPlaylists({deployment:this.deployment, playlists:newValue})
+      }
+    },
+  },
+
+  methods: {
+    ...mapActions('content2', [
+      'setPlaylists',
+    ]),
+
+  },
+
+}
+</script>

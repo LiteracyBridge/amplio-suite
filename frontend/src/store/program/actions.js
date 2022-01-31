@@ -3,7 +3,7 @@ import {
   postProgram,
   putProgram
 } from '@/api/programs.api'
-import { publish } from '@/api/deploy.api'
+import { publish } from '@/api/content.api'
 
 const generateProgramData = (state, rootState) => ({
   program_id: state.programId,
@@ -19,12 +19,10 @@ const generateProgramData = (state, rootState) => ({
   languages: rootState.programData.languages,
   direct_beneficiaries_map: rootState.programData.directBeneficiariesMap,
   direct_beneficiaries_additional_map: rootState.programData.directBeneficiariesAdditionalMap,
-  partner: rootState.programData.partner,
-  affiliate: rootState.programData.affiliate,
 })
 
 const fetchProgram = async ({ commit, state, rootState }, programId) => {
-  if (state.status == 'loading') return
+  if (state.status === 'loading') return
   if (state.programId === programId && !state.dirty && !rootState.programData.dirty) return
 
   commit('resetState')

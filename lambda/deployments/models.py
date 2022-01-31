@@ -37,9 +37,11 @@ class Deployment(BaseModel, SerializerMixin):
     comment = Column(String)
     component = Column(String, nullable=False)
 
-    playlists = relationship(
-        'Playlist',
-        cascade="all, delete",
-        passive_deletes=True,
-        order_by='Playlist.position',
-    )
+    # WTF. This appears to retrieve the playlists associated with this deployment. A more sensible approach would
+    # involve, you know, ASKING for the "children".
+    # playlists = relationship(
+    #     'Playlist',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     order_by='Playlist.position',
+    # )

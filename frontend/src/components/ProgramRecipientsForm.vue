@@ -309,9 +309,6 @@ export default {
     beneficiariesIsOpen: false,
     listeningModels: listeningModels,
   }),
-  mounted () {
-    this.fetchListeningModels()
-  },
   methods: {
     ...mapActions('recipients', [
       'setRecipientDeployments',

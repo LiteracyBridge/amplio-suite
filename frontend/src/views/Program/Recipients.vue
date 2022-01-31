@@ -281,6 +281,7 @@ export default {
       return values.some(Boolean)
     },
   },
+
   components: {
     VInput,
     VButton,
@@ -288,6 +289,7 @@ export default {
     VTooltip,
     ProgramRecipientsForm,
   },
+
   created () {
     this.fetchProgram(this.programId)
     this.fetchRecipients(this.programId)
@@ -296,9 +298,11 @@ export default {
     this.scroll()
     EventBus.$on('handleEscape', this.handleModalEscape)
   },
+
   beforeDestroy () {
     EventBus.$off('handleEscape', this.handleModalEscape)
   },
+
   data: () => ({
     selectedRecipientId: null,
     columns,
@@ -308,10 +312,14 @@ export default {
       mandatory: false
     },
   }),
+
   methods: {
     ...mapActions('ui', [
       'setModal',
       'closeModal'
+    ]),
+    ...mapActions('languages', [
+      'fetchLanguages',
     ]),
     ...mapActions('program', [
       'fetchProgram',
@@ -397,6 +405,11 @@ export default {
       if (this.recipient.id) this.onClickDiscard()
       else this.onClickDiscardNewRecipient()
     }
-  }
+  },
+
+  async mounted() {
+    this.fetchLanguages()
+    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
+  },
 }
 </script>

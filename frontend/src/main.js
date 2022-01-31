@@ -7,6 +7,7 @@ import router from './router'
 import store from './store'
 
 // Polyfill :focus-visible
+// Remove this to restore normal focus behaviour.
 import 'focus-visible'
 
 // Custom plugins
@@ -14,6 +15,7 @@ import './plugins/fontawesome'
 
 // Style
 import '@/assets/css/tailwind.scss'
+import '@/assets/css/suite.scss'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 // Layouts

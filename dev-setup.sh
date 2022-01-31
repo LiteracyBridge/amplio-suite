@@ -1,4 +1,10 @@
+docker version >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Docker does not seem to be running. $?"
+    exit 1
+fi
 set -e # halt the setup if any command fails
+
 docker-compose build
 
 # Copy the python deps to the lambdas

@@ -22,8 +22,6 @@ const setProgramData = (state, payload) => {
   state.deploymentsFirst = payload.deployments_first
   state.feedbackFrequently = payload.feedback_frequency
   state.languages = payload.languages
-  state.partner = payload.partner,
-  state.affiliate = payload.affiliate,
   state.directBeneficiariesMap = payload.direct_beneficiaries_map
   state.directBeneficiariesAdditionalMap = payload.direct_beneficiaries_additional_map
 }
@@ -80,19 +78,12 @@ const setLanguages = (state, payload) => {
 }
 
 const deleteLanguage = (state, language) => {
+  // noinspection EqualityComparisonWithCoercionJS
   state.languages = state.languages.filter(lang => lang != language)
 }
 
 const setFeedbackFrequently = (state, payload) => {
   state.feedbackFrequently = payload
-}
-
-const setPartner = (state, payload) => {
-  state.partner = payload
-}
-
-const setAffiliate = (state, payload) => {
-  state.affiliate = payload
 }
 
 const setDirectBeneficiariesLabel = (state, payload) => {
@@ -139,8 +130,6 @@ export default {
   setLanguages,
   deleteLanguage,
   setFeedbackFrequently,
-  setPartner,
-  setAffiliate,
 
   setDirectBeneficiariesLabel,
   setDirectBeneficiariesAdditionalLabel,

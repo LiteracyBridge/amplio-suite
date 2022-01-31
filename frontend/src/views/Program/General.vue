@@ -15,6 +15,7 @@
       <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
         <label for="programName">Program Name</label>
         <v-input
+          id="programName"
           ref="programName"
           name="programName"
           type="text"
@@ -85,25 +86,6 @@
           pulse
           class="block w-10 h-10 mt-2 text-left" />
 
-        <label for="partner">Partner</label>
-        <v-input
-          name="partner"
-          type="text"
-          :value="partner"
-          mx="mx-0"
-          class="w-full"
-          @input="setPartner($event.target.value)"
-        />
-
-        <label class="md:pl-4" for="affiliate">Affiliate</label>
-        <v-input
-          name="affiliate"
-          type="text"
-          :value="affiliate"
-          mx="mx-0"
-          class="w-full"
-          @input="setAffiliate($event.target.value)"
-        />
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
@@ -234,8 +216,8 @@ export default {
     ...mapState('programData', [
       'country',
       'region',
-      'partner',
-      'affiliate',
+      // 'partner',
+      // 'affiliate',
       'languages',
       'listeningModels',
     ]),
@@ -304,8 +286,8 @@ export default {
       'setCountry',
       'addRegion',
       'removeRegion',
-      'setPartner',
-      'setAffiliate',
+      // 'setPartner',
+      // 'setAffiliate',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
@@ -316,6 +298,9 @@ export default {
     ]),
     ...mapActions('recipients', [
       'fetchRecipients',
+    ]),
+    ...mapActions('languages', [
+      'fetchLanguages',
     ]),
     addTag (region) {
       this.addRegion(region)
@@ -340,6 +325,11 @@ export default {
     spam () {
       console.log('nuevo click')
     }
-  }
+  },
+  mounted() {
+    this.fetchLanguages()
+    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
+  },
+
 }
 </script>

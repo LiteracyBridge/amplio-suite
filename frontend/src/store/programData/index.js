@@ -20,8 +20,6 @@ export const getDefaultState = () => ({
   languages: [],
 
   feedbackFrequently: '',
-  partner: '',
-  affiliate: '',
 
   directBeneficiariesMap: {},
   directBeneficiariesAdditionalMap: {},

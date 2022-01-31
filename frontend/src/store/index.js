@@ -10,6 +10,7 @@ import programs from './programs'
 import programData from './programData'
 import deployments from './deployments'
 import content from './content'
+import content2 from './content2'
 import recipients from './recipients'
 import languages from './languages'
 import categories from './categories'
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     programData,
     deployments,
     content,
+    content2,
     recipients,
     languages,
     categories,

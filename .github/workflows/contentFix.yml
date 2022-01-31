@@ -1,4 +1,4 @@
-name: Publish site to Staging
+name: Publish to amplio-suite-test
 
 on:
   push:
@@ -33,21 +33,16 @@ jobs:
       run: |
         cd frontend
         yarn install
-        yarn staging-build
+        yarn production-build
         cd ..
-
-    # - name: Unit Tests
-    #   run: |
-    #     yarn test:unit
 
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
-        args: --acl public-read --delete
+        args: --delete
       env:
-        AWS_S3_BUCKET: 'amplio-suite'
+        AWS_S3_BUCKET: 'amplio-suite-test'
         AWS_ACCESS_KEY_ID: ${{ secrets.TESTING__AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.TESTING__AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-west-2'
         SOURCE_DIR: 'frontend/dist'
-        DEST_DIR: 'test/'

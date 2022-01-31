@@ -34,7 +34,7 @@
           :to="`/programs/${programId}/settings/${section}`"
           :class="[$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black', index === 0 ? 'rounded-tl-lg' : '']"
           class="p-4 text-lg uppercase hover:bg-green hover:text-white">
-          {{ section }}
+          {{ ` ${sectionTitles[section] || section} ` }}
         </router-link>
       </nav>
 
@@ -97,8 +97,7 @@ export default {
       const partial = [
         this.$store.state.program.dirty,
         this.$store.state.programData.dirty,
-        this.$store.state.deployments.dirty,
-        this.$store.state.content.dirty,
+        this.$store.state.content2.changed,
         this.$store.state.recipients.dirty
       ]
 
@@ -120,7 +119,8 @@ export default {
   },
   data () {
     return {
-      sections: ['general', 'deployments', 'content', 'recipients'],
+      sections: ['general', 'content2', 'recipients'],
+      sectionTitles: {content2: 'Deployments & Content'},
       publishStatus: null,
       transitionName: 'slide-left',
       isModalOpen: false,
@@ -137,8 +137,7 @@ export default {
     const toName = sTo[sTo.length - 1]
     const fromName = sFrom[sFrom.length - 1]
 
-    const sections = this.sections.map(section => section.name)
-    this.transitionName = sections.indexOf(toName) < sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
+    this.transitionName = this.sections.indexOf(toName) < this.sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
 
     // Check if the data is save
     if (this.anyTabDirty) {
@@ -160,10 +159,7 @@ export default {
   watch: {
     deployments () {
       if (this.deployments.length > 0) {
-        this.fetchContent({
-          programId: this.programId,
-          deploymentId: this.deployments[0].id
-        })
+        this.fetchContent2({programId: this.programId});
       }
     }
   },
@@ -178,6 +174,9 @@ export default {
     ...mapActions('content', [
       'fetchContent',
     ]),
+    ...mapActions('content2', {
+      fetchContent2: 'fetchContent'
+    }),
     ...mapActions('deployments', [
       'fetchDeployments',
     ]),
