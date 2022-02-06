@@ -12,7 +12,7 @@ class Environment(Enum):
 
 class Settings(BaseSettings):
     ENVIRONMENT: Environment = Environment.DEVELOPMENT
-    BACKEND_CORS_ORIGINS: AnyHttpUrl = "http://localhost"
+    BACKEND_CORS_ORIGINS: str = "http://localhost"
 
 class Config:
     case_sensitive = True

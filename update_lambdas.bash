@@ -5,6 +5,7 @@ unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
 
 BACKEND_CORS_ORIGINS=https://suite.amplio.org
+BACKEND_CORS_ORIGINS='*'
 ENVIRONMENT=production
 
 function die() {
