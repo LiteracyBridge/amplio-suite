@@ -40,8 +40,8 @@ class CURDProgram(CRUDBase[models.Program, schemas.ProgramCreate, schemas.Progra
             .filter(recipients_models.Recipient == program.program_id) \
             .update({
                 "country": program.country,
-                "partner": program.partner,
-                "affiliate": program.affiliate,
+                # "partner": program.partner,
+                # "affiliate": program.affiliate,
             })
 
         return program

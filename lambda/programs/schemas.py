@@ -14,8 +14,8 @@ class ProgramBase(BaseSchema):
     deployments_first: str
     feedback_frequency: str
     languages: List[str]
-    partner: str
-    affiliate: str
+    # partner: str
+    # affiliate: str
 
 
 class ProgramCreate(ProgramBase):

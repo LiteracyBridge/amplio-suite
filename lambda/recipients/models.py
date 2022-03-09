@@ -22,7 +22,7 @@ class Recipient(BaseModel, SerializerMixin):
         CheckConstraint('(((recipientid)::text = lower((recipientid)::text)))', name='lowercase_recipientid_check'),
         UniqueConstraint(
             'project',
-            'partner',
+            # 'partner',
             'communityname',
             'groupname',
             'agent',
@@ -45,10 +45,10 @@ class Recipient(BaseModel, SerializerMixin):
     program_id = Column(
         'project', String, primary_key=True, index=True, nullable=False
     )
-    partner = Column(String, nullable=False)
+    # partner = Column(String, nullable=False)
     community_name = Column('communityname', String, nullable=False)
     group_name = Column('groupname', String, nullable=False)
-    affiliate = Column(String, nullable=False)
+    # affiliate = Column(String, nullable=False)
     component = Column(String, nullable=False)
     country = Column(String, nullable=False)
     region = Column(String, nullable=False)

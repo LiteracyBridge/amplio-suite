@@ -35,8 +35,8 @@ def create_recipient(
 
     recipient = {
         "id": recipient_id,
-        "partner": program.partner,
-        "affiliate": program.affiliate,
+        # "partner": program.partner,
+        # "affiliate": program.affiliate,
         "country": program.country,
         **recipient,
     }
