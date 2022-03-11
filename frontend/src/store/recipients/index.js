@@ -49,7 +49,8 @@ export default {
           .some(val => val.toString().toLowerCase().includes(text.toLowerCase()))
       )
 
-      return recipients.slice(0, state.recipientsToShow)
+      // return recipients.slice(0, state.recipientsToShow)
+      return recipients;
     }
   }
 }

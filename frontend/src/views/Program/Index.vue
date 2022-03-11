@@ -14,7 +14,7 @@
         />
         <v-tooltip
           v-if="!canPublish"
-          text="You need to add at least one deployment, one message, and one recipient before you can submit this information to the ACM"
+          text="There must be at least one deployment with a message and one recipient before this can be published to the ACM"
           position="right"
           class="my-2 ml-2"
         >
@@ -84,10 +84,7 @@ export default {
     ...mapState('program', [
       'programName',
     ]),
-    ...mapState('content', [
-      'playlists',
-    ]),
-    ...mapState('deployments', [
+    ...mapState('content2', [
       'deployments',
     ]),
     ...mapState('recipients', [
@@ -104,16 +101,9 @@ export default {
       return partial.some(Boolean)
     },
     canPublish () {
-      if (!this.playlists) return false
-
-      const hasOneMessage = (this.playlists
-        .map(playlist => playlist.messages.map(message => message.title))
-        .flat()
-        .filter(title => !title.startsWith('Message Title'))
-      ).length > 0
-
+      if (!this.deployments) return false;
+      const hasOneMessage = this.deployments.some(depl=>depl.playlists.some(pl=>pl.messages.length > 0));
       const hasOneRecipient = this.recipients.length > 0
-
       return hasOneMessage && hasOneRecipient && !this.anyTabDirty
     }
   },
@@ -128,7 +118,7 @@ export default {
     }
   },
   created () {
-    this.fetchDeployments(this.programId)
+    this.fetchContent2({programId: this.programId});
     this.fetchRecipients(this.programId)
   },
   beforeRouteUpdate (to, from, next) {
@@ -171,15 +161,9 @@ export default {
     ...mapActions('program', [
       'publishProgram',
     ]),
-    ...mapActions('content', [
-      'fetchContent',
-    ]),
     ...mapActions('content2', {
       fetchContent2: 'fetchContent'
     }),
-    ...mapActions('deployments', [
-      'fetchDeployments',
-    ]),
     ...mapActions('recipients', [
       'fetchRecipients',
     ]),

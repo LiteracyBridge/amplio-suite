@@ -343,8 +343,8 @@ export default {
     ]),
     scroll () {
       window.onscroll = () => {
-        const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
-        if (bottomOfWindow) this.addRecipientsToShow()
+        // const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
+        // if (bottomOfWindow) this.addRecipientsToShow()
       }
     },
     async onAddRecipient () {
@@ -409,7 +409,6 @@ export default {
 
   async mounted() {
     this.fetchLanguages()
-    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
   },
 }
 </script>
