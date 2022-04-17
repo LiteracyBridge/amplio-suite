@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto text-center">
     <h1 class="py-20 text-4xl text-blue font-semibold">
-      Hello, <span class="capitalize">{{ user.name }}</span>, Welcome to the Amplio Suite!
+      Hello, <span class="capitalize">{{ user.name }}</span>, welcome to the Amplio Suite!
     </h1>
 
     <font-awesome-icon
@@ -12,11 +12,11 @@
       class="mx-auto w-20 h-20" />
 
     <div v-else class="grid grid-cols-3 gap-10">
-      <router-link :to="linkTo">
+      <div @click="onProgspecClicked">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Program Specification">
           Define your requirements and complete/modify the program specification document.
         </home-box>
-      </router-link>
+      </div>
 
       <a href="https://amplio.moodlecloud.com/" target="_blank">
         <home-box img="/img/learning.png" alt="Go to the learning portal" title="2. Learning Portal">
@@ -53,13 +53,6 @@ export default {
       wizardCompleted: 'wizardCompleted',
       programStatus: state => state.status
     }),
-    linkTo () {
-      if (this.wizardCompleted || this.programId==='TEST') {
-        return `${this.$route.path}/settings`
-      } else {
-        return `${this.$route.path}/wizard`
-      }
-    }
   },
   components: {
     HomeBox
@@ -76,6 +69,16 @@ export default {
     ...mapActions('program', [
       'fetchProgram'
     ]),
+    onProgspecClicked(ev) {
+      let altKey = ev && ev.altKey;
+      let path = '';
+      if (this.wizardCompleted || altKey) {
+        path = `${this.$route.path}/settings`;
+      } else {
+        path = `${this.$route.path}/wizard`;
+      }
+      this.$router.push(path);
+    },
   }
 }
 </script>

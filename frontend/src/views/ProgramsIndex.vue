@@ -2,7 +2,7 @@
   <main class="container mx-auto text-center">
     <header class="py-16 text-blue font-semibold">
       <h1 class="text-4xl">
-        Hello, <span class="capitalize">{{ user.name }}</span>, Welcome to the Amplio Suite!
+        Hello, <span class="capitalize">{{ user.name }}</span>, welcome to the Amplio Suite!
       </h1>
       <h2 v-if="status === 'success'" class="text-2xl">Select a Program Specification</h2>
       <h2 v-else-if="status === 'error'" class="text-2xl">Error</h2>

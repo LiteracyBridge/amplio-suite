@@ -8,14 +8,11 @@ import wizard from './wizard'
 import program from './program'
 import programs from './programs'
 import programData from './programData'
-import deployments from './deployments'
-import content from './content'
 import content2 from './content2'
 import recipients from './recipients'
 import languages from './languages'
 import categories from './categories'
 import roadmap from './roadmap'
-// import listeningModels from './listeningModels'
 
 Vue.use(Vuex)
 
@@ -30,13 +27,10 @@ export default new Vuex.Store({
     program,
     programs,
     programData,
-    deployments,
-    content,
     content2,
     recipients,
     languages,
     categories,
-    // listeningModels,
     roadmap,
   }
 })

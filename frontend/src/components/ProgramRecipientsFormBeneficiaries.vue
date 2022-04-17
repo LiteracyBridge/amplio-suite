@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-form-2 items-center col-span-2">
     <div>
-      <span>{{ label }}</span>
+      <span class="float-right mr-4 text-right">{{ label }}</span>
       <v-tooltip
         v-if="showTooltip"
         text="This field cannot be greater than Direct Beneficiaries"
@@ -14,7 +14,7 @@
         />
       </v-tooltip>
     </div>
-    <v-input
+    <v-input class="recipient-number-value"
       type="number"
       :value="val"
       @input="input($event.target.value)"

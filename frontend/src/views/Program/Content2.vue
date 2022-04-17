@@ -125,7 +125,6 @@ export default {
     ProgramHeader,
     VButton,
   },
-
   methods: {
     ...mapActions('content2', [
       'fetchContent',

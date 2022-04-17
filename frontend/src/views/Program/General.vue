@@ -326,9 +326,10 @@ export default {
       console.log('nuevo click')
     }
   },
-  mounted() {
-    this.fetchLanguages()
-    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
+  async mounted() {
+    await this.fetchLanguages()
+    let numLanguages = this.supportedLanguages && this.supportedLanguages.length || -1;
+    console.log(`Fetched languages, got ${numLanguages} languages.`)
   },
 
 }

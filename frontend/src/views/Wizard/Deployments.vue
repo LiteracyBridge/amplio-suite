@@ -41,8 +41,8 @@
       type="date"
       iconLeft="calendar-alt"
       aria-labelledby="firstDeployment"
-      :min="date"
-      :value="first"
+      :min="yesterday"
+      :value="date"
       @change="setDeploymentsFirst({ first: $event.target.value, step })"
     />
   </Box>
@@ -70,14 +70,21 @@ export default {
   },
   data () {
     return {
-      date: null
+      date: null,
+      yesterday: null
     }
   },
   mounted () {
-    const date = new Date()
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const dateNumber = (date.getDate()).toString().padStart(2, '0')
-    this.date = `${date.getFullYear()}-${month}-${dateNumber}`
+    let today = new Date()
+    let date = new Date(today)
+    // Tomorrow
+    date.setDate(date.getDate() + 1);
+    const yesterday = new Date();
+    yesterday.setDate(date.getDate() - 1);
+    this.yesterday = yesterday;
+    // const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    // const dateNumber = date.getDate().toString().padStart(2, '0');
+    this.date = date; //`${date.getFullYear()}-${month}-${dateNumber}`
 
     // Auto focus
     this.$refs.deployments.$el.children[0].focus()

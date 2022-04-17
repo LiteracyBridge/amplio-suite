@@ -143,8 +143,21 @@ export default {
         .filter(lang => lang.name.toLowerCase().includes(query))
     },
 
+    /**
+     * Map a language code to a dict of {code:language-code, name:language-name, coment:whatever}
+     * If a code is not found, return {code:the-code, name:the-code, comment:the-code}
+     * @param codes
+     * @returns {*}
+     */
     mapLanguageCodesToInfo(codes) {
-      return codes.map(lc => this.supportedLanguages.find(languageInfo => languageInfo.code === lc));
+      const infos = codes.map((lc) => {
+        let languageInfo = this.supportedLanguages.find(languageInfo => languageInfo.code === lc);
+        if (!languageInfo) {
+          languageInfo = {code: lc, name: lc, comment: lc}
+        }
+        return languageInfo
+      });
+      return infos;
     },
 
   },

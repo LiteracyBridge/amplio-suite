@@ -84,10 +84,13 @@ export default {
       'addRegion',
       'removeRegion',
     ]),
+    ...mapActions('languages', [
+      'fetchLanguages',
+    ]),
     addTag (region) {
       this.options.push(region)
       this.addRegion({ region, step: this.step })
-    }
+    },
   }
 }
 </script>

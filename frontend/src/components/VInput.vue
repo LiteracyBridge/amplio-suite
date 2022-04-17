@@ -1,5 +1,5 @@
 <template>
-  <div :class="[isFocus ? 'focused' : '', mx]"  class="relative w-64 my-2 text-base bg-white field-wrapper">
+  <div :class="[isFocus ? 'focused' : '', mx]"  class="relative w-64 text-base bg-white field-wrapper">
     <div v-if="iconLeft" class="absolute left-0 pl-5 pt-2 pointer-events-none">
       <font-awesome-icon :icon="iconLeft" class="w-6 h-6 text-gray-500" />
     </div>

@@ -26,11 +26,11 @@
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 
-        <div class="pr-6 overflow-y-auto" style="max-height: 60vh;">
+        <div class="pr-6 overflow-y-auto pb-4" style="max-height: 70vh;">
           <portal-target name="modalBody" slim />
         </div>
 
-        <portal-target name="modalFooter" slim />
+        <portal-target class="border-t-2 b-gray-600 pt-4" name="modalFooter" slim />
       </section>
     </div>
     <div tabindex="0" />

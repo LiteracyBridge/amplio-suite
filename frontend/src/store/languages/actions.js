@@ -1,7 +1,7 @@
 import { getLanguages } from '@/api/languages.api'
 
 const fetchLanguages = async ({ commit, state }) => {
-  if (state.status == 'loading' || state.languages.length > 0) {
+  if (state.status == 'loading' || state.languages && state.languages.length > 0) {
     return
   }
   commit('getLanguagesRequest')

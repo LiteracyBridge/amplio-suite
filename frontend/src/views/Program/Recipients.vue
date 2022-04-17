@@ -33,14 +33,14 @@
     </header>
 
     <div v-if="status !== 'loading' && filterRecipients.length === 0">
-      <p>Please, add a recipient</p>
+      <p>Add recipients here.</p>
     </div>
 
     <div v-if="filterRecipients.length > 0" class="block pt-8 overflow-x-auto">
       <table class="w-full table-auto overflow-x-auto">
         <thead>
           <tr>
-            <th v-for="col in columns" :key="col.key">
+            <th v-for="col in columns" :key="col.key" class="text-left border-2">
               <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
                 <button
                   class="flex gap-2"
@@ -57,7 +57,7 @@
                 </button>
               </v-tooltip>
             </th>
-            <th class="px-4 py-2 text-green border-b">Actions</th>
+            <th class="px-4 py-2 text-green border-b text-left border-2">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -66,6 +66,7 @@
             :key="recipient.id"
             :class="index % 2 === 0 ? '' : 'bg-gray-200'"
             class="hover:bg-gray-400"
+            @dblclick="showEditForm(recipient, index)"
           >
             <td
               v-for="col in columns"
@@ -83,10 +84,10 @@
                   @click="onClickEdit(recipient.id)"
                 />
                 </v-tooltip>
-                <v-tooltip :width="100" :text="`Copy`">
+                <v-tooltip :width="100" :text="`Duplicate`">
                 <VButton
                   iconL="copy"
-                  :ariaLabel="`Copy recipient ${recipient.id}`"
+                  :ariaLabel="`Duplicate recipient ${recipient.id}`"
                   @click="onClickDuplicate(recipient.id)"
                 />
                 </v-tooltip>
@@ -106,16 +107,16 @@
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
-        :recipient="recipient"
+        :recipient="selectedRecipient"
         :invalidConstraint="invalidConstraint"
         :invalidBeneficiaries="invalidBeneficiaries"
       />
     </portal>
 
     <portal to="modalFooter" v-if="showModal.edit">
-      <footer v-if="recipient" class="flex justify-end gap-4">
+      <footer v-if="selectedRecipient" class="flex justify-end gap-4">
         <VButton
-          v-if="recipient.id"
+          v-if="selectedRecipient.id"
           label="Discard"
           variant="warning"
           :disabled="!dirty"
@@ -135,7 +136,7 @@
           @click="onClickSave"
         />
         <VButton
-          v-if="recipient.id"
+          v-if="selectedRecipient.id"
           label="Close"
           variant="success"
           :disabled="dirty"
@@ -233,23 +234,29 @@ export default {
     ...mapGetters('recipients', [
       'filterRecipients',
     ]),
-    recipient () {
+    selectedRecipient () {
       return this.recipients.find(reci => reci.id === this.selectedRecipientId)
     },
     tableIsFilter () {
       return this.sortTable.by !== '' || this.filterText !== ''
     },
-    isFormFill () {
-      if (!this.recipient) return null
+    /**
+     * Is the the currently selected recipient properly "filled"?
+     * @returns {null|boolean}
+     */
+    isSelectedRecipientValid () {
+      // nothing selected; can't be valid
+      if (!this.selectedRecipient) return null
 
       const requiredFields = [
         'region', 'district', 'communityName',
-        'language', 'listeningModel', 'numTbs',
-        'deployments', 'directBeneficiaries'
+        'language',
+        // 'listeningModel', 'numTbs',
+        // 'deployments', 'directBeneficiaries'
       ]
 
-      const partial = requiredFields.map(key => {
-        const value = this.recipient[key]
+      const partial = requiredFields.map(field => {
+        const value = this.selectedRecipient[field]
         if (typeof value === 'string' || value instanceof String) return value !== ''
         else if (typeof value === 'number') return value >= 0
         else if (Array.isArray(value)) return value.length > 0
@@ -258,23 +265,23 @@ export default {
       return partial.every(Boolean)
     },
     invalidConstraint () {
-      if (!this.recipient) return null
+      if (!this.selectedRecipient) return null
 
       const options = this.recipients
         .map(recipient => `${recipient.communityName}-${recipient.groupName}-${recipient.agent}`)
-      const option = `${this.recipient.communityName}-${this.recipient.groupName}-${this.recipient.agent}`
+      const option = `${this.selectedRecipient.communityName}-${this.selectedRecipient.groupName}-${this.selectedRecipient.agent}`
 
       return options.filter(opt => opt === option).length > 1
     },
     invalidBeneficiaries () {
-      if (!this.recipient) return null
+      if (!this.selectedRecipient) return null
 
-      const values = Object.values(this.recipient.directBeneficiariesAdditional)
-        .map(val => val > this.recipient.directBeneficiaries)
+      const values = Object.values(this.selectedRecipient.directBeneficiariesAdditional)
+        .map(val => val > this.selectedRecipient.directBeneficiaries)
 
       const keys = ['numHouseholds', 'groupSize']
       keys.forEach(key => {
-        const partial = this.recipient[key] > this.recipient.directBeneficiaries
+        const partial = this.selectedRecipient[key] > this.selectedRecipient.directBeneficiaries
         values.push(partial)
       })
 
@@ -293,7 +300,6 @@ export default {
   created () {
     this.fetchProgram(this.programId)
     this.fetchRecipients(this.programId)
-    this.fetchDeployments(this.programId)
 
     this.scroll()
     EventBus.$on('handleEscape', this.handleModalEscape)
@@ -324,9 +330,6 @@ export default {
     ...mapActions('program', [
       'fetchProgram',
     ]),
-    ...mapActions('deployments', [
-      'fetchDeployments',
-    ]),
     ...mapMutations('recipients', [
       'addRecipientsToShow',
     ]),
@@ -347,6 +350,12 @@ export default {
         // if (bottomOfWindow) this.addRecipientsToShow()
       }
     },
+    showEditForm(recipient, event) {
+      let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
+      console.log(`Double click ${recip}, ${event}`);
+      this.onClickEdit(recipient.id);
+    },
+
     async onAddRecipient () {
       const id = await this.addRecipient()
       this.onClickEdit(id)
@@ -366,7 +375,7 @@ export default {
     onClickSave () {
       this.onCloseModal()
 
-      if (this.isFormFill) this.updateRecipient(this.selectedRecipientId)
+      if (this.isSelectedRecipientValid) this.updateRecipient(this.selectedRecipientId)
       else this.onOpenModal('mandatory', 'Required Fields')
     },
     onClickDiscard () {
@@ -393,7 +402,7 @@ export default {
       this.showModal.mandatory = false
       this.closeModal()
 
-      if (!this.isFormFill && this.recipient.id) {
+      if (!this.isSelectedRecipientValid && this.selectedRecipient.id) {
         this.onOpenModal('edit', 'Recipient Details')
       }
     },
@@ -402,7 +411,7 @@ export default {
       this.onCloseModal()
     },
     handleModalEscape () {
-      if (this.recipient.id) this.onClickDiscard()
+      if (this.selectedRecipient.id) this.onClickDiscard()
       else this.onClickDiscardNewRecipient()
     }
   },

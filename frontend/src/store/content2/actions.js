@@ -44,8 +44,8 @@ const setDeployments = async ({ commit }, payload) => {
 }
 
 // Adds a deployment to the end of the list
-const addDeployment = async ({ commit }, rootstate) => {
-  commit('addDeployment', rootstate);
+const addDeployment = async ({ commit }, payload) => {
+  commit('addDeployment', payload);
   commit('setChanged', true);
 }
 

@@ -43,10 +43,22 @@ export default {
       'languages',
     ])
   },
+  async created() {
+    await this.fetchLanguages()
+  },
+
+  async mounted() {
+    console.log('Languages wiz mounted');
+    await this.fetchLanguages()
+    console.log('Languages wiz called fetchLanguages');
+  },
   methods: {
     ...mapActions('wizard', [
       'setLanguages',
       'deleteLanguage',
+    ]),
+    ...mapActions('languages', [
+      'fetchLanguages',
     ]),
     onLanguageSelected(language) {
       let index = this.languages.length
@@ -54,7 +66,8 @@ export default {
     },
     onLanguageDeleted(language) {
       this.deleteLanguage({ lang: language.code, step: this.step })
-    }
+    },
+
   }
 }
 </script>

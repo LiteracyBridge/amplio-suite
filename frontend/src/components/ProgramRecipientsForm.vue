@@ -20,8 +20,8 @@
       Invalid Direct Beneficiaries details
     </p>
 
-    <label class="mandatory-field" for="region">Region/State</label>
-    <multiselect
+    <label class="mandatory-field text-right" for="region" >Region/State</label>
+    <multiselect class="suppress-int-border rounded border border-solid border-gray-500"
       id="region"
       placeholder="Select a region"
       :value="recipient.region"
@@ -30,7 +30,7 @@
       @remove="(region) => removeRecipientRegion({ recipientIndex })"
     />
 
-    <label class="mandatory-field" for="district">District/County</label>
+    <label class="mandatory-field text-right" for="district">District/County</label>
     <v-input
       name="district"
       type="text"
@@ -39,40 +39,27 @@
       @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
     />
 
-    <p class="mandatory-field">Community</p>
+    <label class="mandatory-field text-right" for="community">Community</label>
     <v-input
+      name="community"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.communityName"
       @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
     />
 
-    <p>Group Name</p>
+    <label class="text-right" for="group-name">Group Name</label>
     <v-input
+      name="group-name"
       type="text"
       mx="mx-0 w-full"
       :value="recipient.groupName"
       @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
     />
 
-    <p>Agent</p>
-    <v-input
-      type="text"
-      mx="mx-0 w-full"
-      :value="recipient.agent"
-      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
-    />
-
-    <p>Agent Gender</p>
-    <multiselect
-      :options="['Male', 'Female', 'Other']"
-      :value="recipient.agentGender"
-      placeholder="Select the agent gender"
-      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
-    />
-
-    <p class="mandatory-field">Language</p>
-    <languages-selector
+    <label class="mandatory-field text-right" for="language">Language</label>
+    <languages-selector class="suppress-int-border rounded border border-solid border-gray-500"
+      name="language"
       :options="languages"
       :languages="recipient.language"
       :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
@@ -80,21 +67,57 @@
       :multiple="false"
     />
 
-    <span class="col-span-2" />
+    <div class="text-right"><!--class="flex md:col-span-3"-->
+      <label class="text-right" for="variant">Variant</label>
+      <v-tooltip
+        v-if="recipient.variant && recipient.variant.length > 2"
+        text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
+        class="my-auto ml-2"
+      >
+        <font-awesome-icon
+          class="text-orange-600"
+          icon="exclamation-circle"
+        />
+      </v-tooltip>
+    </div>
+    <v-input class="variant w-12"
+        name="variant"
+        type="text"
+        mx="mx-0"
+        :value="recipient.variant"
+        @input="setRecipientVariant({ recipientIndex, variant: $event.target.value })"
+      />
 
-    <label class="mandatory-field" for="numTalkingBooks">Number of Talking Books</label>
+    <label class="text-right" for="agent">Agent</label>
     <v-input
+      name="agent"
+      type="text"
+      placeholder="Agent, Health Worker, etc."
+      mx="mx-0 w-full"
+      :value="recipient.agent"
+      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
+    />
+
+    <label class="text-right" for="agent-gender">Agent Gender</label>
+    <multiselect class="suppress-int-border rounded border border-solid border-gray-500"
+      name="agent=gender"
+      :options="['Male', 'Female', 'Unknown']"
+      :value="recipient.agentGender"
+      placeholder="Select the agent gender"
+      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
+    />
+
+    <label class="text-right" for="numTalkingBooks">Number Talking Books</label>
+    <v-input class="recipient-number-value"
       name="numTalkingBooks"
       type="number"
-      mx="mx-0 w-full"
+      mx="mx-0 w-24"
       :value="recipient.numTbs"
       @input="setRecipientNumberTalkingBooks({ recipientIndex, numTbs: $event.target.value })"
     />
 
-    <span class="col-span-2" />
-
-    <label class="mandatory-field" for="listeningModel">Listening Model</label>
-    <multiselect
+    <label class="text-right" for="listeningModel">Listening Model</label>
+    <multiselect class="suppress-int-border rounded border border-solid border-gray-500"
       id="listeningModel"
       :options="listeningModels"
       :value="listeningModelSelected"
@@ -105,10 +128,8 @@
       placeholder="Select the listening model"
     />
 
-    <span class="col-span-2" />
-
-    <label class="mandatory-field" for="deployments">Deployments</label>
-    <multiselect
+    <label class="text-right" for="deployments">Deployments</label>
+    <multiselect class="suppress-int-border rounded border border-solid border-gray-500"
       id="deployments"
       :options="deployments"
       :value="recipient.deployments"
@@ -117,7 +138,7 @@
       :clear-on-select="false"
       :preserve-search="true"
       @input="(deployments) => setRecipientDeployments({ recipientIndex, deployments })"
-      placeholder="Select the deployments"
+      placeholder="Select the deployments, leave blank for 'all'"
     >
       <template slot="option" slot-scope="props">
         <div class="option__desc">
@@ -126,9 +147,7 @@
       </template>
     </multiselect>
 
-    <span class="col-span-2" />
-
-    <label for="supportEntity">Support Entity</label>
+    <label class="text-right" for="supportEntity">Support Entity</label>
     <v-input
       name="supportEntity"
       type="text"
@@ -137,10 +156,8 @@
       @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
     />
 
-    <span class="col-span-2" />
-
-    <div>
-      <label class="mandatory-field" for="directBeneficiaries">Direct Beneficiaries</label>
+    <div class="text-right">
+      <label class="text-right" for="directBeneficiaries">Direct Beneficiaries</label>
       <v-tooltip
         text="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
         class="ml-2"
@@ -151,7 +168,7 @@
         />
       </v-tooltip>
     </div>
-    <v-input
+    <v-input class="recipient-number-value"
       name="directBeneficiaries"
       type="number"
       mx="mx-0 w-full"
@@ -196,7 +213,7 @@
       />
     </div>
 
-    <label for="indirectBeneficiaries">Indirect beneficiaries</label>
+    <label class="text-right" for="indirectBeneficiaries">Indirect beneficiaries</label>
     <v-input
       name="indirectBeneficiaries"
       type="text"
@@ -207,28 +224,23 @@
 
     <span class="col-span-2" />
 
-    <label for="variant">Variant</label>
-    <div class="flex md:col-span-3">
-      <v-input
-        name="variant"
-        type="text"
-        mx="mx-0"
-        :value="recipient.variant"
-        @input="setRecipientVariant({ recipientIndex, variant: $event.target.value })"
-      />
-      <v-tooltip
-        v-if="recipient.variant && recipient.variant.length > 1"
-        text="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
-        class="my-auto ml-2"
-      >
-        <font-awesome-icon
-          class="text-orange-600"
-          icon="exclamation-circle"
-        />
-      </v-tooltip>
-    </div>
   </div>
 </template>
+
+<style>
+.multiselect__tags {
+  border: 0 !important;
+}
+.suppress-int-border div {
+  border: 0 !important;
+}
+.variant input {
+  width: 7rem;
+}
+.recipient-number-value input {
+  width: 6rem;
+}
+</style>
 
 <script>
 import { mapState, mapActions } from 'vuex'
@@ -274,8 +286,9 @@ export default {
       'languages',
     ]),
     deployments () {
-      return this.$store.state.deployments.deployments
-        .map(item => item.number)
+      const deployments = this.$store.state && this.$store.state.content2 && this.$store.state.content2.deployments || [];
+      let deploymentnumbers = deployments.map(item => item.deploymentnumber);
+      return deploymentnumbers;
     },
     listeningModelSelected () {
       return this.listeningModels.find(opt => opt.label === this.recipient.listeningModel)
