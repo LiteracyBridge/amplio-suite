@@ -146,13 +146,13 @@ export default {
       next()
     }
   },
-  watch: {
-    deployments () {
-      if (this.deployments.length > 0) {
-        this.fetchContent2({programId: this.programId});
-      }
-    }
-  },
+  // watch: {
+  //   deployments () {
+  //     if (this.deployments.length > 0) {
+  //       this.fetchContent2({programId: this.programId});
+  //     }
+  //   }
+  // },
   methods: {
     ...mapActions('ui', [
       'setModal',
