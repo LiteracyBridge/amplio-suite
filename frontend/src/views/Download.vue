@@ -7,8 +7,13 @@
     <section class="p-6 bg-white rounded-lg shadow-box">
       <div class="min-h-200-px py-5 text-left">
 
+        <!-- You'd think that we would use an <ol> here. But tailwind, for reasons known only to them, defines
+         "ol {list-style:none;}", which, of course, totally eviscerates <ol>. Tailwind's creators complained
+         that css is too hard, and that's not wrong, but throwing the baby out with the bath is probably not
+         the most effective first step though. But here we are, and we need to manually numbers these
+         entries, and manually keep them in order. -->
         <p class="text-2xl font-semibold">
-          1. Download and install <a class="underline text-blue" href="https://downloads.amplio.org/software/AmplioSetup.exe " download>Amplio Software</a>. This installer includes:
+          1. Download and install <a class="underline text-blue" href="https://downloads.amplio.org/software/index.html"  target="_blank">Amplio Software</a>. This installer includes:
         </p>
 
         <ul class="pl-10 pb-5 text-2xl">
@@ -33,15 +38,7 @@
         </ul>
 
         <p class="text-2xl font-semibold pb-5">
-          2. Download and install <a class="underline text-blue" href="https://www.dropbox.com/downloading" target="_blank">Dropbox</a>
-        </p>
-
-        <p class="text-2xl font-semibold pb-5">
-          3. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/" target="_blank">Audacity</a>
-        </p>
-
-         <p class="text-2xl font-semibold pb-5">
-          4. Download and install <a class="underline text-blue" href="https://www.tableau.com/products/reader" target="_blank">Tableau Reader</a>
+          2. Download and install <a class="underline text-blue" href="https://www.audacityteam.org/download/" target="_blank">Audacity</a>
         </p>
 
         <footer class="mt-10 text-center">

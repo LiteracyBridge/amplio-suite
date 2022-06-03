@@ -109,8 +109,8 @@ export default {
   },
   data () {
     return {
-      sections: ['general', 'content2', 'recipients'],
-      sectionTitles: {content2: 'Deployments & Content'},
+      sections: ['general', 'content2', 'recipients', 'importExport'],
+      sectionTitles: {content2: 'Deployments & Content', importExport: 'Bulk import/export'},
       publishStatus: null,
       transitionName: 'slide-left',
       isModalOpen: false,

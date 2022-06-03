@@ -5,15 +5,6 @@
   >
     <div tabindex="0" />
 
-    <!-- Close modal button -->
-    <div
-      tabindex="0"
-      class="absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50"
-      @click="onClickCloseModal"
-    >
-      <font-awesome-icon icon="times" />
-      <span class="text-sm">(Esc)</span>
-    </div>
 
     <div
       class="absolute p-6 bg-white text-center shadow-modal rounded-md"
@@ -21,6 +12,17 @@
       role="dialog"
       aria-modal="true"
     >
+
+      <!-- Close modal button -->
+      <div
+        tabindex="0"
+        class="absolute bg-red top-0 right-0 cursor-pointer flex flex-col items-center text-black text-sm z-50"
+        @click="onClickCloseModal"
+      >
+        <font-awesome-icon icon="times" />
+        <span class="text-sm">(Esc)</span>
+      </div>
+
       <section>
         <header v-if="title" class="mb-4 pb-2 border-b-2 b-gray-600">
           <h2 class="text-2xl text-bold">{{ title }}</h2>

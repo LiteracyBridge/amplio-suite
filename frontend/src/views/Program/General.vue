@@ -234,8 +234,28 @@ export default {
       return listeningModels;
     },
     listeningModelsSelected () {
-      return this.listeningModels
-        .map(label => this.listeningModelsOptions.find(opt => opt.label === label))
+      /**
+       * Given a listening model label from the program, find the corresponding global listening model object.
+       * @param modelLabel label to be found.
+       * @returns the global object, or a local object with the image from "Other" if not found.
+       */
+      function lmo(programListeningModel) {
+        let found = listeningModels.find(lm => lm.label === programListeningModel);
+        if (!found) found = {
+          label: programListeningModel,
+          imgUrl: "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png"
+        };
+        return found;
+      }
+      let result = [];
+      if (this) {
+        // return a list of this program's listening models, mapped to the global listening model descriptions.
+        this.listeningModels.forEach((programListeningModel) => {
+          let found = lmo(programListeningModel);
+          if (result.indexOf(found) < 0) result.push(found);
+        });
+      }
+      return result;
     },
     dirty () {
       return this.$store.state.program.dirty || this.$store.state.programData.dirty

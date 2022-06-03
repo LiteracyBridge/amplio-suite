@@ -4,11 +4,13 @@ const URL = 'https://v853rt57t9.execute-api.us-west-2.amazonaws.com/Prod'
 const PUBLISH = '/publish'
 const GET_CONTENT = '/get_content'
 const PUT_CONTENT = '/put_content'
+const DOWNLOAD = '/download'
 
 function makeInit(params) {
   params = params || {}
   const method = params.method || 'GET';
   const data = params.data || undefined;
+  const fileData = params.fileData || undefined;
   let init = {
     method: method,
     cache: 'no-cache',
@@ -17,6 +19,9 @@ function makeInit(params) {
   if (data) {
     init.body = JSON.stringify(data);
     init.headers['Content-Type'] = 'application/json';
+  } else if (fileData) {
+    init.body = fileData;
+    //init.headers['Content-Type'] = 'application/text';
   }
   return init;
 }
@@ -30,7 +35,7 @@ async function publish(programid) {
 async function getContent(programid) {
   const init = makeInit();
   const fetch_response = await fetch(`${URL}${GET_CONTENT}?programid=${programid}`, init);
-  return fetch_response.json()
+  return fetch_response.json();
 }
 
 async function putContent(programid, deployments) {
@@ -40,8 +45,23 @@ async function putContent(programid, deployments) {
   console.log(fetch_response);
 }
 
-export {
+async function getDownloadLink(programid, artifact) {
+  const init = makeInit();
+  const fetch_response = await fetch(`${URL}${DOWNLOAD}?programid=${programid}&aslink=true&artifact=${artifact}`, init);
+  return fetch_response.json();
+}
+
+async function uploadSpec(programid, fileData) {
+  const init = makeInit({method: 'POST', fileData: fileData});
+  const fetch_request = new Request(`${URL}/upload?programid=${programid}&return_diff=t`, init);
+  const fetch_response = await fetch(fetch_request);
+  return fetch_response.json();
+}
+
+  export {
   publish,
   getContent,
   putContent,
+  getDownloadLink,
+    uploadSpec,
 }

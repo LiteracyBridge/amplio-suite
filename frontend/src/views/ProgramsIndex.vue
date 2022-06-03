@@ -53,6 +53,11 @@ export default {
         if (programs.length == 1) this.selectProgram(programs[0])
       },
       immediate: true
+    },
+    'status': {
+      handler (status) {
+        if (status === 'error') this.handleLogout()
+      }
     }
   },
   created () {
@@ -66,9 +71,17 @@ export default {
     ...mapActions('programs', [
       'getAllPrograms'
     ]),
+    ...mapActions('account', [
+      'logout'
+    ]),
     async selectProgram (programId) {
       this.$router.push(`/programs/${programId}`)
+    },
+    handleLogout () {
+      this.logout()
+      this.$router.go()
     }
+
   }
 }
 </script>
