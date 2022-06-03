@@ -11,14 +11,14 @@
 
 table thead th {
   white-space: nowrap;
-  @apply px-4 py-2 text-green border-b;
+  @apply px-4 py-2 text-amplio-green border-b;
 }
 
 // For vue-multiselect
 .multiselect__tags .multiselect__placeholder {
   @apply text-label;
 }
-
+/*
 .text-blue-hover-hunder {
   @apply text-blue;
   @apply font-semibold;
@@ -28,7 +28,7 @@ table thead th {
 .text-blue-hover-hunder:hover {
   @apply underline;
 }
-
+*/
 .moving-item {
   @apply opacity-50 bg-gray-400 rounded border border-2 border-blue;
 }

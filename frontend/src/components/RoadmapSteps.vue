@@ -20,7 +20,7 @@
             <font-awesome-icon
               v-if="selected.includes(step.id)"
               icon="check"
-              class="w-4 h-4 text-green"
+              class="w-4 h-4 text-amplio-green"
             />
           </div>
         </div>

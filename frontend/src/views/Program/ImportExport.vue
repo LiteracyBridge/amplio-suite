@@ -12,25 +12,28 @@
     <div class="grid grid-cols-5">
       <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
         <div>
-          <p bg-red>On this page you can download the currently published program specification as a spreadsheet.<br/>
+          <p>On this page you can export the currently published program specification as a spreadsheet.<br/>
           <p v-if="!exportUnpublished" class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b> this will export the <em>published</em> program
             specification. If changes have been made, but not published, those won't be in the exported spreadsheet.</p>
-          <p>
-            You can upload a new program specification from a spreadsheet. If you do <em>please be sure to start
-            with a freshly downloaded spreadsheet! </em>
+            <p v-else class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b> this will export the <em>un-published</em> program
+                specification. This is not what will be used by the ACM; it uses the <em>published</em> program specification only.</p>
+            <p>
+            You can import a new program specification from a spreadsheet. If you do <em>please be sure to start
+            with a freshly exported spreadsheet! </em> After you upload a program specification spreadsheet you'll
+                have an opportunity to review and approve the changes before they're stored into the database.
           </p>
         </div>
       </div>
       <div class="flex flex-col gap-2">
         <VButton class="export-button"
           label="Export Spreadsheet"
-          variant="bg-gray-200"
+          variant="bg-indigo-200 hover:bg-indigo-400"
           @click="onExportProgramSpec"
          />
 
         <VButton class="import-button"
-          label="Import Spreadsheet"
-          variant="bg-red-200 hover:bg-red-400"
+          label="Upload Spreadsheet"
+          variant="bg-orange-200 hover:bg-orange-400"
           @click="onImportProgramSpec"
         />
       </div>
@@ -86,7 +89,7 @@
 
 <script>
 
-import { /*mapState, mapGetters, mapMutations,*/ mapActions } from 'vuex'
+import {mapActions} from 'vuex'
 
 // import VInput from '@/components/VInput'
 import VButton from '@/components/VButton'
@@ -204,18 +207,17 @@ export default {
     },
 
     async readFileData(file, encode) {
-      const promise = new Promise( (resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = function (readerEvt) {
-          var binaryString = readerEvt.target.result;
-          resolve(encode?btoa(binaryString):binaryString);
-        };
-        reader.onerror = evt => {
-          reject(evt);
-        };
-        reader.readAsBinaryString(file);
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function (readerEvt) {
+              var binaryString = readerEvt.target.result;
+              resolve(encode ? btoa(binaryString) : binaryString);
+          };
+          reader.onerror = evt => {
+              reject(evt);
+          };
+          reader.readAsBinaryString(file);
       });
-      return promise;
     },
 
   },

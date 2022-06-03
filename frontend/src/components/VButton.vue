@@ -1,3 +1,4 @@
+<!--suppress CssUnusedSymbol -->
 <template>
   <component
     :is="tag"
@@ -122,7 +123,7 @@ export default {
   @apply bg-gray-200;
 }
 .button.success {
-  @apply text-white bg-green;
+  @apply text-white bg-amplio-green;
 }
 .button.submit {
   @apply text-white bg-blue;

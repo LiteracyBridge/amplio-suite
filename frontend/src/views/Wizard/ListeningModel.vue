@@ -33,7 +33,7 @@
         </p>
         <Check
           v-if="listeningModels.includes(opt.label)"
-          class="absolute top-41 left-41 w-8 h-8 text-green pointer-events-none"
+          class="absolute top-41 left-41 w-8 h-8 text-amplio-green pointer-events-none"
         />
       </div>
     </div>

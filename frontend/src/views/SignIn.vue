@@ -57,7 +57,7 @@
       </div>
 
       <p class="text-sm mt-4">
-        No account? <router-link class="text-green font-bold" to="/register">Sign Up</router-link>
+        No account? <router-link class="text-amplio-green font-bold" to="/register">Sign Up</router-link>
       </p>
     </div>
   </main>

@@ -32,8 +32,8 @@
           v-for="(section, index) in sections"
           :key="section"
           :to="`/programs/${programId}/settings/${section}`"
-          :class="[$route.path.endsWith(section) ? 'bg-green text-white' : 'text-black', index === 0 ? 'rounded-tl-lg' : '']"
-          class="p-4 text-lg uppercase hover:bg-green hover:text-white">
+          :class="[$route.path.endsWith(section) ? 'bg-amplio-green text-white' : 'text-black', index === 0 ? 'rounded-tl-lg' : '']"
+          class="p-4 text-lg uppercase hover:bg-amplio-green hover:text-white">
           {{ ` ${sectionTitles[section] || section} ` }}
         </router-link>
       </nav>

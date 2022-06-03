@@ -63,7 +63,7 @@
       </div>
 
       <p class="text-sm mt-4">
-        Already have login and password? <router-link class="text-green font-bold" to="/login">Sign in</router-link>
+        Already have login and password? <router-link class="text-amplio-green font-bold" to="/login">Sign in</router-link>
       </p>
     </div>
   </main>

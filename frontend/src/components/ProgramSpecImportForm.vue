@@ -2,8 +2,8 @@
   <div class="items-center text-left">
     <!--UPLOAD-->
     <form enctype="multipart/form-data" novalidate>
-      <div class="dropTarget">
-        <input type="file" single
+      <div class="dropTarget bg-cyan-100">
+        <input type="file"
                @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                class="input-file">
@@ -19,7 +19,8 @@
     <footer class="flex justify-end gap-4 mt-5">
       <VButton
         type="success"
-        label="Import"
+        label="Upload"
+        :disabled="!file"
         @click="$emit('ok', file)"
       />
       <VButton
@@ -62,7 +63,7 @@ export default {
 .dropTarget {
   outline: 2px dashed grey; /* the dash box */
   outline-offset: -10px;
-  background: lightcyan;
+  /*background: lightcyan;*/
   color: dimgray;
   padding: 10px 10px;
   min-height: 200px; /* minimum height */

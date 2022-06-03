@@ -5,7 +5,7 @@
     </div>
 
     <div class="mb-4 pb-4 rounded-md shadow-box">
-      <header class="p-4 text-white text-xl text-center font-bold uppercase bg-green rounded-t-md">
+      <header class="p-4 text-white text-xl text-center font-bold uppercase bg-amplio-green rounded-t-md">
         <h2>Launch checklist</h2>
       </header>
 
@@ -16,7 +16,7 @@
           :on-click="toggleStep"
         />
 
-        <p class="text-green text-xl text-center font-bold">READY TO LAUNCH</p>
+        <p class="text-amplio-green text-xl text-center font-bold">READY TO LAUNCH</p>
 
         <steps
           :options="launchOptions"

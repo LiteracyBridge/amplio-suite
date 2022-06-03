@@ -57,7 +57,7 @@
                 </button>
               </v-tooltip>
             </th>
-            <th class="px-4 py-2 text-green border-b text-left border-2">Actions</th>
+            <th class="px-4 py-2 text-amplio-green border-b text-left border-2">Actions</th>
           </tr>
         </thead>
         <tbody>

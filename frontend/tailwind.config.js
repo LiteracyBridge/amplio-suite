@@ -24,7 +24,9 @@ module.exports = {
       },
       colors: {
         label: '#4f5a65',
-        green: '#289b6a',
+          // Previously had this definition, which hides the "standard" bg-green-200 etc.
+          //green: '#289b6a',
+          'amplio-green': '#289b6a',
         blue: '#475caa',
         'semi-transparent': 'hsla(0, 0%, 4%, .2)',
         'semi-transparent-darken': 'hsla(0, 0%, 4%, .3)',
