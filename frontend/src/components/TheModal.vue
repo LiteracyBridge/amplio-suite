@@ -28,7 +28,7 @@
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 
-        <div class="pr-6 overflow-y-auto pb-4" style="max-height: 70vh;">
+        <div class="overflow-y-auto" style="max-height: 70vh;">
           <portal-target name="modalBody" slim />
         </div>
 
@@ -48,7 +48,7 @@ export default {
   computed: {
     ...mapState('ui', {
       isOpen: state => state.modal.isOpen,
-      title: state => state.modal.title
+      title: state => state.modal.title || 'closed'
     })
   },
   mounted () {

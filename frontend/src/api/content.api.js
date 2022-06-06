@@ -58,10 +58,18 @@ async function uploadSpec(programid, fileData) {
   return fetch_response.json();
 }
 
+async function approveSpec(programid, publish) {
+    const init = makeInit({method: 'GET'});
+    const fetch_request = new Request(`${URL}/accept?programid=${programid}&publish=${publish?'t':'f'}`, init);
+    const fetch_response = await fetch(fetch_request);
+    return fetch_response.json();
+}
+
   export {
   publish,
   getContent,
   putContent,
   getDownloadLink,
-    uploadSpec,
+      uploadSpec,
+      approveSpec,
 }

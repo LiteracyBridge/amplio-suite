@@ -9,7 +9,10 @@
 }
 
 .has-dialog {
-  overflow: hidden;
+  /* It's not clear why this is here. turning 'overflow:hidden' off and on makes the scroll bar appear and
+  disappear, which causes the display to jump slightly. The esthetics seem slightly better without this option.
+   */
+  /*overflow: hidden;*/
 }
 
 // Use [:focus-visible polyfill](https://github.com/WICG/focus-visible) to show

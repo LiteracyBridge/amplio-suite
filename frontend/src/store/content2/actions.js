@@ -1,6 +1,6 @@
 // Import the API to load/store content.
 
-import {getContent, getDownloadLink, putContent, uploadSpec as uploadSpecFile} from '@/api/content.api'
+import {getContent, getDownloadLink, putContent, uploadSpec as uploadSpecFile, approveSpec as approveSpecFile} from '@/api/content.api'
 
 const getExportLink = async({ state }, payload) => {
   const {programId, artifact} = payload;
@@ -15,13 +15,23 @@ const getExportLink = async({ state }, payload) => {
 };
 
 const uploadSpec = async({ state }, payload) => {
-  const {programId, fileData} = payload;
-  if (state.status === 'loading') return;
-  try {
-    return await uploadSpecFile(programId, fileData);
-  } catch (error) {
-    return null;
-  }
+    const {programId, fileData} = payload;
+    if (state.status === 'loading') return;
+    try {
+        return await uploadSpecFile(programId, fileData);
+    } catch (error) {
+        return null;
+    }
+};
+
+const approveSpec = async({ state }, payload) => {
+    const {programId, publish} = payload;
+    if (state.status === 'loading') return;
+    try {
+        return await approveSpecFile(programId, publish);
+    } catch (error) {
+        return null;
+    }
 };
 
 // Fetch the content from the server. payload must have a member .programId.
@@ -193,7 +203,8 @@ export default {
   updateContent,
 
   getExportLink,
-  uploadSpec,
+    uploadSpec,
+    approveSpec,
 
   setDeployments,
   addDeployment,
