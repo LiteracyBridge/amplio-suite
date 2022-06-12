@@ -56,6 +56,13 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: '/programs/:programId/tableau',
+    name: 'tableau',
+    props: true,
+    component: () => import(/* webpackChunkName: "tableau" */ '../views/Tableau.vue'),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/programs/:programId/wizard',
     redirect: { name: 'step-program-name' },
     props: true,

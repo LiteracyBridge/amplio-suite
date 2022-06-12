@@ -103,34 +103,41 @@ export default {
       'programs'
     ]),
     options() {
-      let opts = [
-        {
+      let items = [];
+      // Menu items in order. These first ones are not dependent on having a programId.
+      items.push({
           name: 'Analytics Dashboard',
           link: 'https://dashboard.amplio.org/',
           target: '_blank'
-        },
-        {
+        });
+      items.push({
           name: 'Learning Portal',
           link: 'https://amplio.moodlecloud.com/',
           target: '_blank'
-        },
-        {
-          name: 'Software Installation',
-          link: '/download',
-          tag: 'router-link'
-        }
-      ]
+        });
 
+      // Menu items that depend on having a programId
       if (this.programId) {
-        const opt = {
+        items.push({
           name: 'Program Specification',
           link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
           tag: 'router-link'
-        }
-        opts = [...opts.slice(0, 2), opt, ...opts.slice(2)]
+        });
+        items.push({
+          name: 'Tableau Analytics',
+          link: `/programs/${this.programId}/tableau`,
+          tag: 'router-link'
+        });
       }
 
-      return opts
+      // Items not dependent on a programId
+      items.push({
+          name: 'Software Installation',
+          link: '/download',
+          tag: 'router-link'
+        });
+
+      return items
     },
   },
   data () {
