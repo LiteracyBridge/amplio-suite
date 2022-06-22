@@ -17,12 +17,13 @@
         </p>
 
         <ul class="pl-10 pb-5 text-2xl">
-          <li class="block">
+          <!--li class="block">
+            < !-- We do not make Java available to the user, and they don't have to do anything, so why show it? -- >
             <span class="inline-flex items-center">
               <font-awesome-icon icon="check" class="w-4 h-4 pr-3 text-gray-500" />
               Java
             </span>
-          </li>
+          </li-->
           <li class="block">
             <span class="inline-flex items-center">
               <font-awesome-icon icon="check" class="w-4 h-4 pr-3 text-gray-500" />

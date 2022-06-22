@@ -10,21 +10,13 @@
         <div class="grid grid-cols-5">
             <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
                 <div>
-                    <p>On this page you can export the current published program specification as a spreadsheet.<br/>
-                    <p v-if="!exportUnpublished" class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b>
-                        this will export the <em>published</em> program
-                        specification. If changes have been made, but not published, those won't be in the exported
-                        spreadsheet.</p>
-                    <p v-else class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b> this
-                        will export the <em>un-published</em> program
-                        specification. This is not what will be used by the ACM; it uses the <em>published</em> program
-                        specification only.</p>
-                    <p>
-                        You can import a new program specification from a spreadsheet. If you do <em>please be sure to
-                        start with a freshly exported spreadsheet!</em> After you upload a program specification
-                        spreadsheet you'll have an opportunity to review and approve the changes before they're saved
-                        in the database.
-                    </p>
+                    <p>On this page you can:</p>
+                    <ul>
+                        <li class="import-export-list">Export the current published program specification as a
+                            spreadsheet.
+                        </li>
+                        <li class="import-export-list">Import a program specification spreadsheet.</li>
+                    </ul>
                 </div>
             </div>
             <div class="flex flex-col gap-2">
@@ -33,7 +25,28 @@
                          variant="bg-indigo-200 hover:bg-indigo-400"
                          @click="onExportProgramSpec"
                 />
+            </div>
 
+            <div class="col-span-4 mr-4 ml-4">
+                <div v-if="showUnpublishedOption">
+                    <input type="checkbox" id="checkbox" v-model="exportUnpublished">
+                    <label for="checkbox"> Export the un-published program specification.</label>
+                </div>
+            </div>
+
+            <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
+                <div>
+                    <p v-if="!exportUnpublished" class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b>
+                        this will export the <em>published</em> program specification. If there are changes that are not
+                        published, those won't be in the exported spreadsheet.</p>
+                    <p v-else class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"><b>Remember:</b> this
+                        will export the <em>un-published</em> program
+                        specification. This is not what will be used by the ACM; it uses the <em>published</em> program
+                        specification only.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
                 <VButton class="import-button"
                          label="Upload Spreadsheet"
                          variant="bg-orange-200 hover:bg-orange-400"
@@ -41,10 +54,14 @@
                 />
             </div>
 
-            <div class="col-span-4 mr-4 ml-4">
-                <div v-if="showUnpublishedOption">
-                    <input type="checkbox" id="checkbox" v-model="exportUnpublished">
-                    <label for="checkbox"> Export the un-published program specification.</label>
+
+            <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
+                <div>
+                    <p class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded">
+                        <b>Remember:</b> Always start from a <em>recently exported spreadsheet!</em> First, please
+                        upload your program specification spreadsheet. You'll then have an opportunity to review the
+                        changes. If you approve the changes, they'll be saved in the database.
+                    </p>
                 </div>
             </div>
 
@@ -106,7 +123,7 @@
                 </div>
                 <div class="flex justify-end gap-4 mt-3">
                     <VButton
-                        label="Approve and Import"
+                        :label="publishImported?'Import and Publish':'Import'"
                         type="success"
                         @click="onApprove()"
                     />
@@ -131,9 +148,14 @@
     left: 45%;
     width: 4rem;
 }
+
 .diff-spinner {
     /* slide it up a little more for "Pubish the imported progspec" */
     top: calc(50% - 3rem);
+}
+
+.import-export-list {
+    list-style: square inside;
 }
 </style>
 
@@ -236,7 +258,7 @@ export default {
             let diffs = result && result.diff || [];
             this.diffs = diffs.map((line) => line.replace(/^ */, (match) => "\xa0\xa0".repeat(match.length)));
             console.log(this.diffs);
-            this.onOpenModal('showDiffs', 'Approve Program Specification Import');
+            this.onOpenModal('showDiffs', 'Import Program Specification');
         },
 
         async onApprove() {

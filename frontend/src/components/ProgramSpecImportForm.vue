@@ -1,7 +1,7 @@
 <template>
     <div class="items-center text-left">
-        <p>Choose the spreadsheet to upload here. In the next step you'll be shown the differences from the
-        current Program Specification, and be given an opportunity to approve or cancel the import.</p>
+        <p>Choose the spreadsheet to upload here. Next, you'll see the differences from the current Program
+            Specification. You will have an opportunity to approve or cancel the import.</p>
         <!--Choose file to upload-->
         <form enctype="multipart/form-data" novalidate class="mt-2">
             <div class="dropTarget">
@@ -10,7 +10,7 @@
                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                        class="input-file h-full">
                 <div v-if="file != null">
-                    <p v-if="contentHidden"> </p>
+                    <p v-if="contentHidden"></p>
                     <p v-else>{{ file.name }}</p>
                 </div>
                 <p v-else>
