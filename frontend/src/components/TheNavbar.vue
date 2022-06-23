@@ -90,6 +90,8 @@ import DropDown from '@/components/TheNavbarDropDown'
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
+const IMPLEMENT_TABLEAU_LINK = false;
+
 export default {
   mounted () {
     this.getAllPrograms()
@@ -123,11 +125,13 @@ export default {
           link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
           tag: 'router-link'
         });
-        items.push({
-          name: 'Tableau Analytics',
-          link: `/programs/${this.programId}/tableau`,
-          tag: 'router-link'
-        });
+        if (IMPLEMENT_TABLEAU_LINK) {
+            items.push({
+                name: 'Tableau Analytics',
+                link: `/programs/${this.programId}/tableau`,
+                tag: 'router-link'
+            });
+        }
       }
 
       // Items not dependent on a programId
@@ -135,6 +139,11 @@ export default {
           name: 'Software Installation',
           link: '/download',
           tag: 'router-link'
+        });
+        items.push({
+            name: 'User Feedback Processing',
+            link: 'https://userfeedback.amplio.org/',
+            target: '_blank'
         });
 
       return items

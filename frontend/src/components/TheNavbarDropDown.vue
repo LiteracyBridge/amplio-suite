@@ -16,7 +16,7 @@
     />
 
     <!-- Options -->
-    <div v-if="isOpen" class="absolute left-0 ml-2 mt-1 w-48 z-20 bg-white rounded-lg shadow-xl">
+    <div v-if="isOpen" class="absolute left-0 ml-2 mt-1 w-64 z-20 bg-white rounded-lg shadow-xl">
       <component
         v-for="(opt, index) in options"
         :key="index"
