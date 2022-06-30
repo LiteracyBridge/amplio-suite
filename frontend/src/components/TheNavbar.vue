@@ -90,7 +90,7 @@ import DropDown from '@/components/TheNavbarDropDown'
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
-const IMPLEMENT_TABLEAU_LINK = false;
+const ENABLE_TABLEAU_LINK = false;
 
 export default {
   mounted () {
@@ -125,7 +125,7 @@ export default {
           link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
           tag: 'router-link'
         });
-        if (IMPLEMENT_TABLEAU_LINK) {
+        if (ENABLE_TABLEAU_LINK || this.tableauOption) {
             items.push({
                 name: 'Tableau Analytics',
                 link: `/programs/${this.programId}/tableau`,
@@ -152,6 +152,7 @@ export default {
   data () {
     return {
       isOpen: false,
+        tableauOption: false,
     }
   },
   components: {
@@ -174,6 +175,13 @@ export default {
       this.logout()
       this.$router.go()
     }
-  }
+  },
+    created() {
+        let urlParams = new URLSearchParams(window.location.search);
+        let tableau = urlParams.get('tableau');
+        // Only turn the option on. Refresh the page to turn off.
+        if (tableau)
+            this.tableauOption = true;
+    },
 }
 </script>
