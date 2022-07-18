@@ -46,7 +46,7 @@ export default class CognitoAuth {
   // a function that will allow existing users to
   // authenticate with our application
   authenticate (username, pass, cb) {
-    let authenticationData = { Username: username, Password: pass }
+    let authenticationData = { Username: username, Password: pass , ValidationData: {Application: 'Amplio Suite'}}
     let authenticationDetails = new AuthenticationDetails(authenticationData)
     let userData = { Username: username, Pool: this.userPool }
     let cognitoUser = new CognitoUser(userData)
