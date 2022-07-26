@@ -12,7 +12,18 @@ module.exports = {
       .use('vue-svg-loader')
       .loader('vue-svg-loader')
 
-    if (process.env.NODE_ENV === 'production') {
+      config.module
+          .rule('vue')
+          .use('vue-loader')
+          .tap(options => ({
+              ...options,
+              compilerOptions: {
+                  // treat any tag that starts with tableau- as custom elements
+                  isCustomElement: tag => tag.startsWith('tableau-')
+              }
+          }))
+
+      if (process.env.NODE_ENV === 'production') {
       const gzipPlugin = config.plugin('gzip')
       gzipPlugin
         .use(CompressionPlugin, [{
