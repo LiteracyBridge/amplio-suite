@@ -28,14 +28,16 @@ const fetchProgram = async ({ commit, state, rootState }, programId) => {
   commit('resetState')
   commit('requestInit')
   commit('setprogramId', programId)
-  commit('wizard/resetState', null, { root: true })
-  commit('programData/resetState', null, { root: true })
+  commit('wizard/resetState', null, { root: true });
+  commit('content2/resetState', null, { root: true });
+  commit('programData/resetState', null, { root: true });
 
   try {
-    const program = await getProgram(programId)
-    commit('setProgram', program)
+    const programData = await getProgram(programId)
+    commit('setProgram', programData)
     commit('setWizardCompleted', true)
-    commit('programData/setProgramData', program, { root: true })
+    commit('programData/setProgramData', programData, { root: true })
+    commit('requestSuccess');
   } catch (err) {
     console.log('ERROR', err.response)
     commit('requestError')

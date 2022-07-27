@@ -118,7 +118,7 @@ export default {
     }
   },
   created () {
-    this.fetchContent2({programId: this.programId});
+    this.fetchContent({programId: this.programId});
     this.fetchRecipients(this.programId)
   },
   beforeRouteUpdate (to, from, next) {
@@ -161,9 +161,9 @@ export default {
     ...mapActions('program', [
       'publishProgram',
     ]),
-    ...mapActions('content2', {
-      fetchContent2: 'fetchContent'
-    }),
+    ...mapActions('content2', [
+      'fetchContent',
+    ]),
     ...mapActions('recipients', [
       'fetchRecipients',
     ]),

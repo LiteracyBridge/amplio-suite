@@ -1,13 +1,18 @@
 // Import the API to load/store content.
 
-import {getContent, getDownloadLink, putContent, uploadSpec as uploadSpecFile, approveSpec as approveSpecFile} from '@/api/content.api'
+import {
+    approveSpec as approveSpecFile,
+    getContent,
+    getDownloadLink,
+    putContent,
+    uploadSpec as uploadSpecFile
+} from '@/api/content.api'
 
 const getExportLink = async({ state }, payload) => {
   const {programId, artifact} = payload;
   if (state.status === 'loading') return;
   try {
-    const link = await getDownloadLink(programId, artifact);
-    return link;
+      return await getDownloadLink(programId, artifact);
   } catch (error) {
     // TODO: return an error message.
     return null;
@@ -24,9 +29,13 @@ const uploadSpec = async({ state }, payload) => {
     }
 };
 
-const approveSpec = async({ state }, payload) => {
+const approveSpec = async({ state, commit }, payload) => {
     const {programId, publish} = payload;
     if (state.status === 'loading') return;
+    commit('resetState');
+    commit('recipients/resetState', null, { root: true });
+    commit('programData/resetState', null, { root: true });
+    commit('program/resetState', null, { root: true });
     try {
         return await approveSpecFile(programId, publish);
     } catch (error) {

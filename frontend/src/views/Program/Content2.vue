@@ -172,16 +172,13 @@ export default {
 
   },
 
-  created() {
-    this.fetchProgram(this.programId)
+   created() {
+      this.fetchProgram(this.programId)
+      this.fetchCategories();
+      this.fetchLanguages();
+      this.fetchContent({programId: this.programId});
+      console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
   },
-
-  async mounted() {
-    this.fetchCategories();
-    this.fetchLanguages()
-    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
-  },
-
 
 }
 </script>

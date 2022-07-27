@@ -216,15 +216,13 @@ export default {
     ...mapState('programData', [
       'country',
       'region',
-      // 'partner',
-      // 'affiliate',
       'languages',
       'listeningModels',
     ]),
     ...mapGetters('recipients', [
       'labelUsed'
     ]),
-    ...mapState('programData', {
+      ...mapState('programData', {
       directBeneficiariesLabels: state => Object.keys(state.directBeneficiariesMap)
         .map(key => ({ key, value: state.directBeneficiariesMap[key] })),
       directBeneficiariesAdditionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
@@ -236,7 +234,7 @@ export default {
     listeningModelsSelected () {
       /**
        * Given a listening model label from the program, find the corresponding global listening model object.
-       * @param modelLabel label to be found.
+       * @param programListeningModel label to be found.
        * @returns the global object, or a local object with the image from "Other" if not found.
        */
       function lmo(programListeningModel) {
@@ -271,8 +269,8 @@ export default {
     ProgramHeader,
   },
   created () {
-    this.fetchProgram(this.programId)
-    this.fetchRecipients(this.programId)
+      this.fetchProgram(this.programId)
+      this.fetchLanguages();
   },
   watch: {
     region: {
@@ -306,8 +304,6 @@ export default {
       'setCountry',
       'addRegion',
       'removeRegion',
-      // 'setPartner',
-      // 'setAffiliate',
       'setLanguages',
       'deleteLanguage',
       'toggleListening',
@@ -345,11 +341,6 @@ export default {
     spam () {
       console.log('nuevo click')
     }
-  },
-  async mounted() {
-    await this.fetchLanguages()
-    let numLanguages = this.supportedLanguages && this.supportedLanguages.length || -1;
-    console.log(`Fetched languages, got ${numLanguages} languages.`)
   },
 
 }

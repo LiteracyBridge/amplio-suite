@@ -1,4 +1,6 @@
 // Map db model to store model
+import { getDefaultState } from './index'
+
 const responseToRecipient = (response) => ({
   id: response.id,
   communityName: response.community_name,
@@ -21,6 +23,10 @@ const responseToRecipient = (response) => ({
   directBeneficiariesAdditional: response.direct_beneficiaries_additional,
   indirectBeneficiaries: response.indirect_beneficiaries,
 })
+
+const resetState = (state) => {
+    Object.assign(state, getDefaultState());
+};
 
 const setDirty = (state, status) => {
   state.dirty = status
@@ -198,6 +204,8 @@ const setRecipientsIndirectBeneficiaries = (state, payload) => {
 }
 
 export default {
+    resetState,
+
   setDirty,
   requestInit,
   requestError,

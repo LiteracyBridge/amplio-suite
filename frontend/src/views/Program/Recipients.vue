@@ -298,10 +298,10 @@ export default {
   },
 
   created () {
-    this.fetchProgram(this.programId)
-    this.fetchRecipients(this.programId)
+      this.fetchProgram(this.programId)
+      this.fetchRecipients(this.programId)
+      this.fetchLanguages()
 
-    this.scroll()
     EventBus.$on('handleEscape', this.handleModalEscape)
   },
 
@@ -344,12 +344,6 @@ export default {
       'removeRecipient',
       'discardRecipient',
     ]),
-    scroll () {
-      window.onscroll = () => {
-        // const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= ( document.documentElement.offsetHeight - 50)
-        // if (bottomOfWindow) this.addRecipientsToShow()
-      }
-    },
     showEditForm(recipient, event) {
       let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
       console.log(`Double click ${recip}, ${event}`);
@@ -414,10 +408,6 @@ export default {
       if (this.selectedRecipient.id) this.onClickDiscard()
       else this.onClickDiscardNewRecipient()
     }
-  },
-
-  async mounted() {
-    this.fetchLanguages()
   },
 }
 </script>
