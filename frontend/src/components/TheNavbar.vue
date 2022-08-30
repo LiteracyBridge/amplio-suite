@@ -125,7 +125,7 @@ export default {
           link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
           tag: 'router-link'
         });
-        if (ENABLE_TABLEAU_LINK || this.tableauOption) {
+        if (ENABLE_TABLEAU_LINK || this.tableauOption || this.programId==='CARE-HTI' || this.programId==='ILC-MW-R2R') {
             items.push({
                 name: 'Tableau Analytics',
                 link: `/programs/${this.programId}/tableau`,

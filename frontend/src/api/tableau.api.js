@@ -23,7 +23,7 @@ async function getTableauJwt(programid) {
   const init = makeInit();
   let url = `${URL}${GET_JWT}`
   if (programid) {
-    url += `?programid=${programid}&user=lisa@amplio.org`;
+    url += `?programid=${programid}`;
   }
   const fetch_response = await fetch(url, init);
   let result = fetch_response.json();

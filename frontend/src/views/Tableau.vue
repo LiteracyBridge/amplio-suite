@@ -15,8 +15,6 @@
 import {mapState, mapActions} from 'vuex'
 import {getTableauJwt} from '@/api/tableau.api'
 
-const db1 = 'https://10ay.online.tableau.com/t/amplio/views/Ready2Read/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link';
-const db2 = 'https://10ay.online.tableau.com/t/amplio/views/Ready2Read/Dashboard3?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link';
 
 export default {
     props: ['programId'],
@@ -25,12 +23,9 @@ export default {
             'programName',
         ]),
         workbook() {
-            if (this.programId === 'ILC-MW-R2R')
-                return db1;
-            else if (this.programId === 'LANDESA-LR')
-                return db2;
-            else
-                return db2;
+            let url = `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
+            console.log(`URL for Tableau Viz: ${url}`);
+            return url;
         }
     },
     components: {},
@@ -51,7 +46,7 @@ export default {
         const viz = document.getElementById("tableauViz");
         viz.token = this.jwt;
         viz.src = this.workbook;
-        console.log(this.jwt);
+        console.log(`Tableau mounted. URL: ${this.workbook}`);
     },
     methods: {
         ...mapActions('program', [
