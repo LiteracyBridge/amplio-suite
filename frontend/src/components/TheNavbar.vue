@@ -90,7 +90,7 @@ import DropDown from '@/components/TheNavbarDropDown'
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
-const ENABLE_TABLEAU_LINK = false;
+const ENABLE_TABLEAU_LINK = true;
 
 export default {
   mounted () {

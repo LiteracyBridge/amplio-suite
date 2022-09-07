@@ -4,9 +4,15 @@
             <h1 class="text-2xl text-blue">{{ programName }} Analytics</h1>
         </div>
 
-        <tableau-viz id="tableauViz"
-                     toolbar="hidden">
-        </tableau-viz>
+        <div id="tableauHolder" :class="tableauVisibility">
+            <tableau-viz id="tableauViz"
+                         toolbar="hidden">
+            </tableau-viz>
+        </div>
+        <div class="py-6 px-4 flex justify-start"
+        @if="tableauUnavailable">
+            <h1 class="text-2xl text-blue">Tableau Analytics for this program are not available at the present time.</h1>
+        </div>
 
     </main>
 </template>
@@ -26,7 +32,15 @@ export default {
             let url = `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
             console.log(`URL for Tableau Viz: ${url}`);
             return url;
-        }
+        },
+        tableauVisibility() {
+            const gotJwt = !(!this.jwt || this.jwt['error']==="Not found");
+            return gotJwt ? '' : 'visually_hidden';
+        },
+        tableauUnavailable() {
+            const noJwt = (!this.jwt || this.jwt['error']==="Not found");
+            return noJwt;
+        },
     },
     components: {},
     data() {
