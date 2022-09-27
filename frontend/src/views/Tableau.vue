@@ -9,9 +9,8 @@
                          toolbar="hidden">
             </tableau-viz>
         </div>
-        <div class="py-6 px-4 flex justify-start"
-        @if="tableauUnavailable">
-            <h1 class="text-2xl text-blue">Tableau Analytics for this program are not available at the present time.</h1>
+        <div class="py-6 px-4 flex justify-start">
+            <h1 class="text-2xl text-blue" :class="messageVisibility">Tableau Analytics for this program are not available at the present time.</h1>
         </div>
 
     </main>
@@ -29,17 +28,16 @@ export default {
             'programName',
         ]),
         workbook() {
-            let url = `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
-            console.log(`URL for Tableau Viz: ${url}`);
-            return url;
+            return `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
         },
         tableauVisibility() {
             const gotJwt = !(!this.jwt || this.jwt['error']==="Not found");
             return gotJwt ? '' : 'visually_hidden';
         },
-        tableauUnavailable() {
-            const noJwt = (!this.jwt || this.jwt['error']==="Not found");
-            return noJwt;
+        messageVisibility() {
+            // Show when "jwt" is an error message.
+            const showMessage = this.jwt && this.jwt.error;
+            return showMessage ? '' : 'visually_hidden';
         },
     },
     components: {},
@@ -53,14 +51,13 @@ export default {
         tableauScript.setAttribute('type', 'module');
         tableauScript.setAttribute('src', 'https://online.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js');
         document.head.appendChild(tableauScript);
-        console.log('loaded tableau-viz');
     },
     async mounted() {
+        this.jwt = null; // hide message while attempting fetch of jwt
         this.jwt = await getTableauJwt(this.programId);
         const viz = document.getElementById("tableauViz");
         viz.token = this.jwt;
         viz.src = this.workbook;
-        console.log(`Tableau mounted. URL: ${this.workbook}`);
     },
     methods: {
         ...mapActions('program', [
