@@ -265,13 +265,17 @@ export default {
       return partial.every(Boolean)
     },
     invalidConstraint () {
+        // All of the recipients are from the current program, so don't have a "program" property.
+        const key = (recip) =>
+            `${recip.country}-${recip.region}-${recip.district}-` +
+            `${recip.communityName}-${recip.groupName}-${recip.agent}-${recip.language}`;
+
       if (!this.selectedRecipient) return null
 
-      const options = this.recipients
-        .map(recipient => `${recipient.communityName}-${recipient.groupName}-${recipient.agent}`)
-      const option = `${this.selectedRecipient.communityName}-${this.selectedRecipient.groupName}-${this.selectedRecipient.agent}`
+      const allKeys = this.recipients.map(recipient => key(recipient));
+      const thisKey = key(this.selectedRecipient);
 
-      return options.filter(opt => opt === option).length > 1
+      return allKeys.filter(key => key === thisKey).length > 1
     },
     invalidBeneficiaries () {
       if (!this.selectedRecipient) return null

@@ -9,7 +9,7 @@
       class="col-span-2 md:col-span-4 text-center text-red-500"
     >
       <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
-      Community, Group Name and Agent combination must be unique.
+      Region, District, Community, Group, Agent, and Language combination must be unique.
     </p>
 
     <p
