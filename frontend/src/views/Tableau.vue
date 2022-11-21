@@ -16,6 +16,14 @@
     </main>
 </template>
 
+<!--suppress CssUnusedSymbol -->
+<style scoped>
+/* Used to show/hide the TableauViz component. */
+.noTableau {
+    display: none ;
+}
+</style>
+
 <script>
 import {mapState, mapActions} from 'vuex'
 import {getTableauJwt} from '@/api/tableau.api'
@@ -32,7 +40,9 @@ export default {
         },
         tableauVisibility() {
             const gotJwt = !(!this.jwt || this.jwt['error']==="Not found");
-            return gotJwt ? '' : 'visually_hidden';
+            // 'visually_hidden' leaves the TableauWiz in a state from which it never recovers, so it never appears.
+            // Instead, use the traditional "display: none;" style.
+            return gotJwt ? '' : 'noTableau';
         },
         messageVisibility() {
             // Show when "jwt" is an error message.
