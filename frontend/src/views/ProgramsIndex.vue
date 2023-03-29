@@ -18,7 +18,7 @@
 
         <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pb-16">
             <div
-                v-for="(programId, index) in programs"
+                v-for="(programId, index) in programsList"
                 :key="index"
                 tabindex="0"
                 class="p-6 h-full bg-white rounded-lg shadow-box cursor-pointer hover:shadow-hover"
@@ -63,7 +63,17 @@ export default {
         ]),
         ...mapState('account', [
             'user'
-        ])
+        ]),
+        programsList() {
+            // Map from name to programid
+            let idsMap = {}
+            this.programs.forEach(id=>idsMap[this.programNames[id]] = id);
+            // names in sorted order
+            let names = Object.values(this.programNames).sort();
+            // ids in sorted-name order
+            let ids = names.map(name=>idsMap[name]);
+            return ids;
+        },
     },
     watch: {
         'programs': {
