@@ -1,19 +1,23 @@
-import { getPrograms } from '@/api/programs.api'
+import {getPrograms2} from '@/api/programs.api'
 
-const getAllPrograms = async ({ commit, state }) => {
-  if (state.status == 'loading') return
+const getProgramsList = async ({commit, state}) => {
+    if (state.status === 'loading') return
 
-  commit('requestInit')
+    commit('requestInit')
 
-  try {
-    const allPrograms = await getPrograms()
-    await commit('setAllPrograms', allPrograms)
-  } catch (error) {
-    commit('requestError')
-    commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
-  }
+    try {
+        const getProgramsResult = await getPrograms2();
+        const programsList = getProgramsResult['result']['programs'];
+        const programIdsList = Object.keys(programsList).sort();
+        let programNamesMap = {};
+        programIdsList.forEach(id=> {programNamesMap[id] = programsList[id].name;});
+        await commit('setProgramsList', {programIds:programIdsList, programNames:programNamesMap});
+    } catch (error) {
+        commit('requestError');
+        commit('ui/setNotification', {type: 'alert', text: error.toString()}, {root: true});
+    }
 }
 
 export default {
-  getAllPrograms
+    getProgramsList
 }

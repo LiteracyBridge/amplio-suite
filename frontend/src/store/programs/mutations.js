@@ -1,18 +1,20 @@
 const requestInit = (state) => {
-  state.status = 'loading'
+    state.status = 'loading'
 }
 
 const requestError = (state) => {
-  state.status = 'error'
+    state.status = 'error'
 }
 
-const setAllPrograms = (state, programs) => {
-  state.status = 'success'
-  state.programs = programs
+const setProgramsList = (state, values) => {
+    state.status = 'success';
+    state.programs = values.programIds;
+    state.programNames = values.programNames;
+    console.log(`ids: ${state.programs}, names: ${state.programNames}`);
 }
 
 export default {
-  requestInit,
-  requestError,
-  setAllPrograms,
+    requestInit,
+    requestError,
+    setProgramsList,
 }
