@@ -188,9 +188,12 @@ export default {
         },
         programNameSelected(programName) {
             // A program name was selected. Search for the name and open the corresponding program, by programid.
-            for (var programId in this.programs) {
+            for (var idIx in this.programs) {
+                let programId = this.programs[idIx];
                 if (this.programNames[programId] === programName) {
-                    this.$router.push(`/programs/${programId}`);
+                    let route = `/programs/${programId}`;
+                    console.log(`router push( ${route} )`);
+                    this.$router.push(route);
                     return;
                 }
             }

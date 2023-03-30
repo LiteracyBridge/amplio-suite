@@ -10,7 +10,6 @@ const setProgramsList = (state, values) => {
     state.status = 'success';
     state.programs = values.programIds;
     state.programNames = values.programNames;
-    console.log(`ids: ${state.programs}, names: ${state.programNames}`);
 }
 
 export default {

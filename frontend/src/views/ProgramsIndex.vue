@@ -107,7 +107,9 @@ export default {
             return this.programNames[programId];
         },
         async selectProgram(programId) {
-            this.$router.push(`/programs/${programId}`)
+            let route = `/programs/${programId}`;
+            console.log(`router push( ${route} )`);
+            this.$router.push(route);
         },
         handleLogout() {
             this.logout()
