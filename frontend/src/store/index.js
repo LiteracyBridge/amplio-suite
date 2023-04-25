@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import ui from './ui'
 import account from './account'
-import wizard from './wizard'
-
+import categories from './categories'
+import languages from './languages'
 import programs from './programs'
 import programspec from './programspec'
-import languages from './languages'
-import categories from './categories'
 import roadmap from './roadmap'
+import uf from './uf'
+import ui from './ui'
+import wizard from './wizard'
 
 Vue.use(Vuex)
 
@@ -17,14 +17,14 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
 
   modules: {
-    ui,
-    account,
-    wizard,
-
-    programs,
+      account,
+      categories,
+      languages,
+      programs,
       programspec,
-    languages,
-    categories,
-    roadmap,
+      roadmap,
+      uf,
+      ui,
+      wizard,
   }
 })

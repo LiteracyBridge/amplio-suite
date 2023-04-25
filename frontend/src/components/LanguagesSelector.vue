@@ -20,7 +20,7 @@
       :custom-label="(opt) => opt.name||opt.code||opt"
       label="name"
       track-by="code"
-      placeholder="Type a language to add"
+      :placeholder="placeholder"
       @select="onLanguageSelected"
       @remove="onLanguageDeleted"
       @search-change="onSearch"
@@ -75,7 +75,11 @@ export default {
     multiple: {
       type: Boolean,
       default: true
-    }
+    },
+    placeholder: {
+        type: String,
+        default: 'Type a language to add'
+    },
   },
 
   components: {

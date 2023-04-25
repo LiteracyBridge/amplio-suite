@@ -17,8 +17,8 @@
     </label>
     <!-- remove the 'focus:...' properties to make focus more standard. -->
     <input
-      :class="[iconLeft ? 'pl-12' : 'pl-5', iconRight ? 'pr-12' : 'pr-5']"
-      class="w-full block py-2 rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+      :class="[iconLeft ? 'pl-12' : 'pl-5', iconRight ? 'pr-12' : 'pr-5', py]"
+      class="w-full block rounded border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
       :value="value"
       :name="name === '' ? false : name"
       :id="name === '' ? false : name"
@@ -54,6 +54,10 @@ export default {
     mx: {
       type: String,
       default: 'mx-auto'
+    },
+    py: {
+        type: String,
+        default: 'py-2'
     }
   },
   data () {

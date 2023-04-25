@@ -141,11 +141,16 @@ const routes = [
         props: true,
         component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/Recipients.vue')
       },
-      {
-        path: 'importExport',
-        props: true,
-        component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/ImportExport.vue')
-      },
+        {
+            path: 'importExport',
+            props: true,
+            component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/ImportExport.vue')
+        },
+        {
+            path: 'ufImportExport',
+            props: true,
+            component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/UfImportExport.vue')
+        },
     ]
   },
     {

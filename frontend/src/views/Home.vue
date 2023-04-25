@@ -11,7 +11,7 @@
       pulse
       class="mx-auto w-20 h-20" />
 
-    <div v-else class="grid grid-cols-3 gap-10">
+    <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-10">
       <div @click="onProgspecClicked">
         <home-box img="/img/plan.png" alt="plan and prepare the programs" title="1. Program Specification">
           Define your requirements and complete/modify the program specification document.
@@ -29,6 +29,19 @@
           Monitor user engagement and feedback through the Amplio Dashboard
         </home-box>
       </a>
+
+<!--        <div @click="onUfSurveyClicked">-->
+<!--            <home-box img="/img/uf-spec.png" alt="Upload or download a user feedback survey spec" title="4. User Feedback Survey Specification">-->
+<!--                Work with your User Feedback survey specification.-->
+<!--            </home-box>-->
+<!--        </div>-->
+
+<!--        <div @click="onControlCenterClicked">-->
+<!--            <home-box img="/img/control.png" alt="View the control center" title="5. Control Center">-->
+<!--                View progress of deployments in the Control Center.-->
+<!--            </home-box>-->
+<!--        </div>-->
+
     </div>
 
     <p class="mt-10 text-lg">
@@ -79,6 +92,26 @@ export default {
       }
       this.$router.push(path);
     },
+      onUfSurveyClicked(ev) {
+          let altKey = ev && ev.altKey;
+          let path = '';
+          if (this.wizardCompleted || altKey) {
+              path = `${this.$route.path}/settings`;
+          } else {
+              path = `${this.$route.path}/wizard`;
+          }
+          this.$router.push(path);
+      },
+      onControlCenterClicked(ev) {
+          let altKey = ev && ev.altKey;
+          let path = '';
+          if (this.wizardCompleted || altKey) {
+              path = `${this.$route.path}/settings`;
+          } else {
+              path = `${this.$route.path}/wizard`;
+          }
+          this.$router.push(path);
+      },
   }
 }
 </script>

@@ -237,7 +237,7 @@
 .variant input {
   width: 7rem;
 }
-.recipient-number-value input {
+.deployment-number-value input {
   width: 6rem;
 }
 </style>
