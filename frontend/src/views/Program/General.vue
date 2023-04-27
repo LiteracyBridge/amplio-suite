@@ -1,18 +1,20 @@
 <template>
-  <section class="relative p-6 pt-0">
-    <loading v-if="status === 'loading'" class="-ml-6 rounded-b-lg" />
+    <section class="relative min-h-200-px p-6 pt-0">
+        <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg"/>
 
     <program-header
       title="General"
-      :dirty="dirty"
-      :canSave="dirty"
+      :changed="changed"
+      :canSave="changed"
       :description="description"
-      :onSaveChanges="updateProgram"
-      :onDiscardChanges="() => fetchProgram(this.programId)"
+      :onSaveChanges="updateSpec"
+      :onDiscardChanges="() => fetchSpec({programId:this.programId})"
     />
 
     <div class="min-h-200-px my-5 text-center">
-      <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
+        <!-- Separater line between heading and content -->
+        <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600"/>
+        <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
         <label for="programName">Program Name</label>
         <v-input
           id="programName"
@@ -75,8 +77,8 @@
           :close-on-select="false"
           :clear-on-select="false"
           :preserve-search="true"
-          @select="(model) => toggleListening(model.label)"
-          @remove="(model) => toggleListening(model.label)"
+          @select="(model) => toggleListeningModel(model.label)"
+          @remove="(model) => toggleListeningModel(model.label)"
           placeholder="Select the listening model"
         />
         <font-awesome-icon
@@ -209,25 +211,20 @@ import listeningModels from '@/data/listeningModels.json'
 export default {
   props: ['programId'],
   computed: {
-    ...mapState('program', [
-      'status',
-      'programName'
+      ...mapState('programspec', {
+          'status': (state)=>state.status,
+
+          'programName': (state)=>state.general.name,
+          'country': (state)=>state.general.country,
+          'region': (state)=>state.general.region,
+          'languages': (state)=>state.general.languages,
+          'listeningModels': (state)=>state.general.listening_models,
+      }),
+    ...mapGetters('programspec', [
+      'labelUsed',
+        'directBeneficiariesLabels',
+        'directBeneficiariesAdditionalLabels',
     ]),
-    ...mapState('programData', [
-      'country',
-      'region',
-      'languages',
-      'listeningModels',
-    ]),
-    ...mapGetters('recipients', [
-      'labelUsed'
-    ]),
-      ...mapState('programData', {
-      directBeneficiariesLabels: state => Object.keys(state.directBeneficiariesMap)
-        .map(key => ({ key, value: state.directBeneficiariesMap[key] })),
-      directBeneficiariesAdditionalLabels: state => Object.keys(state.directBeneficiariesAdditionalMap)
-        .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] })),
-    }),
     listeningModelsOptions() {
       return listeningModels;
     },
@@ -255,8 +252,8 @@ export default {
       }
       return result;
     },
-    dirty () {
-      return this.$store.state.program.dirty || this.$store.state.programData.dirty
+    changed () {
+      return this.$store.state.programspec.changed;
     },
   },
   components: {
@@ -269,7 +266,6 @@ export default {
     ProgramHeader,
   },
   created () {
-      this.fetchProgram(this.programId)
       this.fetchLanguages();
   },
   watch: {
@@ -295,25 +291,23 @@ export default {
       'setModal',
       'closeModal'
     ]),
-    ...mapActions('program', [
-      'fetchProgram',
-      'updateProgram',
-      'setProgramName',
-    ]),
-    ...mapActions('programData', [
-      'setCountry',
-      'addRegion',
-      'removeRegion',
-      'setLanguages',
-      'deleteLanguage',
-      'toggleListening',
-      'setDirectBeneficiariesLabel',
-      'setDirectBeneficiariesAdditionalLabel',
-      'addDirectBeneficiariesAdditionalLabel',
-      'deleteDirectBeneficiariesAdditionalLabel',
-    ]),
-    ...mapActions('recipients', [
-      'fetchRecipients',
+    ...mapActions('programspec', [
+        'ensureSpec',
+        'fetchSpec',
+        'updateSpec',
+
+        'setProgramName',
+
+        'setCountry',
+        'addRegion',
+        'removeRegion',
+        'setLanguages',
+        'deleteLanguage',
+        'toggleListeningModel',
+        'setDirectBeneficiariesLabel',
+        'setDirectBeneficiariesAdditionalLabel',
+        'addDirectBeneficiariesAdditionalLabel',
+        'deleteDirectBeneficiariesAdditionalLabel',
     ]),
     ...mapActions('languages', [
       'fetchLanguages',

@@ -68,10 +68,9 @@ export default {
     }
   },
   computed: {
-    // The selected goals are placed here.
-    ...mapState('programData', [
-      'goals'
-    ]),
+      ...mapState('programspec', {
+          goals: (state)=>state.general.sustainable_development_goals,
+      }),
   },
   components: {
     Box,

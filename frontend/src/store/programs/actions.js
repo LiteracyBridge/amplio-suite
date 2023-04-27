@@ -1,4 +1,4 @@
-import {getPrograms2} from '@/api/programs.api'
+import {getPrograms} from '@/api/generalQueries.api'
 
 const getProgramsList = async ({commit, state}) => {
     if (state.status === 'loading') return
@@ -6,7 +6,7 @@ const getProgramsList = async ({commit, state}) => {
     commit('requestInit')
 
     try {
-        const getProgramsResult = await getPrograms2();
+        const getProgramsResult = await getPrograms();
         const programsList = getProgramsResult['result']['programs'];
         const programIdsList = Object.keys(programsList).sort();
         let programNamesMap = {};

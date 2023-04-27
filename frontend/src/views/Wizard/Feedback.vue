@@ -42,9 +42,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('programData', [
-      'feedbackFrequently',
-    ])
+    ...mapState('programspec', {
+        feedbackFrequently: (state)=>state.general.feedback_frequency,
+    })
   },
   components: {
     Box

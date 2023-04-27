@@ -5,11 +5,8 @@ import ui from './ui'
 import account from './account'
 import wizard from './wizard'
 
-import program from './program'
 import programs from './programs'
-import programData from './programData'
-import content2 from './content2'
-import recipients from './recipients'
+import programspec from './programspec'
 import languages from './languages'
 import categories from './categories'
 import roadmap from './roadmap'
@@ -24,11 +21,8 @@ export default new Vuex.Store({
     account,
     wizard,
 
-    program,
     programs,
-    programData,
-    content2,
-    recipients,
+      programspec,
     languages,
     categories,
     roadmap,

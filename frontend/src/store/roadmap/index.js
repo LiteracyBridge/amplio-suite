@@ -1,10 +1,10 @@
-import { getRoadmap, putRoadmap } from '@/api/roadmap.api'
+import { getRoadmap, putRoadmap } from '@/api/generalQueries.api'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    dirty: false,
+    changed: false,
     status: '',
     programId: '',
 
@@ -12,15 +12,15 @@ export default {
   }),
 
   mutations: {
-    setDirty (state, status) {
-      state.dirty = status
+    setChanged (state, changed) {
+      state.changed = changed
     },
     getRoadmapRequest (state) {
       state.status = 'loading'
     },
     getRoadmapSuccess (state, payload) {
       state.status = 'success'
-      state.dirty = false
+      state.changed = false
       state.roadmap = payload.completed
       state.programId = payload.program_code || payload.program_id
     },
@@ -38,7 +38,7 @@ export default {
   actions: {
     async fetchRoadmap ({ commit, state }, programId) {
       if (state.status == 'loading') return
-      if (state.programId === programId && !state.dirty) return
+      if (state.programId === programId && !state.changed) return
 
       commit('getRoadmapRequest')
 
@@ -51,10 +51,11 @@ export default {
     },
     async updateRoadmap ({ commit, state }) {
       const { programId, roadmap } = state
+      if (!state.changed) return;
 
       try {
         await putRoadmap(programId, roadmap)
-        commit('setDirty', false)
+        commit('setChanged', false)
       } catch (error) {
         commit('requestError')
         commit('ui/setNotification', { type: 'alert', text: error.toString() }, { root: true })
@@ -66,7 +67,7 @@ export default {
       if (index > -1) commit('removeStep', index)
       else commit('addStep', stepId)
 
-      commit('setDirty', true)
+      commit('setChanged', true)
     }
   }
 }

@@ -59,10 +59,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('programData', [
-      'country',
-      'region',
-    ])
+      ...mapState('programspec', {
+          country: (state) => state.general.country,
+          region: (state) => state.general.region,
+
+      }),
   },
   components: {
     Box,

@@ -49,8 +49,8 @@ export default {
     ...mapState('account', [
       'user'
     ]),
-    ...mapState('program', {
-      wizardCompleted: 'wizardCompleted',
+    ...mapState('programspec', {
+      wizardCompleted: ()=>true,
       programStatus: state => state.status
     }),
   },
@@ -59,15 +59,15 @@ export default {
   },
   watch: {
     '$route' () {
-      this.fetchProgram(this.programId)
+      this.fetchSpec({programId: this.programId});
     }
   },
   created () {
-    this.fetchProgram(this.programId)
+    this.fetchSpec({programId: this.programId})
   },
   methods: {
-    ...mapActions('program', [
-      'fetchProgram'
+      ...mapActions('programspec', [
+          'fetchSpec',
     ]),
     onProgspecClicked(ev) {
       let altKey = ev && ev.altKey;

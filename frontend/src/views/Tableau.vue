@@ -25,16 +25,16 @@
 </style>
 
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState} from 'vuex'
 import {getTableauJwt} from '@/api/tableau.api'
 
 
 export default {
     props: ['programId'],
     computed: {
-        ...mapState('program', [
-            'programName',
-        ]),
+        ...mapState('programspec', {
+            programName: (state)=>state.general.name,
+        }),
         workbook() {
             return `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
         },
@@ -68,11 +68,6 @@ export default {
         const viz = document.getElementById("tableauViz");
         viz.token = this.jwt;
         viz.src = this.workbook;
-    },
-    methods: {
-        ...mapActions('program', [
-            'fetchProgram'
-        ]),
     },
 
 }

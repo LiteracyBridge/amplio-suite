@@ -98,7 +98,7 @@ export default {
   },
 
   computed: {
-    ...mapState('content2', [
+    ...mapState('programspec', [
       'deployments'
     ]),
 
@@ -158,7 +158,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('content2', [
+    ...mapActions('programspec', [
       'removePlaylist',
       'setPlaylistTitle',
       'setPlaylistAudience',

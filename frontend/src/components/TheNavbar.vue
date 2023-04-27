@@ -100,12 +100,14 @@ const ENABLE_TABLEAU_LINK = true;
 export default {
     mounted() {
         this.getProgramsList()
+        this.fetchLanguages()
+        this.fetchCategories()
     },
     computed: {
-        ...mapState('program', [
-            'programId',
-            'wizardCompleted',
-        ]),
+        ...mapState('programspec', {
+            'programId': (state)=>state.general.program_id,
+            wizardCompleted: ()=>true, // TODO: figure out how to get to SDG and Listening Model selection.
+        }),
         ...mapState('programs', [
             'programs',
             'programNames'
@@ -170,12 +172,40 @@ export default {
 
             return items
         },
+        programName() {
+            try {
+                // Program spec name, fall back to program name, fall back to program id.
+                // (Program data is loaded before the full program spec).
+                const specName = this.$store.state.programspec.general.name ||
+                    this.$store.state.program.programName ||
+                    this.$store.state.program.programId
+                console.log(`Spec name: ${specName}, selected name: ${this.selectedName}`)
+                return specName || this.selectedName || null;
+            } catch(ignored) {
+                return null;
+            }
+        }
+    },
+    watch: {
+        loadedProgramName: {
+            immediate: true,
+            handler() {
+                console.log(`Loaded name: ${this.loadedProgramName}`);
+            }
+        },
+        general: {
+            immediate: true,
+            handler() {
+                console.log(`Spec name: ${this.general.name}`)
+            }
+        },
     },
     data() {
         return {
             isOpen: false,
             tableauOption: false,
-            expandWhenActive: ""
+            expandWhenActive: "",
+            selectedName: "",
         }
     },
     components: {
@@ -187,6 +217,12 @@ export default {
     methods: {
         ...mapActions('programs', [
             'getProgramsList'
+        ]),
+        ...mapActions('languages', [
+            'fetchLanguages',
+        ]),
+        ...mapActions('categories', [
+            'fetchCategories',
         ]),
         ...mapActions('account', [
             'logout'
@@ -206,6 +242,7 @@ export default {
                 if (this.programNames[programId] === programName) {
                     let route = `/programs/${programId}`;
                     console.log(`router push( ${route} )`);
+                    this.selectedName = programName;
                     this.$router.push(route);
                     return;
                 }

@@ -81,35 +81,27 @@ export default {
     VSnackbars,
   },
   computed: {
-    ...mapState('program', [
-      'programName',
-    ]),
-    ...mapState('content2', [
+    ...mapState('programspec', [
       'deployments',
-    ]),
-    ...mapState('recipients', [
       'recipients',
     ]),
-    anyTabDirty () {
-      const partial = [
-        this.$store.state.program.dirty,
-        this.$store.state.programData.dirty,
-        this.$store.state.content2.changed,
-        this.$store.state.recipients.dirty
-      ]
-
-      return partial.some(Boolean)
+      programName() {
+        return this.$store.state.programspec.general.name;
+      },
+    anyTabChanged () {
+      return this.$store.state.programspec.changed;
     },
     canPublish () {
       if (!this.deployments) return false;
       const hasOneMessage = this.deployments.some(depl=>depl.playlists.some(pl=>pl.messages.length > 0));
       const hasOneRecipient = this.recipients.length > 0
-      return hasOneMessage && hasOneRecipient && !this.anyTabDirty
+      return hasOneMessage && hasOneRecipient && !this.anyTabChanged
     }
   },
   data () {
     return {
       sections: ['general', 'content2', 'recipients', 'importExport'],
+        internal: {general: true, content2: true, recipients: true},
       sectionTitles: {content2: 'Deployments & Content', importExport: 'Import/Export'},
       publishStatus: null,
       transitionName: 'slide-left',
@@ -117,11 +109,11 @@ export default {
       showSnackbar: false,
     }
   },
-  created () {
-    this.fetchContent({programId: this.programId});
-    this.fetchRecipients(this.programId)
+  async created () {
+    await this.fetchSpec({programId: this.programId});
   },
   beforeRouteUpdate (to, from, next) {
+    const isInternalNavigation = () => this.internal[fromName] && this.internal[toName];
     const sTo = to.path.split('/')
     const sFrom = from.path.split('/')
     const toName = sTo[sTo.length - 1]
@@ -130,7 +122,7 @@ export default {
     this.transitionName = this.sections.indexOf(toName) < this.sections.indexOf(fromName) ? 'slide-right' : 'slide-left'
 
     // Check if the data is save
-    if (this.anyTabDirty) {
+    if (this.anyTabChanged && !isInternalNavigation()) {
       this.handleOpenModal()
       next(false)
     } else {
@@ -139,7 +131,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     // Check if the data is save
-    if (this.anyTabDirty) {
+    if (this.anyTabChanged) {
       this.handleOpenModal()
       next(false)
     } else {
@@ -158,20 +150,15 @@ export default {
       'setModal',
       'closeModal'
     ]),
-    ...mapActions('program', [
-      'publishProgram',
-    ]),
-    ...mapActions('content2', [
-      'fetchContent',
-    ]),
-    ...mapActions('recipients', [
-      'fetchRecipients',
+      ...mapActions('programspec', [
+          'fetchSpec',
+          'publishSpec',
     ]),
     async onPublish () {
       if (!this.canPublish) return
 
       this.publishStatus = 'loading'
-      this.publishStatus = await this.publishProgram()
+      this.publishStatus = await this.publishSpec()
       if (this.publishStatus === 'success') this.showSnackbar = true
     },
     handleOpenModal () {

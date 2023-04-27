@@ -92,6 +92,8 @@ export default {
     created() {
         this.closeNotification()
         this.getProgramsList()
+        this.getLanguages()
+        this.getCategories()
     },
     methods: {
         ...mapActions('ui', [
@@ -99,6 +101,12 @@ export default {
         ]),
         ...mapActions('programs', [
             'getProgramsList'
+        ]),
+        ...mapActions('languages', [
+            'fetchLanguages',
+        ]),
+        ...mapActions('categories', [
+            'fetchCategories',
         ]),
         ...mapActions('account', [
             'logout'

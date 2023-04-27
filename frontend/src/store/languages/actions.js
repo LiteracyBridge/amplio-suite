@@ -1,4 +1,4 @@
-import { getLanguages } from '@/api/languages.api'
+import { getLanguages } from '@/api/generalQueries.api'
 
 const fetchLanguages = async ({ commit, state }) => {
   if (state.status == 'loading' || state.languages && state.languages.length > 0) {

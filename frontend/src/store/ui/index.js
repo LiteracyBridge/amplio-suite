@@ -1,6 +1,6 @@
 import actions from './actions'
 import mutations from './mutations'
-import getters from './getters'
+// import getters from './getters'
 
 export const getModalDefaultState = () => ({
   isOpen: false,
@@ -23,5 +23,5 @@ export default {
 
   mutations,
   actions,
-  getters
+  // getters
 }

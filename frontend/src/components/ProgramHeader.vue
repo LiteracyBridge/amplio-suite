@@ -1,7 +1,7 @@
 <template>
   <header>
     <h2 class="visually_hidden">{{ title }}</h2>
-
+    <!-- h2>{{ title }}: {{ description }}</h2 -->
     <div class="grid grid-cols-5 items-center">
       <div class="col-span-4 mr-4">
         <font-awesome-icon icon="exclamation-circle" class="w-6 h-6 text-gray-500" />
@@ -12,7 +12,7 @@
         <VButton
           label="Discard Changes"
           variant="warning-light"
-          :disabled="!dirty"
+          :disabled="!changed"
           @click="onDiscardChanges"
         />
         <VButton
@@ -39,7 +39,7 @@ export default {
       type: String,
       required: true
     },
-    dirty: {
+    changed: {
       type: Boolean,
       required: true
     },

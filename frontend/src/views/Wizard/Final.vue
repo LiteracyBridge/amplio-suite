@@ -51,10 +51,8 @@ export default {
     ...mapState('wizard', {
       wizarsIsComplete: 'isComplete'
     }),
-    ...mapState('program', [
-      'status'
-    ]),
-    ...mapState('programData', [
+    ...mapState('programspec', [
+        'status',
       'programId'
     ]),
     title () {
@@ -70,13 +68,13 @@ export default {
     if (!this.wizarsIsComplete) {
     this.addCompletedStep(this.step)
       this.setWizardIsCompleted()
-      await this.createProgram()
+      // await this.createProgram()
     }
   },
   methods: {
-    ...mapActions('program', [
-      'createProgram'
-    ]),
+    // ...mapActions('program', [
+    //   'createProgram'
+    // ]),
     ...mapActions('wizard', {
       setWizardIsCompleted: 'setIsCompleted',
       addCompletedStep: 'addCompletedStep'

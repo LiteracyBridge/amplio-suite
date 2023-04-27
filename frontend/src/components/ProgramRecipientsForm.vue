@@ -26,8 +26,8 @@
       placeholder="Select a region"
       :value="recipient.region"
       :options="regionsOptions"
-      @select="(region) => addRecipientRegion({ recipientIndex, region })"
-      @remove="(region) => removeRecipientRegion({ recipientIndex })"
+      @select="(region) => onSetRecipientValue({field:'region', value:region})"
+      @remove="(region) => onSetRecipientValue({field:'region', value:''})"
     />
 
     <label class="mandatory-field text-right" for="district">District/County</label>
@@ -36,7 +36,7 @@
       type="text"
       mx="mx-0 w-full"
       :value="recipient.district"
-      @input="setRecipientDistrict({ recipientIndex, district: $event.target.value })"
+      @input="onSetRecipientValue({field:'district', value:$event.target.value})"
     />
 
     <label class="mandatory-field text-right" for="community">Community</label>
@@ -44,8 +44,8 @@
       name="community"
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.communityName"
-      @input="setRecipientCommunity({ recipientIndex, community: $event.target.value })"
+      :value="recipient.communityname"
+      @input="onSetRecipientValue({field:'communityname', value:$event.target.value})"
     />
 
     <label class="text-right" for="group-name">Group Name</label>
@@ -53,8 +53,8 @@
       name="group-name"
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.groupName"
-      @input="setRecipientGroupName({ recipientIndex, groupName: $event.target.value })"
+      :value="recipient.groupname"
+      @input="onSetRecipientValue({field:'groupname', value:$event.target.value})"
     />
 
     <label class="mandatory-field text-right" for="language">Language</label>
@@ -62,8 +62,8 @@
       name="language"
       :options="languages"
       :languages="recipient.language"
-      :onLanguageSelected="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
-      :onLanguageDeleted="({ name, code }) => setRecipientLang({ recipientIndex, lang: code })"
+      :onLanguageSelected="({ name, code }) => onSetRecipientValue({field:'language', value:code})"
+      :onLanguageDeleted="({ name, code }) => onSetRecipientValue({field:'language', value:''})"
       :multiple="false"
     />
 
@@ -85,7 +85,7 @@
         type="text"
         mx="mx-0"
         :value="recipient.variant"
-        @input="setRecipientVariant({ recipientIndex, variant: $event.target.value })"
+        @input="onSetRecipientValue({field:'variant', value:$event.target.value})"
       />
 
     <label class="text-right" for="agent">Agent</label>
@@ -95,16 +95,16 @@
       placeholder="Agent, Health Worker, etc."
       mx="mx-0 w-full"
       :value="recipient.agent"
-      @input="setRecipientAgent({ recipientIndex, agent: $event.target.value })"
+      @input="onSetRecipientValue({field:'agent', value:$event.target.value})"
     />
 
     <label class="text-right" for="agent-gender">Agent Gender</label>
     <multiselect class="suppress-int-border rounded border border-solid border-gray-500"
       name="agent=gender"
       :options="['Male', 'Female', 'Unknown']"
-      :value="recipient.agentGender"
+      :value="recipient.agent_gender"
       placeholder="Select the agent gender"
-      @input="(gender) => setRecipientAgentGender({ recipientIndex, gender })"
+      @input="(gender) => onSetRecipientValue({field:'agent_gender', value:gender})"
     />
 
     <label class="text-right" for="numTalkingBooks">Number Talking Books</label>
@@ -112,8 +112,8 @@
       name="numTalkingBooks"
       type="number"
       mx="mx-0 w-24"
-      :value="recipient.numTbs"
-      @input="setRecipientNumberTalkingBooks({ recipientIndex, numTbs: $event.target.value })"
+      :value="recipient.numtbs"
+      @input="onSetRecipientValue({field:'numtbs', value:$event.target.value})"
     />
 
     <label class="text-right" for="listeningModel">Listening Model</label>
@@ -123,8 +123,8 @@
       :value="listeningModelSelected"
       label="label"
       trackBy="label"
-      @select="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.label })"
-      @remove="(listeningModel) => setRecipientListeningModel({ recipientIndex, listeningModel: listeningModel.label })"
+      @select="(listeningModel) => onSetRecipientValue({field:'listening_model', value:listeningModel.label})"
+      @remove="(listeningModel) => onSetRecipientValue({field:'listening_model', value:''})"
       placeholder="Select the listening model"
     />
 
@@ -137,7 +137,7 @@
       :close-on-select="false"
       :clear-on-select="false"
       :preserve-search="true"
-      @input="(deployments) => setRecipientDeployments({ recipientIndex, deployments })"
+      @input="(deployments) => onSetRecipientValue({field:'deployments', value:deployments})"
       placeholder="Select the deployments, leave blank for 'all'"
     >
       <template slot="option" slot-scope="props">
@@ -152,8 +152,8 @@
       name="supportEntity"
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.supportEntity"
-      @input="setRecipientSupportEntity({ recipientIndex, supportEntity: $event.target.value })"
+      :value="recipient.supportentity"
+      @input="onSetRecipientValue({field:'support_entity', value:$event.target.value})"
     />
 
     <div class="text-right">
@@ -172,8 +172,8 @@
       name="directBeneficiaries"
       type="number"
       mx="mx-0 w-full"
-      :value="recipient.directBeneficiaries"
-      @input="setRecipientDirectBeneficiaries({ recipientIndex, directBeneficiaries: $event.target.value })"
+      :value="recipient.direct_beneficiaries"
+      @input="onSetRecipientValue({field:'direct_beneficiaries', value:$event.target.value})"
     />
 
     <div class="col-span-2 ml-4">
@@ -191,25 +191,25 @@
     >
       <beneficiaries-field
         label="Number of Households"
-        :val="recipient.numHouseholds"
-        :showTooltip="recipient.numHouseholds > recipient.directBeneficiaries"
-        :input="(val) => setRecipientHouseholds({ recipientIndex, numHouseholds: +val })"
+        :val="recipient.numhouseholds"
+        :showTooltip="recipient.numhouseholds > recipient.direct_beneficiaries"
+        :input="(val) => onSetRecipientValue({field:'numhouseholds', value:+val})"
       />
 
       <beneficiaries-field
         label="Group Size"
-        :val="recipient.groupSize"
-        :showTooltip="recipient.groupSize > recipient.directBeneficiaries"
-        :input="(val) => setRecipientGroupSize({ recipientIndex, groupSize: +val })"
+        :val="recipient.group_size"
+        :showTooltip="recipient.group_size > recipient.direct_beneficiaries"
+        :input="(val) => onSetRecipientValue({field:'group_size', value:+val})"
       />
 
       <beneficiaries-field
         v-for="opt in beneficiariesAdditionalFields"
         :key="opt.key"
         :label="opt.value"
-        :val="recipient.directBeneficiariesAdditional[opt.key]"
-        :showTooltip="recipient.directBeneficiariesAdditional[opt.key] > recipient.directBeneficiaries"
-        :input="(val) => setRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: +val })"
+        :val="recipient.direct_beneficiaries_additional[opt.key]"
+        :showTooltip="recipient.direct_beneficiaries_additional[opt.key] > recipient.direct_beneficiaries"
+        :input="(val) => onSetRecipientDirectBeneficiariesAdditional({ recipientIndex, key: opt.key, value: +val })"
       />
     </div>
 
@@ -218,8 +218,8 @@
       name="indirectBeneficiaries"
       type="text"
       mx="mx-0 w-full"
-      :value="recipient.indirectBeneficiaries"
-      @input="setRecipientsIndirectBeneficiaries({ recipientIndex, indirectBeneficiaries: $event.target.value })"
+      :value="recipient.indirect_beneficiaries"
+      @input="onSetRecipientValue({field:'indirect_beneficiaries', value:$event.target.value})"
     />
 
     <span class="col-span-2" />
@@ -243,7 +243,7 @@
 </style>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import Multiselect from 'vue-multiselect'
 
 import VButton from '@/components/VButton'
@@ -270,33 +270,33 @@ export default {
     }
   },
   computed: {
-    ...mapState('programData', {
+    ...mapState('programspec', {
       beneficiariesAdditionalFields: state => {
-        const part1 = Object.keys(state.directBeneficiariesAdditionalMap)
-          .map(key => ({ key, value: state.directBeneficiariesAdditionalMap[key] }))
+        const part1 = Object.keys(state.general.direct_beneficiaries_additional_map)
+          .map(key => ({ key, value: state.general.direct_beneficiaries_additional_map[key] }))
 
-        const part2 = Object.keys(state.directBeneficiariesMap)
-          .map(key => ({ key, value: state.directBeneficiariesMap[key] }))
+        const part2 = Object.keys(state.general.direct_beneficiaries_map)
+          .map(key => ({ key, value: state.general.direct_beneficiaries_map[key] }))
 
         return part2.concat(part1)
       },
     }),
-    ...mapState('programData', [
-      'region',
-      'languages',
-    ]),
+    ...mapState('programspec', {
+        region: (state)=>state.general.region,
+        languages: (state)=>state.general.languages,
+    }),
     deployments () {
-      const deployments = this.$store.state && this.$store.state.content2 && this.$store.state.content2.deployments || [];
+      const deployments = this.$store.state && this.$store.state.programspec && this.$store.state.programspec.deployments || [];
       let deploymentnumbers = deployments.map(item => item.deploymentnumber);
       return deploymentnumbers;
     },
     listeningModelSelected () {
-      return this.listeningModels.find(opt => opt.label === this.recipient.listeningModel)
+      return this.listeningModels.find(opt => opt.label === this.recipient.listening_model)
     },
     recipientIndex () {
-      return this.$store.state.recipients.recipients
-        .map(reci => reci.id)
-        .indexOf(this.recipient.id)
+      return this.$store.state.programspec.recipients
+        .map(recipient => recipient.recipientid)
+        .indexOf(this.recipient.recipientid)
     }
   },
   components: {
@@ -322,28 +322,17 @@ export default {
     beneficiariesIsOpen: false,
     listeningModels: listeningModels,
   }),
-  methods: {
-    ...mapActions('recipients', [
-      'setRecipientDeployments',
-      'addRecipientRegion',
-      'removeRecipientRegion',
-      'setRecipientDistrict',
-      'setRecipientCommunity',
-      'setRecipientGroupName',
-      'setRecipientLang',
-      'setRecipientListeningModel',
-      'setRecipientAgent',
-      'setRecipientAgentGender',
-      'setRecipientVariant',
-      'setRecipientHouseholds',
-      'setRecipientGroupSize',
-      'setRecipientSupportEntity',
-      'setRecipientNumberTalkingBooks',
-      'setRecipientDirectBeneficiaries',
-      'setRecipientDirectBeneficiariesAdditional',
-      'setRecipientsIndirectBeneficiaries',
-      'setRecipientVariant',
-    ]),
-  }
+    methods: {
+        onSetRecipientValue(payload) {
+            let {field, value} = payload;
+            this.recipient[field] = value;
+            this.$emit('changed', true);
+        },
+        onSetRecipientDirectBeneficiariesAdditional(v) {
+            console.log(`additional: ${v}, ${this.recipient.direct_beneficiaries_additional[v.key]} -> ${v.value}`);
+            this.recipient.direct_beneficiaries_additional[v.key] = v.value
+            this.$emit('changed', true);
+        },
+    }
 }
 </script>

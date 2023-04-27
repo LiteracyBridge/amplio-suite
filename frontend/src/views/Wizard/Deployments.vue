@@ -62,11 +62,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('programData', {
-      count: state => state.deploymentsCount,
-      first: state => state.deploymentsFirst,
-      length: state => state.deploymentsLength
-    })
+      ...mapState('programspec', {
+          count: (state)=>state.general.deployments_count,
+          first: (state)=>state.general.deployments_first,
+          length: (state)=>state.general.deployments_length,
+      })
   },
   data () {
     return {

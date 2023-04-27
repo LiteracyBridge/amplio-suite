@@ -86,10 +86,10 @@ export default {
     }
   },
   computed: {
-    // The program's listening models
-    ...mapState('programData', [
-      'listeningModels'
-    ]),
+      // The program's listening models
+      ...mapState('programspec', {
+          listeningModels: (state) => state.general.listening_models,
+      }),
   },
   data: function() {
     return {

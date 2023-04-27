@@ -108,7 +108,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('content', [
+    ...mapState('programspec', [
       'deployments',
     ]),
 
@@ -151,7 +151,7 @@ export default {
       'setModal',
       'closeModal'
     ]),
-    ...mapActions('content2', [
+    ...mapActions('programspec', [
       'setMessages',
       'setMessageTitle',
       'removeMessage'

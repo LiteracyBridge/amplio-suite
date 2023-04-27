@@ -37,13 +37,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('program', [
-      'programName'
-    ]),
-    ...mapState('programData', [
-      'partner',
-      'affiliate',
-    ])
+      ...mapState('programspec', {
+          partner: () => '',
+          affiliate: () => '',
+          programName: (state) => state.general.name,
+      }),
   },
   components: {
     Box,

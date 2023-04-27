@@ -137,7 +137,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('content2', [
+    ...mapActions('programspec', [
       'removeDeployment',
       'setDeploymentStartdate',
       'setDeploymentEnddate',

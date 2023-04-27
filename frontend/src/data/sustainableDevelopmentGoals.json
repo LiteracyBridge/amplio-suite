@@ -1,875 +1,875 @@
 [
   {
-    "goalId": 1,
+    "goalId": 1, "sdg_goal": "1",
     "label": "No Poverty",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-1.png",
     "targets": [
       {
-        "goalId": 1,
+        "goalId": 1, "sdg_goal": "1",
         "targetId": 1,
-        "name": "1.1",
+        "name": 1.1, "sdg_target": "1.1",
         "label": "Eradicate extreme poverty"
       },
       {
-        "goalId": 1,
+        "goalId": 1, "sdg_goal": "1",
         "targetId": 2,
-        "name": "1.2",
+        "name": 1.2, "sdg_target": "1.2",
         "label": "Reduce poverty by at least 50%"
       },
       {
-        "goalId": 1,
+        "goalId": 1, "sdg_goal": "1",
         "targetId": 3,
-        "name": "1.3",
+        "name": 1.3, "sdg_target": "1.3",
         "label": "Implement social protection systems"
       },
       {
-        "goalId": 1,
+        "goalId": 1, "sdg_goal": "1",
         "targetId": 4,
-        "name": "1.4",
+        "name": 1.4, "sdg_target": "1.4",
         "label": "Equal rights to ownership, basic services, technology and economic resources"
       },
       {
-        "goalId": 1,
+        "goalId": 1, "sdg_goal": "1",
         "targetId": 5,
-        "name": "1.5",
+        "name": 1.5, "sdg_target": "1.5",
         "label": "Build resilience to environmental, economic and social disasters"
       }
     ]
   },
   {
-    "goalId": 2,
+    "goalId": 2, "sdg_goal": "2",
     "label": "Zero Hunger",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-2.png",
     "targets": [
       {
-        "goalId": 2,
+        "goalId": 2, "sdg_goal": "2",
         "targetId": 1,
-        "name": "2.1",
+        "name": 2.1, "sdg_target": "2.1",
         "label": "Universal access to safe and nutritious food"
       },
       {
-        "goalId": 2,
+        "goalId": 2, "sdg_goal": "2",
         "targetId": 2,
-        "name": "2.2",
+        "name": 2.2, "sdg_target": "2.2",
         "label": "End all forms of malnutrition"
       },
       {
-        "goalId": 2,
+        "goalId": 2, "sdg_goal": "2",
         "targetId": 3,
-        "name": "2.3",
+        "name": 2.3, "sdg_target": "2.3",
         "label": "Double the productivity and incomes of small-scale food producers"
       },
       {
-        "goalId": 2,
+        "goalId": 2, "sdg_goal": "2",
         "targetId": 4,
-        "name": "2.4",
+        "name": 2.4, "sdg_target": "2.4",
         "label": "Sustainable food production and resilient agricultural practices"
       },
       {
-        "goalId": 2,
+        "goalId": 2, "sdg_goal": "2",
         "targetId": 5,
-        "name": "2.5",
+        "name": 2.5, "sdg_target": "2.5",
         "label": "Maintain the genetic diversity in food production"
       }
     ]
   },
   {
-    "goalId": 3,
+    "goalId": 3, "sdg_goal": "3",
     "label": "Good Health and Well-being",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-3.png",
     "targets": [
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 1,
-        "name": "3.1",
+        "name": 3.1, "sdg_target": "3.1",
         "label": "Reduce maternal mortality"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 2,
-        "name": "3.2",
+        "name": 3.2, "sdg_target": "3.2",
         "label": "End all preventable deaths under 5 years of age"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 3,
-        "name": "3.3",
+        "name": 3.3, "sdg_target": "3.3",
         "label": "Fight communicable diseases"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 4,
-        "name": "3.4",
+        "name": 3.4, "sdg_target": "3.4",
         "label": "Reduce mortality from non-communicable diseases and promote mental health"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 5,
-        "name": "3.5",
+        "name": 3.5, "sdg_target": "3.5",
         "label": "Prevent and treat substance abuse"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 6,
-        "name": "3.6",
+        "name": 3.6, "sdg_target": "3.6",
         "label": "Reduce road injuries and deaths"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 7,
-        "name": "3.7",
+        "name": 3.7, "sdg_target": "3.7",
         "label": "Universal access to sexual and reproductive care, family planning and education"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 8,
-        "name": "3.8",
+        "name": 3.8, "sdg_target": "3.8",
         "label": "Achieve universal health coverage"
       },
       {
-        "goalId": 3,
+        "goalId": 3, "sdg_goal": "3",
         "targetId": 9,
-        "name": "3.9",
+        "name": 3.9, "sdg_target": "3.9",
         "label": "Reduce illnesses and deaths from hazardous chemicals and pollution"
       }
     ]
   },
   {
-    "goalId": 4,
+    "goalId": 4, "sdg_goal": "4",
     "label": "Quality Education",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-4.png",
     "targets": [
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 1,
-        "name": "4.1",
+        "name": 4.1, "sdg_target": "4.1",
         "label": "Free primary and secondary education"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 2,
-        "name": "4.2",
+        "name": 4.2, "sdg_target": "4.2",
         "label": "Equal access to quality pre-primary education"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 3,
-        "name": "4.3",
+        "name": 4.3, "sdg_target": "4.3",
         "label": "Equal access to affordable technical, vocational and higher education"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 4,
-        "name": "4.4",
+        "name": 4.4, "sdg_target": "4.4",
         "label": "Increase the number of people with relevant skills for financial success"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 5,
-        "name": "4.5",
+        "name": 4.5, "sdg_target": "4.5",
         "label": "Eliminate all discrimination in education"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 6,
-        "name": "4.6",
+        "name": 4.6, "sdg_target": "4.6",
         "label": "Universal literacy and numeracy"
       },
       {
-        "goalId": 4,
+        "goalId": 4, "sdg_goal": "4",
         "targetId": 7,
-        "name": "4.7",
+        "name": 4.7, "sdg_target": "4.7",
         "label": "Education for sustainable development and global citizenship"
       }
     ]
   },
   {
-    "goalId": 5,
+    "goalId": 5, "sdg_goal": "5",
     "label": "Gender Equality",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-5.png",
     "targets": [
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 1,
-        "name": "5.1",
+        "name": 5.1, "sdg_target": "5.1",
         "label": "End discrimination against women and girls"
       },
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 2,
-        "name": "5.2",
+        "name": 5.2, "sdg_target": "5.2",
         "label": "End all violence against and exploitation of women and girls"
       },
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 3,
-        "name": "5.3",
+        "name": 5.3, "sdg_target": "5.3",
         "label": "Eliminate forced marriages and genital mutilation"
       },
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 4,
-        "name": "5.4",
+        "name": 5.4, "sdg_target": "5.4",
         "label": "Value unpaid care and promote shared domestic responsibilities"
       },
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 5,
-        "name": "5.5",
+        "name": 5.5, "sdg_target": "5.5",
         "label": "Ensure full participation in leadership and decision-making"
       },
       {
-        "goalId": 5,
+        "goalId": 5, "sdg_goal": "5",
         "targetId": 6,
-        "name": "5.6",
+        "name": 5.6, "sdg_target": "5.6",
         "label": "Universal access to reproductive rights and health"
       }
     ]
   },
   {
-    "goalId": 6,
+    "goalId": 6, "sdg_goal": "6",
     "label": "Clean Water and Sanitation",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-6.png",
     "targets": [
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 1,
-        "name": "6.1",
+        "name": 6.1, "sdg_target": "6.1",
         "label": "Safe and affordable drinking water"
       },
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 2,
-        "name": "6.2",
+        "name": 6.2, "sdg_target": "6.2",
         "label": "End open defecation and provide access to sanitation and hygiene"
       },
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 3,
-        "name": "6.3",
+        "name": 6.3, "sdg_target": "6.3",
         "label": "Improve water quality, wastewater treatment and safe reuse"
       },
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 4,
-        "name": "6.4",
+        "name": 6.4, "sdg_target": "6.4",
         "label": "Increase water use efficiency and ensure freshwater supplies"
       },
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 5,
-        "name": "6.5",
+        "name": 6.5, "sdg_target": "6.5",
         "label": "Implement integrated water resources management"
       },
       {
-        "goalId": 6,
+        "goalId": 6, "sdg_goal": "6",
         "targetId": 6,
-        "name": "6.6",
+        "name": 6.6, "sdg_target": "6.6",
         "label": "Protect and restore water-related ecosystems"
       }
     ]
   },
   {
-    "goalId": 7,
+    "goalId": 7, "sdg_goal": "7",
     "label": "Affordable and Clean Energy",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-7.png",
     "targets": [
       {
-        "goalId": 7,
+        "goalId": 7, "sdg_goal": "7",
         "targetId": 1,
-        "name": "7.1",
+        "name": 7.1, "sdg_target": "7.1",
         "label": "Universal access to modern energy"
       },
       {
-        "goalId": 7,
+        "goalId": 7, "sdg_goal": "7",
         "targetId": 2,
-        "name": "7.2",
+        "name": 7.2, "sdg_target": "7.2",
         "label": "Increase global percentage of renewable energy"
       },
       {
-        "goalId": 7,
+        "goalId": 7, "sdg_goal": "7",
         "targetId": 3,
-        "name": "7.3",
+        "name": 7.3, "sdg_target": "7.3",
         "label": "Double the improvement in energy efficiency"
       }
     ]
   },
   {
-    "goalId": 8,
+    "goalId": 8, "sdg_goal": "8",
     "label": "Decent Work and Economic Growth",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-8.png",
     "targets": [
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 1,
-        "name": "8.1",
+        "name": 8.1, "sdg_target": "8.1",
         "label": "Sustainable Economic Growth"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 2,
-        "name": "8.2",
+        "name": 8.2, "sdg_target": "8.2",
         "label": "Diversify, innovate and upgrade for economic productivity"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 3,
-        "name": "8.3",
+        "name": 8.3, "sdg_target": "8.3",
         "label": "Promote policies to support job creation and growing enterprises"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 4,
-        "name": "8.4",
+        "name": 8.4, "sdg_target": "8.4",
         "label": "Improve resource efficiency in consumption and production"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 5,
-        "name": "8.5",
+        "name": 8.5, "sdg_target": "8.5",
         "label": "Full employment and decent work with equal pay"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 6,
-        "name": "8.6",
+        "name": 8.6, "sdg_target": "8.6",
         "label": "Promote youth employment, education and training"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 7,
-        "name": "8.7",
+        "name": 8.7, "sdg_target": "8.7",
         "label": "End modern slavery, trafficking, and child labour"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 8,
-        "name": "8.8",
+        "name": 8.8, "sdg_target": "8.8",
         "label": "Protect labour rights and promote safe working environments"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 9,
-        "name": "8.9",
+        "name": 8.9, "sdg_target": "8.9",
         "label": "Promote beneficial and sustainable tourism"
       },
       {
-        "goalId": 8,
+        "goalId": 8, "sdg_goal": "8",
         "targetId": 10,
-        "name": "8.10",
+        "name": 8.10, "sdg_target": "8.10",
         "label": "Universal access to banking, insurance and financial services"
       }
     ]
   },
   {
-    "goalId": 9,
+    "goalId": 9, "sdg_goal": "9",
     "label": "Industry, Innovation and Infrastructure",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-9.png",
     "targets": [
       {
-        "goalId": 9,
+        "goalId": 9, "sdg_goal": "9",
         "targetId": 1,
-        "name": "9.1",
+        "name": 9.1, "sdg_target": "9.1",
         "label": "Develop sustainable, resilient and inclusive infrastructures"
       },
       {
-        "goalId": 9,
+        "goalId": 9, "sdg_goal": "9",
         "targetId": 2,
-        "name": "9.2",
+        "name": 9.2, "sdg_target": "9.2",
         "label": "Promote inclusive and sustainable industrialization"
       },
       {
-        "goalId": 9,
+        "goalId": 9, "sdg_goal": "9",
         "targetId": 3,
-        "name": "9.3",
+        "name": 9.3, "sdg_target": "9.3",
         "label": "Increase access to financial services and markets"
       },
       {
-        "goalId": 9,
+        "goalId": 9, "sdg_goal": "9",
         "targetId": 4,
-        "name": "9.4",
+        "name": 9.4, "sdg_target": "9.4",
         "label": "Upgrade all industries and infrastructures for sustainability"
       },
       {
-        "goalId": 9,
+        "goalId": 9, "sdg_goal": "9",
         "targetId": 5,
-        "name": "9.5",
+        "name": 9.5, "sdg_target": "9.5",
         "label": "Enhance research and upgrade industrial technologies"
       }
     ]
   },
   {
-    "goalId": 10,
+    "goalId": 10, "sdg_goal": "10",
     "label": "Reduced Inequality",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-10.png",
     "targets": [
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 1,
-        "name": "10.1",
+        "name": 10.1, "sdg_target": "10.1",
         "label": "Reduce income inequalities"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 2,
-        "name": "10.2",
+        "name": 10.2, "sdg_target": "10.2",
         "label": "Promote universal social, economic and political inclusion"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 3,
-        "name": "10.3",
+        "name": 10.3, "sdg_target": "10.3",
         "label": "Ensure equal opportunities and end discrimination"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 4,
-        "name": "10.4",
+        "name": 10.4, "sdg_target": "10.4",
         "label": "Adopt fiscal and social policies that promotes equality"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 5,
-        "name": "10.5",
+        "name": 10.5, "sdg_target": "10.5",
         "label": "Improved regulation of global financial markets and institutions"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 6,
-        "name": "10.6",
+        "name": 10.6, "sdg_target": "10.6",
         "label": "Enhanced representation for developing countries in financial institutions"
       },
       {
-        "goalId": 10,
+        "goalId": 10, "sdg_goal": "10",
         "targetId": 7,
-        "name": "10.7",
+        "name": 10.7, "sdg_target": "10.7",
         "label": "Responsible and well-managed migration policies"
       }
     ]
   },
   {
-    "goalId": 11,
+    "goalId": 11, "sdg_goal": "11",
     "label": "Sustainable Cities and Communities",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-11.png",
     "targets": [
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 1,
-        "name": "11.1",
+        "name": 11.1, "sdg_target": "11.1",
         "label": "Safe and affordable housing"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 2,
-        "name": "11.2",
+        "name": 11.2, "sdg_target": "11.2",
         "label": "Affordable and sustainable transport systems"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 3,
-        "name": "11.3",
+        "name": 11.3, "sdg_target": "11.3",
         "label": "Inclusive and sustainable urbanization"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 4,
-        "name": "11.4",
+        "name": 11.4, "sdg_target": "11.4",
         "label": "Protect the world's cultural and natural heritage"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 5,
-        "name": "11.5",
+        "name": 11.5, "sdg_target": "11.5",
         "label": "Reduce the adverse effects of natural disasters"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 6,
-        "name": "11.6",
+        "name": 11.6, "sdg_target": "11.6",
         "label": "Reduce the environmental impacts of cities"
       },
       {
-        "goalId": 11,
+        "goalId": 11, "sdg_goal": "11",
         "targetId": 7,
-        "name": "11.7",
+        "name": 11.7, "sdg_target": "11.7",
         "label": "Provide access to safe and inclusive green and public spaces"
       }
     ]
   },
   {
-    "goalId": 12,
+    "goalId": 12, "sdg_goal": "12",
     "label": "Responsible Consumption and Production",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-12.png",
     "targets": [
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 1,
-        "name": "12.1",
+        "name": 12.1, "sdg_target": "12.1",
         "label": "Implement the 10-year sustainable consumption and production framework"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 2,
-        "name": "12.2",
+        "name": 12.2, "sdg_target": "12.2",
         "label": "Sustainable management and use of natural resources"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 3,
-        "name": "12.3",
+        "name": 12.3, "sdg_target": "12.3",
         "label": "Halve global per capita food waste"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 4,
-        "name": "12.4",
+        "name": 12.4, "sdg_target": "12.4",
         "label": "Responsible management of chemicals and waste"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 5,
-        "name": "12.5",
+        "name": 12.5, "sdg_target": "12.5",
         "label": "Substantially reduce waste generation"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 6,
-        "name": "12.6",
+        "name": 12.6, "sdg_target": "12.6",
         "label": "Encourage companies to adopt sustainable practices and sustainability reporting"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 7,
-        "name": "12.7",
+        "name": 12.7, "sdg_target": "12.7",
         "label": "Promote sustainable public procurement practices"
       },
       {
-        "goalId": 12,
+        "goalId": 12, "sdg_goal": "12",
         "targetId": 8,
-        "name": "12.8",
+        "name": 12.8, "sdg_target": "12.8",
         "label": "Promote universal understanding of sustainable lifestyles"
       }
     ]
   },
   {
-    "goalId": 13,
+    "goalId": 13, "sdg_goal": "13",
     "label": "Climate Action",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-13.png",
     "targets": [
       {
-        "goalId": 13,
+        "goalId": 13, "sdg_goal": "13",
         "targetId": 1,
-        "name": "13.1",
+        "name": 13.1, "sdg_target": "13.1",
         "label": "Strengthen resilience and adaptive capacity to climate-related disasters"
       },
       {
-        "goalId": 13,
+        "goalId": 13, "sdg_goal": "13",
         "targetId": 2,
-        "name": "13.2",
+        "name": 13.2, "sdg_target": "13.2",
         "label": "Integrate climate change measures into policy and planning"
       },
       {
-        "goalId": 13,
+        "goalId": 13, "sdg_goal": "13",
         "targetId": 3,
-        "name": "13.3",
+        "name": 13.3, "sdg_target": "13.3",
         "label": "Build knowledge and capacity to meet climate change"
       }
     ]
   },
   {
-    "goalId": 14,
+    "goalId": 14, "sdg_goal": "14",
     "label": "Life Below Water",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-14.png",
     "targets": [
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 1,
-        "name": "14.1",
+        "name": 14.1, "sdg_target": "14.1",
         "label": "Reduce marine pollution"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 2,
-        "name": "14.2",
+        "name": 14.2, "sdg_target": "14.2",
         "label": "Protect and restore ecosystems"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 3,
-        "name": "14.3",
+        "name": 14.3, "sdg_target": "14.3",
         "label": "Reduce ocean acidification"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 4,
-        "name": "14.4",
+        "name": 14.4, "sdg_target": "14.4",
         "label": "Sustainable fishing"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 5,
-        "name": "14.5",
+        "name": 14.5, "sdg_target": "14.5",
         "label": "Conserve coastal and marine areas"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 6,
-        "name": "14.6",
+        "name": 14.6, "sdg_target": "14.6",
         "label": "End subsidies contributing to overfishing"
       },
       {
-        "goalId": 14,
+        "goalId": 14, "sdg_goal": "14",
         "targetId": 7,
-        "name": "14.7",
+        "name": 14.7, "sdg_target": "14.7",
         "label": "Increase the economic benefits from sustainable use of marine resources"
       }
     ]
   },
   {
-    "goalId": 15,
+    "goalId": 15, "sdg_goal": "15",
     "label": "Life on Land",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-15.png",
     "targets": [
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 1,
-        "name": "15.1",
+        "name": 15.1, "sdg_target": "15.1",
         "label": "Conserve and restore terrestrial and freshwater ecosystems"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 2,
-        "name": "15.2",
+        "name": 15.2, "sdg_target": "15.2",
         "label": "End deforestation and restore degraded forests"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 3,
-        "name": "15.3",
+        "name": 15.3, "sdg_target": "15.3",
         "label": "End desertification and restore degraded land"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 4,
-        "name": "15.4",
+        "name": 15.4, "sdg_target": "15.4",
         "label": "Ensure conservation of mountain ecosystems"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 5,
-        "name": "15.5",
+        "name": 15.5, "sdg_target": "15.5",
         "label": "Protect biodiversity and natural habitats"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 6,
-        "name": "15.6",
+        "name": 15.6, "sdg_target": "15.6",
         "label": "Protect access to genetic resources and fair sharing of the benefits"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 7,
-        "name": "15.7",
+        "name": 15.7, "sdg_target": "15.7",
         "label": "Eliminate poaching and trafficking of protected species"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 8,
-        "name": "15.8",
+        "name": 15.8, "sdg_target": "15.8",
         "label": "Prevent invasive alien species on land and in water ecosystems"
       },
       {
-        "goalId": 15,
+        "goalId": 15, "sdg_goal": "15",
         "targetId": 9,
-        "name": "15.9",
+        "name": 15.9, "sdg_target": "15.9",
         "label": "Integrate ecosystem and biodiversity in governmental planning"
       }
     ]
   },
   {
-    "goalId": 16,
+    "goalId": 16, "sdg_goal": "16",
     "label": "Peace and Justice Strong Institutions",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-16.png",
     "targets": [
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 1,
-        "name": "16.1",
+        "name": 16.1, "sdg_target": "16.1",
         "label": "Reduce violence everywhere"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 2,
-        "name": "16.2",
+        "name": 16.2, "sdg_target": "16.2",
         "label": "Protect children from abuse, exploitation, trafficking and violence"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 3,
-        "name": "16.3",
+        "name": 16.3, "sdg_target": "16.3",
         "label": "Promote the rule of law and ensure equal access to justice"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 4,
-        "name": "16.4",
+        "name": 16.4, "sdg_target": "16.4",
         "label": "Combat organized crime and illicit financial and arms flows"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 5,
-        "name": "16.5",
+        "name": 16.5, "sdg_target": "16.5",
         "label": "Substantially reduce corruption and bribery"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 6,
-        "name": "16.6",
+        "name": 16.6, "sdg_target": "16.6",
         "label": "Develop effective, accountable and transgoal_id institutions"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 7,
-        "name": "16.7",
+        "name": 16.7, "sdg_target": "16.7",
         "label": "Ensure responsive, inclusive and representative decision-making"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 8,
-        "name": "16.8",
+        "name": 16.8, "sdg_target": "16.8",
         "label": "Strengthen the participation in global governance"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 9,
-        "name": "16.9",
+        "name": 16.9, "sdg_target": "16.9",
         "label": "Provide universal legal identity"
       },
       {
-        "goalId": 16,
+        "goalId": 16, "sdg_goal": "16",
         "targetId": 10,
-        "name": "16.10",
+        "name": 16.10, "sdg_target": "16.10",
         "label": "Ensure public access to information and protect fundamental freedoms"
       }
     ]
   },
   {
-    "goalId": 17,
+    "goalId": 17, "sdg_goal": "17",
     "label": "Partnerships to achieve the Goal",
     "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-17.png",
     "targets": [
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 1,
-        "name": "17.1",
+        "name": 17.1, "sdg_target": "17.1",
         "label": "Mobilize resources to improve domestic revenue collection"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 2,
-        "name": "17.2",
+        "name": 17.2, "sdg_target": "17.2",
         "label": "Implement all development assistance commitments"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 3,
-        "name": "17.3",
+        "name": 17.3, "sdg_target": "17.3",
         "label": "Mobilize financial resources for developing countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 4,
-        "name": "17.4",
+        "name": 17.4, "sdg_target": "17.4",
         "label": "Assist developing countries in attaining debt sustainability"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 5,
-        "name": "17.5",
+        "name": 17.5, "sdg_target": "17.5",
         "label": "Invest in least-developed countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 6,
-        "name": "17.6",
+        "name": 17.6, "sdg_target": "17.6",
         "label": "Knowledge sharing and cooperation for access to science, technology and innovation"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 7,
-        "name": "17.7",
+        "name": 17.7, "sdg_target": "17.7",
         "label": "Promote sustainable technologies to developing countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 8,
-        "name": "17.8",
+        "name": 17.8, "sdg_target": "17.8",
         "label": "Strengthen the science, technology and innovation capacity for least-developed countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 9,
-        "name": "17.9",
+        "name": 17.9, "sdg_target": "17.9",
         "label": "Enhanced SDG capacity in developing countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 10,
-        "name": "17.10",
+        "name": 17.10, "sdg_target": "17.10",
         "label": "Promote a universal trading system under the WTO"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 11,
-        "name": "17.11",
+        "name": 17.11, "sdg_target": "17.11",
         "label": "Increase the exports of developing countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 12,
-        "name": "17.12",
+        "name": 17.12, "sdg_target": "17.12",
         "label": "Remove trade barriers for least-developed countries"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 13,
-        "name": "17.13",
+        "name": 17.13, "sdg_target": "17.13",
         "label": "Enhance global macroeconomic stability"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 14,
-        "name": "17.14",
+        "name": 17.14, "sdg_target": "17.14",
         "label": "Enhance policy coherence for sustainable development"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 15,
-        "name": "17.15",
+        "name": 17.15, "sdg_target": "17.15",
         "label": "Respect national leadership to implement policies for the sustainable development goals"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 16,
-        "name": "17.16",
+        "name": 17.16, "sdg_target": "17.16",
         "label": "Enhance the global partnership for sustainable development"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 17,
-        "name": "17.17",
+        "name": 17.17, "sdg_target": "17.17",
         "label": "Encourage effective partnerships"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 18,
-        "name": "17.18",
+        "name": 17.18, "sdg_target": "17.18",
         "label": "Enhance availability of reliable data"
       },
       {
-        "goalId": 17,
+        "goalId": 17, "sdg_goal": "17",
         "targetId": 19,
-        "name": "17.19",
+        "name": 17.19, "sdg_target": "17.19",
         "label": "Further develop measurements of progress"
       }
     ]

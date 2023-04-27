@@ -205,12 +205,13 @@ const launchOptions = [
 export default {
   props: ['programId'],
   computed: {
-    ...mapState('program', [
-      'programName',
-    ]),
     ...mapState('roadmap', [
       'roadmap'
     ]),
+      programName() {
+          return this.$store.state.programspec.general.name;
+      },
+
   },
   components: {
     Steps,
@@ -222,7 +223,7 @@ export default {
     }
   },
   created () {
-    this.fetchProgram(this.programId)
+    this.fetchSpec({programId: this.programId})
     this.fetchRoadmap(this.programId)
   },
   beforeRouteLeave (to, from, next) {
@@ -230,9 +231,9 @@ export default {
     next()
   },
   methods: {
-    ...mapActions('program', [
-      'fetchProgram'
-    ]),
+    ...mapActions('programspec', {
+        'fetchSpec': 'fetchSpec',
+    }),
     ...mapActions('roadmap', [
       'fetchRoadmap',
       'updateRoadmap',

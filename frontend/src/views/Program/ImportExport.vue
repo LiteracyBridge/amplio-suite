@@ -201,7 +201,7 @@ export default {
             'closeModal',
             'setNotification',
         ]),
-        ...mapActions('content2', [
+        ...mapActions('programspec', [
             'getExportLink',
             'uploadSpec',
             'approveSpec',

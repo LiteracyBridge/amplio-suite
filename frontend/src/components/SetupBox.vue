@@ -37,7 +37,7 @@ import VButton from '@/components/VButton'
 
 export default {
   computed: {
-    ...mapState('program', [
+    ...mapState('programspec', [
       'status',
     ]),
     ...mapState('wizard', [

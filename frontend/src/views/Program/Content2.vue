@@ -6,7 +6,7 @@
     <program-header
       class="mb-2"
       title="Deployments & Content"
-      :dirty="hasChanges"
+      :changed="hasChanges"
       :canSave="canSave"
       :description="description"
       :onSaveChanges="onSaveChanges"
@@ -16,8 +16,7 @@
 
     <div id="deployments-container" class="line col-span-9" style="font-family:system-ui;">
       <!-- Separater line between heading and content -->
-      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600">
-      </p>
+      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600"/>
       <draggable
         id="deployments-draggable"
         v-model="deployments"
@@ -77,7 +76,7 @@ export default {
   props: ['programId'],
 
   computed: {
-    ...mapState('content2', [
+    ...mapState('programspec', [
       'status',
       'changed',
       'deployments'
@@ -85,10 +84,6 @@ export default {
     ...mapState('languages', {
       supportedLanguages: state => state.languages,
     }),
-
-    dirty() {
-      return this.changed;
-    },
 
     canSave() {
       return this.changed;
@@ -100,7 +95,7 @@ export default {
 
     deployments: {
       get() {
-        return this.$store.state.content2.deployments;
+        return this.$store.state.programspec.deployments;
       },
       set(newValue) {
         this.printData(this.deployments, "From");
@@ -126,18 +121,20 @@ export default {
     VButton,
   },
   methods: {
-    ...mapActions('content2', [
-      'fetchContent',
-      'updateContent',
+    ...mapActions('programspec', [
+        'ensureSpec',
+      'fetchSpec',
+      'updateSpec',
+
       'setDeployments',
       'addDeployment',
     ]),
     ...mapActions('languages', [
       'fetchLanguages',
     ]),
-    ...mapActions('program', [
-      'fetchProgram',
-    ]),
+    // ...mapActions('program', [
+    //   'fetchProgram',
+    // ]),
     ...mapActions('categories', [
       'fetchCategories'
     ]),
@@ -150,12 +147,12 @@ export default {
     onSaveChanges() {
       console.log("onSaveChanges");
       this.printData(this.deployments);
-      this.updateContent();
+      this.updateSpec();
     },
 
     onDiscardChanges() {
       console.log("onDiscardChanges")
-      this.fetchContent({programId: this.programId});
+      this.fetchSpec({programId: this.programId});
     },
 
     printData(deployments, title) {
@@ -173,10 +170,9 @@ export default {
   },
 
    created() {
-      this.fetchProgram(this.programId)
+      this.ensureSpec({programId: this.programId});
       this.fetchCategories();
       this.fetchLanguages();
-      this.fetchContent({programId: this.programId});
       console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`)
   },
 

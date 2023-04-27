@@ -39,9 +39,9 @@ export default {
     LanguagesSelector,
   },
   computed: {
-    ...mapState('programData', [
-      'languages',
-    ])
+      ...mapState('programspec', {
+          languages: (state) => state.general.languages,
+      }),
   },
   async created() {
     await this.fetchLanguages()

@@ -1,4 +1,4 @@
-import { getCategories } from '@/api/categories.api'
+import { getCategories } from '@/api/generalQueries.api'
 
 export default {
   namespaced: true,

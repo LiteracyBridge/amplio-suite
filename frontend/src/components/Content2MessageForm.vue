@@ -58,7 +58,7 @@
       class="md:col-span-3"
       :options="targets"
       :value="selectedTarget"
-      :custom-label="(opt) => `${message.sdg_goal_id}.${opt.targetId} ${opt.label}`"
+      :custom-label="(opt) => `${message.sdg_goal}.${opt.targetId} ${opt.label}`"
       :max-height="200"
       track-by="subsection"
       placeholder="Select the target"
@@ -66,7 +66,7 @@
       @remove="(opt) => setMessageSDGTarget({ deployment, playlist, message, target: null })"
     >
       <template slot="option" slot-scope="props">
-        <span>{{ message.sdg_goal_id }}.{{ props.option.targetId }} {{ props.option.label }}</span>
+        <span>{{ message.sdg_goal }}.{{ props.option.targetId }} {{ props.option.label }}</span>
       </template>
     </multiselect>
 
@@ -141,8 +141,8 @@ export default {
   },
   computed: {
     // The program's configured languages.
-    ...mapState('programData', {
-      programLanguages: 'languages'
+    ...mapState('programspec', {
+      programLanguages: (state)=>state.general.languages
     }),
 
     messageLanguages () {
@@ -152,7 +152,7 @@ export default {
 
     categories () {
       return this.$store.state.categories.categories
-        .filter(cat => cat.is_leaf)
+        .filter(cat => cat.is_leaf || cat.isleafnode)
     },
 
     audience: {
@@ -169,7 +169,7 @@ export default {
     targets () {
       // noinspection EqualityComparisonWithCoercionJS
       const goal = this.goals
-        .find(goal => goal.goalId == this.message.sdg_goal_id)
+        .find(goal => goal.goalId == this.message.sdg_goal)
 
       if (goal) return goal.targets
       else return []
@@ -183,28 +183,43 @@ export default {
     },
 
     selectedGoal () {
-      console.log(`Searching ${this.goals.length} goals for ${this.message.sdg_goal_id}`);
+        // Goals are like:
+        // {
+        //      "goalId": 1, "sdg_goal": "1",
+        //      "label": "No Poverty",
+        //      "imgUrl": "https://amplio-suite.s3-us-west-2.amazonaws.com/img/goals/Goal-1.png",
+        //      "targets": [
+        //          . . .
+      console.log(`Searching ${this.goals.length} goals for ${this.message.sdg_goal}`);
       // noinspection EqualityComparisonWithCoercionJS
-      let goal = this.goals.find(g => g.goalId == this.message.sdg_goal_id)
+      let goal = this.goals.find(g => g.goalId == this.message.sdg_goal)
       if (goal)
-        console.log(`message.sdg_goal_id: ${this.message.sdg_goal_id}, found ${goal.goalId}, ${goal.label}`);
+        console.log(`message.sdg_goal: ${this.message.sdg_goal}, found ${goal.goalId}, ${goal.label}`);
       else
-        console.log(`message.sdg_goal_id: ${this.message.sdg_goal_id}, found nothing`);
+        console.log(`message.sdg_goal: ${this.message.sdg_goal}, found nothing`);
       return goal;
     },
 
     selectedTarget () {
-      console.log(`Searching ${this.targets.length} targets for ${this.message.sdg_target_id}/${this.message.sdg_target}`);
+        // Targets are like:
+        // "targets": [
+        //     {
+        //         "goalId": 1, "sdg_goal": "1",
+        //         "targetId": 1,
+        //         "name": 1.1, "sdg_target": "1.1",
+        //         "label": "Eradicate extreme poverty"
+        //     },
+      console.log(`Searching ${this.targets.length} targets for ${this.message.sdg_target}`);
       // noinspection EqualityComparisonWithCoercionJS
-      let target = this.targets.find(t => t.targetId == this.message.sdg_target)
+      let target = this.targets.find(t => t.sdg_target == this.message.sdg_target)
       if (!target) {
         // noinspection EqualityComparisonWithCoercionJS
-        target = this.targets.find(t => t.targetId == this.message.sdg_target_id)
+        target = this.targets.find(t => t.targetId == this.message.sdg_target)
       }
       if (target)
-        console.log(`message.sdg_target_id: ${this.message.sdg_target_id}, sdg_target: ${this.message.sdg_target}, found ${target.targetId}, ${target.label}.`);
+        console.log(`message.sdg_target_id: ${this.message.sdg_target}, sdg_target: ${this.message.sdg_target}, found ${target.targetId} (${target.sdg_target}), ${target.label}.`);
       else
-        console.log(`message.sdg_target_id: ${this.message.sdg_target_id}, sdg_target: ${this.message.sdg_target}, found nothing`);
+        console.log(`message.sdg_target_id: ${this.message.sdg_target}, sdg_target: ${this.message.sdg_target}, found nothing`);
       return target;
     },
   },
@@ -230,15 +245,8 @@ export default {
     }
   },
 
-  // created () {
-  //   this.fetchCategories()
-  // },
-
   methods: {
-    // ...mapActions('categories', [
-    //   'fetchCategories'
-    // ]),
-    ...mapActions('content2', [
+    ...mapActions('programspec', [
       'setMessageVariant',
       'setMessageFormat',
       'addMessageLanguage',

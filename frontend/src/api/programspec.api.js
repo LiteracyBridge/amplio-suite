@@ -38,24 +38,16 @@ async function publish(programid) {
  * @param programid
  * @returns {Promise<any>}
  */
-async function getContent2(programid) {
+async function getProgramSpec(programid) {
     const init = makeInit();
     const fetch_response = await fetch(`${URL2}${GET_CONTENT}?programid=${programid}`, init);
-    let result = fetch_response.json();
-    return result;
+    return fetch_response.json();
 }
 
-async function getContent(programid) {
-    const init = makeInit();
-    const fetch_response = await fetch(`${URL}${GET_CONTENT}?programid=${programid}`, init);
-  return fetch_response.json();
-}
-
-async function putContent(programid, deployments) {
-    console.log(deployments);
-    let init = makeInit({method: 'POST', data: deployments});
-    let fetch_response = await fetch(`${URL}${PUT_CONTENT}?programid=${programid}`, init);
-    console.log(fetch_response);
+async function putProgramSpec(programid, programspec) {
+    const init = makeInit({method: 'POST', data: programspec});
+    const fetch_response = await fetch(`${URL2}${PUT_CONTENT}?programid=${programid}`, init);
+    return fetch_response.json();
 }
 
 async function getDownloadLink(programid, artifact) {
@@ -80,9 +72,12 @@ async function approveSpec(programid, publish) {
 
 export {
     publish,
-    getContent,
-    getContent2,
-    putContent,
+    getProgramSpec,
+    putProgramSpec,
+
+    // getContent,
+    // getContent2,
+    // putContent,
     getDownloadLink,
     uploadSpec,
     approveSpec,
