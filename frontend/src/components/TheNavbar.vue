@@ -110,6 +110,9 @@ export default {
             'programs',
             'programNames'
         ]),
+        ...mapState('account', [
+            'user',
+        ]),
         programNameList() {
             return Object.values(this.programNames).sort();
         },
@@ -139,6 +142,16 @@ export default {
                         name: 'Tableau Analytics',
                         link: `/programs/${this.programId}/tableau`,
                         tag: 'router-link'
+                    });
+                }
+            }
+
+            if (this.user && this.user.email) {
+                if (this.user.email.endsWith('@amplio.org')) {
+                    items.push({
+                        name: 'Knowledge Base',
+                        link: '/kb',
+                        tag: 'kb-link'
                     });
                 }
             }

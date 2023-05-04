@@ -148,6 +148,11 @@ const routes = [
       },
     ]
   },
+    {
+        path: '/kb',
+        component: () => import('../views/kb.vue'),
+        beforeEnter: requireAuth
+    },
   {
     path: '/download',
     component: () => import(/* webpackChunkName: "download" */ '../views/Download.vue'),
