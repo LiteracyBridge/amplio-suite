@@ -1,4 +1,9 @@
 #!/bin/bash
+printf "\n******************************************************************************************\n\n"
+printf " These AWS Lambda fuctions are obsolete and need not be built, should not be deployed."
+printf "\n\n******************************************************************************************\n\n"
+exit 1
+
 set -eo pipefail
 set -x	
 unset AWS_ACCESS_KEY_ID

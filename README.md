@@ -17,7 +17,11 @@
 ### 1.1. Starting your local server
 When you are ready to test the Vue code, ```cd frontend``` and run
 ```bash
-yarn serve
+yarn serve --port 8080
+```
+or, to run inside docker,
+```bash
+./up.sh
 ```
 
 When you are finished with your test environment, use ```Ctrl+C``` to kill the web server.
