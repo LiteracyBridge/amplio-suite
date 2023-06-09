@@ -1,4 +1,5 @@
 import store from '@/store';
+// import Papa from 'papaparse';
 
 const GET_PROGRAMS_URL = 'https://uomgzti07c.execute-api.us-west-2.amazonaws.com/prod';
 const GET_PROGRAMS_ENDPOINT = '/getPrograms';
@@ -7,6 +8,7 @@ const SUPPORTED_LANGUAGES = '/supported_languages'
 const SUPPORTED_CATEGORIES = '/supported_categories'
 const GET_ROADMAP = '/get_roadmap'
 const PUT_ROADMAP = '/put_roadmap'
+const STATUS = '/status'
 
 function makeInit(params) {
     params = params || {}
@@ -81,10 +83,20 @@ const getCategories = async (programid) => {
     return result;
 }
 
+const getTbStatusBy = async (programid, selector) => {
+    const init = makeInit();
+    let url = `${URL}${STATUS}?selector=${selector}&programid=${programid}`;
+    const fetch_promise = fetch(url, init);
+    const fetch_response = await fetch_promise;
+    let result = await fetch_response.json();
+    return result;
+}
+
 export {
     getPrograms,
     getLanguages,
     getCategories,
     getRoadmap,
-    putRoadmap
+    putRoadmap,
+    getTbStatusBy,
 }

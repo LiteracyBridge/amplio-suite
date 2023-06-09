@@ -119,40 +119,59 @@ const routes = [
       }
     ]
   },
-  {
-    path: '/programs/:programId/settings',
-    redirect: { path: '/programs/:programId/settings/general' },
-    props: true,
-    component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
-    beforeEnter: requireAuth,
-    children: [
-      {
-        path: 'general',
+    {
+        path: '/programs/:programId/monitor',
+        redirect: {path: '/programs/:programId/monitor/StatusByDepl'},
         props: true,
-        component: () => import(/* webpackChunkName: "general" */ '../views/Program/General.vue')
-      },
-      {
-        path: 'content2',
+        component: () => import('../views/Monitor/Index.vue'),
+        beforeEnter: requireAuth,
+        children: [
+            {
+                path: 'StatusByDepl',
+                props: true,
+                component: () => import('../views/Monitor/StatusByDepl.vue')
+            },
+            {
+                path: 'StatusByTb',
+                props: true,
+                component: () => import('../views/Monitor/StatusByTb.vue')
+            },
+        ]
+    },
+    {
+        path: '/programs/:programId/settings',
+        redirect: {path: '/programs/:programId/settings/general'},
         props: true,
-        component: () => import(/* webpackChunkName: "content2" */ '../views/Program/Content2.vue')
-      },
-      {
-        path: 'recipients',
-        props: true,
-        component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/Recipients.vue')
-      },
-        {
-            path: 'importExport',
-            props: true,
-            component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/ImportExport.vue')
-        },
-        {
-            path: 'ufImportExport',
-            props: true,
-            component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/UfImportExport.vue')
-        },
-    ]
-  },
+        component: () => import(/* webpackChunkName: "program" */ '../views/Program/Index.vue'),
+        beforeEnter: requireAuth,
+        children: [
+            {
+                path: 'general',
+                props: true,
+                component: () => import(/* webpackChunkName: "general" */ '../views/Program/General.vue')
+            },
+            {
+                path: 'content2',
+                props: true,
+                component: () => import(/* webpackChunkName: "content2" */ '../views/Program/Content2.vue')
+            },
+            {
+                path: 'recipients',
+                props: true,
+                component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/Recipients.vue')
+            },
+            {
+                path: 'importExport',
+                props: true,
+                component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/ImportExport.vue')
+            },
+            {
+                path: 'ufImportExport',
+                props: true,
+                component: () => import(/* webpackChunkName: "recipients" */ '../views/Program/UfImportExport.vue')
+            },
+        ]
+    },
     {
         path: '/kb',
         component: () => import('../views/kb.vue'),

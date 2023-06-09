@@ -18,14 +18,9 @@
         </home-box>
       </div>
 
-      <a href="https://amplio.moodlecloud.com/" target="_blank">
-        <home-box img="/img/learning.png" alt="Go to the learning portal" title="2. Learning Portal">
-          Access learning portal, job aids and community of practice
-        </home-box>
-      </a>
 
       <a href="https://dashboard.amplio.org/" target="_blank">
-        <home-box img="/img/analytics.png" alt="Go to the dashboard portal" title="3. Analytics Dashboard">
+        <home-box img="/img/analytics.png" alt="Go to the dashboard portal" title="2. Analytics Dashboard">
           Monitor user engagement and feedback through the Amplio Dashboard
         </home-box>
       </a>
@@ -36,11 +31,16 @@
 <!--            </home-box>-->
 <!--        </div>-->
 
-<!--        <div @click="onControlCenterClicked">-->
-<!--            <home-box img="/img/control.png" alt="View the control center" title="5. Control Center">-->
-<!--                View progress of deployments in the Control Center.-->
-<!--            </home-box>-->
-<!--        </div>-->
+        <div v-if="isAmplioUser" @click="onMonitoringCenterClicked">
+            <home-box img="/img/control2.png" alt="View the monitoring center" title="3. Monitoring Center">
+                View progress of deployments in the Monitoring Center.
+            </home-box>
+        </div>
+        <a v-else href="https://amplio.moodlecloud.com/" target="_blank">
+            <home-box img="/img/learning.png" alt="Go to the learning portal" title="3. Learning Portal">
+                Access learning portal, job aids and community of practice
+            </home-box>
+        </a>
 
     </div>
 
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 import HomeBox from '@/components/HomeBox'
 
@@ -66,6 +66,12 @@ export default {
       wizardCompleted: ()=>true,
       programStatus: state => state.status
     }),
+      ...mapState('account', [
+          'user',
+      ]),
+      isAmplioUser() {
+          return this.user && this.user.email && this.user.email.toLowerCase().endsWith('@amplio.org');
+      }
   },
   components: {
     HomeBox
@@ -102,14 +108,10 @@ export default {
           }
           this.$router.push(path);
       },
-      onControlCenterClicked(ev) {
+      onMonitoringCenterClicked(ev) {
           let altKey = ev && ev.altKey;
-          let path = '';
-          if (this.wizardCompleted || altKey) {
-              path = `${this.$route.path}/settings`;
-          } else {
-              path = `${this.$route.path}/wizard`;
-          }
+          let path = `${this.$route.path}/monitor`;
+          if (altKey) path = path + '';
           this.$router.push(path);
       },
   }

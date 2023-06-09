@@ -46,9 +46,9 @@
                         </div>
                     </div>
 
-                    <router-link
-                        :to="{ name: 'roadmap', params: { programId } }"
-                        class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
+                    <router-link v-if="programId"
+                                 :to="{ name: 'roadmap', params: { programId } }"
+                                 class="block px-3 pt-3 md:pt-0 text-xl text-white font-bold rounded hover:text-gray-500"
                     >
                         Roadmap
                     </router-link>
@@ -95,8 +95,6 @@ import DropDown from '@/components/TheNavbarDropDown'
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
 
-const ENABLE_TABLEAU_LINK = true;
-
 export default {
     mounted() {
         this.getProgramsList()
@@ -105,8 +103,8 @@ export default {
     },
     computed: {
         ...mapState('programspec', {
-            'programId': (state)=>state.general.program_id,
-            wizardCompleted: ()=>true, // TODO: figure out how to get to SDG and Listening Model selection.
+            'programId': (state) => state.general.program_id,
+            wizardCompleted: () => true, // TODO: figure out how to get to SDG and Listening Model selection.
         }),
         ...mapState('programs', [
             'programs',
@@ -119,6 +117,7 @@ export default {
             return Object.values(this.programNames).sort();
         },
         options() {
+            const isAmplioUser = this.user && this.user.email && this.user.email.toLowerCase().endsWith('@amplio.org');
             let items = [];
             // Menu items in order. These first ones are not dependent on having a programId.
             items.push({
@@ -126,12 +125,13 @@ export default {
                 link: 'https://dashboard.amplio.org/',
                 target: '_blank'
             });
-            items.push({
-                name: 'Learning Portal',
-                link: 'https://amplio.moodlecloud.com/',
-                target: '_blank'
-            });
-
+            if (!isAmplioUser) {
+                items.push({
+                    name: 'Learning Portal',
+                    link: 'https://amplio.moodlecloud.com/',
+                    target: '_blank'
+                });
+            }
             // Menu items that depend on having a programId
             if (this.programId) {
                 items.push({
@@ -139,23 +139,26 @@ export default {
                     link: this.wizardCompleted ? `/programs/${this.programId}/settings` : `/programs/${this.programId}/wizard`,
                     tag: 'router-link'
                 });
-                if (ENABLE_TABLEAU_LINK || this.tableauOption || this.programId === 'CARE-HTI' || this.programId === 'ILC-MW-R2R') {
+                if (isAmplioUser) {
                     items.push({
-                        name: 'Tableau Analytics',
-                        link: `/programs/${this.programId}/tableau`,
+                        name: 'Monitoring Center',
+                        link: `/programs/${this.programId}/monitor`,
                         tag: 'router-link'
                     });
                 }
+                items.push({
+                    name: 'Tableau Analytics',
+                    link: `/programs/${this.programId}/tableau`,
+                    tag: 'router-link'
+                });
             }
 
-            if (this.user && this.user.email) {
-                if (this.user.email.endsWith('@amplio.org')) {
-                    items.push({
-                        name: 'Knowledge Base',
-                        link: '/kb',
-                        tag: 'kb-link'
-                    });
-                }
+            if (isAmplioUser) {
+                items.push({
+                    name: 'Knowledge Base',
+                    link: '/kb',
+                    tag: 'kb-link'
+                });
             }
 
             // Items not dependent on a programId
@@ -181,7 +184,7 @@ export default {
                     this.$store.state.program.programId
                 console.log(`Spec name: ${specName}, selected name: ${this.selectedName}`)
                 return specName || this.selectedName || null;
-            } catch(ignored) {
+            } catch (ignored) {
                 return null;
             }
         }
