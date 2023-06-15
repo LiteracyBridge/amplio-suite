@@ -43,9 +43,12 @@ async function getQuestionnaireDownloadLink({programId, deploymentNumber, langua
     return result;
 }
 
-async function questionnaireUpload({programId, deploymentNumber, language, fileData}) {
+async function questionnaireUpload({programId, deploymentNumber, language, fileData, clearAnswers}) {
     const init = makeInit({method: 'POST', data: fileData});
-    const url = `${URL}${UPLOAD}?programid=${programId}&deploymentnumber=${deploymentNumber}&language=${language}`;
+    let url = `${URL}${UPLOAD}?programid=${programId}&deploymentnumber=${deploymentNumber}&language=${language}`;
+    if (clearAnswers) {
+        url += '&clear_answers=true';
+    }
     const fetch_request = new Request(url, init);
     const fetch_response = await fetch(fetch_request);
     return fetch_response.json();

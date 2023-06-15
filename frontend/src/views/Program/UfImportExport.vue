@@ -4,7 +4,7 @@
              v-on:keyup.18.prevent="altKeyPressed=false" tabindex="0">
 
         <header class="w-full inline-flex items-center justify-between">
-            <h2 class="visually_hidden">Upload or Download a Program Specification spreadsheet.</h2>
+            <h2 class="visually_hidden">Upload or Download a User Feedback Questionnaire spreadsheet.</h2>
         </header>
 
         <div class="grid grid-cols-5">
@@ -13,7 +13,7 @@
                     <p><b>Choose</b> the deployment number and language of interest, and:</p>
                     <ul>
                         <li class="import-export-list"><b>Download</b> a User Feedback Questionnaire as a
-                            spreadsheet.
+                            spreadsheet, or
                         </li>
                         <li class="import-export-list"><b>Upload</b> a User Feedback Questionnaire spreadsheet.</li>
                     </ul>
@@ -48,7 +48,7 @@
             <div class="flex items-center col-span-4 mr-4 ml-4">
                 <p v-if="!selectedQuestionnaireExists && languageName">
                     There is no questionnaire for deployment <span class="outline-box">{{ deploymentNumber }}</span> in
-                    the <span class="outline-box">{{ languageName }} language.</span>.
+                    the <span class="outline-box">{{ languageName }}</span> language..
                 </p>
             </div>
 
@@ -61,17 +61,44 @@
                          variant="bg-orange-200 hover:bg-orange-400" @click="onUploadClicked"/>
             </div>
 
-            <div class="flex col-span-4 mr-4 ml-4">
-                <div v-if="needConfirmation">
-                    <p>There is already questionnaire for deployment <span
+            <div class="flex col-span-5">
+                <div v-if="needConfirmation" class=" mx-4 mt-5 pl-2 pr-4 py-2 border-2 border-grey rounded">
+                    <p class="mb-1">There is already a questionnaire for deployment <span
                         class="outline-box">{{ deploymentNumber }}</span> in the <span
                         class="outline-box">{{ languageName }}</span> language.
-                        If you proceed, the current questionnaire will be replaced with this new one. This can not be
-                        un-done.</p>
-                    <input type="checkbox" id="checkbox" v-model="confirmed">
-                    <label for="checkbox"> Replace the current questionnaire.</label>
-                    <VButton class="import-button float-right" label="Confirm"
-                             variant="bg-green-200 hover:bg-green-400" @click="onConfirmClicked"/>
+                        If you proceed, the current questionnaire will be replaced with this new one. If you haven't
+                        already, please consider downloading a copy as a backup.</p>
+
+                    <input class="mb-5" type="checkbox" id="replaceCheckbox" v-model="replaceConfirmed">
+                    <label for="replaceCheckbox"> Replace the current questionnaire.</label>
+
+                    <div v-if="selectedQuestionnaireHasAnswers" class="mb-3">
+                        <p class="mb-1" v-if="selectedQuestionnaireHasAnswers">There are <span class="outline-box">{{numberOfAnswers}}</span> existing answers for this
+                            questionnaire. Please consider carefully whether these answers will be invalidated by
+                            the new questions, and if so, clear the existing answers.</p>
+
+                        <div v-if="selectedQuestionnaireHasAnswers">
+                            <div>
+                                <input type="radio" id="doClear" v-model="clearAnswers" value="true">
+                                <label for="doClear">Also clear the existing answers.</label>
+                            </div>
+
+                            <div>
+                                <input type="radio" id="donotClear" v-model="clearAnswers" value="false">
+                                <label for="donotClear">Do not clear the existing answers.</label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 float-right">
+                        <VButton class="import-button" label="Confirm" :disabled="needUploadConfirmation"
+                                 variant="bg-green-300 hover:bg-green-500" @click="onConfirmClicked"/>
+                        <VButton class="ml-5" label="Cancel" variant="warning"
+                                 @click="resetConfirmations()"
+                        />
+                    </div>
+
                 </div>
             </div>
 
@@ -104,15 +131,42 @@
                 <VButton
                     label="Cancel"
                     variant="warning"
-                    @click="onCancel()"
+                    @click="onCancelUpload()"
                 />
             </footer>
         </portal>
 
-        <!-- Show differences from database modal -->
-        <portal to="modalBody" v-if="showModal.waiting">
-            <div class="py-20">
-                <p :contentHidden="showModal.showSpinner">&nbsp;</p>
+
+        <!-- Show download wait spinner modal -->
+        <portal to="modalBody" v-if="showModal.downloading">
+            <div>
+                <uf-questionnaire-download
+                    :programName="programName"
+                    :programId="programId"
+                    :deploymentNumber="deploymentNumber"
+                    :languageName="languageName"
+                />
+                <font-awesome-icon
+                    icon="spinner"
+                    size="2x"
+                    pulse
+                    class="block mt-2 upload-spinner"/>
+            </div>
+        </portal>
+
+        <portal to="modalFooter" v-if="showModal.downloading">
+            <footer class="flex justify-end gap-4 mt-5">
+                <p>&nbsp;</p>
+            </footer>
+        </portal>
+
+
+        <!-- Show errors in upload candidate or downloaded file -->
+        <portal to="modalBody" v-if="showModal.showErrors">
+            <div>
+                <uf-questionnaire-errors
+                    :errors="errors"
+                />
                 <font-awesome-icon
                     v-if="showModal.showSpinner"
                     icon="spinner"
@@ -122,10 +176,15 @@
             </div>
         </portal>
 
-        <portal to="modalFooter" v-if="showModal.waiting">
+        <portal to="modalFooter" v-if="showModal.showErrors">
             <footer>
-                <div>
-                    <p>&nbsp;</p>
+                <p v-html="explanation"></p>
+                <div class="flex justify-end gap-4 mt-3">
+                    <VButton
+                        label="Close"
+                        type="success"
+                        @click="onCloseErrors()"
+                    />
                 </div>
             </footer>
         </portal>
@@ -144,18 +203,12 @@
 }
 
 .diff-spinner {
-    /* slide it up a little more for "Pubish the imported progspec" */
+    /* slide it up a little more */
     top: calc(50% - 3rem);
 }
 
 .import-export-list {
     list-style: square inside;
-}
-
-@layer components {
-    .outline-box {
-        @apply rounded border border-solid border-gray-500 px-1 font-semibold;
-    }
 }
 
 </style>
@@ -164,22 +217,24 @@
 
 import {mapActions, mapState} from 'vuex'
 
-import VButton from '@/components/VButton'
-// import ProgramSpecImportForm from '@/components/ProgramSpecImportForm'
 import FileSelectionForm from '@/components/FileSelectionForm'
-import VInput from '@/components/VInput.vue';
 import LanguagesSelector from '@/components/LanguagesSelector.vue';
+import UfQuestionnaireErrors from '@/components/UfQuestionnaireErrors'
+import UfQuestionnaireDownload from '@/components/UfQuestionnaireDownload'
+import VButton from '@/components/VButton'
+import VInput from '@/components/VInput.vue';
 import {getQuestionnaireDownloadLink, questionnaireUpload} from '@/api/uf.api';
 
 export default {
     props: ['programId'],
 
     components: {
-        LanguagesSelector,
-        VInput,
-        VButton,
-        // ProgramSpecImportForm,
         FileSelectionForm,
+        LanguagesSelector,
+        UfQuestionnaireDownload,
+        UfQuestionnaireErrors,
+        VButton,
+        VInput,
     },
 
     computed: {
@@ -187,6 +242,7 @@ export default {
             languages: (state) => {
                 return state.general.languages;
             },
+            programName: (state) => state.general.name,
         }),
         ...mapState('uf', [
             'counts',
@@ -210,7 +266,32 @@ export default {
             console.log(`selectedQuestionnaireExists: ${exists}`);
             return exists;
         },
+        selectedQuestionnaireHasAnswers() {
+            let hasAnswers = this.numberOfAnswers > 0;
+            console.log(`selectedQuestionnaireHasAnswers: ${hasAnswers}`);
+            return hasAnswers;
+        },
+        numberOfAnswers() {
+            let numAnswers = 0;
+            let depl = this.counts[this.deploymentNumber]
+            if (depl) {
+                let lang = depl[this.language];
+                if (lang) {
+                    numAnswers = lang.answers;
+                }
+            }
+            console.log(`numberOfAnswers: ${numAnswers}`);
+            return numAnswers;
+        },
 
+        needUploadConfirmation() {
+            let waiting = this.selectedQuestionnaireExists && !this.replaceConfirmed;
+            waiting = waiting || this.selectedQuestionnaireHasAnswers && !this.clearAnswers;
+            console.log(`needUploadConfirmation: Q exists: ${this.selectedQuestionnaireExists}, ` +
+                `Q Conf: ${this.replaceConfirmed}, A exists: ${this.selectedQuestionnaireHasAnswers}, ` +
+                `A conf: ${this.clearAnswers}`);
+            return waiting;
+        },
     },
 
     async created() {
@@ -224,16 +305,26 @@ export default {
         language: '',
         languageName: null,
         needConfirmation: false,
+        replaceConfirmed: false,
+        clearAnswers: null,
 
-        exportUnpublished: false,
+        downloadLink: null,
+        downloadPending: false,
+
+        empty: [],
+
         selectedFile: null,
-        diffs: null,
-        publishImported: true,
+        errors: null,
+        explanation: '',
+
         showModal: {
             showSpinner: false,
             selectFile: false,
-            showDiffs: false
+            showErrors: false,
+            downloading: false,
         },
+        uploadExplanation: "The selected questionnaire spreadsheet cannot be uploaded because it contains one or more errors. Please correct the error(s) and try again.",
+        downloadExplanation: "The current questionnaire contains one or more errors. You can download the spreadsheet, but the error(s) must be corrected before it can be uploaded again."
     }),
 
     methods: {
@@ -251,7 +342,7 @@ export default {
         ]),
 
         onSetLanguage(code) {
-            this.needConfirmation = false;
+            this.resetConfirmations();
             this.language = code;
             let info = this.$store.state.languages.languages.find(l => l.code === code);
             this.languageName = info && info.name || code;
@@ -259,9 +350,15 @@ export default {
         },
 
         onSetDeploymentNumber(number) {
-            this.needConfirmation = false;
+            this.resetConfirmations();
             this.deploymentNumber = number;
             console.log(`Set deployment to ${this.deploymentNumber}`);
+        },
+
+        resetConfirmations(set) {
+            this.needConfirmation = set && (this.selectedQuestionnaireExists || this.selectedQuestionnaireHasAnswers);
+            this.replaceConfirmed = false;
+            this.clearAnswers = null;
         },
 
         /**
@@ -271,36 +368,69 @@ export default {
         async onDownloadClicked() {
             // Get the link to the downloadable object.
             this.onSetDeploymentNumber(this.deploymentNumber);
-            this.needConfirmation = false;
-            this.onOpenModal('waiting', 'Downloading UF Questionnaire', true);
-            const downloadLink = await getQuestionnaireDownloadLink({
+            this.errors = null;
+            this.resetConfirmations();
+            this.doOpenModal({modal: 'downloading', title: 'Downloading UF Questionnaire', spinner: true});
+            const downloadLinkResult = await getQuestionnaireDownloadLink({
                 programId: this.programId,
                 deploymentNumber: this.deploymentNumber,
                 language: this.language
             });
-            if (downloadLink.status === 'ok') {
-                const downloadUrl = downloadLink.url;
-                console.log(`Export ${this.exportUnpublished ? 'unpublished ' : ''} Program Specification for ${this.programId} from ${downloadLink.url}`);
+            if (downloadLinkResult.status === 'ok') {
+                const downloadUrl = downloadLinkResult.url;
+                console.log(`Export ${this.exportUnpublished ? 'unpublished ' : ''} Program Specification for ${this.programId} from ${downloadLinkResult.url}`);
                 // Download the object.
                 const fetch_response = await fetch(downloadUrl);
                 // Get the bits, and add them to an <a> element.
                 const data = await fetch_response.arrayBuffer();
                 const blob = new Blob([data], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-                const link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = downloadLink.object.filename;
-                this.closeModal();
-                // Simulate a click on the <a>
-                link.click();
+                this.downloadLink = document.createElement("a");
+
+                this.downloadLink.href = window.URL.createObjectURL(blob);
+                this.downloadLink.download = downloadLinkResult.object.filename;
+                this.doCloseModal();
+                if (downloadLinkResult.errors && downloadLinkResult.errors.length > 0) {
+                    // this.doShowErrors(downloadLinkResult.errors, 'Errors in Downloaded UF Questionnaire');
+                    this.downloadPending = false;
+                    this.errors = downloadLinkResult.errors;
+                    this.explanation = this.downloadExplanation;
+                    this.doOpenModal({
+                        modal: 'showErrors',
+                        title: 'Errors in Downloaded UF Questionnaire',
+                        width: 1024
+                    });
+                    this.downloadPending = true;
+                } else {
+                    this.doCloseModal();
+                    this.doPerformDownload();
+                }
+            } else {
+                this.doCloseModal();
             }
-            this.closeModal();
+        },
+
+        doPerformDownload() {
+            this.downloadLink.click();
+        },
+
+        // doShowErrors(errors, title) {
+        //     this.downloadPending = false;
+        //     this.errors = errors;
+        //     this.doOpenModal({modal: 'showErrors', title:title, width: 1024});
+        // },
+
+        onCloseErrors() {
+            if (this.downloadPending) {
+                this.doPerformDownload();
+            }
+            this.doCloseModal();
         },
 
         onUploadClicked() {
             // If there is aleady a Questionnaire for the given deployment and language, the user needs to confirm
             // that they wish to replace it.
             if (this.selectedQuestionnaireExists) {
-                this.needConfirmation = true;
+                this.resetConfirmations(true);
             } else {
                 // If no existing questionnaire, upload one.
                 this.doUpload();
@@ -314,7 +444,7 @@ export default {
         async doUpload() {
             console.log(`Upload UF Questionnaire for ${this.programId}, ${this.deploymentNumber}, ${this.language}`);
             // Open the modal to choose the file to upload.
-            this.onOpenModal('selectFile', 'Upload UF Questionnaire');
+            this.doOpenModal({modal: 'selectFile', title: 'Upload UF Questionnaire'});
         },
 
         onFileSelected(file) {
@@ -327,52 +457,57 @@ export default {
          * @returns Nothing.
          */
         async onUpload() {
-            this.needConfirmation = false;
-            if (!this.selectedFile) {
-                this.closeModal();
+            const self = this;
+            const clearAnswers = self.clearAnswers==='true';
+            self.resetConfirmations();
+            if (!self.selectedFile) {
+                self.doCloseModal();
                 return;
             }
-            this.showModal.showSpinner = true;
+            self.showModal.showSpinner = true;
             // Upload it.
-            const data = await this.readFileData(this.selectedFile, true);
-            console.log(this.selectedFile);
+            const data = await self.readFileData(self.selectedFile, true);
+            console.log(self.selectedFile);
             let result = await questionnaireUpload({
-                programId: this.programId,
-                deploymentNumber: this.deploymentNumber,
-                language: this.language,
-                fileData: data
+                programId: self.programId,
+                deploymentNumber: self.deploymentNumber,
+                language: self.language,
+                fileData: data,
+                clearAnswers: clearAnswers
             });
             if (result.status === 'ok') {
-                this.refresh()
+                self.refreshCounts();
+                self.doCloseModal();
             } else {
                 //TODO: show errors.
-                this.refresh();
+                self.explanation = self.uploadExplanation;
+                self.doOpenModal({modal: 'showErrors', title: 'Errors in UF Questionnaire Spreadsheet', width: 1024});
+                self.errors = result.errors;
             }
-            this.closeModal();
         },
 
-        async refresh() {
+        async refreshCounts() {
             // If a new questionnaire was just uploaded, we should reflect that in the UI.
             await this.fetchCounts({programId: this.programId, refresh: true});
         },
 
-        onOpenModal(modal, title, spinner) {
-            this.closeModal();
+        doOpenModal(payload) {
+            let {modal, title, spinner, width} = payload;
+            this.doCloseModal();
             console.log(`Opening modal with ${modal}, ${title}, ${spinner}`);
             Object.keys(this.showModal).forEach(k => this.showModal[k] = false);
             this.showModal[modal] = true
             this.showModal.showSpinner = !!spinner;
-            this.setModal(title)
+            this.setModal(title, width)
         },
 
-        onCancel() {
-            this.onCancelImport();
+        doCloseModal() {
             Object.keys(this.showModal).forEach(k => this.showModal[k] = false);
+            this.closeModal();
         },
 
-        onCancelImport() {
-            Object.keys(this.showModal).forEach(k => this.showModal[k] = false);
-            this.closeModal()
+        onCancelUpload() {
+            this.doCloseModal()
         },
 
         async readFileData(file, encode) {

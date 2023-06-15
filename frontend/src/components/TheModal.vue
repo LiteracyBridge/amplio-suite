@@ -7,24 +7,22 @@
 
 
     <div
-      class="absolute p-6 bg-white text-center shadow-modal rounded-md"
-      style="top: 50vh; left: 50vw; transform: translateX(-50%) translateY(-50%); min-width: calc(640px - (1.5rem * 2));"
+      class="absolute p-6 bg-white shadow-modal rounded-md"
+      :style="style"
       role="dialog"
       aria-modal="true"
     >
 
       <!-- Close modal button -->
       <div
-        tabindex="0"
-        class="absolute bg-red top-0 right-0 cursor-pointer flex flex-col items-center text-black text-sm z-50"
-        @click="onClickCloseModal"
-      >
+          v-if="closeButton" tabindex="0"
+        class="absolute bg-red top-0 right-0 cursor-pointer flex flex-col items-center text-black text-sm z-50" @click="onClickCloseModal">
         <font-awesome-icon icon="times" />
         <span class="text-sm">(Esc)</span>
       </div>
 
       <section>
-        <header v-if="title" class="mb-4 pb-2 border-b-2 b-gray-600">
+        <header v-if="title" class="text-center mb-4 pb-2 border-b-2 b-gray-600">
           <h2 class="text-2xl text-bold">{{ title }}</h2>
         </header>
 
@@ -48,7 +46,12 @@ export default {
   computed: {
     ...mapState('ui', {
       isOpen: state => state.modal.isOpen,
-      title: state => state.modal.title || 'closed'
+      title: state => state.modal.title || 'closed',
+        style: state => {
+          let width = state.modal.width || 640
+          return `top: 50vh; left: 50vw; transform: translateX(-50%) translateY(-50%); min-width: calc(${width}px - (1.5rem * 2));`;
+      },
+        closeButton: state => state.modal.closeButton===undefined ? true : state.modal.closeButton
     })
   },
   mounted () {

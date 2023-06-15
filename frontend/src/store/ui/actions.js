@@ -2,9 +2,10 @@ const closeModal = ({ commit }) => {
   commit('closeModal')
 }
 
-const setModal = ({ commit }, text) => {
+const setModal = ({ commit }, text, width) => {
   commit('openModal')
   commit('setModalTitle', text)
+    commit('setModalWidth', width);
 }
 
 const closeNotification = ({ commit }) => {
