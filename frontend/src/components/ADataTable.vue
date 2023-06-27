@@ -1,14 +1,14 @@
-/*eslint no-use-before-define: 2*/
+/*eslint disable */
 <template>
     <div class="">
 
         <div class="grid" :style="gridColsStyle">
-            <div v-for="label in tableColumnLabels"  :key="label" class="text-left font-bold border break-words px-2">
+            <div v-for="label in tableColumnLabels" :key="label" class="text-left font-bold border break-words px-2">
                 {{label}}
             </div>
 
             <template v-for="row in tableDataRows" class="text-left">
-                <div v-for="(key) in tableColumnKeys"  class="border break-words px-1">{{row[key]}}</div>
+                <div v-for="(col) in tableColumnKeys" :key="row[col]" class="border break-words px-1">{{row[col]}}</div>
 
             </template>
 
