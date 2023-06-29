@@ -202,15 +202,15 @@ const columns = [
 export default {
     props: ['programId'],
     computed: {
-        ...mapState('programspec', [
-            'status',
-            'changed',
+        ...mapState('programspec', {
+            'status': (state)=>state.status,
+            'changed': (state)=>state.changed,
+            'sortTable': (state)=>state.sortTable,
+            'filterText': (state)=>state.filterText,
 
-            'sortTable',
-            'filterText',
-
-            'recipients',
-        ]),
+            'country': (state)=>state.general.country,
+            'recipients': (state)=>state.recipients,
+        }),
         ...mapGetters('programspec', [
             'filteredRecipients',
         ]),
@@ -361,20 +361,21 @@ export default {
 
         editRecipient(recipient) {
             let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
-            console.log(`Edit ${recip}`);
+            console.log(`Edit ${JSON.stringify(recip)}`);
             this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
             this.onOpenModal('edit', 'Recipient Details')
         },
         duplicateRecipient(recipient) {
             let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
-            console.log(`Duplicate ${recip}`);
+            console.log(`Duplicate ${JSON.stringify(recip)}`);
             this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
             this.recipientInEdit.recipientid = null;
             this.onOpenModal('edit', 'Duplicated Recipient Details')
         },
         addNewRecipient() {
             this.recipientInEdit = this.newRecipient();
-            console.log(`new recipient: ${this.recipientInEdit}`);
+            this.recipientInEdit.country = this.country;
+            console.log(`new recipient: ${JSON.stringify(this.recipientInEdit)}`);
             this.onOpenModal('edit', 'New Recipient Details')
         },
 
