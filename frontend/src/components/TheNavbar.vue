@@ -125,13 +125,6 @@ export default {
                 link: 'https://dashboard.amplio.org/',
                 target: '_blank'
             });
-            if (!isAmplioUser) {
-                items.push({
-                    name: 'Learning Portal',
-                    link: 'https://amplio.moodlecloud.com/',
-                    target: '_blank'
-                });
-            }
             // Menu items that depend on having a programId
             if (this.programId) {
                 items.push({
@@ -153,13 +146,11 @@ export default {
                 });
             }
 
-            if (isAmplioUser) {
-                items.push({
-                    name: 'Knowledge Base',
-                    link: '/kb',
-                    tag: 'kb-link'
-                });
-            }
+            items.push({
+                name: 'Knowledge Base',
+                link: '/kb',
+                tag: 'kb-link'
+            });
 
             // Items not dependent on a programId
             items.push({
