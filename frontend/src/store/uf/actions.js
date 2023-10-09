@@ -1,4 +1,4 @@
-import {getUfCounts, upload} from '@/api/uf.api';
+import {getUfCounts} from '@/api/uf.api';
 
 
 const fetchCounts = async ({commit, state}, payload) => {
@@ -31,5 +31,3 @@ export default {
     fetchCounts,
     uploadQuestionnaire,
 };
-
-

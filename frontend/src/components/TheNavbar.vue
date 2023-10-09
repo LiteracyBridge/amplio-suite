@@ -90,7 +90,7 @@
 import {mapState, mapActions} from 'vuex'
 import Multiselect from 'vue-multiselect'
 
-import DropDown from '@/components/TheNavbarDropDown'
+import DropDown from '@/components/TheNavbarDropDown.vue'
 
 import Bars from '@/assets/svg/bars.svg'
 import Close from '@/assets/svg/close.svg'
