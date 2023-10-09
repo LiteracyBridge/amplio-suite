@@ -36,3 +36,4 @@ proxy/resolver
 output
 partial.zip
 python/
+venv
