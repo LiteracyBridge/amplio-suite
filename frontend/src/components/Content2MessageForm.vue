@@ -120,7 +120,7 @@ import { mapState, mapActions } from 'vuex'
 import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput.vue'
 import LanguagesSelector from '@/components/LanguagesSelector'
-import VTooltip from '@/components/VTooltip'
+import VTooltip from '@/components/VTooltip.vue'
 import sustainableDevelopmentGoals from '@/data/sustainableDevelopmentGoals.json'
 
 export default {

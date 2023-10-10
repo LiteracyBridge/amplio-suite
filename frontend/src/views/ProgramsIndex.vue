@@ -49,7 +49,7 @@
 
 <script>
 import {mapState, mapActions} from 'vuex'
-import VTooltip from '@/components/VTooltip'
+import VTooltip from '@/components/VTooltip.vue'
 
 export default {
     components: {

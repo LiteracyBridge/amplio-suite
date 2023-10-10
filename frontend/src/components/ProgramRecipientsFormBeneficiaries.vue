@@ -25,7 +25,7 @@
 
 <script>
 import VInput from '@/components/VInput.vue'
-import VTooltip from '@/components/VTooltip'
+import VTooltip from '@/components/VTooltip.vue'
 
 export default {
   props: {

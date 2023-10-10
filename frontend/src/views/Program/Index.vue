@@ -70,8 +70,8 @@
 import {mapState, mapActions} from 'vuex'
 
 import VButton from '@/components/VButton.vue'
-import VTooltip from '@/components/VTooltip'
-import VSnackbars from '@/components/VSnackbars'
+import VTooltip from '@/components/VTooltip.vue'
+import VSnackbars from '@/components/VSnackbars.vue'
 
 export default {
     name: 'Program',

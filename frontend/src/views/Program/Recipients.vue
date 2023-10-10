@@ -184,7 +184,7 @@ import {mapState, mapGetters, mapActions} from 'vuex'
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'
 import Loading from '@/components/Loading'
-import VTooltip from '@/components/VTooltip'
+import VTooltip from '@/components/VTooltip.vue'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
 import {EventBus} from '@/event-bus'
 import ProgramHeader from '@/components/ProgramHeader.vue';

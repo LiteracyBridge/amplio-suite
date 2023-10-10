@@ -85,7 +85,7 @@ import {mapState, mapActions} from 'vuex'
 import Content2MessageForm from '@/components/Content2MessageForm'
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
-import VTooltip from '@/components/VTooltip'
+import VTooltip from '@/components/VTooltip.vue'
 
 export default {
   props: {
