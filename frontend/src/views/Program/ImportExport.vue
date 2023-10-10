@@ -163,7 +163,7 @@
 
 import {mapActions} from 'vuex'
 
-import VButton from '@/components/VButton'
+import VButton from '@/components/VButton.vue'
 import ProgramSpecImportForm from '@/components/ProgramSpecImportForm'
 import ProgramSpecImportDiffs from '@/components/ProgramSpecImportDiffs'
 
@@ -310,4 +310,3 @@ export default {
 
 }
 </script>
-

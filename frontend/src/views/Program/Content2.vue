@@ -70,7 +70,7 @@ import Content2Deployment from '@/components/Content2Deployment'
 import Draggable from 'vuedraggable'
 import Loading from '@/components/Loading'
 import ProgramHeader from '@/components/ProgramHeader'
-import VButton from '@/components/VButton'
+import VButton from '@/components/VButton.vue'
 
 export default {
   props: ['programId'],

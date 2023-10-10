@@ -54,7 +54,7 @@
 <script>
 import {mapActions, mapState} from 'vuex'
 
-import HomeBox from '@/components/HomeBox'
+import HomeBox from '@/components/HomeBox.vue'
 
 export default {
   props: ['programId'],

@@ -1,7 +1,7 @@
 import store from "@/store";
 
 // const URL2 = 'https://ng02lptr62.execute-api.us-west-2.amazonaws.com/Prod'
-const URL2 = process.env.VUE_APP_API_URL;
+const URL2 = import.meta.env.VITE_APP_API_URL;
 const URL = "https://v853rt57t9.execute-api.us-west-2.amazonaws.com/Prod";
 const PUBLISH = "/publish";
 // const GET_CONTENT = '/get_content'

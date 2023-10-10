@@ -1,10 +1,14 @@
-import { createApp, Vue } from "vue";
+import { createApp } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
-import cognitoAuth from "./cognito";
+import CognitoAuth from "./cognito/cognito";
+import config from "./cognito/config";
 import router from "./router";
 import store from "./store";
+import Vuex from "vuex";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Polyfill :focus-visible
 // Remove this to restore normal focus behaviour.
@@ -23,8 +27,12 @@ import Default from "@/layouts/Default.vue";
 import Login from "@/layouts/Login.vue";
 
 const app = createApp(App);
-app.use(PortalVue);
-Vue.component("default-layout", Default);
+app.use(Vuex)
+    .use(PortalVue)
+    .use(fas);
+
+app.component("font-awesome-icon", FontAwesomeIcon);
+app.component("default-layout", Default);
 app.component("login-layout", Login);
 
 app.config.productionTip = false;
@@ -36,7 +44,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(router)
     .use(store)
-    .use(cognitoAuth);
+    .use(CognitoAuth, config);
 
 app.mount("#app");
 // new Vue({

@@ -73,8 +73,8 @@
 import {mapActions} from 'vuex'
 
 import Content2Playlists from '@/components/Content2Playlists';
-import VButton from '@/components/VButton'
-import VInput from '@/components/VInput'
+import VButton from '@/components/VButton.vue'
+import VInput from '@/components/VInput.vue'
 
 export default {
   props: {

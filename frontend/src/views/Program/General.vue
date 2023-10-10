@@ -198,8 +198,8 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import Multiselect from 'vue-multiselect'
-import VButton from '@/components/VButton'
-import VInput from '@/components/VInput'
+import VButton from '@/components/VButton.vue'
+import VInput from '@/components/VInput.vue'
 import VTooltip from '@/components/VTooltip'
 import LanguagesSelector from '@/components/LanguagesSelector'
 import Loading from '@/components/Loading'

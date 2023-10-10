@@ -75,7 +75,7 @@ import {mapState, mapActions} from 'vuex'
 
 import Content2Message from '@/components/Content2Message'
 import Draggable from 'vuedraggable'
-import VButton from '@/components/VButton'
+import VButton from '@/components/VButton.vue'
 
 export default {
   props: {

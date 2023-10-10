@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import VInput from '@/components/VInput'
+import VInput from '@/components/VInput.vue'
 import VTooltip from '@/components/VTooltip'
 
 export default {

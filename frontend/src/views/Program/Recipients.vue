@@ -181,8 +181,8 @@
 <script>
 import {mapState, mapGetters, mapActions} from 'vuex'
 
-import VInput from '@/components/VInput'
-import VButton from '@/components/VButton'
+import VInput from '@/components/VInput.vue'
+import VButton from '@/components/VButton.vue'
 import Loading from '@/components/Loading'
 import VTooltip from '@/components/VTooltip'
 import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'

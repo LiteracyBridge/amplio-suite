@@ -27,7 +27,7 @@
 import { mapState, mapActions } from 'vuex'
 
 import Box from '@/components/SetupBox'
-import VInput from '@/components/VInput'
+import VInput from '@/components/VInput.vue'
 
 export default {
   props: {

@@ -1,12 +1,12 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+// import Vue from 'vue'
+import {createRouter} from 'vue-router'
 import multiguard from 'vue-router-multiguard'
 
 import store from '@/store'
 import Home from '@/views/Home.vue'
 import Login from '@/views/SignIn.vue'
 
-Vue.use(VueRouter)
+// Vue.use(VueRouter)
 
 const routes = [
   {
@@ -184,7 +184,7 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
+const router = new createRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes

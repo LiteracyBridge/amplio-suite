@@ -33,7 +33,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 
-import VButton from '@/components/VButton'
+import VButton from '@/components/VButton.vue'
 
 export default {
   computed: {

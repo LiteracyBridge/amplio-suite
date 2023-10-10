@@ -221,8 +221,8 @@ import FileSelectionForm from '@/components/FileSelectionForm'
 import LanguagesSelector from '@/components/LanguagesSelector.vue';
 import UfQuestionnaireErrors from '@/components/UfQuestionnaireErrors'
 import UfQuestionnaireDownload from '@/components/UfQuestionnaireDownload'
-import VButton from '@/components/VButton'
-import VInput from '@/components/VInput.vue';
+import VButton from '@/components/VButton.vue'
+import VInput from '@/components/VInput.vue.vue';
 import {getQuestionnaireDownloadLink, questionnaireUpload} from '@/api/uf.api';
 
 export default {
@@ -528,4 +528,3 @@ export default {
 
 }
 </script>
-
