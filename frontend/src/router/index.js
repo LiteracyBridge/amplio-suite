@@ -273,8 +273,8 @@ function requireAuth(to, from, next) {
 }
 
 function checkAuth(to, from, next) {
-    store
-        .dispatch("account/requireAuth")
+    useAccountStore()
+        .requireAuth()
         .then(() => next({ path: "/programs" }))
         .catch(() => {
             return next();
