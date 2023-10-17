@@ -1,7 +1,7 @@
 import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
 
-export const useAccountStore = defineStore("account-store", {
+export const useAccountStore = defineStore("account", {
     state: () => ({
         status: "",
         user: {
