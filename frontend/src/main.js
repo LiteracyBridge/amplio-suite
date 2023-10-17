@@ -5,10 +5,11 @@ import App from "./App.vue";
 import CognitoAuth from "./cognito/cognito";
 import config from "./cognito/config";
 import router from "./router";
-import store from "./store";
-import Vuex from "vuex";
+import { useAccountStore } from "@/store/account";
+// import Vuex from "vuex";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { createPinia } from "pinia";
 
 // Polyfill :focus-visible
 // Remove this to restore normal focus behaviour.
@@ -27,9 +28,8 @@ import Default from "@/layouts/Default.vue";
 import Login from "@/layouts/Login.vue";
 
 const app = createApp(App);
-app.use(Vuex)
-    .use(PortalVue)
-    .use(fas);
+// app.use(Vuex)
+app.use(PortalVue).use(fas);
 
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("default-layout", Default);
@@ -38,12 +38,13 @@ app.component("login-layout", Login);
 app.config.productionTip = false;
 
 if (process.env.NODE_ENV === "development") {
-    const VueAxe = require("vue-axe").default;
+    const VueAxe = import.meta.glob("vue-axe").default;
     app.use(VueAxe);
 }
 
 app.use(router)
-    .use(store)
+    // .use(store)
+    .use(createPinia())
     .use(CognitoAuth, config);
 
 app.mount("#app");

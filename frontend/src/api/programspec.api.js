@@ -1,4 +1,5 @@
-import store from "@/store";
+// import store from "@/store";
+import { useAccountStore } from "@/store/account";
 
 // const URL2 = 'https://ng02lptr62.execute-api.us-west-2.amazonaws.com/Prod'
 const URL2 = import.meta.env.VITE_APP_API_URL;
@@ -16,7 +17,7 @@ function makeInit(params) {
     let init = {
         method: method,
         cache: "no-cache",
-        headers: { Authorization: store.state.account.user.token.jwtToken }
+        headers: { Authorization:  useAccountStore().user.token.jwtToken }
     };
     if (data) {
         init.body = JSON.stringify(data);

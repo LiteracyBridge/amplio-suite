@@ -1,4 +1,5 @@
-import store from '@/store';
+// import store from '@/store';
+import { useAccountStore } from "@/store/account";
 
 const URL = 'https://t55bv9y1ad.execute-api.us-west-2.amazonaws.com/prod';
 const GET_COUNTS = '/questionnaire/get_uf_counts'
@@ -12,8 +13,8 @@ function makeInit(params) {
   let init = {
     method: method,
     cache: 'no-cache',
-    headers: {Authorization: store.state.account.user.token.jwtToken}
-  };
+    headers: { Authorization:  useAccountStore().user.token.jwtToken }
+};
   if (data) {
     init.body = JSON.stringify(data);
     init.headers['Content-Type'] = 'application/json';
