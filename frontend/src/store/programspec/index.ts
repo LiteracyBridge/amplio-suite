@@ -388,9 +388,12 @@ export const useProgramSpecStore = defineStore("programspec", {
             const { programId, publish } = payload;
             if (this.status === "loading") return;
             this.resetState();
-            commit("recipients/resetState", null, { root: true });
-            commit("programData/resetState", null, { root: true });
-            commit("program/resetState", null, { root: true });
+
+            // FIXME: cannot find vuex state
+            // commit("recipients/resetState", null, { root: true });
+            // commit("programData/resetState", null, { root: true });
+            // commit("program/resetState", null, { root: true });
+
             try {
                 return await approveSpecFile(programId, publish);
             } catch (error) {
