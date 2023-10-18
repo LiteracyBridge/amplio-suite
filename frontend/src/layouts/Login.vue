@@ -1,5 +1,6 @@
 <template>
   <div>
+    <slot />
     <router-view class="min-h-banner">
       <TheNotification />
     </router-view>

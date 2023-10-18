@@ -1,6 +1,6 @@
 <template>
-    <section class="relative min-h-200-px p-6 pt-0">
-        <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg"/>
+  <section class="relative min-h-200-px p-6 pt-0">
+    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       title="General"
@@ -8,13 +8,15 @@
       :canSave="changed"
       :description="description"
       :onSaveChanges="updateSpec"
-      :onDiscardChanges="() => fetchSpec({programId:this.programId})"
+      :onDiscardChanges="() => fetchSpec({ programId: this.programId })"
     />
 
     <div class="min-h-200-px my-5 text-center">
-        <!-- Separater line between heading and content -->
-        <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600"/>
-        <div class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left">
+      <!-- Separater line between heading and content -->
+      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
+      <div
+        class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left"
+      >
         <label for="programName">Program Name</label>
         <v-input
           id="programName"
@@ -53,9 +55,7 @@
           @select="addRegion"
           @remove="removeRegion"
         >
-          <template slot="noOptions">
-            Region/State
-          </template>
+          <template slot="noOptions"> Region/State </template>
         </multiselect>
 
         <span id="langs">Languages</span>
@@ -86,8 +86,8 @@
           icon="spinner"
           size="2x"
           pulse
-          class="block w-10 h-10 mt-2 text-left" />
-
+          class="block w-10 h-10 mt-2 text-left"
+        />
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
@@ -105,20 +105,20 @@
         class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left pl-10"
       >
         <p class="col-span-2 md:col-span-4 text-sm text-blue">
-          The direct beneficiaries properties apply to the Recipients tab, and allow to gather custom information regarding the recipients
+          The direct beneficiaries properties apply to the Recipients tab, and allow to
+          gather custom information regarding the recipients
         </p>
-        <template v-for="(opt, index) in directBeneficiariesLabels">
-          <span
-            :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'md:pl-4' : ''"
-          >
-            Field {{ index + 1 }}
-          </span>
+        <template
+          v-for="(opt, index) in directBeneficiariesLabels"
+          :key="`${opt.key}-label`"
+        >
+          <span :class="index % 2 === 1 ? 'md:pl-4' : ''"> Field {{ index + 1 }} </span>
           <v-input
-            :key="`${opt.key}-input`"
             type="text"
             :value="opt.value"
-            @input="setDirectBeneficiariesLabel({ key: opt.key, value: $event.target.value })"
+            @input="
+              setDirectBeneficiariesLabel({ key: opt.key, value: $event.target.value })
+            "
             mx="mx-0"
             class="w-full"
           />
@@ -126,18 +126,23 @@
 
         <span class="col-span-2" />
 
-        <template v-for="(opt, index) in directBeneficiariesAdditionalLabels">
-          <span
-            :key="`${opt.key}-label`"
-            :class="index % 2 === 1 ? 'md:pl-4' : ''"
-          >
+        <template
+          v-for="(opt, index) in directBeneficiariesAdditionalLabels"
+          :key="`${opt.key}-label`"
+        >
+          <span :class="index % 2 === 1 ? 'md:pl-4' : ''">
             Additional Field {{ index + 1 }}
           </span>
-          <div :key="`${opt.key}-input`" class="flex items-center">
+          <div class="flex items-center">
             <v-input
               type="text"
               :value="opt.value"
-              @input="setDirectBeneficiariesAdditionalLabel({ key: opt.key, value: $event.target.value })"
+              @input="
+                setDirectBeneficiariesAdditionalLabel({
+                  key: opt.key,
+                  value: $event.target.value,
+                })
+              "
               mx="mx-0 mr-2"
               class="w-full"
             />
@@ -155,10 +160,7 @@
               text="Field used in multiple recipients"
               class="my-auto"
             >
-              <font-awesome-icon
-                class="text-orange-600"
-                icon="exclamation-circle"
-              />
+              <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
             </v-tooltip>
           </div>
         </template>
@@ -180,66 +182,63 @@
 
     <portal to="modalFooter" v-if="languageToDelete">
       <footer class="flex flex-row-reverse justify-between">
-        <VButton
-          label="Confirm"
-          variant="warning"
-          @click="confirmLanguageDeletion"
-        />
-        <VButton
-          label="Cancel"
-          @click="cancelLanguageDeletion"
-        />
+        <VButton label="Confirm" variant="warning" @click="confirmLanguageDeletion" />
+        <VButton label="Cancel" @click="cancelLanguageDeletion" />
       </footer>
     </portal>
   </section>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'pinia'
+import { mapState, mapGetters, mapActions } from "pinia";
 
-import Multiselect from 'vue-multiselect'
-import VButton from '@/components/VButton.vue'
-import VInput from '@/components/VInput.vue'
-import VTooltip from '@/components/VTooltip.vue'
-import LanguagesSelector from '@/components/LanguagesSelector.vue'
-import Loading from '@/components/Loading.vue'
-import ProgramHeader from '@/components/ProgramHeader.vue'
-import { useProgramSpecStore } from '@/store/programspec'
-import countries from '@/data/countries.json'
-import listeningModels from '@/data/listeningModels.json'
+import Multiselect from "vue-multiselect";
+import VButton from "@/components/VButton.vue";
+import VInput from "@/components/VInput.vue";
+import VTooltip from "@/components/VTooltip.vue";
+import LanguagesSelector from "@/components/LanguagesSelector.vue";
+import Loading from "@/components/Loading.vue";
+import ProgramHeader from "@/components/ProgramHeader.vue";
+import { useProgramSpecStore } from "@/store/programspec";
+import countries from "@/data/countries.json";
+import listeningModels from "@/data/listeningModels.json";
+import { useUIStore } from "@/store/ui";
+import { useLanguagesStore } from "@/store/languages";
 
 export default {
-  props: ['programId'],
+  props: ["programId"],
   computed: {
-      ...mapState(useProgramSpecStore, {
-          'status': (state)=>state.status,
+    ...mapState(useProgramSpecStore, {
+      status: (state) => state.status,
 
-          'programName': (state)=>state.general.name,
-          'country': (state)=>state.general.country,
-          'region': (state)=>state.general.region,
-          'languages': (state)=>state.general.languages,
-          'listeningModels': (state)=>state.general.listening_models,
-      }),
+      programName: (state) => state.general.name,
+      country: (state) => state.general.country,
+      region: (state) => state.general.region,
+      languages: (state) => state.general.languages,
+      listeningModels: (state) => state.general.listening_models,
+    }),
     ...mapState(useProgramSpecStore, [
-      'labelUsed',
-        'directBeneficiariesLabels',
-        'directBeneficiariesAdditionalLabels',
+      "labelUsed",
+      "directBeneficiariesLabels",
+      "directBeneficiariesAdditionalLabels",
     ]),
     listeningModelsOptions() {
       return listeningModels;
     },
-    listeningModelsSelected () {
+    listeningModelsSelected() {
       /**
        * Given a listening model label from the program, find the corresponding global listening model object.
        * @param programListeningModel label to be found.
        * @returns the global object, or a local object with the image from "Other" if not found.
        */
       function lmo(programListeningModel) {
-        let found = listeningModels.find(lm => lm.label === programListeningModel);
-        if (!found) found = {
-          label: programListeningModel,
-          imgUrl: "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png"
-        };
+        let found = listeningModels.find((lm) => lm.label === programListeningModel);
+        if (!found)
+          found = {
+            label: programListeningModel,
+            imgUrl:
+              "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png",
+          };
         return found;
       }
       let result = [];
@@ -252,7 +251,7 @@ export default {
       }
       return result;
     },
-    changed () {
+    changed() {
       return this.$store.state.programspec.changed;
     },
   },
@@ -265,77 +264,72 @@ export default {
     Loading,
     ProgramHeader,
   },
-  created () {
-      this.fetchLanguages();
+  created() {
+    this.fetchLanguages();
   },
   watch: {
     region: {
       immediate: true,
-      handler () {
-        this.regionOptions = [...this.region] // Populete the options
-      }
+      handler() {
+        this.regionOptions = [...(this.region || [])]; // Populete the options
+      },
     },
   },
-  data () {
+  data() {
     return {
-      description: "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
+      description:
+        "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
 
       countries,
       regionOptions: [],
       languageToDelete: null,
-      beneficiariesIsOpen: false
-    }
+      beneficiariesIsOpen: false,
+    };
   },
   methods: {
-    ...mapActions('ui', [
-      'setModal',
-      'closeModal'
-    ]),
+    ...mapActions(useUIStore, ["setModal", "closeModal"]),
     ...mapActions(useProgramSpecStore, [
-        'ensureSpec',
-        'fetchSpec',
-        'updateSpec',
+      "ensureSpec",
+      "fetchSpec",
+      "updateSpec",
 
-        'setProgramName',
+      "setProgramName",
 
-        'setCountry',
-        'addRegion',
-        'removeRegion',
-        'setLanguages',
-        'deleteLanguage',
-        'toggleListeningModel',
-        'setDirectBeneficiariesLabel',
-        'setDirectBeneficiariesAdditionalLabel',
-        'addDirectBeneficiariesAdditionalLabel',
-        'deleteDirectBeneficiariesAdditionalLabel',
+      "setCountry",
+      "addRegion",
+      "removeRegion",
+      "setLanguages",
+      "deleteLanguage",
+      "toggleListeningModel",
+      "setDirectBeneficiariesLabel",
+      "setDirectBeneficiariesAdditionalLabel",
+      "addDirectBeneficiariesAdditionalLabel",
+      "deleteDirectBeneficiariesAdditionalLabel",
     ]),
-    ...mapActions('languages', [
-      'fetchLanguages',
-    ]),
-    addTag (region) {
-      this.addRegion(region)
+    ...mapActions(useLanguagesStore, ["fetchLanguages"]),
+    addTag(region) {
+      this.addRegion(region);
     },
     onLanguageSelected(language) {
-      let index = this.languages.length
-      this.setLanguages({ lang: language.code, index })
+      let index = this.languages.length;
+      this.setLanguages({ lang: language.code, index });
     },
     onLanguageDeleted(language) {
-      this.languageToDelete = language
-      this.setModal(`Delete Language ${language.name}`)
+      this.languageToDelete = language;
+      this.setModal(`Delete Language ${language.name}`);
     },
     confirmLanguageDeletion() {
-      this.deleteLanguage(this.languageToDelete.code)
-      this.languageToDelete = null
-      this.closeModal()
+      this.deleteLanguage(this.languageToDelete.code);
+      this.languageToDelete = null;
+      this.closeModal();
     },
-    cancelLanguageDeletion () {
-      this.languageToDelete = null
-      this.closeModal()
+    cancelLanguageDeletion() {
+      this.languageToDelete = null;
+      this.closeModal();
     },
-    spam () {
-      console.log('nuevo click')
-    }
+    spam() {
+      console.log("nuevo click");
+    },
   },
-
-}
+};
 </script>

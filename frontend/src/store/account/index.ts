@@ -90,7 +90,7 @@ export const useAccountStore = defineStore("account", {
                             const user = {
                                 email: payload.email,
                                 name: payload.email.split("@")[0],
-                                token
+                                token: token.jwtToken,
                             };
 
                             localStorage.setItem("user", JSON.stringify(user));

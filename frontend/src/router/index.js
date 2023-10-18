@@ -5,7 +5,8 @@ import multiguard from "vue-router-multiguard";
 import { useAccountStore } from "@/store/account";
 import { useWizardStore } from "@/store/wizard";
 import Home from "@/views/Home.vue";
-import Login from "@/views/SignIn.vue";
+import SignIn from "@/views/SignIn.vue";
+import Default from "@/layouts/Default.vue";
 
 // Vue.use(VueRouter)
 
@@ -16,7 +17,7 @@ const routes = [
     },
     {
         path: "/login",
-        component: Login,
+        component: SignIn,
         beforeEnter: checkAuth,
         meta: {
             layout: "login"
@@ -44,6 +45,9 @@ const routes = [
     },
     {
         path: "/programs",
+        meta: {
+            layout: "default"
+        },
         component: () =>
             import(
                 /* webpackChunkName: "programs-index" */ "../views/ProgramsIndex.vue"
