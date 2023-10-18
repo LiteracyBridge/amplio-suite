@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'pinia'
 
 import Box from '@/components/SetupBox'
 import Check from '@/assets/svg/check-circle.svg'

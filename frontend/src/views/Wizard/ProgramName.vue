@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import Box from '@/components/SetupBox'
 import VInput from '@/components/VInput.vue'

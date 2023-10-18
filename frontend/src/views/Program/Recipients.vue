@@ -179,7 +179,7 @@
 </template>
 
 <script>
-import {mapState, mapGetters, mapActions} from 'vuex'
+import {mapState, mapGetters, mapActions} from 'pinia'
 
 import VInput from '@/components/VInput.vue'
 import VButton from '@/components/VButton.vue'

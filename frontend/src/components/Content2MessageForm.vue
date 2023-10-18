@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import Multiselect from 'vue-multiselect'
 import VInput from '@/components/VInput.vue'

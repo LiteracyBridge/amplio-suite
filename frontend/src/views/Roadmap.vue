@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import Steps from '@/components/RoadmapSteps'
 

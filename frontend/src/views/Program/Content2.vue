@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions} from 'pinia'
 
 import Content2Deployment from '@/components/Content2Deployment'
 import Draggable from 'vuedraggable'

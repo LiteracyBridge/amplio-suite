@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import content2Playlist from '@/components/Content2Playlist.vue'
 import Draggable from 'vuedraggable'

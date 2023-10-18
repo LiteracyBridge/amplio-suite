@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import Loading from '@/components/Loading'
 import MonitorHeader from '@/components/MonitorHeader'

@@ -195,7 +195,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'pinia'
 
 import Multiselect from 'vue-multiselect'
 import VButton from '@/components/VButton.vue'
@@ -204,14 +204,14 @@ import VTooltip from '@/components/VTooltip.vue'
 import LanguagesSelector from '@/components/LanguagesSelector.vue'
 import Loading from '@/components/Loading.vue'
 import ProgramHeader from '@/components/ProgramHeader.vue'
-
+import { useProgramSpecStore } from '@/store/programspec'
 import countries from '@/data/countries.json'
 import listeningModels from '@/data/listeningModels.json'
 
 export default {
   props: ['programId'],
   computed: {
-      ...mapState('programspec', {
+      ...mapState(useProgramSpecStore, {
           'status': (state)=>state.status,
 
           'programName': (state)=>state.general.name,
@@ -220,7 +220,7 @@ export default {
           'languages': (state)=>state.general.languages,
           'listeningModels': (state)=>state.general.listening_models,
       }),
-    ...mapGetters('programspec', [
+    ...mapState(useProgramSpecStore, [
       'labelUsed',
         'directBeneficiariesLabels',
         'directBeneficiariesAdditionalLabels',
@@ -291,7 +291,7 @@ export default {
       'setModal',
       'closeModal'
     ]),
-    ...mapActions('programspec', [
+    ...mapActions(useProgramSpecStore, [
         'ensureSpec',
         'fetchSpec',
         'updateSpec',

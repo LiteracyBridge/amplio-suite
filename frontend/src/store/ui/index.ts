@@ -1,3 +1,4 @@
+import { notification } from "ant-design-vue";
 import { defineStore } from "pinia";
 // import actions from "./actions";
 // import mutations from "./mutations";
@@ -44,7 +45,16 @@ export const useUIStore = defineStore("ui", {
         },
 
         openNotification() {
-            this.notification.isOpen = true;
+            if (this.notification.type == "notice") {
+                notification.info({
+                    message: this.notification.text
+                });
+            } else {
+                notification.warning({
+                    message: this.notification.text
+                });
+            }
+            // this.notification.isOpen = true;
         },
 
         setNotificationNotice(payload: string) {

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { getPrograms } from "@/api/generalQueries.api";
 import { useUIStore } from "../ui";
 
-export const useProgramsStore = defineStore("programs-store", {
+export const useProgramsStore = defineStore("programs", {
     state: () => ({
         status: "",
         programs: [],

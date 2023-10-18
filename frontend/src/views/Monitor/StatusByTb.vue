@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions} from 'pinia'
 
 import { getTbStatusBy } from '@/api/generalQueries.api'
 import ADataTable from '@/components/ADataTable'

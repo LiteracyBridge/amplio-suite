@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions} from 'pinia'
 
 import Content2Playlists from '@/components/Content2Playlists';
 import VButton from '@/components/VButton.vue'

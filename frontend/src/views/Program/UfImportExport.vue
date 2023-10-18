@@ -251,7 +251,7 @@
 </style>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
 
 import FileSelectionForm from "@/components/FileSelectionForm";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";

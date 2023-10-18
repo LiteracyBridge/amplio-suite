@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions} from 'pinia'
 
 import Content2Message from '@/components/Content2Message'
 import Draggable from 'vuedraggable'

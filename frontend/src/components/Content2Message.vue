@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions} from 'pinia'
 
 import Content2MessageForm from '@/components/Content2MessageForm'
 import VButton from '@/components/VButton.vue'

@@ -161,7 +161,7 @@
 
 <script>
 
-import {mapActions} from 'vuex'
+import {mapActions} from 'pinia'
 
 import VButton from '@/components/VButton.vue'
 import ProgramSpecImportForm from '@/components/ProgramSpecImportForm'

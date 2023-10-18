@@ -243,7 +243,7 @@
 </style>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import Multiselect from 'vue-multiselect'
 
 import VButton from '@/components/VButton.vue'

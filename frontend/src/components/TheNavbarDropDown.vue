@@ -54,9 +54,10 @@ export default {
       }
     }
     document.addEventListener('keydown', handleEscape)
-    this.$once('hook:beforeDestroy', () => {
-      document.removeEventListener('keydown', handleEscape)
-    })
+    // FIXME: Navbar dropdown destroy hook not is not working
+    // this.$once('hook:beforeDestroy', () => {
+    //   document.removeEventListener('keydown', handleEscape)
+    // })
   }
 }
 </script>

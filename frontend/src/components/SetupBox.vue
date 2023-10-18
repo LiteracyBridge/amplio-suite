@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
 import VButton from '@/components/VButton.vue'
 
