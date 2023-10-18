@@ -35,7 +35,7 @@ const pinia = createPinia();
 const app = createApp(App);
 // app.use(Vuex)
 app.use(PortalVue)
-    .use(fas)
+    // .use(fas)
     .use(pinia);
 
 app.component("font-awesome-icon", FontAwesomeIcon);
