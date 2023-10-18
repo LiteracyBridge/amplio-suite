@@ -67,7 +67,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('ui', [
+    ...mapActions(useUIStore, [
       'closeModal'
     ]),
     handlerKeyDown (e) {

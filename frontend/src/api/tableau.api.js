@@ -10,7 +10,7 @@ function makeInit(params) {
   let init = {
     method: method,
     cache: 'no-cache',
-    headers: { Authorization:  useAccountStore().user.token.jwtToken }
+    headers: { Authorization:  useAccountStore().user.token }
 };
   if (data) {
     init.body = JSON.stringify(data);

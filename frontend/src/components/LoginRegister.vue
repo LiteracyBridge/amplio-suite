@@ -51,7 +51,8 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-
+import { useAccountStore } from '@/store/account'
+import { useUIStore } from '@/store/ui'
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
 
@@ -61,7 +62,7 @@ export default {
     VInput
   },
   computed: {
-    ...mapState('account', [
+    ...mapState(useAccountStore, [
       'status'
     ]),
   },
@@ -74,10 +75,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('ui', [
+    ...mapActions(useUIStore, [
       'setNotification'
     ]),
-    ...mapActions('account', [
+    ...mapActions(useAccountStore, [
       'register'
     ]),
     async handleRegister () {

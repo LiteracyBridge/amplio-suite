@@ -1,7 +1,7 @@
 import { getCategories } from "@/api/generalQueries.api";
 import { defineStore } from "pinia";
 
-export const useCategoriesStore = defineStore("categories-store", {
+export const useCategoriesStore = defineStore("categories", {
     state: () => ({
         status: "",
         categories: []

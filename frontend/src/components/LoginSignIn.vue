@@ -21,7 +21,10 @@
     />
 
     <div class="mt-2">
-      <router-link to="/password_reset" class="float-right text-sm text-right text-blue underline">
+      <router-link
+        to="/password_reset"
+        class="float-right text-sm text-right text-blue underline"
+      >
         Forgot your password?
       </router-link>
     </div>
@@ -38,50 +41,44 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
-
-import VButton from '@/components/VButton.vue'
-import VInput from '@/components/VInput.vue'
+import { mapState, mapActions } from "pinia";
+import { useAccountStore } from "@/store/account";
+import { useUIStore } from "@/store/ui";
+import VButton from "@/components/VButton.vue";
+import VInput from "@/components/VInput.vue";
 
 export default {
   components: {
     VButton,
-    VInput
+    VInput,
   },
   computed: {
-    ...mapState('account', [
-      'status'
-    ]),
+    ...mapState(useAccountStore, ["status"]),
   },
-  data () {
+  data() {
     return {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    };
   },
-  mounted () {
-    this.$refs.user.$el.children[1].focus()
+  mounted() {
+    this.$refs.user.$el.children[1].focus();
   },
   methods: {
-    ...mapActions('ui', [
-      'setNotification'
-    ]),
-    ...mapActions('account', [
-      'login'
-    ]),
-    async doLogin () {
+    ...mapActions(useUIStore, ["setNotification"]),
+    ...mapActions(useAccountStore, ["login"]),
+    async doLogin() {
       try {
-        await this.login({ email: this.email, password: this.password })
-        this.$router.push('/programs')
-      }
-      catch {
-        this.email = ''
-        this.password = ''
-        this.setNotification({ type: 'alert', text: 'Incorrect email or password' })
+        await this.login({ email: this.email, password: this.password });
+        this.$router.push("/programs");
+      } catch {
+        this.email = "";
+        this.password = "";
+        this.setNotification({ type: "alert", text: "Incorrect email or password" });
 
-        this.$refs.user.$el.children[1].focus()
+        this.$refs.user.$el.children[1].focus();
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

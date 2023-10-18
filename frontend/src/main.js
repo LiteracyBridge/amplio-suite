@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
-import CognitoAuth from "./cognito/cognito";
+import CognitoAuth from "./cognito";
 import config from "./cognito/config";
 import router from "./router";
 import { useAccountStore } from "@/store/account";
@@ -26,6 +26,10 @@ import "vue-multiselect/dist/vue-multiselect.css";
 // Layouts
 import Default from "@/layouts/Default.vue";
 import Login from "@/layouts/Login.vue";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faUserSecret, faTimes } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faUserSecret, faTimes);
 
 const pinia = createPinia();
 const app = createApp(App);

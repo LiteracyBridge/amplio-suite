@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import multiguard from "vue-router-multiguard";
 
 import { useAccountStore } from "@/store/account";
+import { useWizardStore } from "@/store/wizard";
 import Home from "@/views/Home.vue";
 import Login from "@/views/SignIn.vue";
 
@@ -251,7 +252,7 @@ function stepIsCompleted(to, from, next) {
         // const s = to.path.split('/')
         // const nextStep = +s[s.length -1].split('-')[1]
         const nextStep = to.matched[1].props.default.step;
-        const isComplete = store.state.wizard.completedSteps.includes(
+        const isComplete = useWizardStore().completedSteps.includes(
             nextStep - 1
         );
 
