@@ -126,7 +126,8 @@ export default {
     return theData;
   },
   async created() {
-    await this.fetchSpec({ programId: this.programId });
+    console.log(this.$route.params)
+    await this.fetchSpec({ programId: this.$route.query.programId });
   },
   beforeRouteUpdate(to, from, next) {
     const isInternalNavigation = () => this.internal[fromName] && this.internal[toName];

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { useLanguagesStore } from '@/store/languages'
 import {mapState} from 'pinia'
 
 import Multiselect from 'vue-multiselect'
@@ -87,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapState('languages', {
+    ...mapState(useLanguagesStore, {
       // List of  [{code:'en', comment:'Popular language', name:'English'}, {code:'zed', comment:'End of the line', name:'Zebra'}]
       supportedLanguages: state => state.languages,
     }),

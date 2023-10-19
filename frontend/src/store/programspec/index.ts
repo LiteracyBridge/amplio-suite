@@ -42,7 +42,10 @@ export const getDefaultState = () => {
         programId: "",
         deployments: [] as any[],
         recipients: [] as any[],
-        general: {} as any,
+        general: {
+            direct_beneficiaries_map: {},
+            direct_beneficiaries_additional_map: {}
+        } as any,
 
         filterText: "",
         sortTable: {

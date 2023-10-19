@@ -215,12 +215,13 @@ export default {
       country: (state) => state.general.country,
       region: (state) => state.general.region,
       languages: (state) => state.general.languages,
-      listeningModels: (state) => state.general.listening_models,
+      listeningModels: (state) => state.general.listening_models || [],
     }),
     ...mapState(useProgramSpecStore, [
       "labelUsed",
       "directBeneficiariesLabels",
       "directBeneficiariesAdditionalLabels",
+      "changed",
     ]),
     listeningModelsOptions() {
       return listeningModels;
@@ -252,7 +253,7 @@ export default {
       return result;
     },
     changed() {
-      return this.$store.state.programspec.changed;
+      return useProgramSpecStore().changed;
     },
   },
   components: {

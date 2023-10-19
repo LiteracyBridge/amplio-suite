@@ -47,7 +47,7 @@ const getLanguages = async programid => {
         url += `?programid=${programid}`;
     }
     const fetch_response = await fetch(url, init);
-    let result = fetch_response.json();
+    let result = await fetch_response.json();
     console.log(result);
     console.log(programid);
     return result;

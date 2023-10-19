@@ -27,9 +27,23 @@ import "vue-multiselect/dist/vue-multiselect.css";
 import Default from "@/layouts/Default.vue";
 import Login from "@/layouts/Login.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUserSecret, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+    faUserSecret,
+    faTimes,
+    faSpinner,
+    faExclamationCircle,
+    faChevronDown,
+    faUserCircle
+} from "@fortawesome/free-solid-svg-icons";
 
-library.add(faUserSecret, faTimes);
+library.add(
+    faUserSecret,
+    faTimes,
+    faSpinner,
+    faExclamationCircle,
+    faChevronDown,
+    faUserCircle
+);
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -49,10 +63,10 @@ if (process.env.NODE_ENV === "development") {
     app.use(VueAxe);
 }
 
-app.use(router);
-// .use(store)
-// .use(createPinia());
-// .use(CognitoAuth, config);
+app.use(router)
+    // .use(store)
+    // .use(createPinia());
+    .use(CognitoAuth, config);
 
 app.mount("#app");
 // new Vue({

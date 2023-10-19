@@ -166,6 +166,9 @@ const routes = [
         props: true,
         component: () => import("../views/Monitor/Index.vue"),
         beforeEnter: requireAuth,
+        meta: {
+            layout: Default
+        },
         children: [
             {
                 path: "StatusByDepl",
@@ -181,7 +184,16 @@ const routes = [
     },
     {
         path: "/programs/:programId/settings",
-        redirect: { path: "/programs/:programId/settings/general" },
+        // redirect: { path: "/programs/:programId/settings/general" },
+        redirect: to => {
+            // the function receives the target route as the argument
+            // we return a redirect path/location here.
+            return {
+                path: "/programs/:programId/settings/general",
+                params: to.params,
+                query: { programId: to.params.programId }
+            };
+        },
         props: true,
         component: () =>
             import(
@@ -266,9 +278,13 @@ function stepIsCompleted(to, from, next) {
 }
 
 function requireAuth(to, from, next) {
-    store
-        .dispatch("account/requireAuth")
-        .then(() => next())
+    useAccountStore()
+        .requireAuth()
+        .then(() => {
+            console.log("here we go");
+
+            next();
+        })
         .catch(() => {
             return next({
                 path: "/login",
@@ -278,9 +294,12 @@ function requireAuth(to, from, next) {
 }
 
 function checkAuth(to, from, next) {
-    useAccountStore()
+    return useAccountStore()
         .requireAuth()
-        .then(() => next({ path: "/programs" }))
+        .then(() => {
+            console.log("here we go");
+            next({ path: "/programs" });
+        })
         .catch(() => {
             return next();
         });
