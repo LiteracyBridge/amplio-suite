@@ -90,7 +90,7 @@ export default {
       return this.general.name;
     },
     anyTabChanged() {
-      return this.programspec.changed;
+      return useProgramSpecStore().changed;
     },
     canPublish() {
       if (!this.deployments) return false;

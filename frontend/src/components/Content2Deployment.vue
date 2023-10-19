@@ -72,7 +72,7 @@
 <script>
 import {mapActions} from 'pinia'
 
-import Content2Playlists from '@/components/Content2Playlists';
+import Content2Playlists from '@/components/Content2Playlists.vue';
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
 

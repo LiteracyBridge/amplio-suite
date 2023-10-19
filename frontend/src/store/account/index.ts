@@ -183,6 +183,8 @@ export const useAccountStore = defineStore("account", {
         async requireAuth() {
             // Resolve if the user is authenticated
             // Else reject
+            // if(this.user?.token !=null) return;
+
             const loadUser = () => {
                 // Retrieve the object from storage
                 const user = localStorage.getItem("user");

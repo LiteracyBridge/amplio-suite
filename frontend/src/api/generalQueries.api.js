@@ -40,7 +40,7 @@ async function getPrograms() {
     return fetch_response.json();
 }
 
-const getLanguages = async programid => {
+async function getLanguages(programId) {
     const init = makeInit();
     let url = `${URL}${SUPPORTED_LANGUAGES}`;
     if (programid) {
@@ -51,7 +51,7 @@ const getLanguages = async programid => {
     console.log(result);
     console.log(programid);
     return result;
-};
+}
 
 const getRoadmap = async programid => {
     const init = makeInit();
@@ -75,7 +75,7 @@ const putRoadmap = async (programid, completed) => {
     return result;
 };
 
-const getCategories = async programid => {
+async function getCategories(programid) {
     const init = makeInit();
     let url = `${URL}${SUPPORTED_CATEGORIES}`;
     if (programid) {

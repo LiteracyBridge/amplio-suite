@@ -17,7 +17,7 @@
       :clear-on-select="true"
       :preserve-search="false"
       :internal-search="false"
-      :custom-label="(opt) => opt.name||opt.code||opt"
+      :custom-label="(opt) => opt.name || opt.code || opt"
       label="name"
       track-by="code"
       :placeholder="placeholder"
@@ -35,22 +35,23 @@
       icon="spinner"
       size="2x"
       pulse
-      class="block w-10 h-10 mt-2 text-left"/>
+      class="block w-10 h-10 mt-2 text-left"
+    />
   </div>
 </template>
 
 <script>
-import { useLanguagesStore } from '@/store/languages'
-import {mapState} from 'pinia'
+import { useLanguagesStore } from "@/store/languages";
+import { mapState } from "pinia";
 
-import Multiselect from 'vue-multiselect'
+import Multiselect from "vue-multiselect";
 
 export default {
   props: {
     options: {
       // A list of language codes: ['en', 'fr'].
       type: Array,
-      default: null
+      default: null,
     },
     languages: {
       // The initially selected language codes: ['en']
@@ -67,7 +68,7 @@ export default {
     },
     labelBy: {
       type: String,
-      default: 'code'
+      default: "code",
     },
     autofocus: {
       type: Boolean,
@@ -75,37 +76,39 @@ export default {
     },
     multiple: {
       type: Boolean,
-      default: true
+      default: true,
     },
     placeholder: {
-        type: String,
-        default: 'Type a language to add'
+      type: String,
+      default: "Type a language to add",
     },
   },
 
   components: {
-    Multiselect
+    Multiselect,
   },
 
   computed: {
     ...mapState(useLanguagesStore, {
       // List of  [{code:'en', comment:'Popular language', name:'English'}, {code:'zed', comment:'End of the line', name:'Zebra'}]
-      supportedLanguages: state => state.languages,
+      supportedLanguages: (state) => state.languages,
     }),
 
     selectedLanguages() {
       // List of initially selected languages, expanded to 'supportedLanguages' format, [{code:'en', comment:...}]
-      if (!this.languages || this.languages === '') {
-        return []
+      if (!this.languages || this.languages === "") {
+        return [];
       }
-      let result = []
+      let result = [];
       try {
-        const languageCodes = Array.isArray(this.languages) ? this.languages : [this.languages]
+        const languageCodes = Array.isArray(this.languages)
+          ? this.languages
+          : [this.languages];
         // map from codes to full info.
         result = this.mapLanguageCodesToInfo(languageCodes);
-        if (result.len === 0) result = []
+        if (result.len === 0) result = [];
       } catch (ignored) {
-        result = []
+        result = [];
       }
       return result;
     },
@@ -115,37 +118,38 @@ export default {
     supportedLanguages: {
       immediate: true,
       handler() {
-        if (this.supportedLanguages.length === 0) return
+        if (this.supportedLanguages.length === 0) return;
         if (this.autofocus && this.supportedLanguages.length > 0) {
           this.$nextTick(() => {
-            this.$refs.languages.$refs.search.focus()
+            this.$refs.languages.$refs.search.focus();
           });
         }
         // Is there an options property? (list of language codes from which user can select)
         if (this.options) {
           this.allOptions = this.mapLanguageCodesToInfo(this.options);
-          this.filteredLanguageOptions = [...this.allOptions]
+          this.filteredLanguageOptions = [...this.allOptions];
         } else {
-          this.allOptions = [...this.supportedLanguages]
-          this.filteredLanguageOptions = [...this.supportedLanguages]
+          this.allOptions = [...this.supportedLanguages];
+          this.filteredLanguageOptions = [...this.supportedLanguages];
         }
-      }
-    }
+      },
+    },
   },
 
   data() {
     return {
       allOptions: [],
       filteredLanguageOptions: [],
-    }
+    };
   },
 
   methods: {
     onSearch(query) {
-      query = query.trim().toLowerCase()
+      query = query.trim().toLowerCase();
 
-      this.filteredLanguageOptions = this.allOptions
-        .filter(lang => lang.name.toLowerCase().includes(query))
+      this.filteredLanguageOptions = this.allOptions.filter((lang) =>
+        lang.name.toLowerCase().includes(query)
+      );
     },
 
     /**
@@ -156,15 +160,16 @@ export default {
      */
     mapLanguageCodesToInfo(codes) {
       const infos = codes.map((lc) => {
-        let languageInfo = this.supportedLanguages.find(languageInfo => languageInfo.code === lc);
+        let languageInfo = this.supportedLanguages.find(
+          (languageInfo) => languageInfo.code === lc
+        );
         if (!languageInfo) {
-          languageInfo = {code: lc, name: lc, comment: lc}
+          languageInfo = { code: lc, name: lc, comment: lc };
         }
-        return languageInfo
+        return languageInfo;
       });
       return infos;
     },
-
   },
-}
+};
 </script>

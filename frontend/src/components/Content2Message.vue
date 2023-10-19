@@ -82,7 +82,7 @@
 <script>
 import {mapState, mapActions} from 'pinia'
 
-import Content2MessageForm from '@/components/Content2MessageForm'
+import Content2MessageForm from '@/components/Content2MessageForm.vue'
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
 import VTooltip from '@/components/VTooltip.vue'

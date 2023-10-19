@@ -73,7 +73,7 @@
 <script>
 import {mapState, mapActions} from 'pinia'
 
-import Content2Message from '@/components/Content2Message'
+import Content2Message from '@/components/Content2Message.vue'
 import Draggable from 'vuedraggable'
 import VButton from '@/components/VButton.vue'
 
