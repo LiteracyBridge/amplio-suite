@@ -25,7 +25,7 @@ import {mapState, mapActions} from 'pinia'
 
 import { getTbStatusBy } from '@/api/generalQueries.api'
 import ADataTable from '@/components/ADataTable'
-import Loading from '@/components/Loading'
+import Loading from '@/components/Loading.vue'
 import MonitorHeader from '@/components/MonitorHeader'
 
 export default {

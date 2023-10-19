@@ -21,7 +21,7 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 
-import Loading from '@/components/Loading'
+import Loading from '@/components/Loading.vue'
 import MonitorHeader from '@/components/MonitorHeader'
 
 export default {

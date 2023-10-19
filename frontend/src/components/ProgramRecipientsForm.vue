@@ -249,8 +249,8 @@ import Multiselect from 'vue-multiselect'
 import VButton from '@/components/VButton.vue'
 import VInput from '@/components/VInput.vue'
 import VTooltip from '@/components/VTooltip.vue'
-import LanguagesSelector from '@/components/LanguagesSelector'
-import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries'
+import LanguagesSelector from '@/components/LanguagesSelector.vue'
+import BeneficiariesField from '@/components/ProgramRecipientsFormBeneficiaries.vue'
 
 import listeningModels from '@/data/listeningModels.json'
 
