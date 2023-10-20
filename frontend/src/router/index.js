@@ -167,7 +167,7 @@ const routes = [
         component: () => import("../views/Monitor/Index.vue"),
         beforeEnter: requireAuth,
         meta: {
-            layout: Default
+            layout: "default"
         },
         children: [
             {
@@ -281,9 +281,7 @@ function requireAuth(to, from, next) {
     useAccountStore()
         .requireAuth()
         .then(() => {
-            console.log("here we go");
-
-            next();
+            return next();
         })
         .catch(() => {
             return next({
@@ -297,8 +295,7 @@ function checkAuth(to, from, next) {
     return useAccountStore()
         .requireAuth()
         .then(() => {
-            console.log("here we go");
-            next({ path: "/programs" });
+            return next({ path: "/programs" });
         })
         .catch(() => {
             return next();

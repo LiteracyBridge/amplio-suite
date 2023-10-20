@@ -89,7 +89,7 @@ export default {
 
     deployments: {
       get() {
-        return this.$store.state.programspec.deployments;
+        return this.deployments;
       },
       set(newValue) {
         this.printData(this.deployments, "From");
