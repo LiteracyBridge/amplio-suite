@@ -28,6 +28,7 @@
         ghost-class="moving-item"
         @start="dragging = true"
         @end="dragging = false"
+        item-key="deploymentnumber"
       >
         <div
           v-for="(deployment, index) in deployments"
@@ -62,7 +63,7 @@
 import { mapState, mapActions } from "pinia";
 
 import Content2Deployment from "@/components/Content2Deployment.vue";
-import Draggable from "vuedraggable";
+import draggable from "vuedraggable";
 import Loading from "@/components/Loading.vue";
 import ProgramHeader from "@/components/ProgramHeader.vue";
 import VButton from "@/components/VButton.vue";
@@ -109,7 +110,7 @@ export default {
   /* External components used in this one */
   components: {
     Content2Deployment,
-    Draggable,
+    draggable,
     Loading,
     ProgramHeader,
     VButton,

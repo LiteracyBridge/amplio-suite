@@ -184,16 +184,22 @@ const routes = [
     },
     {
         path: "/programs/:programId/settings",
-        // redirect: { path: "/programs/:programId/settings/general" },
+        name: "programspec.settings",
         redirect: to => {
             // the function receives the target route as the argument
             // we return a redirect path/location here.
             return {
-                path: "/programs/:programId/settings/general",
+                // path: "/programs/:programId/settings/general",
+                name: "programspec.index",
                 params: to.params,
                 query: { programId: to.params.programId }
             };
-        },
+        }
+    },
+    {
+        path: "/programs/:programId/settings",
+        name: "programspec.index",
+        // redirect: { path: "/programs/:programId/settings/general" },
         props: true,
         component: () =>
             import(

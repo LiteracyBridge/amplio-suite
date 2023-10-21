@@ -39,9 +39,14 @@
         </router-link>
       </nav>
 
-      <transition :name="transitionName" mode="out-in">
+      <!-- <transition :name="transitionName" mode="out-in">
         <router-view />
-      </transition>
+      </transition> -->
+      <router-view v-slot="{ Component }">
+        <transition>
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </div>
 
     <footer class="py-6">

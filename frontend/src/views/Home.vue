@@ -116,26 +116,33 @@ export default {
       let path = "";
       if (this.wizardCompleted || altKey) {
         path = `${this.$route.path}/settings`;
+        this.$router.push({ name: "programspec.settings", params: this.$route.params });
       } else {
         path = `${this.$route.path}/wizard`;
+        this.$router.push({ path, params: this.$route.params });
       }
-      this.$router.push(path);
+      //   console.log({ path, params: this.$route.params });
+      //   this.$router.push(path);
     },
     onUfSurveyClicked(ev) {
       let altKey = ev && ev.altKey;
       let path = "";
       if (this.wizardCompleted || altKey) {
         path = `${this.$route.path}/settings`;
+        this.$router.push({ name: "programspec.settings", params: this.$route.params });
       } else {
         path = `${this.$route.path}/wizard`;
       }
-      this.$router.push(path);
+      //   this.$router.push(path);
     },
     onMonitoringCenterClicked(ev) {
       let altKey = ev && ev.altKey;
       let path = `${this.$route.path}/monitor`;
       if (altKey) path = path + "";
-      this.$router.push(path);
+
+      this.$router.push({ path, params: this.$route.params });
+
+      //   this.$router.push(path);
     },
   },
 };
