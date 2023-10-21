@@ -33,7 +33,10 @@ import {
     faSpinner,
     faExclamationCircle,
     faChevronDown,
-    faUserCircle
+    faUserCircle,
+    faGripLines,
+    faCaretRight,
+    faCalendarAlt
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -42,7 +45,10 @@ library.add(
     faSpinner,
     faExclamationCircle,
     faChevronDown,
-    faUserCircle
+    faUserCircle,
+    faGripLines,
+    faCaretRight,
+    faCalendarAlt
 );
 
 const pinia = createPinia();

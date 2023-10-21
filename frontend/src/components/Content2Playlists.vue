@@ -1,6 +1,5 @@
 <template>
   <div class="tag-deployment">
-
     <draggable
       v-model="playlists"
       :animation="200"
@@ -8,30 +7,28 @@
       group="playlists"
       ghost-class="moving-item"
       @start="dragging = true"
-      @end="dragging = false">
-
-      <div v-for="playlist in playlists" :key="playlist.position">
-        <content2-playlist :deployment="deployment" :playlist="playlist"/>
-      </div>
-
+      @end="dragging = false"
+      item-key="position"
+    >
+      <template #item="{ element: playlist, index: index }">
+        <content2-playlist :deployment="deployment" :playlist="playlist" />
+      </template>
     </draggable>
-
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions } from "pinia";
 
-import content2Playlist from '@/components/Content2Playlist.vue'
-import Draggable from 'vuedraggable'
+import content2Playlist from "@/components/Content2Playlist.vue";
+import Draggable from "vuedraggable";
 
 export default {
   props: {
     deployment: {
       type: Object,
-      required: true
+      required: true,
     },
-
   },
 
   components: {
@@ -40,9 +37,7 @@ export default {
   },
 
   computed: {
-    ...mapState('programspec', [
-      'deployments'
-    ]),
+    ...mapState("programspec", ["deployments"]),
 
     playlists: {
       get() {
@@ -50,17 +45,13 @@ export default {
       },
 
       set(newValue) {
-        this.setPlaylists({deployment:this.deployment, playlists:newValue})
-      }
+        this.setPlaylists({ deployment: this.deployment, playlists: newValue });
+      },
     },
   },
 
   methods: {
-    ...mapActions('programspec', [
-      'setPlaylists',
-    ]),
-
+    ...mapActions("programspec", ["setPlaylists"]),
   },
-
-}
+};
 </script>

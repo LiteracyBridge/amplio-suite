@@ -30,17 +30,15 @@
         @end="dragging = false"
         item-key="deploymentnumber"
       >
-        <div
-          v-for="(deployment, index) in deployments"
-          :key="deployment.deploymentnumber"
-          class="flex mb-1"
-        >
-          <content2-deployment
-            :deployment="deployment"
-            :canRemove="index === deployments.length - 1"
-            :index="index"
-          />
-        </div>
+        <template #item="{ element: deployment, index: index }">
+          <div class="flex mb-1">
+            <content2-deployment
+              :deployment="deployment"
+              :canRemove="index === deployments.length - 1"
+              :index="index"
+            />
+          </div>
+        </template>
       </draggable>
     </div>
 
@@ -63,7 +61,7 @@
 import { mapState, mapActions } from "pinia";
 
 import Content2Deployment from "@/components/Content2Deployment.vue";
-import draggable from "vuedraggable";
+import draggable from "vuedraggable/dist/vuedraggable.common";
 import Loading from "@/components/Loading.vue";
 import ProgramHeader from "@/components/ProgramHeader.vue";
 import VButton from "@/components/VButton.vue";
@@ -71,6 +69,7 @@ import { useProgramSpecStore } from "@/store/programspec";
 import { useLanguagesStore } from "@/store/languages";
 import { useCategoriesStore } from "@/store/categories";
 
+// FIXME: deployments order is not preserved when dragging -> Related to state management?
 export default {
   props: ["programId"],
 
@@ -88,16 +87,16 @@ export default {
       return this.changed;
     },
 
-    deployments: {
-      get() {
-        return this.deployments;
-      },
-      set(newValue) {
-        this.printData(this.deployments, "From");
-        this.setDeployments({ deployments: newValue });
-        this.printData(this.deployments, "To");
-      },
-    },
+    // deployments: {
+    //   get() {
+    //     return this.deployments;
+    //   },
+    //   set(newValue) {
+    //     this.printData(this.deployments, "From");
+    //     this.setDeployments({ deployments: newValue });
+    //     this.printData(this.deployments, "To");
+    //   },
+    // },
   },
 
   data() {
