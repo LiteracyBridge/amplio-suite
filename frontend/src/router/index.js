@@ -189,10 +189,8 @@ const routes = [
             // the function receives the target route as the argument
             // we return a redirect path/location here.
             return {
-                // path: "/programs/:programId/settings/general",
                 name: "programspec.index",
-                params: to.params,
-                query: { programId: to.params.programId }
+                params: to.params
             };
         }
     },

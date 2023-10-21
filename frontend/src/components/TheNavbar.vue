@@ -70,7 +70,7 @@
         </div>
 
         <div class="inline-flex items-center" :class="expandWhenActive">
-          <!-- <VueMultiselect
+          <VueMultiselect
             id="programSelector"
             :value="programName"
             :options="programNameList"
@@ -78,7 +78,7 @@
             @select="programNameSelected"
             @open="programSelectorOpened"
             @close="programSelectorClosed"
-          /> -->
+          />
 
           <span
             tabindex="0"
@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     ...mapState(useProgramSpecStore, {
-      programId: (state) => state.general.program_id,
+      programId: (state) => state.general?.program_id,
       wizardCompleted: () => true, // TODO: figure out how to get to SDG and Listening Model selection.
     }),
     ...mapState(useProgramsStore, ["programs", "programNames"]),
@@ -183,9 +183,7 @@ export default {
         // Program spec name, fall back to program name, fall back to program id.
         // (Program data is loaded before the full program spec).
         const specName =
-          this.$store.state.programspec.general.name ||
-          this.$store.state.program.programName ||
-          this.$store.state.program.programId;
+          this.general.name || this.program.programName || this.program.programId;
         console.log(`Spec name: ${specName}, selected name: ${this.selectedName}`);
         return specName || this.selectedName || null;
       } catch (ignored) {

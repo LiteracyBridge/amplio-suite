@@ -121,8 +121,6 @@ export default {
         path = `${this.$route.path}/wizard`;
         this.$router.push({ path, params: this.$route.params });
       }
-      //   console.log({ path, params: this.$route.params });
-      //   this.$router.push(path);
     },
     onUfSurveyClicked(ev) {
       let altKey = ev && ev.altKey;
@@ -133,7 +131,6 @@ export default {
       } else {
         path = `${this.$route.path}/wizard`;
       }
-      //   this.$router.push(path);
     },
     onMonitoringCenterClicked(ev) {
       let altKey = ev && ev.altKey;
