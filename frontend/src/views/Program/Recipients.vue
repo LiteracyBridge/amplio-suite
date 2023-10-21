@@ -181,6 +181,7 @@ import { EventBus } from "@/event-bus";
 import ProgramHeader from "@/components/ProgramHeader.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
+import { useLanguagesStore } from "@/store/languages";
 
 const columns = [
   { label: "Region/State", key: "region" },
@@ -307,11 +308,11 @@ export default {
   created() {
     this.ensureSpec({ programId: this.programId });
 
-    EventBus.$on("handleEscape", this.handleModalEscape);
+    // EventBus.$on("handleEscape", this.handleModalEscape);
   },
 
   beforeDestroy() {
-    EventBus.$off("handleEscape", this.handleModalEscape);
+    // EventBus.$off("handleEscape", this.handleModalEscape);
   },
 
   data: () => ({
