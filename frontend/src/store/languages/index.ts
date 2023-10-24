@@ -19,19 +19,17 @@ export const useLanguagesStore = defineStore("languages", {
         getLanguagesError() {
             this.status = "error";
         },
-        async fetchLanguages() {
-            if (
-                this.status == "loading" ||
-                (this.languages && this.languages.length > 0)
-            ) {
+        async fetchLanguages(programId?: string) {
+            if ((this.languages || []).length > 0) {
                 return;
             }
             this.getLanguagesRequest();
 
             try {
-                let languages = await getLanguages();
+                let languages = await getLanguages(programId);
                 await this.getLanguagesSuccess(languages);
-            } catch {
+            } catch (err) {
+                console.log(err);
                 this.getLanguagesError();
             }
         }

@@ -40,16 +40,16 @@ async function getPrograms() {
     return fetch_response.json();
 }
 
-async function getLanguages(programId) {
+async function getLanguages(programId = null) {
     const init = makeInit();
     let url = `${URL}${SUPPORTED_LANGUAGES}`;
-    if (programid) {
-        url += `?programid=${programid}`;
+    if (programId) {
+        url += `?programid=${programId}`;
     }
     const fetch_response = await fetch(url, init);
     let result = await fetch_response.json();
     console.log(result);
-    console.log(programid);
+    console.log(programId);
     return result;
 }
 
@@ -84,7 +84,7 @@ async function getCategories(programid) {
     const fetch_response = await fetch(url, init);
     let result = fetch_response.json();
     return result;
-};
+}
 
 const getTbStatusBy = async (programid, selector) => {
     const init = makeInit();

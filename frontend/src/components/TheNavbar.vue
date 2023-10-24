@@ -118,7 +118,7 @@ export default {
       programId: (state) => state.general?.program_id,
       wizardCompleted: () => true, // TODO: figure out how to get to SDG and Listening Model selection.
     }),
-    ...mapState(useProgramsStore, ["programs", "programNames"]),
+    ...mapState(useProgramsStore, ["programs", "programNames", "general"]),
     ...mapState(useAccountStore, ["user"]),
     programNameList() {
       return Object.values(this.programNames).sort();

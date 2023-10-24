@@ -266,7 +266,7 @@ export default {
     ProgramHeader,
   },
   created() {
-    this.fetchLanguages();
+    this.fetchLanguages(this.programId);
   },
   watch: {
     region: {
