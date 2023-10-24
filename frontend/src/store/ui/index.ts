@@ -71,10 +71,13 @@ export const useUIStore = defineStore("ui", {
         //     this.notification.text = payload.text;
         //     this.notification.type = payload.type;
         // },
-        setModal(text: string, width: any) {
+        setModal(text: string, width?: any) {
             this.openModal();
             this.setModalTitle(text);
-            this.setModalWidth(width);
+
+            if (width !== undefined) {
+                this.setModalWidth(width);
+            }
         },
 
         setNotification(payload: { type?: any; text?: string }) {

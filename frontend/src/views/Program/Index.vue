@@ -8,8 +8,8 @@
           label="Publish"
           variant="submit"
           :disabled="!canPublish"
-          :iconL="publishStatus === 'loading' ? 'spinner' : ''"
-          :iconLPulse="publishStatus === 'loading'"
+          :iconL="data.publishStatus === 'loading' ? 'spinner' : ''"
+          :iconLPulse="data.publishStatus === 'loading'"
           @click="onPublish"
         />
         <v-tooltip
@@ -26,7 +26,7 @@
     <div class="bg-white rounded-lg shadow-box">
       <nav aria-label="Program sections" class="flex border-b">
         <router-link
-          v-for="(section, index) in sections"
+          v-for="(section, index) in data.sections"
           :key="section"
           :to="`/programs/${programId}/settings/${section}`"
           :class="[
@@ -35,7 +35,7 @@
           ]"
           class="p-4 text-lg uppercase hover:bg-amplio-green hover:text-white"
         >
-          {{ ` ${sectionTitles[section] || section} ` }}
+          {{ ` ${data.sectionTitles[section] || section} ` }}
         </router-link>
       </nav>
 
@@ -55,16 +55,16 @@
     </footer>
 
     <v-snackbars
-      :show.sync="showSnackbar"
+      :show.sync="data.showSnackbar"
       label="The program specification was successfully published to the ACM."
     />
 
     <!-- For modal components -->
-    <portal to="modalBody" v-if="isModalOpen">
+    <portal to="modalBody" v-if="data.isModalOpen">
       <p class="text-xl">Save or discard the change before continue.</p>
     </portal>
 
-    <portal to="modalFooter" v-if="isModalOpen">
+    <portal to="modalFooter" v-if="data.isModalOpen">
       <footer class="flex flex-row-reverse justify-between pt-20">
         <VButton label="Ok" @click="handleCloseModal" />
       </footer>
@@ -72,122 +72,121 @@
   </main>
 </template>
 
-<script>
-import { mapState, mapActions } from "pinia";
-
+<script lang="ts" setup>
 import VButton from "@/components/VButton.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import VSnackbars from "@/components/VSnackbars.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
+import { computed, onMounted, ref } from "vue";
+import { useAccountStore } from "@/store/account";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 
-export default {
-  name: "Program",
-  props: ["programId"],
-  components: {
-    VButton,
-    VTooltip,
-    VSnackbars,
-  },
-  computed: {
-    ...mapState(useProgramSpecStore, ["deployments", "recipients", "changed", "general"]),
-    programName() {
-      return this.general.name;
-    },
-    anyTabChanged() {
-      return useProgramSpecStore().changed;
-    },
-    canPublish() {
-      if (!this.deployments) return false;
-      const hasOneMessage = this.deployments.some((depl) =>
-        depl.playlists.some((pl) => pl.messages.length > 0)
-      );
-      const hasOneRecipient = this.recipients.length > 0;
-      return hasOneMessage && hasOneRecipient && !this.anyTabChanged;
-    },
-  },
-  data() {
-    let theData = {
-      sections: ["general", "content2", "recipients", "importExport"],
-      internal: { general: true, content2: true, recipients: true },
-      sectionTitles: { content2: "Deployments & Content", importExport: "Import/Export" },
-      publishStatus: null,
-      transitionName: "slide-left",
-      isModalOpen: false,
-      showSnackbar: false,
-    };
-    try {
-      // Add program spec pages that should only be shown to @amplio.org users.
-      const email = this.$store.state.account.user.email;
-      if (email) {
-        if (email.endsWith("@amplio.org")) {
-          theData.sections.push("ufImportExport");
-          theData.sectionTitles["ufImportExport"] = "UF Questionnaire";
-        }
+const props = defineProps<{ programId: string }>();
+const store = useProgramSpecStore(),
+  route = useRoute();
+
+const data = ref({
+  sections: ["general", "content2", "recipients", "importExport"],
+  internal: { general: true, content2: true, recipients: true } as Record<
+    string,
+    boolean
+  >,
+  sectionTitles: {
+    content2: "Deployments & Content",
+    importExport: "Import/Export",
+  } as Record<string, string>,
+  publishStatus: null,
+  transitionName: "slide-left",
+  isModalOpen: false,
+  showSnackbar: false,
+});
+
+const programName = computed(() => {
+  return useProgramSpecStore().general.name;
+});
+
+const anyTabChanged = computed(() => {
+  return useProgramSpecStore().changed;
+});
+
+const canPublish = computed(() => {
+  const deployments = useProgramSpecStore().deployments;
+  const recipients = useProgramSpecStore().recipients;
+  const changed = useProgramSpecStore().changed;
+  const hasOneMessage = deployments.some((depl) =>
+    depl.playlists.some((pl: any) => pl.messages.length > 0)
+  );
+  const hasOneRecipient = recipients.length > 0;
+  return hasOneMessage && hasOneRecipient && !changed;
+});
+
+async function onPublish() {
+  if (!canPublish.value) return;
+
+  data.value.publishStatus = "loading";
+  data.value.publishStatus = await store.publishSpec();
+  if (data.value.publishStatus === "success") data.value.showSnackbar = true;
+}
+
+function handleOpenModal() {
+  data.value.isModalOpen = true;
+  useUIStore().setModal("Save or discard the change");
+}
+
+function handleCloseModal() {
+  data.value.isModalOpen = false;
+  useUIStore().closeModal();
+}
+
+onMounted(async () => {
+  try {
+    // Add program spec pages that should only be shown to @amplio.org users.
+    const email = useAccountStore().user.email;
+    if (email) {
+      if (email.endsWith("@amplio.org")) {
+        data.value.sections.push("ufImportExport");
+        // @ts-ignore
+        data.value.sectionTitles["ufImportExport"] = "UF Questionnaire";
       }
-    } catch (ignored) {
-      console.log("no user");
     }
-    return theData;
-  },
-  async created() {
-    console.log(this.$route.params)
-    await this.fetchSpec({ programId: this.$route.query.programId });
-  },
-  beforeRouteUpdate(to, from, next) {
-    const isInternalNavigation = () => this.internal[fromName] && this.internal[toName];
-    const sTo = to.path.split("/");
-    const sFrom = from.path.split("/");
-    const toName = sTo[sTo.length - 1];
-    const fromName = sFrom[sFrom.length - 1];
+  } catch (ignored) {
+    console.log("no user");
+  }
 
-    this.transitionName =
-      this.sections.indexOf(toName) < this.sections.indexOf(fromName)
-        ? "slide-right"
-        : "slide-left";
+  await store.fetchSpec({ programId: route.params.programId });
+});
 
-    // Check if the data is save
-    if (this.anyTabChanged && !isInternalNavigation()) {
-      this.handleOpenModal();
-      next(false);
-    } else {
-      next();
-    }
-  },
-  beforeRouteLeave(to, from, next) {
-    // Check if the data is save
-    if (this.anyTabChanged) {
-      this.handleOpenModal();
-      next(false);
-    } else {
-      next();
-    }
-  },
-  // watch: {
-  //   deployments () {
-  //     if (this.deployments.length > 0) {
-  //       this.fetchContent2({programId: this.programId});
-  //     }
-  //   }
-  // },
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal"]),
-    ...mapActions(useProgramSpecStore, ["fetchSpec", "publishSpec"]),
-    async onPublish() {
-      if (!this.canPublish) return;
+onBeforeRouteUpdate((to, from, next) => {
+  const sTo = to.path.split("/");
+  const sFrom = from.path.split("/");
+  const toName = sTo[sTo.length - 1];
+  const fromName = sFrom[sFrom.length - 1];
 
-      this.publishStatus = "loading";
-      this.publishStatus = await this.publishSpec();
-      if (this.publishStatus === "success") this.showSnackbar = true;
-    },
-    handleOpenModal() {
-      this.isModalOpen = true;
-      this.setModal("Save or discard the change");
-    },
-    handleCloseModal() {
-      this.isModalOpen = false;
-      this.closeModal();
-    },
-  },
-};
+  const isInternalNavigation = () =>
+    (data.value.internal[fromName] as any) && (data.value.internal[toName] as any);
+
+  data.value.transitionName =
+    data.value.sections.indexOf(toName) < data.value.sections.indexOf(fromName)
+      ? "slide-right"
+      : "slide-left";
+
+  // Check if the data is save
+  if (anyTabChanged.value && !isInternalNavigation()) {
+    handleOpenModal();
+    next(false);
+  } else {
+    next();
+  }
+});
+
+onBeforeRouteLeave((to, from, next) => {
+  // Check if the data is save
+  if (anyTabChanged.value) {
+    handleOpenModal();
+    next(false);
+  } else {
+    next();
+  }
+});
 </script>

@@ -1,13 +1,10 @@
-import { createApp } from "vue";
+import { createApp, h, Fragment } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
 import CognitoAuth from "./cognito";
 import config from "./cognito/config";
 import router from "./router";
-import { useAccountStore } from "@/store/account";
-// import Vuex from "vuex";
-import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createPinia } from "pinia";
 
@@ -58,22 +55,24 @@ library.add(
 );
 
 const pinia = createPinia();
-const app = createApp(App);
-// app.use(Vuex)
-app.use(PortalVue)
-    // .use(fas)
-    .use(pinia);
+let app = createApp(App);
 
+// if (process.env.NODE_ENV === "development") {
+//     const VueAxe = import("vue-axe/dist/vue-axe.min");
+//     app = createApp({
+//         render: () => h(Fragment, [h(App), h(VueAxe.VueAxePopup)])
+//     });
+//     app.use(VueAxe.default);
+// } else {
+//     app = createApp(App);
+// }
+
+app.use(PortalVue).use(pinia);
+
+app.config.productionTip = false;
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("default-layout", Default);
 app.component("login-layout", Login);
-
-app.config.productionTip = false;
-
-if (process.env.NODE_ENV === "development") {
-    const VueAxe = import.meta.glob("vue-axe").default;
-    app.use(VueAxe);
-}
 
 app.use(router)
     // .use(store)

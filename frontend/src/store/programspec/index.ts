@@ -43,6 +43,7 @@ export const getDefaultState = () => {
         deployments: [] as any[],
         recipients: [] as any[],
         general: {
+            name: null as string | null,
             program_id: null,
             direct_beneficiaries_map: {},
             direct_beneficiaries_additional_map: {}
