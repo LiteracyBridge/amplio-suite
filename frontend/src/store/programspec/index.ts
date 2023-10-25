@@ -43,11 +43,15 @@ export const getDefaultState = () => {
         deployments: [] as any[],
         recipients: [] as any[],
         general: {
+            region: [] as string[],
+            listening_models: [] as any[],
+            country: null as string | null,
+            languages: [] as string[],
             name: null as string | null,
             program_id: null,
             direct_beneficiaries_map: {},
             direct_beneficiaries_additional_map: {}
-        } as any,
+        },
 
         filterText: "",
         sortTable: {

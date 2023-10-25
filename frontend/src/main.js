@@ -36,7 +36,8 @@ import {
     faCalendarAlt,
     faSearch,
     faEdit,
-    faCopy
+    faCopy,
+    faTrashAlt
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -51,7 +52,8 @@ library.add(
     faCalendarAlt,
     faSearch,
     faEdit,
-    faCopy
+    faCopy,
+    faTrashAlt
 );
 
 const pinia = createPinia();

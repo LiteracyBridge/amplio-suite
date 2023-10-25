@@ -1,14 +1,14 @@
 <template>
   <section class="relative min-h-200-px p-6 pt-0">
-    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
+    <loading v-if="specStore.status !== 'success'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       title="General"
-      :changed="changed"
-      :canSave="changed"
-      :description="description"
-      :onSaveChanges="updateSpec"
-      :onDiscardChanges="() => fetchSpec({ programId: this.programId })"
+      :changed="specStore.changed"
+      :canSave="specStore.changed"
+      :description="data.description"
+      :onDiscardChanges="() => specStore.fetchSpec({ programId: programId })"
+      :onSaveChanges="specStore.updateSpec"
     />
 
     <div class="min-h-200-px my-5 text-center">
@@ -24,8 +24,8 @@
           name="programName"
           type="text"
           placeholder="Enter Program Name"
-          :value="programName"
-          @input="(event) => setProgramName(event.target.value)"
+          :value="specStore.general.name"
+          @input="(event) => specStore.setProgramName(event.target.value)"
           mx="mx-0"
           class="w-full"
         />
@@ -35,11 +35,11 @@
         <label for="country">Country</label>
         <multiselect
           id="country"
-          :value="country"
+          :value="specStore.general.country"
           :options="countries"
           placeholder="Select one country"
           aria-label="Select one country"
-          @select="setCountry"
+          @select="specStore.setCountry"
         />
 
         <label class="md:pl-4" for="region">Region/State</label>
@@ -47,29 +47,30 @@
           id="region"
           tag-placeholder="Add this as new region"
           placeholder="Search or add a region"
-          :value="region"
-          :options="regionOptions"
+          :value="specStore.general.region"
+          :options="data.regionOptions"
           :multiple="true"
           :taggable="true"
           @tag="addTag"
-          @select="addRegion"
-          @remove="removeRegion"
+          @select="specStore.addRegion"
+          @remove="specStore.removeRegion"
         >
           <template slot="noOptions"> Region/State </template>
         </multiselect>
 
         <span id="langs">Languages</span>
         <LanguagesSelector
-          :languages="this.languages"
-          :onLanguageSelected="this.onLanguageSelected"
-          :onLanguageDeleted="this.onLanguageDeleted"
+          :languages="specStore.general.languages"
+          :onLanguageSelected="onLanguageSelected"
+          :onLanguageDeleted="onLanguageDeleted"
+          :multiple="true"
         />
 
         <label class="md:pl-4" for="listeningModel">Listening Model</label>
         <multiselect
-          v-if="listeningModelsOptions.length > 0"
+          v-if="listeningModels.length > 0"
           id="listeningModel"
-          :options="listeningModelsOptions"
+          :options="listeningModels"
           :value="listeningModelsSelected"
           :multiple="true"
           label="label"
@@ -77,8 +78,8 @@
           :close-on-select="false"
           :clear-on-select="false"
           :preserve-search="true"
-          @select="(model) => toggleListeningModel(model.label)"
-          @remove="(model) => toggleListeningModel(model.label)"
+          @select="(model: any) => specStore.toggleListeningModel(model.label)"
+          @remove="(model: any) => specStore.toggleListeningModel(model.label)"
           placeholder="Select the listening model"
         />
         <font-awesome-icon
@@ -94,14 +95,14 @@
         <span class="font-bold mr-4">Direct Beneficiaries</span>
         <VButton
           tag="span"
-          :label="beneficiariesIsOpen ? 'Hide Details' : 'Show Details'"
-          :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
-          @click="beneficiariesIsOpen = !beneficiariesIsOpen"
+          :label="data.beneficiariesIsOpen ? 'Hide Details' : 'Show Details'"
+          :iconR="data.beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
+          @click="data.beneficiariesIsOpen = !data.beneficiariesIsOpen"
         />
       </div>
 
       <div
-        :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
+        :class="data.beneficiariesIsOpen ? 'visible' : 'hidden'"
         class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left pl-10"
       >
         <p class="col-span-2 md:col-span-4 text-sm text-blue">
@@ -109,7 +110,7 @@
           gather custom information regarding the recipients
         </p>
         <template
-          v-for="(opt, index) in directBeneficiariesLabels"
+          v-for="(opt, index) in specStore.directBeneficiariesLabels"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''"> Field {{ index + 1 }} </span>
@@ -117,7 +118,10 @@
             type="text"
             :value="opt.value"
             @input="
-              setDirectBeneficiariesLabel({ key: opt.key, value: $event.target.value })
+              specStore.setDirectBeneficiariesLabel({
+                key: opt.key,
+                value: $event.target.value,
+              })
             "
             mx="mx-0"
             class="w-full"
@@ -127,7 +131,7 @@
         <span class="col-span-2" />
 
         <template
-          v-for="(opt, index) in directBeneficiariesAdditionalLabels"
+          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''">
@@ -138,7 +142,7 @@
               type="text"
               :value="opt.value"
               @input="
-                setDirectBeneficiariesAdditionalLabel({
+                specStore.setDirectBeneficiariesAdditionalLabel({
                   key: opt.key,
                   value: $event.target.value,
                 })
@@ -150,13 +154,13 @@
             <VButton
               variant="warning"
               iconL="trash-alt"
-              :disabled="labelUsed.includes(opt.key)"
+              :disabled="specStore.labelUsed.includes(opt.key)"
               :ariaLabel="`Delete option field ${opt.value}`"
-              @click="deleteDirectBeneficiariesAdditionalLabel(opt.key)"
+              @click="specStore.deleteDirectBeneficiariesAdditionalLabel(opt.key)"
             />
 
             <v-tooltip
-              v-if="labelUsed.includes(opt.key)"
+              v-if="specStore.labelUsed.includes(opt.key)"
               text="Field used in multiple recipients"
               class="my-auto"
             >
@@ -169,18 +173,18 @@
           <VButton
             tag="span"
             label="+ Add Optional Field"
-            @click="addDirectBeneficiariesAdditionalLabel"
+            @click="specStore.addDirectBeneficiariesAdditionalLabel"
           />
         </div>
       </div>
     </div>
 
     <!-- For modal components -->
-    <portal to="modalBody" v-if="languageToDelete">
+    <portal to="modalBody" v-if="data.languageToDelete">
       <p>This language will be deleted.</p>
     </portal>
 
-    <portal to="modalFooter" v-if="languageToDelete">
+    <portal to="modalFooter" v-if="data.languageToDelete">
       <footer class="flex flex-row-reverse justify-between">
         <VButton label="Confirm" variant="warning" @click="confirmLanguageDeletion" />
         <VButton label="Cancel" @click="cancelLanguageDeletion" />
@@ -189,9 +193,7 @@
   </section>
 </template>
 
-<script>
-import { mapState, mapGetters, mapActions } from "pinia";
-
+<script lang="ts" setup>
 import Multiselect from "vue-multiselect";
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
@@ -204,133 +206,193 @@ import countries from "@/data/countries.json";
 import listeningModels from "@/data/listeningModels.json";
 import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
+import { computed, onMounted, ref } from "vue";
 
-export default {
-  props: ["programId"],
-  computed: {
-    ...mapState(useProgramSpecStore, {
-      status: (state) => state.status,
+const props = defineProps<{
+  programId: string;
+}>();
+const specStore = useProgramSpecStore(),
+  uiStore = useUIStore(),
+  languageStore = useLanguagesStore();
 
-      programName: (state) => state.general.name,
-      country: (state) => state.general.country,
-      region: (state) => state.general.region,
-      languages: (state) => state.general.languages,
-      listeningModels: (state) => state.general.listening_models || [],
-    }),
-    ...mapState(useProgramSpecStore, [
-      "labelUsed",
-      "directBeneficiariesLabels",
-      "directBeneficiariesAdditionalLabels",
-      "changed",
-    ]),
-    listeningModelsOptions() {
-      return listeningModels;
-    },
-    listeningModelsSelected() {
-      /**
-       * Given a listening model label from the program, find the corresponding global listening model object.
-       * @param programListeningModel label to be found.
-       * @returns the global object, or a local object with the image from "Other" if not found.
-       */
-      function lmo(programListeningModel) {
-        let found = listeningModels.find((lm) => lm.label === programListeningModel);
-        if (!found)
-          found = {
-            label: programListeningModel,
-            imgUrl:
-              "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png",
-          };
-        return found;
-      }
-      let result = [];
-      if (this) {
-        // return a list of this program's listening models, mapped to the global listening model descriptions.
-        this.listeningModels.forEach((programListeningModel) => {
-          let found = lmo(programListeningModel);
-          if (result.indexOf(found) < 0) result.push(found);
-        });
-      }
-      return result;
-    },
-    changed() {
-      return useProgramSpecStore().changed;
-    },
-  },
-  components: {
-    VButton,
-    VInput,
-    VTooltip,
-    Multiselect,
-    LanguagesSelector,
-    Loading,
-    ProgramHeader,
-  },
-  created() {
-    this.fetchLanguages(this.programId);
-  },
-  watch: {
-    region: {
-      immediate: true,
-      handler() {
-        this.regionOptions = [...(this.region || [])]; // Populete the options
-      },
-    },
-  },
-  data() {
-    return {
-      description:
-        "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
+const data = ref({
+  description:
+    "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
 
-      countries,
-      regionOptions: [],
-      languageToDelete: null,
-      beneficiariesIsOpen: false,
-    };
-  },
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal"]),
-    ...mapActions(useProgramSpecStore, [
-      "ensureSpec",
-      "fetchSpec",
-      "updateSpec",
+  countries,
+  regionOptions: [],
+  languageToDelete: null,
+  beneficiariesIsOpen: false,
+});
 
-      "setProgramName",
+const specListeningModels = computed(() => {
+  return specStore.general.listening_models || [];
+});
 
-      "setCountry",
-      "addRegion",
-      "removeRegion",
-      "setLanguages",
-      "deleteLanguage",
-      "toggleListeningModel",
-      "setDirectBeneficiariesLabel",
-      "setDirectBeneficiariesAdditionalLabel",
-      "addDirectBeneficiariesAdditionalLabel",
-      "deleteDirectBeneficiariesAdditionalLabel",
-    ]),
-    ...mapActions(useLanguagesStore, ["fetchLanguages"]),
-    addTag(region) {
-      this.addRegion(region);
-    },
-    onLanguageSelected(language) {
-      let index = this.languages.length;
-      this.setLanguages({ lang: language.code, index });
-    },
-    onLanguageDeleted(language) {
-      this.languageToDelete = language;
-      this.setModal(`Delete Language ${language.name}`);
-    },
-    confirmLanguageDeletion() {
-      this.deleteLanguage(this.languageToDelete.code);
-      this.languageToDelete = null;
-      this.closeModal();
-    },
-    cancelLanguageDeletion() {
-      this.languageToDelete = null;
-      this.closeModal();
-    },
-    spam() {
-      console.log("nuevo click");
-    },
-  },
-};
+const listeningModelsSelected = computed(() => {
+  /**
+   * Given a listening model label from the program, find the corresponding global listening model object.
+   * @param programListeningModel label to be found.
+   * @returns the global object, or a local object with the image from "Other" if not found.
+   */
+  function lmo(programListeningModel: string) {
+    let found = listeningModels.find((lm) => lm.label === programListeningModel);
+    if (!found)
+      found = {
+        id: null,
+        label: programListeningModel,
+        imgUrl: "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png",
+      };
+    return found;
+  }
+
+  let result: any[] = [];
+  if (this) {
+    // return a list of this program's listening models, mapped to the global listening model descriptions.
+    specListeningModels.value.forEach((programListeningModel: string) => {
+      let found = lmo(programListeningModel);
+      if (result.indexOf(found) < 0) result.push(found);
+    });
+  }
+  return result;
+});
+
+function addTag(region: any) {
+  specStore.addRegion(region);
+}
+
+function onLanguageSelected(code: string) {
+//   console.warn(language);
+  let index = specStore.general.languages.length;
+  specStore.setLanguages({ lang: code, index });
+}
+
+function onLanguageDeleted(code: string) {
+    const language = languageStore.languages.find((l) => l.code === code);
+  data.value.languageToDelete = language;
+  uiStore.setModal(`Delete Language ${language?.name}`);
+}
+
+function confirmLanguageDeletion() {
+  specStore.deleteLanguage(data.value.languageToDelete.code);
+  data.value.languageToDelete = null;
+  uiStore.closeModal();
+}
+function cancelLanguageDeletion() {
+  data.value.languageToDelete = null;
+  uiStore.closeModal();
+}
+
+onMounted(() => {
+  data.value.regionOptions = [...(specStore.general.region || [])]; // Populate the options
+
+  languageStore.fetchLanguages(props.programId);
+});
+
+// const
+// export default {
+//   //   props: ["programId"],
+//   computed: {
+//     ...mapState(useProgramSpecStore, {
+//       status: (state) => state.status,
+
+//       programName: (state) => state.general.name,
+//       country: (state) => state.general.country,
+//       region: (state) => state.general.region,
+//       languages: (state) => state.general.languages,
+//       //   listeningModels: (state) => state.general.listening_models || [],
+//     }),
+//     ...mapState(useProgramSpecStore, [
+//       "labelUsed",
+//       "directBeneficiariesLabels",
+//       "directBeneficiariesAdditionalLabels",
+//       "changed",
+//     ]),
+//     // listeningModelsOptions() {
+//     //   return listeningModels;
+//     // },
+
+//     // changed() {
+//     //   return useProgramSpecStore().changed;
+//     // },
+//   },
+//   components: {
+//     VButton,
+//     VInput,
+//     VTooltip,
+//     Multiselect,
+//     LanguagesSelector,
+//     Loading,
+//     ProgramHeader,
+//   },
+//   created() {
+//     this.fetchLanguages(this.programId);
+//   },
+//   FIXME: add watch
+//   watch: {
+//     region: {
+//       immediate: true,
+//       handler() {
+//         this.regionOptions = [...(this.region || [])]; // Populete the options
+//       },
+//     },
+//   },
+//   data() {
+//     // return {
+//     //   description:
+//     //     "You can modify your program name and languages here.<br>You can also rename existing fields and add additional fields for  “Recipients> Direct Beneficiaries“",
+
+//     //   countries,
+//     //   regionOptions: [],
+//     //   languageToDelete: null,
+//     //   beneficiariesIsOpen: false,
+//     // };
+//   },
+//   methods: {
+// ...mapActions(useUIStore, ["setModal", "closeModal"]),
+// ...mapActions(useProgramSpecStore, [
+//   "ensureSpec",
+//   "fetchSpec",
+//   "updateSpec",
+
+//   "setProgramName",
+
+//   "setCountry",
+//   "addRegion",
+//   "removeRegion",
+//   "setLanguages",
+//   "deleteLanguage",
+//   "toggleListeningModel",
+//   "setDirectBeneficiariesLabel",
+//   "setDirectBeneficiariesAdditionalLabel",
+//   "addDirectBeneficiariesAdditionalLabel",
+//   "deleteDirectBeneficiariesAdditionalLabel",
+// ]),
+// ...mapActions(useLanguagesStore, ["fetchLanguages"]),
+// addTag(region) {
+//   this.addRegion(region);
+// },
+// onLanguageSelected(language) {
+//   console.warn(language);
+//   let index = this.languages.length;
+//   this.setLanguages({ lang: language.code, index });
+// },
+// onLanguageDeleted(language) {
+//   this.languageToDelete = language;
+//   this.setModal(`Delete Language ${language?.name}`);
+// },
+// confirmLanguageDeletion() {
+//   this.deleteLanguage(this.languageToDelete.code);
+//   this.languageToDelete = null;
+//   this.closeModal();
+// },
+// cancelLanguageDeletion() {
+//   this.languageToDelete = null;
+//   this.closeModal();
+// },
+//     spam() {
+//       console.log("nuevo click");
+//     },
+//   },
+// };
 </script>
