@@ -4,48 +4,31 @@
       Select { multiple ? 'multiple' : 'one'} language
     </label>
 
-    <!-- :value = initially selected values
-         :options = set of all selectable values -->
-    <Select
-      v-if="store.languages.length > 0"
-      id="language_input"
-      ref="languages"
-      :mode="multiple ? 'multiple' : null"
-      :value="languages"
-      :options="filteredLanguageOptions"
-      :field-names="{ label: 'name', value: 'code' }"
-      :placeholder="placeholder"
-      @select="onLanguageSelected"
-      @deselect="onLanguageDeleted"
-      @search="onSearch"
-      :show-search="true"
-    >
-      <!-- <SelectOption
-        v-for="item in filteredLanguageOptions"
-        :value="item.code"
-        :label="item.name"
-        >{{ item.name }}</SelectOption
-      > -->
-      <!-- <template slot="option" slot-scope="props">
-        <span>{{ props.option.name }}</span>
-      </template> -->
-    </Select>
-
-    <font-awesome-icon
-      v-else
-      icon="spinner"
-      size="2x"
-      pulse
-      class="block w-10 h-10 mt-2 text-left"
-    />
+    <Spin :spinning="store.status == 'loading'">
+      <Select
+        v-if="getLanguages.length > 0"
+        id="language_input"
+        ref="languages"
+        :mode="multiple ? 'multiple' : null"
+        :value="languages"
+        :options="getLanguages"
+        :field-names="{ label: 'name', value: 'code' }"
+        :placeholder="placeholder"
+        @select="onLanguageSelected"
+        @deselect="onLanguageDeleted"
+        :filter-option="true"
+        :option-filter-prop="'name'"
+        :show-search="true"
+        :loading="store.status == 'loading'"
+      >
+      </Select>
+    </Spin>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useLanguagesStore } from "@/store/languages";
-import { Select, SelectOption } from "ant-design-vue";
-// import Multiselect from "vue-multiselect";
-// import { mapState } from "pinia";
+import { Select, SelectOption, Spin } from "ant-design-vue";
 import { computed, onMounted, ref } from "vue";
 
 const props = defineProps<{
@@ -62,16 +45,16 @@ const props = defineProps<{
 const store = useLanguagesStore();
 
 const allOptions = ref([]),
-  filteredLanguageOptions = ref([]),
+//   filteredLanguageOptions = ref([]),
   selectedLanguages = ref([]);
 
-function onSearch(query: string) {
-  query = query.trim().toLowerCase();
+// function onSearch(query: string) {
+//   query = query.trim().toLowerCase();
 
-  filteredLanguageOptions.value = allOptions.value.filter((lang) =>
-    lang.name.toLowerCase().includes(query)
-  );
-}
+//   filteredLanguageOptions.value = allOptions.value.filter((lang) =>
+//     lang.name.toLowerCase().includes(query)
+//   );
+// }
 
 /**
  * Map a language code to a dict of {code:language-code, name:language-name, coment:whatever}
@@ -115,13 +98,13 @@ function mapLanguageCodesToInfo(codes: any[]) {
 onMounted(() => {
   if (props.options != null) {
     allOptions.value = mapLanguageCodesToInfo(props.options);
-    filteredLanguageOptions.value = [...allOptions.value];
-  } else {
-    allOptions.value = [...store.languages];
-    filteredLanguageOptions.value = [...store.languages];
   }
 
   selectedLanguages.value = [...(props.languages || [])];
+});
+
+const getLanguages = computed(() => {
+  return (props.options || []).length > 0 ? allOptions.value : store.languages;
 });
 // export default {
 //   props: {
