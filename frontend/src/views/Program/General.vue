@@ -175,7 +175,7 @@
     </div>
 
     <!-- For modal components -->
-    <portal to="modalBody" v-if="data.languageToDelete">
+    <!-- <portal to="modalBody" v-if="data.languageToDelete">
       <p>This language will be deleted.</p>
     </portal>
 
@@ -184,7 +184,7 @@
         <VButton label="Confirm" variant="warning" @click="confirmLanguageDeletion" />
         <VButton label="Cancel" @click="cancelLanguageDeletion" />
       </footer>
-    </portal>
+    </portal> -->
   </section>
 </template>
 
@@ -201,8 +201,9 @@ import countries from "@/data/countries.json";
 import listeningModels from "@/data/listeningModels.json";
 import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
-import { computed, onMounted, ref } from "vue";
-import { Button, Select, SelectOption } from "ant-design-vue";
+import { computed, createVNode, onMounted, ref } from "vue";
+import { Button, Modal, Select, SelectOption } from "ant-design-vue";
+import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   programId: string;
@@ -217,7 +218,7 @@ const data = ref({
 
   countries,
   regionOptions: [],
-  languageToDelete: null,
+//   languageToDelete: null,
   beneficiariesIsOpen: false,
 });
 
@@ -268,19 +269,30 @@ function onLanguageSelected(code: string) {
 
 function onLanguageDeleted(code: string) {
   const language = languageStore.languages.find((l) => l.code === code);
-  data.value.languageToDelete = language;
-  uiStore.setModal(`Delete Language ${language?.name}`);
+
+  Modal.confirm({
+    title: `Are you sure to delete '${language?.name || code}' language?`,
+    icon: createVNode(ExclamationCircleOutlined),
+    okText: "Yes",
+    okType: "danger",
+    cancelText: "No",
+    onOk() {
+      specStore.deleteLanguage(code);
+    }
+  });
+//   data.value.languageToDelete = language;
+//   uiStore.setModal(`Delete Language ${language?.name}`);
 }
 
-function confirmLanguageDeletion() {
-  specStore.deleteLanguage(data.value.languageToDelete.code);
-  data.value.languageToDelete = null;
-  uiStore.closeModal();
-}
-function cancelLanguageDeletion() {
-  data.value.languageToDelete = null;
-  uiStore.closeModal();
-}
+// function confirmLanguageDeletion() {
+//   specStore.deleteLanguage(data.value.languageToDelete.code);
+//   data.value.languageToDelete = null;
+//   uiStore.closeModal();
+// }
+// function cancelLanguageDeletion() {
+//   data.value.languageToDelete = null;
+//   uiStore.closeModal();
+// }
 
 onMounted(() => {
   specStore.general.listening_models ??= ["Other"];
@@ -288,7 +300,9 @@ onMounted(() => {
     ? specStore.general.region || []
     : [specStore.general.region];
 
-  data.value.regionOptions = (specStore.general.region || []).map((i) => ({ value: i }));
+  data.value.regionOptions = (specStore.general.region || []).map((i: string) => ({
+    value: i,
+  }));
 
   languageStore.fetchLanguages(props.programId);
 });

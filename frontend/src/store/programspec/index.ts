@@ -48,10 +48,11 @@ export const getDefaultState = () => {
             country: null as string | null,
             languages: [] as string[],
             name: null as string | null,
-            program_id: null,
+            program_id: null as string,
             direct_beneficiaries_map: {},
+            sustainable_development_goals: [] as any[],
             direct_beneficiaries_additional_map: {}
-        },
+        } as any,
 
         filterText: "",
         sortTable: {
@@ -146,7 +147,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
         directBeneficiariesLabels: state => {
             const keys = Object.keys(state.general.direct_beneficiaries_map);
-            return keys.map(key => ({
+            return keys.map((key: any) => ({
                 key,
                 value: state.general.direct_beneficiaries_map[key]
             }));

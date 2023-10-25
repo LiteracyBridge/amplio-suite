@@ -66,7 +66,7 @@ export const useWizardStore = defineStore("wizard", {
             const { country, step } = payload;
             const attrs = ["country", "region"];
 
-            await useProgramSpecStore().setCountry(country);
+            useProgramSpecStore().general.country = country;
             await this.check(attrs, step);
         },
 
@@ -74,7 +74,7 @@ export const useWizardStore = defineStore("wizard", {
             const { region, step } = payload;
             const attrs = ["country", "region"];
 
-            await useProgramSpecStore().addRegion(region);
+            await useProgramSpecStore().general.region.push(region);
             await this.check(attrs, step);
         },
 
@@ -96,7 +96,9 @@ export const useWizardStore = defineStore("wizard", {
         // step-listening-models
         async toggleListening(payload: any) {
             const { listeningMode, step } = payload;
-            await useProgramSpecStore().toggleListeningModel(listeningMode);
+            await useProgramSpecStore().general.listening_models.push(
+                listeningMode
+            );
             await this.check("listeningModels", step);
         },
 
