@@ -349,13 +349,13 @@ export const useProgramSpecStore = defineStore("programspec", {
             this.general.name = payload;
         },
 
-        setCountry(payload: any) {
-            this.general.country = payload;
-        },
+        // setCountry(payload: any) {
+        //     this.general.country = payload;
+        // },
 
-        addRegion(region: any) {
-            this.general.region = [...this.general.region, region];
-        },
+        // addRegion(region: any) {
+        //     this.general.region = [...this.general.region, region];
+        // },
 
         removeRegion(region: any) {
             const index = this.general.region.indexOf(region);
@@ -435,15 +435,15 @@ export const useProgramSpecStore = defineStore("programspec", {
             this.setChanged(true);
         },
 
-        toggleListeningModel(model: any) {
-            // This is the program's listening models, not the global list of listening models.
-            const index = this.general.listening_models.indexOf(model);
+        // toggleListeningModel(model: any) {
+        //     // This is the program's listening models, not the global list of listening models.
+        //     const index = this.general.listening_models.indexOf(model);
 
-            if (index > -1) this.removeListeningModel(index);
-            else this.addListeningModel(model);
+        //     if (index > -1) this.removeListeningModel(index);
+        //     else this.addListeningModel(model);
 
-            this.setChanged(true);
-        },
+        //     this.setChanged(true);
+        // },
 
         async setDeploymentCount(payload: any) {
             await this.setDeploymentsCount(payload);
@@ -738,13 +738,13 @@ export const useProgramSpecStore = defineStore("programspec", {
         },
 
         //region toggleListening
-        addListeningModel(payload: any) {
-            this.general.listening_models.push(payload);
-        },
+        // addListeningModel(payload: any) {
+        //     this.general.listening_models.push(payload);
+        // },
 
-        removeListeningModel(index: any) {
-            this.general.listening_models.splice(index, 1);
-        },
+        // removeListeningModel(index: any) {
+        //     this.general.listening_models.splice(index, 1);
+        // },
         //endregion
 
         setDeploymentsCount(payload: any) {

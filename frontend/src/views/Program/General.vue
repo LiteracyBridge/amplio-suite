@@ -33,30 +33,28 @@
         <span class="col-span-2" />
 
         <label for="country">Country</label>
-        <multiselect
+        <Select
           id="country"
-          :value="specStore.general.country"
-          :options="countries"
+          v-model:value="specStore.general.country"
           placeholder="Select one country"
           aria-label="Select one country"
-          @select="specStore.setCountry"
-        />
+          :show-search="true"
+        >
+          <SelectOption v-for="name in countries" :value="name">{{
+            name
+          }}</SelectOption></Select
+        >
 
         <label class="md:pl-4" for="region">Region/State</label>
-        <multiselect
+        <Select
+          mode="tags"
           id="region"
           tag-placeholder="Add this as new region"
           placeholder="Search or add a region"
-          :value="specStore.general.region"
+          v-model:value="specStore.general.region"
           :options="data.regionOptions"
-          :multiple="true"
-          :taggable="true"
-          @tag="addTag"
-          @select="specStore.addRegion"
-          @remove="specStore.removeRegion"
         >
-          <template slot="noOptions"> Region/State </template>
-        </multiselect>
+        </Select>
 
         <span id="langs">Languages</span>
         <LanguagesSelector
@@ -67,21 +65,16 @@
         />
 
         <label class="md:pl-4" for="listeningModel">Listening Model</label>
-        <multiselect
+        <Select
           v-if="listeningModels.length > 0"
           id="listeningModel"
           :options="listeningModels"
-          :value="listeningModelsSelected"
-          :multiple="true"
-          label="label"
-          trackBy="label"
-          :close-on-select="false"
-          :clear-on-select="false"
+          v-model:value="specStore.general.listening_models"
+          mode="multiple"
+          :field-names="{ label: 'label', value: 'label' }"
           :preserve-search="true"
-          @select="(model: any) => specStore.toggleListeningModel(model.label)"
-          @remove="(model: any) => specStore.toggleListeningModel(model.label)"
           placeholder="Select the listening model"
-        />
+        ></Select>
         <font-awesome-icon
           v-else
           icon="spinner"
@@ -93,12 +86,14 @@
 
       <div class="w-full inline-flex items-center mt-10 text-left">
         <span class="font-bold mr-4">Direct Beneficiaries</span>
-        <VButton
-          tag="span"
-          :label="data.beneficiariesIsOpen ? 'Hide Details' : 'Show Details'"
-          :iconR="data.beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
-          @click="data.beneficiariesIsOpen = !data.beneficiariesIsOpen"
-        />
+        <Button type="text" @click="data.beneficiariesIsOpen = !data.beneficiariesIsOpen">
+          {{ data.beneficiariesIsOpen ? "Hide Details" : "Show Details" }}
+
+          <font-awesome-icon
+            :icon="data.beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
+            class="w-6 h-6"
+          />
+        </Button>
       </div>
 
       <div
@@ -109,7 +104,7 @@
           The direct beneficiaries properties apply to the Recipients tab, and allow to
           gather custom information regarding the recipients
         </p>
-        <template
+        <div
           v-for="(opt, index) in specStore.directBeneficiariesLabels"
           :key="`${opt.key}-label`"
         >
@@ -126,11 +121,11 @@
             mx="mx-0"
             class="w-full"
           />
-        </template>
+        </div>
 
         <span class="col-span-2" />
 
-        <template
+        <div
           v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels"
           :key="`${opt.key}-label`"
         >
@@ -167,7 +162,7 @@
               <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
             </v-tooltip>
           </div>
-        </template>
+        </div>
 
         <div class="col-span-4">
           <VButton
@@ -207,6 +202,7 @@ import listeningModels from "@/data/listeningModels.json";
 import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
 import { computed, onMounted, ref } from "vue";
+import { Button, Select, SelectOption } from "ant-design-vue";
 
 const props = defineProps<{
   programId: string;
@@ -225,50 +221,53 @@ const data = ref({
   beneficiariesIsOpen: false,
 });
 
-const specListeningModels = computed(() => {
-  return specStore.general.listening_models || [];
-});
+// const specListeningModels = computed(() => {
+//   return specStore.general.listening_models || [];
+// });
 
-const listeningModelsSelected = computed(() => {
-  /**
-   * Given a listening model label from the program, find the corresponding global listening model object.
-   * @param programListeningModel label to be found.
-   * @returns the global object, or a local object with the image from "Other" if not found.
-   */
-  function lmo(programListeningModel: string) {
-    let found = listeningModels.find((lm) => lm.label === programListeningModel);
-    if (!found)
-      found = {
-        id: null,
-        label: programListeningModel,
-        imgUrl: "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png",
-      };
-    return found;
-  }
+// const listeningModelsSelected = computed(() => {
+//   /**
+//    * Given a listening model label from the program, find the corresponding global listening model object.
+//    * @param programListeningModel label to be found.
+//    * @returns the global object, or a local object with the image from "Other" if not found.
+//    */
+//   function lmo(programListeningModel: string) {
+//     let found = listeningModels.find((lm) => lm.label === programListeningModel);
+//     if (!found)
+//       found = {
+//         id: null,
+//         label: programListeningModel,
+//         imgUrl: "https://amplio-suite.s3-us-west-2.amazonaws.com/img/listening/Other.png",
+//       };
+//     return found;
+//   }
 
-  let result: any[] = [];
-  if (this) {
-    // return a list of this program's listening models, mapped to the global listening model descriptions.
-    specListeningModels.value.forEach((programListeningModel: string) => {
-      let found = lmo(programListeningModel);
-      if (result.indexOf(found) < 0) result.push(found);
-    });
-  }
-  return result;
-});
+//   let result: any[] = [];
+//   if (this) {
+//     // return a list of this program's listening models, mapped to the global listening model descriptions.
+//     specListeningModels.value.forEach((programListeningModel: string) => {
+//       let found = lmo(programListeningModel);
+//       if (result.indexOf(found) < 0) result.push(found);
+//     });
+//   }
+//   return result;
+// });
 
-function addTag(region: any) {
-  specStore.addRegion(region);
-}
+// function addTag(region: any) {
+// //   data.value.regionOptions = Array.from(
+// //     new Set([...data.value.regionOptions.flatMap((i) => i.value), { value: region }])
+// //   ).map((i) => ({ value: i }));
+//   //   specStore.addRegion(region);
+// }
 
 function onLanguageSelected(code: string) {
-//   console.warn(language);
+  //   console.warn(language);
   let index = specStore.general.languages.length;
   specStore.setLanguages({ lang: code, index });
 }
 
 function onLanguageDeleted(code: string) {
-    const language = languageStore.languages.find((l) => l.code === code);
+  const language = languageStore.languages.find((l) => l.code === code);
   data.value.languageToDelete = language;
   uiStore.setModal(`Delete Language ${language?.name}`);
 }
@@ -284,7 +283,12 @@ function cancelLanguageDeletion() {
 }
 
 onMounted(() => {
-  data.value.regionOptions = [...(specStore.general.region || [])]; // Populate the options
+  specStore.general.listening_models ??= ["Other"];
+  specStore.general.region = Array.isArray(specStore.general.region)
+    ? specStore.general.region || []
+    : [specStore.general.region];
+
+  data.value.regionOptions = (specStore.general.region || []).map((i) => ({ value: i }));
 
   languageStore.fetchLanguages(props.programId);
 });
