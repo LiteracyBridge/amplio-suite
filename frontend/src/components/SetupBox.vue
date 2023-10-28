@@ -17,35 +17,28 @@
           :label="nextLabel"
           :disabled="isFill && status !== 'loading' ? false : true"
           @click="handleNext"
-          />
-
-        <VButton
-          v-if="prev !== ''"
-          label="PREV"
-          variant="success"
-          @click="handlePrev"
         />
+
+        <VButton v-if="prev !== ''" label="PREV" variant="success" @click="handlePrev" />
       </footer>
-      </form>
+    </form>
   </section>
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions } from "pinia";
 
-import VButton from '@/components/VButton.vue'
+import VButton from "@/components/VButton.vue";
+import { useProgramSpecStore } from "@/store/programspec";
+import { useWizardStore } from "@/store/wizard";
 
 export default {
   computed: {
-    ...mapState('programspec', [
-      'status',
-    ]),
-    ...mapState('wizard', [
-      'completedSteps'
-    ]),
-    isFill () {
-      return this.completedSteps.includes(this.step)
-    }
+    ...mapState(useProgramSpecStore, ["status"]),
+    ...mapState(useWizardStore, ["completedSteps"]),
+    isFill() {
+      return this.completedSteps.includes(this.step);
+    },
   },
   components: {
     VButton,
@@ -53,40 +46,37 @@ export default {
   props: {
     step: {
       type: Number,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     prev: {
       type: [String, Object],
-      default: ''
+      default: "",
     },
     next: {
       type: [String, Object],
-      default: ''
+      default: "",
     },
     nextLabel: {
       type: String,
-      default: 'NEXT'
+      default: "NEXT",
     },
   },
   methods: {
-    ...mapActions('wizard', [
-      'nextStep',
-      'prevStep'
-    ]),
-    handlePrev () {
-      this.prevStep()
-      this.$router.push(this.prev)
+    ...mapActions(useWizardStore, ["nextStep", "prevStep"]),
+    handlePrev() {
+      this.prevStep();
+      this.$router.push(this.prev);
     },
-    handleNext () {
-      if(this.isFill && this.status !== 'loading') {
-        this.nextStep()
-        this.$router.push(this.next)
+    handleNext() {
+      if (this.isFill && this.status !== "loading") {
+        this.nextStep();
+        this.$router.push(this.next);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

@@ -15,7 +15,7 @@ export default defineConfig({
         port: 8080
     },
     define: {
-        global: {}
+        // global: {}
         // _global: ({}),
     },
     resolve: {
