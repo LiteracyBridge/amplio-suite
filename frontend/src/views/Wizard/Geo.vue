@@ -5,9 +5,7 @@
     :next="{ name: 'step-sdg' }"
     title="Let's add some geographic details"
   >
-    <p class="text-2xl font-semibold mb-5">
-      Where will you implement this program?
-    </p>
+    <p class="text-2xl font-semibold mb-5">Where will you implement this program?</p>
 
     <label class="visually_hidden" for="country_input">Select one country</label>
     <multiselect
@@ -34,66 +32,58 @@
       @select="(region) => addRegion({ region, step })"
       @remove="(region) => removeRegion({ region, step })"
     >
-      <template slot="noResult">
-        No match found
-      </template>
-      <template slot="noOptions">
-        Region/State
-      </template>
+      <template slot="noResult"> No match found </template>
+      <template slot="noOptions"> Region/State </template>
     </multiselect>
   </Box>
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
-import Multiselect from 'vue-multiselect'
+import { mapState, mapActions } from "pinia";
+import Multiselect from "vue-multiselect";
 
-import Box from '@/components/SetupBox'
-import countries from '@/data/countries.json'
+import Box from "@/components/SetupBox.vue";
+import countries from "@/data/countries.json";
+import { useWizardStore } from "@/store/wizard";
+import { useLanguagesStore } from "@/store/languages";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: {
     step: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
-      ...mapState('programspec', {
-          country: (state) => state.general.country,
-          region: (state) => state.general.region,
-
-      }),
+    ...mapState(useProgramSpecStore, {
+      country: (state) => state.general.country,
+      region: (state) => state.general.region,
+    }),
   },
   components: {
     Box,
     Multiselect,
   },
-  data () {
+  data() {
     return {
       countries,
       options: [],
-    }
+    };
   },
-  mounted () {
-    if (!this.country) this.$refs.country.$refs.search.focus()
-    this.options = [...this.region] // Populete the options
+  mounted() {
+    if (!this.country) this.$refs.country.$refs.search.focus();
+    this.options = [...this.region]; // Populete the options
   },
   methods: {
-    ...mapActions('wizard', [
-      'setCountry',
-      'addRegion',
-      'removeRegion',
-    ]),
-    ...mapActions('languages', [
-      'fetchLanguages',
-    ]),
-    addTag (region) {
-      this.options.push(region)
-      this.addRegion({ region, step: this.step })
+    ...mapActions(useWizardStore, ["setCountry", "addRegion", "removeRegion"]),
+    ...mapActions(useLanguagesStore, ["fetchLanguages"]),
+    addTag(region) {
+      this.options.push(region);
+      this.addRegion({ region, step: this.step });
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

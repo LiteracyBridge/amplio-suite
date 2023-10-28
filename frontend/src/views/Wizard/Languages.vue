@@ -24,8 +24,8 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 
-import Box from '@/components/SetupBox'
-import LanguagesSelector from '@/components/LanguagesSelector'
+import Box from '@/components/SetupBox.vue'
+import LanguagesSelector from '@/components/LanguagesSelector.vue'
 
 export default {
   props: {

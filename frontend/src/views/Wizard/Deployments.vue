@@ -51,7 +51,7 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 
-import Box from '@/components/SetupBox'
+import Box from '@/components/SetupBox.vue'
 import VInput from '@/components/VInput.vue'
 
 export default {

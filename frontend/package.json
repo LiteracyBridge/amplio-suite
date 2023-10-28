@@ -10,7 +10,8 @@
     "lint": "vue-cli-service lint",
     "dev": "vue-tsc --noEmit && vite",
     "vite": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build --mode staging",
+    "build:prod": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 4173"
   },
   "dependencies": {

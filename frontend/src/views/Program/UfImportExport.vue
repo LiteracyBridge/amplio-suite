@@ -253,13 +253,16 @@
 <script>
 import { mapActions, mapState } from "pinia";
 
-import FileSelectionForm from "@/components/FileSelectionForm";
+import FileSelectionForm from "@/components/FileSelectionForm.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
 import UfQuestionnaireErrors from "@/components/UfQuestionnaireErrors.vue";
 import UfQuestionnaireDownload from "@/components/UfQuestionnaireDownload.vue";
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
 import { getQuestionnaireDownloadLink, questionnaireUpload } from "@/api/uf.api";
+import { useProgramSpecStore } from "@/store/programspec";
+import { useUIStore } from "@/store/ui";
+import { useUserFeedbackStore } from "@/store/uf";
 
 export default {
   props: ["programId"],
@@ -274,13 +277,13 @@ export default {
   },
 
   computed: {
-    ...mapState("programspec", {
+    ...mapState(useProgramSpecStore, {
       languages: (state) => {
         return state.general.languages;
       },
       programName: (state) => state.general.name,
     }),
-    ...mapState("uf", ["counts"]),
+    ...mapState(useUserFeedbackStore, ["counts"]),
     showUnpublishedOption() {
       return this.exportUnpublished || this.altKeyPressed;
     },
@@ -366,9 +369,9 @@ export default {
   }),
 
   methods: {
-    ...mapActions("ui", ["setModal", "closeModal", "setNotification"]),
-    ...mapActions("uf", ["fetchCounts", "upload"]),
-    ...mapActions("programspec", ["ensureSpec"]),
+    ...mapActions(useUIStore, ["setModal", "closeModal", "setNotification"]),
+    ...mapActions(useUserFeedbackStore, ["fetchCounts", "upload"]),
+    ...mapActions(useProgramSpecStore, ["ensureSpec"]),
 
     onSetLanguage(code) {
       this.resetConfirmations();
