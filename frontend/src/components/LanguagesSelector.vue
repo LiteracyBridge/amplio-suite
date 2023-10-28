@@ -14,8 +14,8 @@
         :options="getLanguages"
         :field-names="{ label: 'name', value: 'code' }"
         :placeholder="placeholder"
-        @select="onLanguageSelected"
-        @deselect="onLanguageDeleted"
+        @select="emit('languageSelected', $event)"
+        @deselect="emit('languageDeleted', $event)"
         :filter-option="true"
         :option-filter-prop="'name'"
         :show-search="true"
@@ -34,18 +34,23 @@ import { computed, onMounted, ref } from "vue";
 const props = defineProps<{
   options?: string[];
   languages: string | string[];
-  onLanguageSelected: (value: string) => void;
-  onLanguageDeleted: (value: string) => void;
+  //   onLanguageSelected: (value: string) => void;
+  //   onLanguageDeleted: (value: string) => void;
   labelBy?: string;
   autofocus?: boolean;
   multiple: boolean;
   placeholder?: string;
 }>();
 
+const emit = defineEmits<{
+  (e: "languageSelected", value: string): void;
+  (e: "languageDeleted", value: string): void;
+}>();
+
 const store = useLanguagesStore();
 
 const allOptions = ref([]),
-//   filteredLanguageOptions = ref([]),
+  //   filteredLanguageOptions = ref([]),
   selectedLanguages = ref([]);
 
 // function onSearch(query: string) {
@@ -97,7 +102,7 @@ function mapLanguageCodesToInfo(codes: any[]) {
 
 onMounted(() => {
   if (props.options != null) {
-    allOptions.value = mapLanguageCodesToInfo(props.options);
+    allOptions.value = mapLanguageCodesToInfo([...props.options]);
   }
 
   selectedLanguages.value = [...(props.languages || [])];

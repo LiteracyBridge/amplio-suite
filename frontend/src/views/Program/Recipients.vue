@@ -1,14 +1,14 @@
 <template>
   <section class="relative min-h-200-px p-6 pt-0">
-    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
+    <loading v-if="store.status !== 'success'" class="-ml-6 rounded-b-lg" />
 
     <!-- This is the common header, with program name, this panel's title, and save & discard buttons -->
     <program-header
       class="mb-4"
       title="Recipients"
-      :changed="hasChanges"
-      :canSave="canSave"
-      :description="description"
+      :changed="store.changed"
+      :canSave="store.changed"
+      :description="data.description"
       :onSaveChanges="onSaveChanges"
       :onDiscardChanges="onDiscardChanges"
     />
@@ -22,14 +22,14 @@
       <VButton tag="span" label="+ Add Recipient" @click="addNewRecipient" />
 
       <div class="inline-flex">
-        <form v-on:submit.prevent="fetchRecipients(programId)">
+        <!-- <form v-on:submit.prevent="fetchRecipients(programId)">
           <v-input
             type="text"
             name="filterColumns"
             placeholder="Filter columns"
             iconRight="search"
             mx="mx-2"
-            :value="filterText"
+            :value="store.filterText"
             @input="setFilterText($event.target.value)"
           />
         </form>
@@ -37,8 +37,9 @@
           tag="span"
           label="Reset Filter"
           :disabled="!tableIsFilter"
-          @click="resetFilters"
+          @click="store.resetFilters"
         />
+        -->
       </div>
     </header>
 
@@ -46,26 +47,23 @@
     <!--      <p>Add recipients here.</p>-->
     <!--    </div>-->
 
-    <div v-if="filteredRecipients.length > 0" class="block pt-2 overflow-x-auto">
+    <div v-if="store.filteredRecipients.length > 0" class="block pt-2 overflow-x-auto">
       <table class="w-full table-auto overflow-x-auto">
         <thead>
           <tr>
             <th v-for="col in columns" :key="col.key" class="text-left border-2">
               <v-tooltip
                 :width="150"
-                :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`"
+                :text="`Sort ${store.sortTable.descending ? 'Ascending' : 'Descending'}`"
               >
-                <button
-                  class="flex gap-2"
-                  style="white-space: nowrap"
-                  @click="setSortByColumn(col.key)"
+                <button class="flex gap-2" style="white-space: nowrap">
+                  <!-- @click="setSortByColumn(col.key)"
                   @keyup.enter="setSortByColumn(col.key)"
-                  @keyup.space="setSortByColumn(col.key)"
-                >
+                  @keyup.space="setSortByColumn(col.key)" -->
                   {{ col.label }}
                   <font-awesome-icon
-                    v-if="sortTable.by === col.key"
-                    :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
+                    v-if="store.sortTable.by === col.key"
+                    :icon="store.sortTable.descending ? 'chevron-down' : 'chevron-up'"
                   />
                 </button>
               </v-tooltip>
@@ -77,7 +75,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="(recipient, index) in filteredRecipients"
+            v-for="(recipient, index) in store.filteredRecipients"
             :key="recipient.recipientid"
             :class="index % 2 === 0 ? '' : 'bg-gray-200'"
             class="hover:bg-gray-400"
@@ -122,20 +120,23 @@
     <!-- Edit modal -->
     <portal to="modalBody" v-if="showModal.edit">
       <program-recipients-form
-        :recipient="recipientInEdit"
+        :recipient="data.recipientInEdit"
         :isDuplicateRecipient="isDuplicateRecipient"
         :invalidBeneficiaries="invalidBeneficiaries"
         @changed="onRecipientEdited"
+        :invalid-constraint="true"
       />
     </portal>
 
     <portal to="modalFooter" v-if="showModal.edit">
-      <footer v-if="recipientInEdit" class="flex justify-end gap-4">
+      <footer v-if="data.recipientInEdit" class="flex justify-end gap-4">
         <VButton label="Cancel" variant="warning" @click="onCancelEdit" />
         <VButton
           type="success"
           label="OK"
-          :disabled="!recipientEdited || isDuplicateRecipient || invalidBeneficiaries"
+          :disabled="
+            !data.recipientEdited || isDuplicateRecipient || invalidBeneficiaries
+          "
           @click="onAcceptEdit"
         />
         <!--        <VButton-->
@@ -149,12 +150,12 @@
       <p class="text-xl">This recipient will be deleted.</p>
     </portal>
 
-    <portal to="modalFooter" v-if="showModal.delete">
+    <!-- <portal to="modalFooter" v-if="showModal.delete">
       <footer class="flex flex-row-reverse justify-between pt-20">
         <VButton label="Confirm" variant="warning" @click="confirmDeleteRecipient" />
         <VButton label="Cancel" @click="onCloseModal" />
       </footer>
-    </portal>
+    </portal> -->
 
     <!-- Mandatory fields modal -->
     <portal to="modalBody" v-if="showModal.mandatory">
@@ -163,25 +164,23 @@
 
     <portal to="modalFooter" v-if="showModal.mandatory">
       <footer class="flex flex-row-reverse justify-between pt-20">
-        <VButton label="Close" @click="onClickEdit(selectedRecipientId)" />
+        <VButton label="Close" />
+        <!-- <VButton label="Close" @click="onClickEdit(selectedRecipientId)" /> -->
       </footer>
     </portal>
   </section>
 </template>
 
-<script>
-import { mapState, mapGetters, mapActions } from "pinia";
+<script lang="ts" setup>
 
-import VInput from "@/components/VInput.vue";
 import VButton from "@/components/VButton.vue";
 import Loading from "@/components/Loading.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
-import { EventBus } from "@/event-bus";
 import ProgramHeader from "@/components/ProgramHeader.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
-import { useLanguagesStore } from "@/store/languages";
+import { computed, onMounted, ref } from "vue";
 
 const columns = [
   { label: "Region/State", key: "region" },
@@ -193,225 +192,412 @@ const columns = [
   { label: "# TBs", key: "numtbs" },
 ];
 
-export default {
-  props: ["programId"],
-  computed: {
-    ...mapState(useProgramSpecStore, {
-      status: (state) => state.status,
-      changed: (state) => state.changed,
-      sortTable: (state) => state.sortTable,
-      filterText: (state) => state.filterText,
+const props = defineProps<{
+  programId: string;
+}>();
 
-      country: (state) => state.general.country,
-      recipients: (state) => state.recipients,
-    }),
-    ...mapGetters(useProgramSpecStore, ["filteredRecipients"]),
-    hasChanges() {
-      return this.changed;
-    },
-    canSave() {
-      return this.changed;
-    },
-    selectedRecipient() {
-      return this.recipients.find(
-        (recipient) => recipient.recipientid === this.selectedRecipientId
-      );
-    },
-    tableIsFilter() {
-      return this.sortTable.by !== "" || this.filterText !== "";
-    },
-    isRecipientInEditValid() {
-      // nothing selected; can't be valid
-      if (!this.recipientInEdit) return null;
+const store = useProgramSpecStore(),
+  ui = useUIStore();
 
-      const requiredFields = [
-        "region",
-        "district",
-        "communityname",
-        "language",
-        // 'listeningModel', 'numTbs',
-        // 'deployments', 'directBeneficiaries'
-      ];
+const data = ref({
+  selectedRecipientId: null,
+  recipientInEdit: null,
+  recipientEdited: false,
+  description: "Add and edit recipients here.",
+  columns,
+});
+const showModal = ref({
+  edit: false,
+  delete: false,
+  mandatory: false,
+});
 
-      const partial = requiredFields.map((field) => {
-        const value = this.recipientInEdit[field];
-        if (typeof value === "string" || value instanceof String) return value !== "";
-        else if (typeof value === "number") return value >= 0;
-        else if (Array.isArray(value)) return value.length > 0;
-      });
+const selectedRecipient = computed(() => {
+  return store.recipients.find(
+    (recipient) => recipient.recipientid === data.value.selectedRecipientId
+  );
+});
 
-      return partial.every(Boolean);
-    },
-    isDuplicateRecipient() {
-      // All the recipients are from the current program, so don't have a "program" property.
-      // Construct a concatenation of country-region-district-communityname-groupname-agent-language
-      function key(recipient) {
-        return (
-          `${recipient.country}-${recipient.region}-${recipient.district}-` +
-          `${recipient.communityname}-${recipient.groupname}-${recipient.agent}-${recipient.language}`
-        );
+const tableIsFilter = computed(() => {
+  return store.sortTable.by !== "" || store.filterText !== "";
+});
+
+const isRecipientInEditValid = computed(() => {
+  // nothing selected; can't be valid
+  if (!data.value.recipientInEdit) return null;
+
+  const requiredFields = [
+    "region",
+    "district",
+    "communityname",
+    "language",
+    // 'listeningModel', 'numTbs',
+    // 'deployments', 'directBeneficiaries'
+  ];
+
+  const partial = requiredFields.map((field) => {
+    const value = data.value.recipientInEdit[field];
+    if (typeof value === "string" || value instanceof String) return value !== "";
+    else if (typeof value === "number") return value >= 0;
+    else if (Array.isArray(value)) return value.length > 0;
+  });
+
+  return partial.every(Boolean);
+});
+
+const isDuplicateRecipient = computed(() => {
+  // All the recipients are from the current program, so don't have a "program" property.
+  // Construct a concatenation of country-region-district-communityname-groupname-agent-language
+  function key(recipient: {
+    country: any;
+    region: any;
+    district: any;
+    communityname: any;
+    groupname: any;
+    agent: any;
+    language: any;
+  }) {
+    return (
+      `${recipient.country}-${recipient.region}-${recipient.district}-` +
+      `${recipient.communityname}-${recipient.groupname}-${recipient.agent}-${recipient.language}`
+    );
+  }
+
+  if (!data.value.recipientInEdit) return null;
+
+  const thisKey = key(data.value.recipientInEdit);
+  // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
+  let isDuplicate = false;
+  store.recipients.forEach((recip) => {
+    if (
+      key(recip) === thisKey &&
+      recip.recipientid !== data.value.recipientInEdit.recipientid
+    )
+      isDuplicate = true;
+  });
+
+  if (isDuplicate) console.log(`Duplicate recipient properties: ${thisKey}`);
+  return isDuplicate;
+});
+
+const invalidBeneficiaries = computed(() => {
+  if (!data.value.recipientInEdit) return null;
+  let invalid = false;
+  // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
+  Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional).forEach(
+    (key) => {
+      let val = data.value.recipientInEdit.direct_beneficiaries_additional[key];
+      if (val > data.value.recipientInEdit.direct_beneficiaries) {
+        invalid = true;
+        // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
       }
+    }
+  );
+  // const values = Object.values(this.recipientInEdit.direct_beneficiaries_additional)
+  //   .map(val => val > this.recipientInEdit.direct_beneficiaries)
 
-      if (!this.recipientInEdit) return null;
+  // Is either of these properties greater than "direct beneficiaries"?
+  const keys = ["numhouseholds", "group_size"];
+  keys.forEach((key) => {
+    let val = data.value.recipientInEdit[key];
+    if (val > data.value.recipientInEdit.direct_beneficiaries) {
+      invalid = true;
+      // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
+    }
+  });
 
-      const thisKey = key(this.recipientInEdit);
-      // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
-      let isDuplicate = false;
-      this.recipients.forEach((recip) => {
-        if (
-          key(recip) === thisKey &&
-          recip.recipientid !== this.recipientInEdit.recipientid
-        )
-          isDuplicate = true;
-      });
+  return invalid;
+});
 
-      if (isDuplicate) console.log(`Duplicate recipient properties: ${thisKey}`);
-      return isDuplicate;
-    },
-    invalidBeneficiaries() {
-      if (!this.recipientInEdit) return null;
-      let invalid = false;
-      // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
-      Object.keys(this.recipientInEdit.direct_beneficiaries_additional).forEach((key) => {
-        let val = this.recipientInEdit.direct_beneficiaries_additional[key];
-        if (val > this.recipientInEdit.direct_beneficiaries) {
-          invalid = true;
-          // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
-        }
-      });
-      // const values = Object.values(this.recipientInEdit.direct_beneficiaries_additional)
-      //   .map(val => val > this.recipientInEdit.direct_beneficiaries)
+function onSaveChanges() {
+  console.log("onSaveChanges");
+  store.updateSpec();
+}
 
-      // Is either of these properties greater than "direct beneficiaries"?
-      const keys = ["numhouseholds", "group_size"];
-      keys.forEach((key) => {
-        let val = this.recipientInEdit[key];
-        if (val > this.recipientInEdit.direct_beneficiaries) {
-          invalid = true;
-          // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
-        }
-      });
+function onDiscardChanges() {
+  console.log("onDiscardChanges");
+  store.fetchSpec({ programId: props.programId });
+}
 
-      return invalid;
-    },
-  },
+function onCloseModal() {
+  data.value.recipientEdited = false;
+  showModal.value.edit = false;
+  showModal.value.delete = false;
+  showModal.value.mandatory = false;
+  ui.closeModal();
+}
 
-  components: {
-    ProgramHeader,
-    VInput,
-    VButton,
-    Loading,
-    VTooltip,
-    ProgramRecipientsForm,
-  },
+function handleModalEscape() {
+  onCloseModal();
+  data.value.recipientInEdit = null;
+}
 
-  created() {
-    this.ensureSpec({ programId: this.programId });
+function onCancelEdit() {
+  onCloseModal();
+  data.value.recipientInEdit = null;
+}
 
-    // EventBus.$on("handleEscape", this.handleModalEscape);
-  },
+function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
+  data.value.recipientEdited = false;
+  showModal.value[modal] = true;
+  ui.setModal(title);
+}
 
-  beforeDestroy() {
-    // EventBus.$off("handleEscape", this.handleModalEscape);
-  },
+function editRecipient(recipient: { [x: string]: any }, index?: number) {
+  let recip = Object.keys(recipient)
+    .map((k) => `${k}:${recipient[k]}`)
+    .join(", ");
+  console.log(`Edit ${JSON.stringify(recip)}`);
+  data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
+  onOpenModal("edit", "Recipient Details");
+}
 
-  data: () => ({
-    selectedRecipientId: null,
-    recipientInEdit: null,
-    recipientEdited: false,
-    description: "Add and edit recipients here.",
-    columns,
-    showModal: {
-      edit: false,
-      delete: false,
-      mandatory: false,
-    },
-  }),
+function duplicateRecipient(recipient: { [x: string]: any }) {
+  let recip = Object.keys(recipient)
+    .map((k) => `${k}:${recipient[k]}`)
+    .join(", ");
+  console.log(`Duplicate ${JSON.stringify(recip)}`);
+  data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
+  data.value.recipientInEdit.recipientid = null;
+  onOpenModal("edit", "Duplicated Recipient Details");
+}
 
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal"]),
-    ...mapActions(useLanguagesStore, ["fetchLanguages"]),
-    ...mapActions(useProgramSpecStore, [
-      "ensureSpec",
-      "fetchSpec",
-      "updateSpec",
+function addNewRecipient() {
+  data.value.recipientInEdit = store.newRecipient();
+  data.value.recipientInEdit.country = store.general.country;
+  console.log(`new recipient: ${JSON.stringify(data.value.recipientInEdit)}`);
+  onOpenModal("edit", "New Recipient Details");
+}
 
-      "setSortByColumn",
-      "setFilterText",
-      "resetFilters",
+function onRecipientEdited(value: boolean) {
+  data.value.recipientEdited = value;
+}
 
-      "updateRecipient",
-    ]),
-    ...mapGetters(useProgramSpecStore, ["newRecipient"]),
+function onAcceptEdit() {
+  onCloseModal();
+  if (isRecipientInEditValid.value) {
+    store.updateRecipient({ recipient: data.value.recipientInEdit });
+    data.value.recipientInEdit = null;
+  } else {
+    onOpenModal("mandatory", "Required Fields");
+  }
+}
 
-    onSaveChanges() {
-      console.log("onSaveChanges");
-      this.updateSpec();
-    },
+onMounted(() => {
+  store.ensureSpec({ programId: props.programId });
+});
 
-    onDiscardChanges() {
-      console.log("onDiscardChanges");
-      this.fetchSpec({ programId: this.programId });
-    },
+// export default {
+//   props: ["programId"],
+//   computed: {
+// ...mapState(useProgramSpecStore, {
+//   status: (state) => state.status,
+//   changed: (state) => state.changed,
+//   sortTable: (state) => state.sortTable,
+//   store.: (state) => state.store.,
 
-    editRecipient(recipient) {
-      let recip = Object.keys(recipient)
-        .map((k) => `${k}:${recipient[k]}`)
-        .join(", ");
-      console.log(`Edit ${JSON.stringify(recip)}`);
-      this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-      this.onOpenModal("edit", "Recipient Details");
-    },
-    duplicateRecipient(recipient) {
-      let recip = Object.keys(recipient)
-        .map((k) => `${k}:${recipient[k]}`)
-        .join(", ");
-      console.log(`Duplicate ${JSON.stringify(recip)}`);
-      this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-      this.recipientInEdit.recipientid = null;
-      this.onOpenModal("edit", "Duplicated Recipient Details");
-    },
-    addNewRecipient() {
-      this.recipientInEdit = this.newRecipient();
-      this.recipientInEdit.country = this.country;
-      console.log(`new recipient: ${JSON.stringify(this.recipientInEdit)}`);
-      this.onOpenModal("edit", "New Recipient Details");
-    },
+//   country: (state) => state.general.country,
+//   recipients: (state) => state.recipients,
+// }),
+// ...mapGetters(useProgramSpecStore, ["filteredRecipients"]),
+// hasChanges() {
+//   return this.changed;
+// },
+// canSave() {
+//   return this.changed;
+// },
+// selectedRecipient() {
+//   return this.recipients.find(
+//     (recipient) => recipient.recipientid === this.selectedRecipientId
+//   );
+// },
+// tableIsFilter() {
+//   return this.sortTable.by !== "" || this.store. !== "";
+// },
+// isRecipientInEditValid() {
+//   // nothing selected; can't be valid
+//   if (!this.recipientInEdit) return null;
 
-    onRecipientEdited(value) {
-      this.recipientEdited = value;
-    },
+//   const requiredFields = [
+//     "region",
+//     "district",
+//     "communityname",
+//     "language",
+//     // 'listeningModel', 'numTbs',
+//     // 'deployments', 'directBeneficiaries'
+//   ];
 
-    onAcceptEdit() {
-      this.onCloseModal();
-      if (this.isRecipientInEditValid) {
-        this.updateRecipient({ recipient: this.recipientInEdit });
-        this.recipientInEdit = null;
-      } else {
-        this.onOpenModal("mandatory", "Required Fields");
-      }
-    },
-    onCancelEdit() {
-      this.onCloseModal();
-      this.recipientInEdit = null;
-    },
-    onOpenModal(modal, title) {
-      this.recipientEdited = false;
-      this.showModal[modal] = true;
-      this.setModal(title);
-    },
-    onCloseModal() {
-      this.recipientEdited = false;
-      this.showModal.edit = false;
-      this.showModal.delete = false;
-      this.showModal.mandatory = false;
-      this.closeModal();
-    },
+//   const partial = requiredFields.map((field) => {
+//     const value = this.recipientInEdit[field];
+//     if (typeof value === "string" || value instanceof String) return value !== "";
+//     else if (typeof value === "number") return value >= 0;
+//     else if (Array.isArray(value)) return value.length > 0;
+//   });
 
-    handleModalEscape() {
-      this.onCloseModal();
-      this.recipientInEdit = null;
-    },
-  },
-};
+//   return partial.every(Boolean);
+// },
+//     isDuplicateRecipient() {
+//       // All the recipients are from the current program, so don't have a "program" property.
+//       // Construct a concatenation of country-region-district-communityname-groupname-agent-language
+//       function key(recipient) {
+//         return (
+//           `${recipient.country}-${recipient.region}-${recipient.district}-` +
+//           `${recipient.communityname}-${recipient.groupname}-${recipient.agent}-${recipient.language}`
+//         );
+//       }
+
+//       if (!this.recipientInEdit) return null;
+
+//       const thisKey = key(this.recipientInEdit);
+//       // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
+//       let isDuplicate = false;
+//       this.recipients.forEach((recip) => {
+//         if (
+//           key(recip) === thisKey &&
+//           recip.recipientid !== this.recipientInEdit.recipientid
+//         )
+//           isDuplicate = true;
+//       });
+
+//       if (isDuplicate) console.log(`Duplicate recipient properties: ${thisKey}`);
+//       return isDuplicate;
+//     },
+//     invalidBeneficiaries() {
+//       if (!this.recipientInEdit) return null;
+//       let invalid = false;
+//       // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
+//       Object.keys(this.recipientInEdit.direct_beneficiaries_additional).forEach((key) => {
+//         let val = this.recipientInEdit.direct_beneficiaries_additional[key];
+//         if (val > this.recipientInEdit.direct_beneficiaries) {
+//           invalid = true;
+//           // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
+//         }
+//       });
+//       // const values = Object.values(this.recipientInEdit.direct_beneficiaries_additional)
+//       //   .map(val => val > this.recipientInEdit.direct_beneficiaries)
+
+//       // Is either of these properties greater than "direct beneficiaries"?
+//       const keys = ["numhouseholds", "group_size"];
+//       keys.forEach((key) => {
+//         let val = this.recipientInEdit[key];
+//         if (val > this.recipientInEdit.direct_beneficiaries) {
+//           invalid = true;
+//           // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
+//         }
+//       });
+
+//       return invalid;
+//     },
+//   },
+
+//   components: {
+//     ProgramHeader,
+//     VInput,
+//     VButton,
+//     Loading,
+//     VTooltip,
+//     ProgramRecipientsForm,
+//   },
+
+//   created() {
+//     this.ensureSpec({ programId: this.programId });
+
+// EventBus.$on("handleEscape", this.handleModalEscape);
+//   },
+
+//   beforeDestroy() {
+//     // EventBus.$off("handleEscape", this.handleModalEscape);
+//   },
+
+//   data: () => ({
+//     selectedRecipientId: null,
+//     recipientInEdit: null,
+//     recipientEdited: false,
+//     description: "Add and edit recipients here.",
+//     columns,
+//     showModal: {
+//       edit: false,
+//       delete: false,
+//       mandatory: false,
+//     },
+//   }),
+
+//   methods: {
+// ...mapActions(useUIStore, ["setModal", "closeModal"]),
+// ...mapActions(useLanguagesStore, ["fetchLanguages"]),
+// ...mapActions(useProgramSpecStore, [
+//   "ensureSpec",
+//   "fetchSpec",
+//   "updateSpec",
+//   "setSortByColumn",
+//   "setstore.",
+//   "resetFilters",
+//   "updateRecipient",
+// ]),
+// ...mapGetters(useProgramSpecStore, ["newRecipient"]),
+// onSaveChanges() {
+//   console.log("onSaveChanges");
+//   this.updateSpec();
+// },
+// onDiscardChanges() {
+//   console.log("onDiscardChanges");
+//   this.fetchSpec({ programId: this.programId });
+// },
+// editRecipient(recipient) {
+//   let recip = Object.keys(recipient)
+//     .map((k) => `${k}:${recipient[k]}`)
+//     .join(", ");
+//   console.log(`Edit ${JSON.stringify(recip)}`);
+//   this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
+//   this.onOpenModal("edit", "Recipient Details");
+// },
+// duplicateRecipient(recipient) {
+//   let recip = Object.keys(recipient)
+//     .map((k) => `${k}:${recipient[k]}`)
+//     .join(", ");
+//   console.log(`Duplicate ${JSON.stringify(recip)}`);
+//   this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
+//   this.recipientInEdit.recipientid = null;
+//   this.onOpenModal("edit", "Duplicated Recipient Details");
+// },
+// addNewRecipient() {
+//   this.recipientInEdit = this.newRecipient();
+//   this.recipientInEdit.country = this.country;
+//   console.log(`new recipient: ${JSON.stringify(this.recipientInEdit)}`);
+//   this.onOpenModal("edit", "New Recipient Details");
+// },
+// onRecipientEdited(value) {
+//   this.recipientEdited = value;
+// },
+// onAcceptEdit() {
+//   this.onCloseModal();
+//   if (this.isRecipientInEditValid) {
+//     this.updateRecipient({ recipient: this.recipientInEdit });
+//     this.recipientInEdit = null;
+//   } else {
+//     this.onOpenModal("mandatory", "Required Fields");
+//   }
+// },
+// onCancelEdit() {
+//   this.onCloseModal();
+//   this.recipientInEdit = null;
+// },
+// onOpenModal(modal, title) {
+//   this.recipientEdited = false;
+//   this.showModal[modal] = true;
+//   this.setModal(title);
+// },
+// onCloseModal() {
+//   this.recipientEdited = false;
+//   this.showModal.edit = false;
+//   this.showModal.delete = false;
+//   this.showModal.mandatory = false;
+//   this.closeModal();
+// },
+// handleModalEscape() {
+//   this.onCloseModal();
+//   this.recipientInEdit = null;
+// },
+//   },
+// };
 </script>

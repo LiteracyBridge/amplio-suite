@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 export const useLanguagesStore = defineStore("languages", {
     state: () => ({
-        status: "",
+        status: null as "loading" | "error" | "success",
         languages: []
     }),
     actions: {
