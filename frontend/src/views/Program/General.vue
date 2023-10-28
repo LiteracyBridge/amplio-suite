@@ -218,7 +218,7 @@ const data = ref({
 
   countries,
   regionOptions: [],
-//   languageToDelete: null,
+  //   languageToDelete: null,
   beneficiariesIsOpen: false,
 });
 
@@ -278,10 +278,10 @@ function onLanguageDeleted(code: string) {
     cancelText: "No",
     onOk() {
       specStore.deleteLanguage(code);
-    }
+    },
   });
-//   data.value.languageToDelete = language;
-//   uiStore.setModal(`Delete Language ${language?.name}`);
+  //   data.value.languageToDelete = language;
+  //   uiStore.setModal(`Delete Language ${language?.name}`);
 }
 
 // function confirmLanguageDeletion() {
@@ -305,6 +305,17 @@ onMounted(() => {
   }));
 
   languageStore.fetchLanguages(props.programId);
+
+  //   Watch for state changes
+  // this subscription will be kept even after the component is unmounted
+  specStore.$subscribe(
+    (mutation, state) => {
+      if (state.changed == false) {
+        specStore.changed = true;
+      }
+    },
+    { detached: true }
+  );
 });
 
 // const

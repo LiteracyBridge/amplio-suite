@@ -136,12 +136,8 @@
     <Select
       id="deployments"
       :options="deployments"
-      :value="recipient.deployments"
+      v-model:value="recipient.deployments"
       mode="multiple"
-      :preserve-search="true"
-      @input="
-        (deployments) => onSetRecipientValue({ field: 'deployments', value: deployments })
-      "
       placeholder="Select the deployments, leave blank for 'all'"
     >
     </Select>
@@ -256,9 +252,6 @@
 </style>
 
 <script lang="ts" setup>
-import { mapState } from "pinia";
-import Multiselect from "vue-multiselect";
-
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
 import VTooltip from "@/components/VTooltip.vue";
@@ -281,7 +274,6 @@ const state = useProgramSpecStore();
 
 const regionsOptions = ref([]),
   beneficiariesIsOpen = ref(false);
-// listeningModels: listeningModels,
 
 const beneficiariesAdditionalFields = computed(() => {
   const part1 = Object.keys(state.general.direct_beneficiaries_additional_map).map(
@@ -343,13 +335,13 @@ onMounted(() => {
   props.recipient.deployments ??= [];
 });
 
-watch(
-  props,
-  (oldProps, newProps) => {
-    newProps.recipient.deployments ??= [];
-  },
-  { deep: true }
-);
+// watch(
+//   props,
+//   (oldProps, newProps) => {
+//     newProps.recipient.deployments ??= [];
+//   },
+//   { deep: true }
+// );
 // export default {
 //   props: {
 //     recipient: {
