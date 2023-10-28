@@ -12,17 +12,13 @@
   </ConfigProvider>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { ConfigProvider } from "ant-design-vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-export default {
-  computed: {
-    layout() {
-      return (this.$route.meta.layout || "default") + "-layout";
-    },
-  },
-  components: {
-    ConfigProvider,
-  },
-};
+const route = useRoute();
+const layout = computed(() => {
+  return (route.meta.layout || "default") + "-layout";
+});
 </script>

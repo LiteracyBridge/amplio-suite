@@ -62,7 +62,7 @@ export const useAccountStore = defineStore("account", {
             this.signUp.send = false;
             this.signUp.email = "";
         },
-        async login(payload: { email: string; token: any; password: any }) {
+        async login(payload: { email: string; token?: any; password: any }) {
             this.$state.status = "loading";
 
             if (this.signUp.send) {
@@ -90,7 +90,7 @@ export const useAccountStore = defineStore("account", {
                             const user = {
                                 email: payload.email,
                                 name: payload.email.split("@")[0],
-                                token: token.jwtToken,
+                                token: token.jwtToken
                             };
 
                             localStorage.setItem("user", JSON.stringify(user));

@@ -7,6 +7,8 @@ import config from "./cognito/config";
 import router from "./router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createPinia } from "pinia";
+import { Amplify } from 'aws-amplify';
+import awsconfig from "./aws-exports";
 
 // Polyfill :focus-visible
 // Remove this to restore normal focus behaviour.
@@ -84,6 +86,8 @@ app.use(router)
     // .use(store)
     // .use(createPinia());
     .use(CognitoAuth, config);
+
+Amplify.configure(awsconfig);
 
 app.mount("#app");
 // new Vue({
