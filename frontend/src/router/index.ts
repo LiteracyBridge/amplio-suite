@@ -314,7 +314,7 @@ async function getUser() {
                 useAccountStore().user = {
                     email: data.attributes.email,
                     name: data.attributes.email.split("@")[0],
-                    token: data.signInUserSession.accessToken.jwtToken,
+                    token: data.signInUserSession.idToken.jwtToken,
                     img: ""
                 };
 

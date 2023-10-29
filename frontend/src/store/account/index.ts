@@ -185,7 +185,7 @@ export const useAccountStore = defineStore("account", {
             return Auth.currentAuthenticatedUser().then(data => {
                 console.log(data);
                 if (data && data.signInUserSession) {
-                    this.user.token ??= data.signInUserSession.accessToken.jwtToken;
+                    this.user.token ??= data.signInUserSession.idToken.jwtToken;
                     this.user.email ??= data.attributes.email;
                     this.user.name ??=data.attributes.email.split("@")[0];
                     return;
