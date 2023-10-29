@@ -46,8 +46,6 @@ async function getLanguages(programId = null) {
     }
     const fetch_response = await fetch(url, init);
     let result = await fetch_response.json();
-    console.log(result);
-    console.log(programId);
     return result;
 }
 

@@ -57,12 +57,17 @@
         </Select>
 
         <span id="langs">Languages</span>
-        <LanguagesSelector
-          :languages="specStore.general.languages"
-          :onLanguageSelected="onLanguageSelected"
-          :onLanguageDeleted="onLanguageDeleted"
-          :multiple="true"
-        />
+        <div>
+          <LanguagesSelector
+            :languages="specStore.general.languages"
+            :onLanguageSelected="onLanguageSelected"
+            :onLanguageDeleted="onLanguageDeleted"
+            :multiple="true"
+          />
+          <Button type="link" @click.prevent="newLanguage.modal = true"
+            >Not in list? Click to create new language</Button
+          >
+        </div>
 
         <label class="md:pl-4" for="listeningModel">Listening Model</label>
         <Select
@@ -174,6 +179,43 @@
       </div>
     </div>
 
+    <Modal
+      v-model:open="newLanguage.modal"
+      title="Add New Language"
+      ok-text="Save"
+      @ok="addNewLanguage()"
+      @cancel="newLanguage.form = { code: null, name: null }"
+    >
+      <Form layout="vertical" :model="newLanguage.form">
+        <FormItem id="name" :required="true" label="Language Name">
+          <Input
+            name="name"
+            type="text"
+            :required="true"
+            placeholder="eg. English"
+            v-model:value="newLanguage.form.name"
+          />
+        </FormItem>
+
+        <FormItem id="code" label="Language Code">
+          <Input
+            name="code"
+            type="text"
+            placeholder="eg. en"
+            v-model:value="newLanguage.form.code"
+          />
+        </FormItem>
+        <!-- <FormItem id="comments" label="Language comments">
+          <Input
+            name="comments"
+            type="text"
+            placeholder="eg. en"
+            v-model:value="newLanguage.form.code"
+          />
+        </FormItem> -->
+      </Form>
+    </Modal>
+
     <!-- For modal components -->
     <!-- <portal to="modalBody" v-if="data.languageToDelete">
       <p>This language will be deleted.</p>
@@ -202,7 +244,15 @@ import listeningModels from "@/data/listeningModels.json";
 import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
 import { computed, createVNode, onMounted, ref } from "vue";
-import { Button, Modal, Select, SelectOption } from "ant-design-vue";
+import {
+  Button,
+  Modal,
+  Select,
+  SelectOption,
+  Form,
+  FormItem,
+  Input,
+} from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
@@ -220,6 +270,15 @@ const data = ref({
   regionOptions: [],
   //   languageToDelete: null,
   beneficiariesIsOpen: false,
+  isAddingNewLanguage: false,
+});
+
+const newLanguage = ref({
+  modal: false,
+  form: {
+    name: null,
+    code: null,
+  },
 });
 
 // const specListeningModels = computed(() => {
@@ -262,7 +321,6 @@ const data = ref({
 // }
 
 function onLanguageSelected(code: string) {
-  //   console.warn(language);
   let index = specStore.general.languages.length;
   specStore.setLanguages({ lang: code, index });
 }
@@ -284,6 +342,30 @@ function onLanguageDeleted(code: string) {
   //   uiStore.setModal(`Delete Language ${language?.name}`);
 }
 
+function addNewLanguage() {
+  const language = newLanguage.value.form;
+  language.code = language.code || language.name.toLowerCase();
+  // TODO: auto generate code (if not provided)
+
+  // Update main languages list
+  languageStore.languages = [...(languageStore.languages || []), language];
+
+  // Update program languages
+  onLanguageSelected(language.code);
+
+  //   newLanguage.value.modal = false;
+  newLanguage.value = {
+    modal: false,
+    form: {
+      name: null,
+      code: null,
+    },
+  };
+  specStore.general.new_languages = [
+    ...(specStore.general.new_languages || []),
+    language,
+  ];
+}
 // function confirmLanguageDeletion() {
 //   specStore.deleteLanguage(data.value.languageToDelete.code);
 //   data.value.languageToDelete = null;

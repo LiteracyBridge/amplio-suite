@@ -10,6 +10,7 @@ import {
     uploadSpec as uploadSpecFile,
     approveSpec as approveSpecFile
 } from "@/api/programspec.api";
+import { Language } from "@/models/language";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -51,7 +52,8 @@ export const getDefaultState = () => {
             program_id: null as string,
             direct_beneficiaries_map: {},
             sustainable_development_goals: [] as any[],
-            direct_beneficiaries_additional_map: {}
+            direct_beneficiaries_additional_map: {},
+            new_languages: [] as Language[]
         } as any,
 
         filterText: "",

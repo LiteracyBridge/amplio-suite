@@ -1,10 +1,11 @@
 import { getLanguages } from "@/api/generalQueries.api";
+import { Language } from "@/models/language";
 import { defineStore } from "pinia";
 
 export const useLanguagesStore = defineStore("languages", {
     state: () => ({
         status: null as "loading" | "error" | "success",
-        languages: []
+        languages: [] as Language[]
     }),
     actions: {
         getLanguagesRequest() {
