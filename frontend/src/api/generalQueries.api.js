@@ -1,9 +1,10 @@
 import { useAccountStore } from "@/store/account";
+import { API_URL } from "@/models/constants";
 // import Papa from 'papaparse';
 
-const GET_PROGRAMS_URL =
-    "https://uomgzti07c.execute-api.us-west-2.amazonaws.com/prod";
-const GET_PROGRAMS_ENDPOINT = "/getPrograms";
+// const GET_PROGRAMS_URL =
+// "https://uomgzti07c.execute-api.us-west-2.amazonaws.com/prod";
+// cons/programs= "/getPrograms";
 const URL = "https://l0im73yun2.execute-api.us-west-2.amazonaws.com/prod";
 const SUPPORTED_LANGUAGES = "/supported_languages";
 const SUPPORTED_CATEGORIES = "/supported_categories";
@@ -33,10 +34,7 @@ function makeInit(params) {
 
 async function getPrograms() {
     const init = makeInit();
-    const fetch_response = await fetch(
-        `${GET_PROGRAMS_URL}${GET_PROGRAMS_ENDPOINT}`,
-        init
-    );
+    const fetch_response = await fetch(`${API_URL}/programs`, init);
     return fetch_response.json();
 }
 
