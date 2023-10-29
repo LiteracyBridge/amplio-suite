@@ -70,13 +70,15 @@
         </div>
 
         <div class="inline-flex items-center" :class="expandWhenActive">
-          <VueMultiselect
+          <Select
             id="programSelector"
+            style="width: 300px"
+            :show-search="true"
+            :allow-clear="true"
             :value="programName"
             :options="programNameList"
             placeholder="Select a program"
             @select="programNameSelected"
-            @open="programSelectorOpened"
             @close="programSelectorClosed"
           />
 
@@ -96,7 +98,7 @@
 
 <script>
 import { mapState, mapActions } from "pinia";
-import VueMultiselect from "vue-multiselect";
+import { Select } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useProgramsStore } from "@/store/programs";
 import { useLanguagesStore } from "@/store/languages";
@@ -125,7 +127,9 @@ export default {
     ...mapState(useProgramsStore, ["programs", "programNames", "general"]),
     ...mapState(useAccountStore, ["user"]),
     programNameList() {
-      return Object.values(this.programNames).sort();
+      return Object.values(this.programNames)
+        .sort()
+        .map((i) => ({ value: i, label: i, title: i }));
     },
     options() {
       const isAmplioUser =
@@ -221,7 +225,7 @@ export default {
     Bars,
     Close,
     DropDown,
-    VueMultiselect,
+    Select,
   },
   methods: {
     ...mapActions(useProgramsStore, ["getProgramsList"]),

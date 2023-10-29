@@ -183,7 +183,7 @@ export const useAccountStore = defineStore("account", {
         },
         async requireAuth() {
             return Auth.currentAuthenticatedUser().then(data => {
-                console.log(data);
+                // console.log(data);
                 if (data && data.signInUserSession) {
                     this.user.token ??= data.signInUserSession.idToken.jwtToken;
                     this.user.email ??= data.attributes.email;
