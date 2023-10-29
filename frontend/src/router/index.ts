@@ -1,6 +1,6 @@
 // import Vue from 'vue'
 import { createRouter, createWebHistory } from "vue-router";
-import { type RouteRecordRaw } from "vue-router";
+// import { type RouteRecordRaw } from "vue-router";
 import multiguard from "vue-router-multiguard";
 
 import { useAccountStore } from "@/store/account";
@@ -10,9 +10,7 @@ import SignIn from "@/views/SignIn.vue";
 import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
 
-// Vue.use(VueRouter)
-
-const routes: RouteRecordRaw[] = [
+const routes: any = [
     {
         path: "/",
         redirect: { path: "/login" }
@@ -187,7 +185,7 @@ const routes: RouteRecordRaw[] = [
     {
         path: "/programs/:programId/settings",
         name: "programspec.settings",
-        redirect: to => {
+        redirect: (to: any) => {
             // the function receives the target route as the argument
             // we return a redirect path/location here.
             return {
@@ -315,12 +313,13 @@ async function getUser() {
             if (data && data.signInUserSession) {
                 useAccountStore().user = {
                     email: data.attributes.email,
-                    name: data.attribute.email.split("@")[0],
+                    name: data.attributes.email.split("@")[0],
                     token: data.signInUserSession.accessToken.jwtToken,
                     img: ""
                 };
 
                 // TODO: Verify user from server
+                return { authorized: true };
             }
 
             // AppStore().is_loading = false;
@@ -335,12 +334,13 @@ async function getUser() {
 }
 
 Hub.listen("auth", async data => {
+    let user = null;
     // disabledConsole();
 
     console.log(data.payload.event);
     switch (data.payload.event) {
         case "signIn":
-            const user = await getUser();
+            user = await getUser();
             if (user?.authorized == true) {
                 router.push({ path: "/programs" });
             } else {
@@ -351,8 +351,8 @@ Hub.listen("auth", async data => {
         case "signUp":
             console.log(data);
             // TODO: add a/c to sbc
-            const _user = getUser();
-            console.log(_user);
+            user = await getUser();
+            console.log(user);
             if (user?.authorized == true) {
                 router.push({ path: "/programs" });
             } else {
@@ -383,7 +383,15 @@ Hub.listen("auth", async data => {
         case "signIn_failure":
             console.log("user sign in failed");
             break;
-        //   case "configured":
+        case "configured":
+            user = await getUser();
+            console.log(user);
+            if (user?.authorized == true) {
+                router.push({ path: "/programs" });
+            } else {
+                router.push({ path: "/login" });
+            }
+            break;
         //   case "confirmSignUp":
         //     console.log(data.payload);
         //     getUser().then(async (user) => {

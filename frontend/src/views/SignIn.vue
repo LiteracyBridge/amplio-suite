@@ -12,13 +12,8 @@
         /> -->
       </div>
     </template>
-
-    <template v-slot="{ user, signOut }">
-      <h1>Hello {{ user }}!</h1>
-      <button @click="signOut">Sign Out</button>
-    </template>
   </Authenticator>
-
+  <!--
   <main class="container mx-auto pt-4 text-center">
     <slot />
 
@@ -86,7 +81,7 @@
         >
       </p>
     </div>
-  </main>
+  </main> -->
 </template>
 
 <script lang="ts" setup>
@@ -108,22 +103,22 @@ const email = ref(""),
   token = ref(""),
   user = ref();
 
-async function tryLogin() {
-  try {
-    await store.login({
-      email: email.value,
-      password: password.value,
-      token: token.value,
-    });
-    router.push("/programs");
-  } catch {
-    email.value = "";
-    password.value = "";
-    useUIStore().setNotification({ type: "alert", text: "Incorrect email or password" });
+// async function tryLogin() {
+//   try {
+//     await store.login({
+//       email: email.value,
+//       password: password.value,
+//       token: token.value,
+//     });
+//     router.push("/programs");
+//   } catch {
+//     email.value = "";
+//     password.value = "";
+//     useUIStore().setNotification({ type: "alert", text: "Incorrect email or password" });
 
-    // this.$refs.user.$el.children[1].focus()
-  }
-}
+//     // this.$refs.user.$el.children[1].focus()
+//   }
+// }
 
 onMounted(() => {
   //   user.value?.focus();
@@ -180,7 +175,7 @@ onMounted(() => {
 </script>
 
 <style>
-.amplify-button[data-variation='primary'] {
-  background: #289b6a
+.amplify-button[data-variation="primary"] {
+  background: #289b6a;
 }
 </style>

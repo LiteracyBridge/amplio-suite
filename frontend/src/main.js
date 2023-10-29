@@ -2,8 +2,8 @@ import { createApp, h, Fragment } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
-import CognitoAuth from "./cognito";
-import config from "./cognito/config";
+// import CognitoAuth from "./cognito";
+// import config from "./cognito/config";
 import router from "./router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createPinia } from "pinia";
@@ -77,15 +77,15 @@ let app = createApp(App);
 
 app.use(PortalVue).use(pinia);
 
-app.config.productionTip = false;
+// app.config.productionTip = false;
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("default-layout", Default);
 app.component("login-layout", Login);
 
-app.use(router)
+app.use(router);
     // .use(store)
     // .use(createPinia());
-    .use(CognitoAuth, config);
+    // .use(CognitoAuth, config);
 
 Amplify.configure(awsconfig);
 

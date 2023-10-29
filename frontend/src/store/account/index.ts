@@ -1,5 +1,6 @@
-import cognitoAuth from "@/cognito";
+// import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
+import { Auth } from "aws-amplify";
 
 export const useAccountStore = defineStore("account", {
     state: () => ({
@@ -62,151 +63,164 @@ export const useAccountStore = defineStore("account", {
             this.signUp.send = false;
             this.signUp.email = "";
         },
-        async login(payload: { email: string; token?: any; password: any }) {
-            this.$state.status = "loading";
+        // async login(payload: { email: string; token?: any; password: any }) {
+        //     this.$state.status = "loading";
 
-            if (this.signUp.send) {
-                await cognitoAuth.confirmRegistration(
-                    payload.email,
-                    payload.token
-                );
-                this.clearSignUp();
-                // commit("clearSignUp");
-            }
+        //     // if (this.signUp.send) {
+        //     //     await cognitoAuth.confirmRegistration(
+        //     //         payload.email,
+        //     //         payload.token
+        //     //     );
+        //     //     this.clearSignUp();
+        //     //     // commit("clearSignUp");
+        //     // }
 
-            return new Promise((resolve, reject) => {
-                cognitoAuth.authenticate(
-                    payload.email,
-                    payload.password,
-                    (err: any, result: { getIdToken: () => any }) => {
-                        if (err) {
-                            this.authError();
-                            // this.authError();
-                            reject(err);
-                        }
+        //     // return new Promise((resolve, reject) => {
+        //     //     cognitoAuth.authenticate(
+        //     //         payload.email,
+        //     //         payload.password,
+        //     //         (err: any, result: { getIdToken: () => any }) => {
+        //     //             if (err) {
+        //     //                 this.authError();
+        //     //                 // this.authError();
+        //     //                 reject(err);
+        //     //             }
 
-                        if (result) {
-                            const token = result.getIdToken();
-                            const user = {
-                                email: payload.email,
-                                name: payload.email.split("@")[0],
-                                token: token.jwtToken
-                            };
+        //     //             if (result) {
+        //     //                 const token = result.getIdToken();
+        //     //                 const user = {
+        //     //                     email: payload.email,
+        //     //                     name: payload.email.split("@")[0],
+        //     //                     token: token.jwtToken
+        //     //                 };
 
-                            localStorage.setItem("user", JSON.stringify(user));
+        //     //                 localStorage.setItem("user", JSON.stringify(user));
 
-                            this.setUser(user);
-                            this.authSuccess();
-                            // commit("setUser", user);
-                            // this.authSuccess();
-                            resolve("success");
-                        }
-                    }
-                );
-            });
-        },
-        async register(payload: {
-            fullName: string;
-            email: string;
-            emailConfirmation: string;
-            password: string;
-        }) {
-            this.authRequest();
+        //     //                 this.setUser(user);
+        //     //                 this.authSuccess();
+        //     //                 // commit("setUser", user);
+        //     //                 // this.authSuccess();
+        //     //                 resolve("success");
+        //     //             }
+        //     //         }
+        //     //     );
+        //     // });
+        // },
+        // async register(payload: {
+        //     fullName: string;
+        //     email: string;
+        //     emailConfirmation: string;
+        //     password: string;
+        // }) {
+        //     this.authRequest();
 
-            return new Promise((resolve, reject) => {
-                const isFill = [
-                    payload.fullName !== "",
-                    payload.email !== "",
-                    payload.emailConfirmation !== "",
-                    payload.password !== ""
-                ].every(Boolean);
+        //     // return new Promise((resolve, reject) => {
+        //     //     const isFill = [
+        //     //         payload.fullName !== "",
+        //     //         payload.email !== "",
+        //     //         payload.emailConfirmation !== "",
+        //     //         payload.password !== ""
+        //     //     ].every(Boolean);
 
-                if (!isFill) {
-                    reject("Not fill");
-                }
+        //     //     if (!isFill) {
+        //     //         reject("Not fill");
+        //     //     }
 
-                cognitoAuth.signup(
-                    payload.email,
-                    payload.email,
-                    payload.password,
-                    (err: any, result: any) => {
-                        if (err) {
-                            this.authError();
-                            reject(err);
-                        }
+        //     //     cognitoAuth.signup(
+        //     //         payload.email,
+        //     //         payload.email,
+        //     //         payload.password,
+        //     //         (err: any, result: any) => {
+        //     //             if (err) {
+        //     //                 this.authError();
+        //     //                 reject(err);
+        //     //             }
 
-                        if (result) {
-                            this.authSuccess();
-                            this.setSignUp(payload.email);
-                            resolve("success");
-                        }
-                    }
-                );
-            });
-        },
-        async forgotPassword(payload: { user: any }) {
-            this.authRequest();
-            return new Promise((resolve, reject) => {
-                cognitoAuth.forgotPassword(payload.user, (err: any) => {
-                    if (err) {
-                        this.authError();
-                        reject(err);
-                    } else {
-                        this.authSuccess();
-                        resolve("success");
-                    }
-                });
-            });
-        },
-        async confirmNewPassword(payload: {
-            user: any;
-            resetToken: any;
-            password: any;
-        }) {
-            this.authRequest();
-
-            try {
-                await cognitoAuth.confirmPassword(
-                    payload.user,
-                    payload.resetToken,
-                    payload.password
-                );
-                this.authSuccess();
-            } catch {
-                this.authSuccess();
-            }
-        },
+        //     //             if (result) {
+        //     //                 this.authSuccess();
+        //     //                 this.setSignUp(payload.email);
+        //     //                 resolve("success");
+        //     //             }
+        //     //         }
+        //     //     );
+        //     // });
+        // },
+        // async forgotPassword(payload: { user: any }) {
+        //     this.authRequest();
+        //     // return new Promise((resolve, reject) => {
+        //     //     cognitoAuth.forgotPassword(payload.user, (err: any) => {
+        //     //         if (err) {
+        //     //             this.authError();
+        //     //             reject(err);
+        //     //         } else {
+        //     //             this.authSuccess();
+        //     //             resolve("success");
+        //     //         }
+        //     //     });
+        //     // });
+        // },
+        // async confirmNewPassword(payload: {
+        //     user: any;
+        //     resetToken: any;
+        //     password: any;
+        // }) {
+        //     // this.authRequest();
+        //     // try {
+        //     //     await cognitoAuth.confirmPassword(
+        //     //         payload.user,
+        //     //         payload.resetToken,
+        //     //         payload.password
+        //     //     );
+        //     //     this.authSuccess();
+        //     // } catch {
+        //     //     this.authSuccess();
+        //     // }
+        // },
         async logout() {
-            this.setUser({ email: "", name: "", img: "" });
-            cognitoAuth.logout();
+            this.setUser({ email: "", name: "", img: "", token: "" });
+            // Auth.logout();
+            // cognitoAuth.logout();
         },
         async requireAuth() {
-            // Resolve if the user is authenticated
-            // Else reject
-            // if(this.user?.token !=null) return;
-
-            const loadUser = () => {
-                // Retrieve the object from storage
-                const user = localStorage.getItem("user");
-
-                this.setUser(JSON.parse(user));
-            };
-
-            return new Promise<void>((resolve, reject) => {
-                cognitoAuth.isAuthenticated(
-                    (tokenOrError: any, loggedIn: any) => {
-                        if (!loggedIn) {
-                            if (tokenOrError) {
-                                loadUser();
-                                resolve();
-                            } else reject();
-                        } else {
-                            loadUser();
-                            resolve();
-                        }
-                    }
-                );
+            return Auth.currentAuthenticatedUser().then(data => {
+                console.log(data);
+                if (data && data.signInUserSession) {
+                    this.user.token ??= data.signInUserSession.accessToken.jwtToken;
+                    this.user.email ??= data.attributes.email;
+                    this.user.name ??=data.attributes.email.split("@")[0];
+                    return;
+                    // TODO: Verify user from server
+                } else {
+                    throw new Error("No current user");
+                }
             });
+
+            // // Resolve if the user is authenticated
+            // // Else reject
+            // // if(this.user?.token !=null) return;
+
+            // const loadUser = () => {
+            //     // Retrieve the object from storage
+            //     const user = localStorage.getItem("user");
+
+            //     this.setUser(JSON.parse(user));
+            // };
+
+            // return new Promise<void>((resolve, reject) => {
+            //     cognitoAuth.isAuthenticated(
+            //         (tokenOrError: any, loggedIn: any) => {
+            //             if (!loggedIn) {
+            //                 if (tokenOrError) {
+            //                     loadUser();
+            //                     resolve();
+            //                 } else reject();
+            //             } else {
+            //                 loadUser();
+            //                 resolve();
+            //             }
+            //         }
+            //     );
+            // });
         }
     }
 });

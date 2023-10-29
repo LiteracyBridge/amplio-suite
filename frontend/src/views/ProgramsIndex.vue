@@ -86,13 +86,14 @@ export default {
       },
       immediate: true,
     },
-    status: {
-      handler(status) {
-        if (status === "error") this.handleLogout();
-      },
-    },
+    // status: {
+    //   handler(status) {
+    //     if (status === "error") this.handleLogout();
+    //   },
+    // },
   },
-  created() {
+  mounted() {
+    console.log(useAccountStore().user)
     this.closeNotification();
     this.getProgramsList();
     this.fetchLanguages();

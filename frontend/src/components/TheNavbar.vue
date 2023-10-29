@@ -109,9 +109,13 @@ import { useAccountStore } from "@/store/account";
 
 export default {
   mounted() {
-    this.getProgramsList();
-    this.fetchLanguages();
-    this.fetchCategories();
+    useAccountStore()
+      .requireAuth()
+      .then(() => {
+        this.getProgramsList();
+        this.fetchLanguages();
+        this.fetchCategories();
+      });
   },
   computed: {
     ...mapState(useProgramSpecStore, {
