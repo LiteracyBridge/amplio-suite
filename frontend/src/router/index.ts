@@ -58,6 +58,7 @@ const routes: any = [
         path: "/programs/:programId",
         props: true,
         component: Home,
+        name: "home",
         beforeEnter: requireAuth
     },
     {
@@ -162,8 +163,14 @@ const routes: any = [
     },
     {
         path: "/programs/:programId/monitor",
-        redirect: { path: "/programs/:programId/monitor/StatusByDepl" },
+        redirect: (to: any) => {
+            return {
+                name: "monitor:status-by-deployment",
+                params: to.params
+            };
+        },
         props: true,
+        name: "monitor",
         component: () => import("../views/Monitor/Index.vue"),
         beforeEnter: requireAuth,
         meta: {
@@ -171,12 +178,14 @@ const routes: any = [
         },
         children: [
             {
+                name: "monitor:status-by-deployment",
                 path: "StatusByDepl",
                 props: true,
                 component: () => import("../views/Monitor/StatusByDepl.vue")
             },
             {
                 path: "StatusByTb",
+                name: "monitor:status-by-tb",
                 props: true,
                 component: () => import("../views/Monitor/StatusByTb.vue")
             }

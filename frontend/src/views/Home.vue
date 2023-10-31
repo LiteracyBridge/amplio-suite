@@ -126,10 +126,10 @@ export default {
       let altKey = ev && ev.altKey;
       let path = "";
       if (this.wizardCompleted || altKey) {
-        path = `${this.$route.path}/settings`;
         this.$router.push({ name: "programspec.settings", params: this.$route.params });
       } else {
-        path = `${this.$route.path}/wizard`;
+        this.$router.push({ name: "wizard", params: this.$route.params });
+        // path = `${this.$route.path}/wizard`;
       }
     },
     onMonitoringCenterClicked(ev) {
@@ -137,7 +137,9 @@ export default {
       let path = `${this.$route.path}/monitor`;
       if (altKey) path = path + "";
 
-      this.$router.push({ path, params: this.$route.params });
+      this.$router.push({ name: "monitor", params: this.$route.params });
+
+      //   this.$router.push({ path, params: this.$route.params });
 
       //   this.$router.push(path);
     },
