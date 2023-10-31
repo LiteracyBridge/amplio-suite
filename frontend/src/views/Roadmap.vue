@@ -26,6 +26,7 @@
 import { mapState, mapActions } from "pinia";
 
 import Steps from "@/components/RoadmapSteps.vue";
+import { useRoadmapStore } from "@/store/roadmap";
 
 const generalOptions = (programId) => [
   {
@@ -199,9 +200,10 @@ const launchOptions = [
 export default {
   props: ["programId"],
   computed: {
-    ...mapState("roadmap", ["roadmap"]),
+    ...mapState(useRoadmapStore, ["roadmap"]),
+    ...mapState(useProgramSpecStore, ["general"]),
     programName() {
-      return this.$store.state.programspec.general.name;
+      return this.general.name;
     },
   },
   components: {
@@ -222,10 +224,10 @@ export default {
     next();
   },
   methods: {
-    ...mapActions("programspec", {
+    ...mapActions(useProgramSpecStore, {
       fetchSpec: "fetchSpec",
     }),
-    ...mapActions("roadmap", ["fetchRoadmap", "updateRoadmap", "toggleStep"]),
+    ...mapActions(useRoadmapStore, ["fetchRoadmap", "updateRoadmap", "toggleStep"]),
   },
 };
 </script>
