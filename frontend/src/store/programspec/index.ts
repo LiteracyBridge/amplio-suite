@@ -949,7 +949,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       message.title = title;
     },
 
-    addMessageLanguage(payload) {
+    addMessageLanguage(payload: { language: any; }) {
       // console.log("here");
       // 'languages' is a list of comma-separated language names or codes.
       const message = this.getMessage(payload);
