@@ -342,9 +342,21 @@ function onLanguageDeleted(code: string) {
 }
 
 function addNewLanguage() {
-  const language = newLanguage.value.form;
-  language.code = language.code || language.name.toLowerCase();
-  // TODO: auto generate code (if not provided)
+  let language = newLanguage.value.form;
+  let code: string = language.code || "";
+
+  // Check if language already exists
+  const exists = languageStore.languages.find(
+    (l) =>
+      l.code.toLowerCase() == code.toLowerCase() ||
+      l.name.toLowerCase() == language.name.toLowerCase()
+  );
+
+  if (exists != null) {
+    language = exists;
+  } else {
+    language.code = languageStore.generateNewLanguageCode(language);
+  }
 
   // Update main languages list
   languageStore.languages = [...(languageStore.languages || []), language];
@@ -360,10 +372,13 @@ function addNewLanguage() {
       code: null,
     },
   };
-  specStore.general.new_languages = [
-    ...(specStore.general.new_languages || []),
-    language,
-  ];
+
+  if (!exists) {
+    specStore.general.new_languages = [
+      ...(specStore.general.new_languages || []),
+      language,
+    ];
+  }
 }
 // function confirmLanguageDeletion() {
 //   specStore.deleteLanguage(data.value.languageToDelete.code);
