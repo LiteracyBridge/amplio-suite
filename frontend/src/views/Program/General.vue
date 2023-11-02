@@ -231,7 +231,6 @@
 </template>
 
 <script lang="ts" setup>
-import Multiselect from "vue-multiselect";
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
 import VTooltip from "@/components/VTooltip.vue";

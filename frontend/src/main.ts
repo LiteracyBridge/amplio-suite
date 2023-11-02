@@ -2,12 +2,10 @@ import { createApp, h, Fragment } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
-// import CognitoAuth from "./cognito";
-// import config from "./cognito/config";
 import router from "./router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createPinia } from "pinia";
-import { Amplify } from 'aws-amplify';
+import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
 
 // Polyfill :focus-visible
@@ -20,7 +18,6 @@ import "./plugins/fontawesome";
 // Style
 import "@/assets/css/tailwind.scss";
 import "@/assets/css/suite.scss";
-import "vue-multiselect/dist/vue-multiselect.css";
 
 // Layouts
 import Default from "@/layouts/Default.vue";
@@ -46,6 +43,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
+    //@ts-ignore
     faUserSecret,
     faTimes,
     faSpinner,
@@ -85,9 +83,9 @@ app.component("default-layout", Default);
 app.component("login-layout", Login);
 
 app.use(router);
-    // .use(store)
-    // .use(createPinia());
-    // .use(CognitoAuth, config);
+// .use(store)
+// .use(createPinia());
+// .use(CognitoAuth, config);
 
 Amplify.configure(awsconfig);
 
