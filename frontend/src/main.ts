@@ -40,7 +40,8 @@ import {
     faCopy,
     faTrashAlt,
     faQuestionCircle,
-    faCheck
+    faCheck,
+    faCaretDown
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -60,7 +61,8 @@ library.add(
     faCopy,
     faTrashAlt,
     faQuestionCircle,
-    faCheck
+    faCheck,
+    faCaretDown
 );
 
 const pinia = createPinia();

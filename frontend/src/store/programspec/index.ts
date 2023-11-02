@@ -11,6 +11,11 @@ import {
   approveSpec as approveSpecFile
 } from "@/api/programspec.api";
 import { Language } from "@/models/language";
+import { Recipient } from "@/models/recipient";
+import { Deployment } from "@/models/deployment";
+import { Program } from "@/models/program";
+import { Playlist } from "@/models/playlist";
+import { Message } from "@/models/message";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -41,21 +46,9 @@ export const getDefaultState = () => {
     changed: false,
     status: "",
     programId: "",
-    deployments: [] as any[],
-    recipients: [] as any[],
-    general: {
-      region: [] as string[],
-      listening_models: [] as any[],
-      country: null as string | null,
-      languages: [] as string[],
-      name: null as string | null,
-      program_id: null as string,
-      direct_beneficiaries_map: {},
-      sustainable_development_goals: [] as any[],
-      direct_beneficiaries_additional_map: {},
-      new_languages: [] as Language[]
-    } as any,
-
+    deployments: [] as Deployment[],
+    recipients: [] as Recipient[],
+    general: new Program(),
     filterText: "",
     sortTable: {
       by: "region",
@@ -66,68 +59,37 @@ export const getDefaultState = () => {
 };
 
 //region Deployment, Playlist, Message constructors
-function Deployment(
-  deploymentnumber: number,
-  previous: { enddate: string | number | Date },
-  programId: string
-) {
-  var startdate = new Date();
-  let enddate = new Date();
-  let playlists: any[] = [];
-  if (deploymentnumber !== 1) {
-    // Date handline in Javascript is pretty bad, but this seems to work well enough.
-    let prevEnd = new Date(previous.enddate);
-    startdate = new Date(prevEnd);
-    startdate = new Date(startdate.setDate(prevEnd.getDate() + 1));
-    enddate = new Date(startdate);
-    enddate = new Date(enddate.setDate(startdate.getDate() + 90));
-  }
-  let start = startdate.toISOString().substring(0, 10);
-  let end = enddate.toISOString().substring(0, 10);
-  let deployment = `${programId}-${startdate.getFullYear() %
-    100}-${deploymentnumber}`;
-  let deploymentname = deployment;
-  console.log(`start: ${startdate}, end: ${enddate}, depl: ${deployment}`);
-  return {
-    deploymentnumber,
-    startdate: start,
-    enddate: end,
-    playlists,
-    deployment,
-    deploymentname
-  };
-}
 
-function Playlist(position: any) {
-  const title = "";
-  const audience = "";
-  const messages: any[] = [];
-  return { position, title, audience, messages };
-}
+// function Playlist(position: any) {
+//   const title = "";
+//   const audience = "";
+//   const messages: any[] = [];
+//   return { position, title, audience, messages };
+// }
 
-function Message(position: any) {
-  const title = "";
-  const format = "";
-  const default_category_code = "";
-  const variant = "";
-  const sdg_goal = "";
-  const sdg_target = "";
-  const key_points = "";
-  const languages = "";
-  const audience = "";
-  return {
-    position,
-    title,
-    format,
-    default_category_code,
-    variant,
-    sdg_goal,
-    sdg_target,
-    key_points,
-    languages,
-    audience
-  };
-}
+// function Message(position: any) {
+//   const title = "";
+//   const format = "";
+//   const default_category_code = "";
+//   const variant = "";
+//   const sdg_goal = "";
+//   const sdg_target = "";
+//   const key_points = "";
+//   const languages = "";
+//   const audience = "";
+//   return {
+//     position,
+//     title,
+//     format,
+//     default_category_code,
+//     variant,
+//     sdg_goal,
+//     sdg_target,
+//     key_points,
+//     languages,
+//     audience
+//   };
+// }
 
 export const useProgramSpecStore = defineStore("programspec", {
   state: () => getDefaultState(),
@@ -170,7 +132,10 @@ export const useProgramSpecStore = defineStore("programspec", {
       const direction = state.sortTable.descending ? 1 : -1;
       recipients = recipients.sort(
         (a, b) =>
-          direction * a[column].toString().localeCompare(b[column].toString())
+          direction *
+          (a as any)[column]
+            .toString()
+            .localeCompare((b as any)[column].toString())
       );
 
       // Filter
@@ -818,7 +783,7 @@ export const useProgramSpecStore = defineStore("programspec", {
           ? this.deployments[this.deployments.length - 1]
           : undefined;
       this.deployments.push(
-        Deployment(this.deployments.length + 1, previous, this.programId)
+        Deployment.create(this.deployments.length + 1, this.programId, previous)
       );
     },
 
@@ -882,7 +847,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     addPlaylist(payload: any) {
       const deployment = this.getDeployment(payload);
       // New playlist at next position.
-      deployment.playlists.push(Playlist(deployment.playlists.length + 1));
+      deployment.playlists.push(Playlist.create(deployment.playlists.length + 1));
     },
 
     removePlaylist(payload: { playlist: { position: any } }) {
@@ -923,11 +888,13 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addMessage(payload: any) {
       const playlist = this.getPlaylist(payload);
-      const message = Message(playlist.messages.length + 1);
+      const message = Message.create(playlist.messages.length + 1);
       if (playlist.messages.length > 0) {
         playlist.audience =
           playlist.messages[playlist.messages.length - 1].audience;
       }
+
+      playlist.messages ??= []
       playlist.messages.push(message);
     },
 
@@ -949,7 +916,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       message.title = title;
     },
 
-    addMessageLanguage(payload: { language: any; }) {
+    addMessageLanguage(payload: { language: any }) {
       // console.log("here");
       // 'languages' is a list of comma-separated language names or codes.
       const message = this.getMessage(payload);
