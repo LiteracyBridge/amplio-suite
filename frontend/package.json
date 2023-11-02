@@ -22,6 +22,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@vue/compat": "^3.1.0",
+    "vue-multiselect": "^3.0.0-beta.2",
     "ant-design-vue": "4.x",
     "aws-amplify": "^5.3.11",
     "axios": "^0.19.2",

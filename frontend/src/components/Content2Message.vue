@@ -2,25 +2,28 @@
   <div class="border rounded my-1">
     <div class="flex">
       <div class="m-2 p-2 cursor-grab msg-handle">
-        <font-awesome-icon icon="grip-lines"/>
+        <font-awesome-icon icon="grip-lines" />
       </div>
 
-      <div class="m-2 py-2"
-           style="min-width:10px;"
-           @click="toggleExpanded"
-      >
-        <font-awesome-icon :icon="icon" size="lg"/>
+      <div class="m-2 py-2" style="min-width: 10px" @click="toggleExpanded">
+        <font-awesome-icon :icon="icon" size="lg" />
       </div>
 
       <v-input
         aria-label="`message ${message.title}`"
         placeholder="Message Title"
-        :class="!message.title||message.title.length===0?'invalid border-red-500 border-2 rounded':''"
+        :class="
+          !(message.title || '').length == 0
+            ? 'invalid border-red-500 border-2 rounded'
+            : ''
+        "
         type="text"
         :name="`message ${message.title}`"
         mx="w-full mx-0"
         :value="message.title"
-        @input="setMessageTitle({ deployment, playlist, message, title: $event.target.value })"
+        @input="
+          setMessageTitle({ deployment, playlist, message, title: $event.target.value })
+        "
       />
 
       <v-tooltip
@@ -41,14 +44,10 @@
         :ariaLabel="`Delete message ${message.title}`"
         @click="queryDeleteMessage()"
       />
-
     </div>
 
     <!-- Form for editing the details of a message -->
-    <div
-      :class="expanded ? 'h-104 md:h-96' : 'h-0'"
-      class="transition-all duration-300"
-    >
+    <div :class="expanded ? 'h-104 md:h-96' : 'h-0'" class="transition-all duration-300">
       <content2-message-form
         v-if="expanded"
         :deployment="deployment"
@@ -64,61 +63,53 @@
 
     <portal to="modalFooter" v-if="modal.show">
       <footer class="flex flex-row-reverse justify-between">
-        <VButton
-          label="Delete Message"
-          variant="warning"
-          @click="confirmDeleteMessage"
-        />
-        <VButton
-          label="Do Not Delete"
-          @click="cancelDeleteMessage"
-        />
+        <VButton label="Delete Message" variant="warning" @click="confirmDeleteMessage" />
+        <VButton label="Do Not Delete" @click="cancelDeleteMessage" />
       </footer>
     </portal>
-
   </div>
 </template>
 
 <script>
-import {mapState, mapActions} from 'pinia'
+import { mapState, mapActions } from "pinia";
 
-import Content2MessageForm from '@/components/Content2MessageForm.vue'
-import VButton from '@/components/VButton.vue'
-import VInput from '@/components/VInput.vue'
-import VTooltip from '@/components/VTooltip.vue'
+import Content2MessageForm from "@/components/Content2MessageForm.vue";
+import VButton from "@/components/VButton.vue";
+import VInput from "@/components/VInput.vue";
+import VTooltip from "@/components/VTooltip.vue";
+import { useProgramSpecStore } from "@/store/programspec";
+import { useUIStore } from "@/store/ui";
 
 export default {
   props: {
     deployment: {
       type: Object,
-      required: true
+      required: true,
     },
     playlist: {
       type: Object,
-      required: true
+      required: true,
     },
     message: {
       type: Object,
-      required: true
+      required: true,
     },
 
     duplicateTitles: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
-    ...mapState('programspec', [
-      'deployments',
-    ]),
+    ...mapState(useProgramSpecStore, ["deployments"]),
 
     icon() {
-      return this.expanded ? 'caret-down' : 'caret-right';
+      return this.expanded ? "caret-down" : "caret-right";
     },
 
     index() {
       return this.message.position;
-    }
+    },
   },
   components: {
     Content2MessageForm,
@@ -134,12 +125,12 @@ export default {
 
     modal: {
       show: false,
-      eleIndex: -1
-    }
+      eleIndex: -1,
+    },
   }),
 
   mounted() {
-    if (this.message.title.length === 0) this.expanded=true;
+    if (this.message.title.length === 0) this.expanded = true;
     // window.addEventListener('keydown', this.handleKeyboard)
   },
   // beforeDestroy() {
@@ -147,14 +138,11 @@ export default {
   // },
 
   methods: {
-    ...mapActions('ui', [
-      'setModal',
-      'closeModal'
-    ]),
-    ...mapActions('programspec', [
-      'setMessages',
-      'setMessageTitle',
-      'removeMessage'
+    ...mapActions(useUIStore, ["setModal", "closeModal"]),
+    ...mapActions(useProgramSpecStore, [
+      "setMessages",
+      "setMessageTitle",
+      "removeMessage",
     ]),
 
     toggleExpanded() {
@@ -162,26 +150,26 @@ export default {
     },
 
     queryDeleteMessage() {
-      this.modal.show = true
-      this.setModal('Delete Message')
+      this.modal.show = true;
+      this.setModal("Delete Message");
     },
 
     cancelDeleteMessage() {
-      this.modal.show = false
-      this.closeModal()
+      this.modal.show = false;
+      this.closeModal();
     },
 
     confirmDeleteMessage() {
-      this.removeMessage(this.getMessagePath())
-      this.cancelDeleteMessage()
+      this.removeMessage(this.getMessagePath());
+      this.cancelDeleteMessage();
     },
 
     getMessagePath() {
       return {
         deployment: this.deployment,
         playlist: this.playlist,
-        message: this.message
-      }
+        message: this.message,
+      };
     },
 
     setMessageIndex() {
@@ -227,6 +215,6 @@ export default {
     //   .forEach(ele => ele.classList.remove('focus-visible'))
     // this.target.classList.add('focus-visible')
     // }
-  }
-}
+  },
+};
 </script>

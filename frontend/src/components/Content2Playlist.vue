@@ -49,7 +49,11 @@
           item-key="position"
         >
           <template #item="{ element: playlist, index: index }">
-            <div class="flex tag-message">
+            <div
+              v-for="message in messages"
+              :key="message.position"
+              class="flex tag-message"
+            >
               <content2-message
                 class="w-full"
                 :deployment="deployment"
@@ -71,6 +75,7 @@ import { mapState, mapActions } from "pinia";
 import Content2Message from "@/components/Content2Message.vue";
 import Draggable from "vuedraggable";
 import VButton from "@/components/VButton.vue";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: {
@@ -92,7 +97,7 @@ export default {
   },
 
   computed: {
-    ...mapState("programspec", ["deployments"]),
+    ...mapState(useProgramSpecStore, ["deployments"]),
 
     canAddMessage() {
       return (
@@ -167,7 +172,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("programspec", [
+    ...mapActions(useProgramSpecStore, [
       "removePlaylist",
       "setPlaylistTitle",
       "setPlaylistAudience",

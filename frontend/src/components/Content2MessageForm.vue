@@ -8,11 +8,11 @@
       class="md:col-span-3"
       :options="programLanguages"
       :languages="messageLanguages"
-      :onLanguageSelected="
+      @language-selected="
         (language) => addMessageLanguage({ deployment, playlist, message, language })
       "
-      :onLanguageDeleted="
-        (language) => removeMessageLanguage({ deployment, playlist, message, language })
+      @language-deleted="
+        (code) => removeMessageLanguage({ deployment, playlist, message, language: code })
       "
       :multiple="true"
     />
@@ -166,6 +166,7 @@ import VInput from "@/components/VInput.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import sustainableDevelopmentGoals from "@/data/sustainableDevelopmentGoals.json";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: {
@@ -184,7 +185,7 @@ export default {
   },
   computed: {
     // The program's configured languages.
-    ...mapState("programspec", {
+    ...mapState(useProgramSpecStore, {
       programLanguages: (state) => state.general.languages,
     }),
 
@@ -194,9 +195,7 @@ export default {
     },
 
     categories() {
-      return this.$store.state.categories.categories.filter(
-        (cat) => cat.is_leaf || cat.isleafnode
-      );
+      return (this.categories || []).filter((cat) => cat.is_leaf || cat.isleafnode);
     },
 
     audience: {
@@ -301,7 +300,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("programspec", [
+    ...mapActions(useProgramSpecStore, [
       "setMessageVariant",
       "setMessageFormat",
       "addMessageLanguage",
