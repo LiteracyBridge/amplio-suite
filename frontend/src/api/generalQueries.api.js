@@ -73,7 +73,7 @@ const putRoadmap = async (programid, completed) => {
 
 async function getCategories(programid) {
     const init = makeInit();
-    let url = `${URL}${SUPPORTED_CATEGORIES}`;
+    let url = `${API_URL}/categories/supported`;
     if (programid) {
         url += `?programid=${programid}`;
     }

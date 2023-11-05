@@ -172,7 +172,6 @@
 </template>
 
 <script lang="ts" setup>
-
 import VButton from "@/components/VButton.vue";
 import Loading from "@/components/Loading.vue";
 import VTooltip from "@/components/VTooltip.vue";
@@ -181,8 +180,9 @@ import ProgramHeader from "@/components/ProgramHeader.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
+import type { Recipient } from "@/models/recipient";
 
-const columns = [
+const columns: Array<{ label: string; key: keyof Recipient }> = [
   { label: "Region/State", key: "region" },
   { label: "District/County", key: "district" },
   { label: "Community", key: "communityname" },

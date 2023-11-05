@@ -847,7 +847,9 @@ export const useProgramSpecStore = defineStore("programspec", {
     addPlaylist(payload: any) {
       const deployment = this.getDeployment(payload);
       // New playlist at next position.
-      deployment.playlists.push(Playlist.create(deployment.playlists.length + 1));
+      deployment.playlists.push(
+        Playlist.create(deployment.playlists.length + 1)
+      );
     },
 
     removePlaylist(payload: { playlist: { position: any } }) {
@@ -894,7 +896,9 @@ export const useProgramSpecStore = defineStore("programspec", {
           playlist.messages[playlist.messages.length - 1].audience;
       }
 
-      playlist.messages ??= []
+      if (playlist.messages == null) {
+        playlist.messages = [];
+      }
       playlist.messages.push(message);
     },
 
@@ -916,7 +920,12 @@ export const useProgramSpecStore = defineStore("programspec", {
       message.title = title;
     },
 
-    addMessageLanguage(payload: { language: any }) {
+    addMessageLanguage(payload: {
+      language: string;
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+    }) {
       // console.log("here");
       // 'languages' is a list of comma-separated language names or codes.
       const message = this.getMessage(payload);
@@ -935,15 +944,20 @@ export const useProgramSpecStore = defineStore("programspec", {
       message.languages = languages;
     },
 
-    removeMessageLanguage(payload: { language: any }) {
+    removeMessageLanguage(payload: {
+      language: string;
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+    }) {
       // 'languages' is a list of comma-separated language names or codes.
       const message = this.getMessage(payload);
       const { language } = payload;
       let languageCode;
-      if (typeof language === "string" || language instanceof String) {
+      if (typeof language === "string") {
         languageCode = language;
       } else {
-        languageCode = language.code;
+        languageCode = language;
       }
       let languages = message.languages;
       let list = languages.split(/[,;]/);
@@ -953,31 +967,55 @@ export const useProgramSpecStore = defineStore("programspec", {
       message.languages = languages;
     },
 
-    setMessageCategory(payload: { category: any }) {
+    setMessageCategory(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      code: string;
+    }) {
       const message = this.getMessage(payload);
-      const { category } = payload;
-      message.default_category_code = category;
+      message.default_category_code = payload.code;
     },
 
-    setMessageAudience(payload: { audience: any }) {
+    setMessageAudience(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      audience: any;
+    }) {
       const message = this.getMessage(payload);
       const { audience } = payload;
       message.audience = audience;
     },
 
-    setMessageVariant(payload: { variant: any }) {
+    setMessageVariant(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      variant: any;
+    }) {
       const message = this.getMessage(payload);
       const { variant } = payload;
       message.variant = variant;
     },
 
-    setMessageFormat(payload: { format: any }) {
+    setMessageFormat(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      format: any;
+    }) {
       const message = this.getMessage(payload);
       const { format } = payload;
       message.format = format;
     },
 
-    setMessageSDGGoal(payload: { goal: any }) {
+    setMessageSDGGoal(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      goal: any;
+    }) {
       const message = this.getMessage(payload);
       const { goal } = payload;
       message.sdg_goal_id = goal;
@@ -986,7 +1024,12 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setMessageSDGTarget({ ...payload, target: null });
     },
 
-    setMessageSDGTarget(payload: { target: any }) {
+    setMessageSDGTarget(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      target: number;
+    }) {
       const message = this.getMessage(payload);
       const { target } = payload;
       if (target === null || target === undefined) {
@@ -994,12 +1037,17 @@ export const useProgramSpecStore = defineStore("programspec", {
         message.sdg_target = null;
       } else {
         const goal = message.sdg_goal;
-        message.sdg_target_id = `${goal}.${target}`;
-        message.sdg_target = target;
+        message.sdg_target = `${goal}.${target}`;
+        message.sdg_target_id = target;
       }
     },
 
-    setMessageKeyPoints(payload: { text: any }) {
+    setMessageKeyPoints(payload: {
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+      text: string;
+    }) {
       const message = this.getMessage(payload);
       const { text } = payload;
       message.key_points = text;

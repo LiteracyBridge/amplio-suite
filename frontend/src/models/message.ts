@@ -12,7 +12,7 @@ export class Message {
   sdg_goal_id?: number;
   sdg_target?: string = "";
   key_points?: string = "";
-  sdg_target_id?: string;
+  sdg_target_id?: number;
   languages: string = "";
 
   audience?: string = "";

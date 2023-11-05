@@ -92,6 +92,7 @@ import { mapActions } from "pinia";
 import Content2Playlists from "@/components/Content2Playlists.vue";
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: {
@@ -158,7 +159,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("programspec", [
+    ...mapActions(useProgramSpecStore, [
       "removeDeployment",
       "setDeploymentStartdate",
       "setDeploymentEnddate",

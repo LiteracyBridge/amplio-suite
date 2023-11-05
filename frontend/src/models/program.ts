@@ -1,3 +1,5 @@
+import type { Language } from "./language";
+
 export class Program {
   id: number;
   name: string;
@@ -17,4 +19,7 @@ export class Program {
   listening_models: string[] = [];
   tableau_id?: string;
   salesforce_id?: string;
+
+  // For form fields
+  new_languages: Language[] = [];
 }
