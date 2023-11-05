@@ -134,9 +134,7 @@
         <VButton
           type="success"
           label="OK"
-          :disabled="
-            !data.recipientEdited || isDuplicateRecipient || invalidBeneficiaries
-          "
+          :disabled="isDuplicateRecipient || invalidBeneficiaries"
           @click="onAcceptEdit"
         />
         <!--        <VButton-->
@@ -281,7 +279,8 @@ const isDuplicateRecipient = computed(() => {
 });
 
 const invalidBeneficiaries = computed(() => {
-  if (!data.value.recipientInEdit) return null;
+  if (!data.value.recipientInEdit) return false;
+
   let invalid = false;
   // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
   Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional).forEach(
@@ -343,11 +342,8 @@ function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
   ui.setModal(title);
 }
 
-function editRecipient(recipient: { [x: string]: any }, index?: number) {
-  let recip = Object.keys(recipient)
-    .map((k) => `${k}:${recipient[k]}`)
-    .join(", ");
-  console.log(`Edit ${JSON.stringify(recip)}`);
+function editRecipient(recipient: Recipient, index?: number) {
+  console.log(`Edit ${JSON.stringify(recipient)}`);
   data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
   onOpenModal("edit", "Recipient Details");
 }

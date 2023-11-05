@@ -1075,6 +1075,7 @@ export const useProgramSpecStore = defineStore("programspec", {
           }
         });
         recipient.recipientid = TEMP_RECIPIENT_PREFIX + tempId;
+        setChanged(true);
       }
 
       let ix = this.recipients.findIndex(
