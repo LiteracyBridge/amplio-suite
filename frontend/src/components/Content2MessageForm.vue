@@ -84,14 +84,13 @@
     />
 
     <label for="sdgTarget">SDG Target</label>
-    <multiselect
+    <Select
       name="sdgTarget"
       class="md:col-span-3"
-      :options="targets"
       :value="selectedTarget"
+      :field-names="{ label: 'label', value: 'targetId' }"
       :custom-label="(opt:any) => `${message.sdg_goal}.${opt.targetId} ${opt.label}`"
       :max-height="200"
-      track-by="subsection"
       placeholder="Select the target"
       @select="
         (opt:any) =>
@@ -112,14 +111,10 @@
           })
       "
     >
-      <template slot="option" slot-scope="props">
-        <span>{{ message.sdg_goal }}</span>
-        <!-- <span
-          >{{ message.sdg_goal }}.{{ props.option.targetId }}
-          {{ props.option.label }}</span
-        > -->
-      </template>
-    </multiselect>
+      <SelectOption v-for="target of targets" :value="target.targetId">
+        {{ message.sdg_goal }}.{{ target.targetId }} {{ target.label }}
+      </SelectOption>
+    </Select>
 
     <label for="keyPoints">Key Points</label>
     <textarea
@@ -141,7 +136,7 @@
     </textarea>
 
     <label class="md:px-4" for="format">Format</label>
-    <multiselect
+    <Select
       name="format"
       :value="message.format"
       :options="formatOptions"
@@ -195,7 +190,7 @@ import { Deployment } from "@/models/deployment";
 import { Message } from "@/models/message";
 import { computed, ref } from "vue";
 import { useCategoriesStore } from "@/store/categories";
-import { Select } from "ant-design-vue";
+import { Select, SelectOption } from "ant-design-vue";
 
 const props = defineProps<{
   deployment: Deployment;
@@ -206,18 +201,29 @@ const props = defineProps<{
 const store = useProgramSpecStore();
 
 const formatOptions = ref([
-    "Drama",
-    "Endorsement",
-    "Interview",
-    "Message",
-    "Song",
-    "Other",
+    { value: "Drama", label: "Drama" },
+    { value: "Endorsement", label: "Endorsement" },
+    { value: "Interview", label: "Interview" },
+    { value: "Message", label: "Message" },
+    { value: "Song", label: "Song" },
+    { value: "Other", label: "Other" },
   ]),
   goals = ref(sustainableDevelopmentGoals);
 
 const messageLanguages = computed(() => {
-  if (!props.message.languages) return store.general.languages;
-  return props.message.languages.split(/[,;]/);
+  if (!props.message.languages) {
+    (store.general.languages || []).forEach((c) => {
+      store.addMessageLanguage({
+        deployment: props.deployment,
+        playlist: props.playlist,
+        message: props.message,
+        language: c,
+      });
+    });
+    // props.message.languages = (store.general.languages || []).join(",");
+    return store.general.languages;
+  }
+  return (props.message.languages || "").split(/[,;]/).filter((c) => c != "") || [];
 });
 
 const categories = computed(() => {
@@ -307,7 +313,7 @@ const selectedTarget = computed(() => {
     console.log(
       `message.sdg_target_id: ${props.message.sdg_target}, sdg_target: ${props.message.sdg_target}, found nothing`
     );
-  return target;
+  return target?.goalId;
 });
 
 function setSdgGoal(opt: any) {

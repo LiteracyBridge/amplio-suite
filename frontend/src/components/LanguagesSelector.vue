@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { useLanguagesStore } from "@/store/languages";
 import { Select, SelectOption, Spin } from "ant-design-vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps<{
   options?: string[];
@@ -107,6 +107,16 @@ onMounted(() => {
 
   selectedLanguages.value = [...(props.languages || [])];
 });
+
+watch(
+  props,
+  (newProps, oldProps) => {
+    if (newProps.options != null) {
+      allOptions.value = mapLanguageCodesToInfo([...newProps.options]);
+    }
+  },
+  { deep: true }
+);
 
 const getLanguages = computed(() => {
   return (props.options || []).length > 0 ? allOptions.value : store.languages;

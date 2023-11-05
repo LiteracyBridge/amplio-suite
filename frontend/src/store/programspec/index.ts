@@ -918,6 +918,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const message = this.getMessage(payload);
       const { title } = payload;
       message.title = title;
+      this.changed = true;
     },
 
     addMessageLanguage(payload: {
@@ -938,10 +939,11 @@ export const useProgramSpecStore = defineStore("programspec", {
       //   languageCode = language.code;
       // }
       let languages = message.languages;
-      const list = languages.split(/[,;]/);
+      const list = languages == null ? [] : languages.split(/[,;]/);
       if (list.indexOf(language) === -1) list.push(language);
       languages = list.join(",");
       message.languages = languages;
+      this.changed = true;
     },
 
     removeMessageLanguage(payload: {
@@ -960,11 +962,12 @@ export const useProgramSpecStore = defineStore("programspec", {
         languageCode = language;
       }
       let languages = message.languages;
-      let list = languages.split(/[,;]/);
+      let list = languages == null ? [] : languages.split(/[,;]/);
       const ix = list.indexOf(languageCode);
       if (ix >= 0) list.splice(ix, 1);
       languages = list.join(",");
       message.languages = languages;
+      this.setChanged(true);
     },
 
     setMessageCategory(payload: {
@@ -975,6 +978,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     }) {
       const message = this.getMessage(payload);
       message.default_category_code = payload.code;
+      this.setChanged(true);
     },
 
     setMessageAudience(payload: {
