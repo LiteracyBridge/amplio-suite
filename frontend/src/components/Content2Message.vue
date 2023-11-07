@@ -50,7 +50,7 @@
       </v-tooltip>
 
       <VButton
-        class="my-auto ml-2 border-none"
+        class="mt-4 ml-2 border-none"
         iconL="trash-alt"
         variant="warning"
         :ariaLabel="`Delete message ${message.title}`"
