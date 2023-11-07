@@ -906,7 +906,11 @@ export const useProgramSpecStore = defineStore("programspec", {
     //   state.duplicateMessage = payload
     // }
 
-    removeMessage(payload: { message: { position: any } }) {
+    removeMessage(payload: {
+      message: Message;
+      playlist: Playlist;
+      deployment: Deployment;
+    }) {
       const playlist = this.getPlaylist(payload);
       const messageIx = playlist.messages.findIndex(
         (msg: { position: any }) => msg.position === payload.message.position
@@ -914,10 +918,18 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist.messages.splice(messageIx, 1);
     },
 
-    setMessageTitle(payload: { title: any }) {
+    setMessageTitle(payload: {
+      title: string;
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+    }) {
       const message = this.getMessage(payload);
       const { title } = payload;
-      message.title = title;
+
+      // Since the title is used as the file name, we need to remove any characters that are not allowed in file names.
+      // See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+      message.title = title.replace(/[\\\/:\*\?"<>\|]/g, "");
       this.changed = true;
     },
 

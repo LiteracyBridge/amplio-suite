@@ -5,26 +5,38 @@
         <font-awesome-icon icon="grip-lines" />
       </div>
 
-      <div class="m-2 py-2" style="min-width: 10px" @click="toggleExpanded">
+      <div class="m-2 py-2 mt-2" style="min-width: 10px" @click="toggleExpanded">
         <font-awesome-icon :icon="icon" size="lg" />
       </div>
 
-      <v-input
-        aria-label="`message ${message.title}`"
-        placeholder="Message Title"
-        :class="
-          !(message.title || '').length == 0
-            ? 'invalid border-red-500 border-2 rounded'
-            : ''
-        "
-        type="text"
-        :name="`message ${message.title}`"
-        mx="w-full mx-0"
-        :value="message.title"
-        @input="
-          setMessageTitle({ deployment, playlist, message, title: $event.target.value })
-        "
-      />
+      <FormItem
+        help='Message title cannot contain these characters: \/:*?\<>|"'
+        class="mt-3"
+      >
+        <!-- <a-input id="error"   aria-label="`message ${message.title}`" placeholder="Message Title" /> -->
+
+        <v-input
+          aria-label="`message ${message.title}`"
+          placeholder="Message Title"
+          :class="
+            (message.title || '').length == 0
+              ? 'invalid border-red-500 border-2 rounded'
+              : ''
+          "
+          type="text"
+          :name="`message ${message.title}`"
+          mx="w-full mx-0"
+          :value="message.title"
+          @input="
+            store.setMessageTitle({
+              deployment,
+              playlist,
+              message,
+              title: $event.target.value,
+            })
+          "
+        />
+      </FormItem>
 
       <v-tooltip
         v-if="duplicateTitles.includes(message.title)"
@@ -70,151 +82,206 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from "pinia";
-
+<script setup lang="ts">
 import Content2MessageForm from "@/components/Content2MessageForm.vue";
 import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
+import { computed, onMounted, ref } from "vue";
+import { Playlist } from "@/models/playlist";
+import { Message } from "@/models/message";
+import { Deployment } from "@/models/deployment";
+import { FormItem, Input } from "ant-design-vue";
 
-export default {
-  props: {
-    deployment: {
-      type: Object,
-      required: true,
-    },
-    playlist: {
-      type: Object,
-      required: true,
-    },
-    message: {
-      type: Object,
-      required: true,
-    },
+const props = defineProps<{
+  deployment: Deployment;
+  playlist: Playlist;
+  message: Message;
+  duplicateTitles: string[];
+}>();
 
-    duplicateTitles: {
-      type: Array,
-      required: true,
-    },
-  },
-  computed: {
-    ...mapState(useProgramSpecStore, ["deployments"]),
+const store = useProgramSpecStore();
 
-    icon() {
-      return this.expanded ? "caret-down" : "caret-right";
-    },
+const expanded = ref(false),
+  modal = ref({
+    show: false,
+    eleIndex: -1,
+  });
 
-    index() {
-      return this.message.position;
-    },
-  },
-  components: {
-    Content2MessageForm,
-    VButton,
-    VInput,
-    VTooltip,
-  },
+const icon = computed(() => {
+  return expanded.value ? "caret-down" : "caret-right";
+});
 
-  data: () => ({
-    expanded: false,
+// const index = computed(() => {
+//   return props.message.position;
+// });
 
-    target: {},
+onMounted(() => {
+  if (props.message.title.length === 0) {
+    expanded.value = true;
+  }
+});
 
-    modal: {
-      show: false,
-      eleIndex: -1,
-    },
-  }),
+function toggleExpanded() {
+  expanded.value = !expanded.value;
+}
 
-  mounted() {
-    if (this.message.title.length === 0) this.expanded = true;
-    // window.addEventListener('keydown', this.handleKeyboard)
-  },
-  // beforeDestroy() {
-  //   window.removeEventListener('keydown', this.handleKeyboard)
-  // },
+function queryDeleteMessage() {
+  modal.value.show = true;
+  useUIStore().setModal("Delete Message");
+}
 
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal"]),
-    ...mapActions(useProgramSpecStore, [
-      "setMessages",
-      "setMessageTitle",
-      "removeMessage",
-    ]),
+function cancelDeleteMessage() {
+  modal.value.show = false;
+  useUIStore().closeModal();
+}
 
-    toggleExpanded() {
-      this.expanded = !this.expanded;
-    },
+function confirmDeleteMessage() {
+  store.removeMessage({
+    deployment: props.deployment,
+    playlist: props.playlist,
+    message: props.message,
+  });
+  cancelDeleteMessage();
+}
 
-    queryDeleteMessage() {
-      this.modal.show = true;
-      this.setModal("Delete Message");
-    },
+// export default {
+//   props: {
+//     deployment: {
+//       type: Object,
+//       required: true,
+//     },
+//     playlist: {
+//       type: Object,
+//       required: true,
+//     },
+//     message: {
+//       type: Object,
+//       required: true,
+//     },
 
-    cancelDeleteMessage() {
-      this.modal.show = false;
-      this.closeModal();
-    },
+//     duplicateTitles: {
+//       type: Array,
+//       required: true,
+//     },
+//   },
+// computed: {
+//   ...mapState(useProgramSpecStore, ["deployments"]),
 
-    confirmDeleteMessage() {
-      this.removeMessage(this.getMessagePath());
-      this.cancelDeleteMessage();
-    },
+//   icon() {
+//     return this.expanded ? "caret-down" : "caret-right";
+//   },
 
-    getMessagePath() {
-      return {
-        deployment: this.deployment,
-        playlist: this.playlist,
-        message: this.message,
-      };
-    },
+//   index() {
+//     return this.message.position;
+//   },
+// },
+// components: {
+//   Content2MessageForm,
+//   VButton,
+//   VInput,
+//   VTooltip,
+// },
 
-    setMessageIndex() {
-      // if (this.messageIndex === index) this.messageIndex = -1
-      // else this.messageIndex = index
-    },
+// data: () => ({
+//   expanded: false,
 
-    // handleKeyboard(event) {
-    // const {target, code} = event
-    // const {name} = target.dataset
-    //
-    // if (Object.keys(this.target).length === 0 && name !== 'message') return
-    // event.stopPropagation()
-    //
-    // if (code === 'Space') {
-    //   this.target = target
-    // } else if (['Enter', 'Escape'].includes(code)) {
-    //   this.target = {}
-    //   document.querySelectorAll(`[data-name="message"][data-index]`)
-    //     .forEach(ele => ele.classList.remove('focus-visible'))
-    // } else if (['ArrowUp', 'ArrowDown'].includes(code)) {
-    //   this.move(code)
-    // }
-    // },
+//   target: {},
 
-    // move(direction) {
-    // const oldIndex = +this.target.dataset.index
-    // const newIndex = direction === 'ArrowUp' ? oldIndex - 1 : oldIndex + 1
-    // if (newIndex < 0 || newIndex >= this.messages.length) return
-    //
-    // // Swap elements
-    // const tmp = [...this.messages]
-    // const a = tmp[newIndex]
-    // tmp[newIndex] = tmp[oldIndex]
-    // tmp[oldIndex] = a
-    //
-    // this.setMessages({playlistId: this.playlist.id, messages: tmp})
-    // this.setMessageIndex(-1)
-    //
-    // // Update dashed element
-    // this.target = document.querySelector(`[data-name="message"][data-index="${newIndex}"]`)
-    // document.querySelectorAll(`[data-name="message"][data-index]`)
-    //   .forEach(ele => ele.classList.remove('focus-visible'))
-    // this.target.classList.add('focus-visible')
-    // }
-  },
-};
+//   modal: {
+//     show: false,
+//     eleIndex: -1,
+//   },
+// }),
+
+// mounted() {
+//   if (this.message.title.length === 0) this.expanded = true;
+//   // window.addEventListener('keydown', this.handleKeyboard)
+// },
+// beforeDestroy() {
+//   window.removeEventListener('keydown', this.handleKeyboard)
+// },
+
+// methods: {
+//   ...mapActions(useUIStore, ["setModal", "closeModal"]),
+//   ...mapActions(useProgramSpecStore, [
+//     "setMessages",
+//     "setMessageTitle",
+//     "removeMessage",
+//   ]),
+
+// toggleExpanded() {
+//   this.expanded = !this.expanded;
+// },
+
+// queryDeleteMessage() {
+//   this.modal.show = true;
+//   this.setModal("Delete Message");
+// },
+
+// cancelDeleteMessage() {
+//   this.modal.show = false;
+//   this.closeModal();
+// },
+
+// confirmDeleteMessage() {
+//   this.removeMessage(this.getMessagePath());
+//   this.cancelDeleteMessage();
+// },
+
+// getMessagePath() {
+//   return {
+//     deployment: this.deployment,
+//     playlist: this.playlist,
+//     message: this.message,
+//   };
+// },
+
+// setMessageIndex() {
+//   // if (this.messageIndex === index) this.messageIndex = -1
+//   // else this.messageIndex = index
+// },
+
+// handleKeyboard(event) {
+// const {target, code} = event
+// const {name} = target.dataset
+//
+// if (Object.keys(this.target).length === 0 && name !== 'message') return
+// event.stopPropagation()
+//
+// if (code === 'Space') {
+//   this.target = target
+// } else if (['Enter', 'Escape'].includes(code)) {
+//   this.target = {}
+//   document.querySelectorAll(`[data-name="message"][data-index]`)
+//     .forEach(ele => ele.classList.remove('focus-visible'))
+// } else if (['ArrowUp', 'ArrowDown'].includes(code)) {
+//   this.move(code)
+// }
+// },
+
+// move(direction) {
+// const oldIndex = +this.target.dataset.index
+// const newIndex = direction === 'ArrowUp' ? oldIndex - 1 : oldIndex + 1
+// if (newIndex < 0 || newIndex >= this.messages.length) return
+//
+// // Swap elements
+// const tmp = [...this.messages]
+// const a = tmp[newIndex]
+// tmp[newIndex] = tmp[oldIndex]
+// tmp[oldIndex] = a
+//
+// this.setMessages({playlistId: this.playlist.id, messages: tmp})
+// this.setMessageIndex(-1)
+//
+// // Update dashed element
+// this.target = document.querySelector(`[data-name="message"][data-index="${newIndex}"]`)
+// document.querySelectorAll(`[data-name="message"][data-index]`)
+//   .forEach(ele => ele.classList.remove('focus-visible'))
+// this.target.classList.add('focus-visible')
+// }
+//   },
+// };
 </script>
