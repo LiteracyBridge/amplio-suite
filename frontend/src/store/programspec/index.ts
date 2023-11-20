@@ -911,11 +911,12 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       deployment: Deployment;
     }) {
-      const playlist = this.getPlaylist(payload);
-      const messageIx = playlist.messages.findIndex(
-        (msg: { position: any }) => msg.position === payload.message.position
+      // const playlist = this.getPlaylist(payload);
+
+      const messageIx = (payload.playlist.messages ?? []).findIndex(
+        msg => msg.title === payload.message.title
       );
-      playlist.messages.splice(messageIx, 1);
+      payload.playlist.messages.splice(messageIx, 1);
     },
 
     setMessageTitle(payload: {
