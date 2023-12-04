@@ -911,7 +911,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       deployment: Deployment;
     }) {
-      // const playlist = this.getPlaylist(payload);
+      const playlist = this.getPlaylist(payload);
 
       const messageIx = (payload.playlist.messages ?? []).findIndex(
         msg => msg.title === payload.message.title
