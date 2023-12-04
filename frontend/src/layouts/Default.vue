@@ -92,7 +92,7 @@ function openDiscourse() {
         <Sidebar></Sidebar>
 
         <Layout>
-          <Header></Header>
+          <!-- <Header></Header> -->
 
           <LayoutContent
             :style="{

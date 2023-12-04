@@ -45,8 +45,8 @@ const menuItems: Array<{
   name?: string;
   params?: Record<string, string>;
 }> = [
-  // { label: "Dashboard", path: "/" },
-  // { label: "Project Info", path: "/project-info" },
+  { label: "Dashboard", path: "/" },
+  { label: "User", path: "/users" },
   // { label: "Background and context", path: "/background-and-context" },
   // {
   //   label: "Project Objectives",
