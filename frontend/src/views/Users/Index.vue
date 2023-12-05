@@ -62,9 +62,9 @@ const data = [
 <template>
   <PageHeader class="demo-page-header" title="Title" sub-title="This is a subtitle">
     <template #extra>
-      <RouterLink to="/users/manage-roles">
+      <router-link to="/users/manage-roles">
         <Button key="3">Manage Roles</Button>
-      </RouterLink>
+      </router-link>
       <!-- <Button key="2">Add Staff</Button> -->
       <Button key="1" type="primary">Invoice someone</Button>
     </template>
@@ -100,7 +100,7 @@ const data = [
       </template>
       <template v-else-if="column.key === 'tags'">
         <span>
-          Workin
+          Working
           <!-- {{ tag.toUpperCase() }} -->
         </span>
       </template>

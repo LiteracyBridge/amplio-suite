@@ -4,6 +4,12 @@ import {
   Descriptions,
   DescriptionsItem,
   PageHeader,
+  List,
+  ListItem,
+  Tabs,
+  TabPane,
+  Row,
+  Col,
   Table,
 } from "ant-design-vue";
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
@@ -60,51 +66,59 @@ const data = [
 </script>
 
 <template>
-  <PageHeader class="demo-page-header" title="Title" sub-title="This is a subtitle">
+  <PageHeader title="Manage Roles">
     <template #extra>
-      <Button key="3">Manage Roles</Button>
-      <!-- <Button key="2">Add Staff</Button> -->
-      <Button key="1" type="primary">Invoice someone</Button>
+      <Button key="3">New Role</Button>
+      <!-- <Button key="1" type="primary">Invoice someone</Button> -->
     </template>
 
-    <Descriptions size="small" :column="3">
+    <!-- <Descriptions size="small" :column="3">
       <DescriptionsItem label="Created">Lili Qu</DescriptionsItem>
-      <!-- <a-descriptions-item label="Association">
-        <a>421421</a>
-      </a-descriptions-item>
-      <a-descriptions-item label="Creation Time">2017-01-10</a-descriptions-item>
-      <a-descriptions-item label="Effective Time">2017-10-10</a-descriptions-item>
-      <a-descriptions-item label="Remarks">
-        Gonghu Road, Xihu District, Hangzhou, Zhejiang, China
-      </a-descriptions-item> -->
-    </Descriptions>
+    </Descriptions> -->
   </PageHeader>
 
-  <Table :columns="columns" :data-source="data">
-    <template #headerCell="{ column }">
-      <template v-if="column.key === 'name'">
-        <span>
-          <smile-outlined />
-          Name
-        </span>
-      </template>
-    </template>
+  <!-- <h3 :style="{ margin: '16px 0' }">Small Size</h3> -->
 
-    <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'name'">
-        <a>
-          {{ record.name }}
-        </a>
-      </template>
-      <template v-else-if="column.key === 'tags'">
-        <span>
-          Workin
-          <!-- {{ tag.toUpperCase() }} -->
-        </span>
-      </template>
-      <template v-else-if="column.key === 'action'">
-        <span> Come here </span>
-      </template>
-    </template>
-  </Table>
+  <Tabs
+    activeKey="1"
+    tab-position="left"
+    animated
+    size="large"
+    :tabBarStyle="{ width: '200px' }"
+  >
+    <TabPane key="1" tab="Tab 1">
+      <Row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32 }">
+        <Col :span="10">
+          <List size="small" bordered :data-source="data">
+            <template #renderItem="{ item }">
+              <ListItem>{{ item }}</ListItem>
+            </template>
+            <template #header>
+              <span> What this role can access </span>
+              <div>Header</div>
+            </template>
+            <template #footer>
+              <div>Footer</div>
+            </template>
+          </List>
+        </Col>
+        <Col :span="10">
+          <List size="small" bordered :data-source="data">
+            <template #renderItem="{ item }">
+              <ListItem>{{ item }}</ListItem>
+            </template>
+            <template #header>
+              <span> What this role cannot access </span>
+              <div>Header</div>
+            </template>
+            <template #footer>
+              <div>Footer</div>
+            </template>
+          </List>
+        </Col>
+      </Row>
+    </TabPane>
+    <TabPane key="2" tab="Tab 2">Content of Tab 2</TabPane>
+    <TabPane key="3" tab="Tab 3">Content of Tab 3</TabPane>
+  </Tabs>
 </template>

@@ -264,23 +264,15 @@ const routes: any = [
     name: "users",
     component: () =>
       import(/* webpackChunkName: "download" */ "../views/Users/Index.vue"),
-    beforeEnter: requireAuth,
-    children: [
-      {
-        path: "",
-        name: "users.index",
-        component: () =>
-          import(/* webpackChunkName: "download" */ "../views/Users/Index.vue")
-      },
-      {
-        path: "manage-roles",
-        name: "users.manage_roles",
-        component: () =>
-          import(
-            /* webpackChunkName: "download" */ "../views/Users/ManageRoles.vue"
-          )
-      }
-    ]
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/users/manage-roles",
+    name: "users.manage_roles",
+    component: () =>
+      import(
+        /* webpackChunkName: "download" */ "../views/Users/ManageRoles.vue"
+      )
   }
 ];
 
