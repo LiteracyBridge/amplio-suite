@@ -5,8 +5,16 @@ import {
   DescriptionsItem,
   PageHeader,
   Table,
+  Modal,
 } from "ant-design-vue";
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
+import { ref } from "vue";
+import UserInviteModal from "./UserInviteModal.vue";
+
+const modal = ref({
+  open: false,
+});
+
 const columns = [
   {
     name: "Name",
@@ -66,7 +74,7 @@ const data = [
         <Button key="3">Manage Roles</Button>
       </router-link>
       <!-- <Button key="2">Add Staff</Button> -->
-      <Button key="1" type="primary">Invoice someone</Button>
+      <Button key="1" type="primary" @click="modal.open = true">Invite someone</Button>
     </template>
 
     <Descriptions size="small" :column="3">
@@ -109,4 +117,6 @@ const data = [
       </template>
     </template>
   </Table>
+
+  <UserInviteModal :open="modal.open" @closed="modal.open = false" />
 </template>

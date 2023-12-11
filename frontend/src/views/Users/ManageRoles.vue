@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   Table,
+  Tag,
 } from "ant-design-vue";
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 const columns = [
@@ -40,33 +41,11 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+const data = ["Can update TB Loader", "Can create staff"];
 </script>
 
 <template>
-  <PageHeader title="Manage Roles">
+  <PageHeader title="Manage Roles" @back="() => $router.go(-1)">
     <template #extra>
       <Button key="3">New Role</Button>
       <!-- <Button key="1" type="primary">Invoice someone</Button> -->
@@ -87,36 +66,30 @@ const data = [
     :tabBarStyle="{ width: '200px' }"
   >
     <TabPane key="1" tab="Tab 1">
-      <Row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32 }">
-        <Col :span="10">
+      <!-- <Row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32 }"> -->
+      <!-- <Col :span="10"> -->
+      <List bordered :data-source="data">
+        <template #renderItem="{ item }">
+          <ListItem>{{ item }}</ListItem>
+        </template>
+        <template #header>
+          <span color="success" class="w-full text-success"
+            >What this role can access</span
+          >
+        </template>
+      </List>
+      <!-- </Col> -->
+      <!-- <Col :span="10">
           <List size="small" bordered :data-source="data">
             <template #renderItem="{ item }">
               <ListItem>{{ item }}</ListItem>
             </template>
             <template #header>
-              <span> What this role can access </span>
-              <div>Header</div>
-            </template>
-            <template #footer>
-              <div>Footer</div>
+              <Tag color="error"> What this role cannot access </Tag>
             </template>
           </List>
-        </Col>
-        <Col :span="10">
-          <List size="small" bordered :data-source="data">
-            <template #renderItem="{ item }">
-              <ListItem>{{ item }}</ListItem>
-            </template>
-            <template #header>
-              <span> What this role cannot access </span>
-              <div>Header</div>
-            </template>
-            <template #footer>
-              <div>Footer</div>
-            </template>
-          </List>
-        </Col>
-      </Row>
+        </Col> -->
+      <!-- </Row> -->
     </TabPane>
     <TabPane key="2" tab="Tab 2">Content of Tab 2</TabPane>
     <TabPane key="3" tab="Tab 3">Content of Tab 3</TabPane>

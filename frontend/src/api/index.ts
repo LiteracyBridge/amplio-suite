@@ -1,0 +1,56 @@
+import { API_URL } from "@/models/constants";
+import { useAccountStore } from "@/store/account";
+import axios from "axios";
+
+export class ApiRequest {
+  static async get<T>(path: string): Promise<T[] | null> {
+    return axios
+      .get(`${API_URL}/${path}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${useAccountStore().user.token}`
+        }
+      })
+      .then(response => {
+        return response.data.data as T[];
+      });
+  }
+
+  static async delete<T>(path: string): Promise<T[] | null> {
+    return axios
+      .delete(`${API_URL}/${path}`, {
+        headers: {
+          Authorization: `Bearer ${useAccountStore().user.token}`
+        },
+        withCredentials: true
+      })
+      .then(response => {
+        return response.data.data as T[];
+        // Add your code here
+      });
+  }
+
+  static async post<T>(path: string, body: T | any): Promise<T[] | null> {
+    return axios
+      .post(`${API_URL}/${path}`, body, {
+        headers: {
+          Authorization: `Bearer ${useAccountStore().user.token}`
+        }
+      })
+      .then(response => {
+        return response.data.data as T[];
+      });
+  }
+
+  static async put<T>(path: string, body: T | any): Promise<T[] | null> {
+    return axios
+      .put(`${API_URL}/${path}`, body, {
+        headers: {
+          Authorization: `Bearer ${useAccountStore().user.token}`
+        }
+      })
+      .then(response => {
+        return response.data.data as T[];
+      });
+  }
+}
