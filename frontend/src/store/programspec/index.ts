@@ -969,7 +969,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
     }) {
       const message = this.getMessage(payload);
-      return (message.languages || "").split(/[,;]/);
+      return (message?.languages || "").split(/[,;]/);
     },
 
     removeMessageLanguage(payload: {
