@@ -11,7 +11,7 @@
     "dev": "vue-tsc --noEmit && vite",
     "vite": "vite",
     "build": "vue-tsc --noEmit && vite build --mode staging",
-    "build:prod": "vue-tsc --noEmit && vite build",
+    "build:prod": "vue-tsc --noEmit && vite build --mode production",
     "preview": "npm run build && vite preview --port 4173"
   },
   "dependencies": {

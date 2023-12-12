@@ -945,6 +945,9 @@ export const useProgramSpecStore = defineStore("programspec", {
       const message = this.getMessage(payload);
       const { language } = payload;
 
+      if (message == null) {
+        return;
+      }
       // let languageCode
       // if (typeof language === "string" || language instanceof String) {
       //   languageCode = language;
