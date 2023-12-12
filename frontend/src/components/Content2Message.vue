@@ -11,7 +11,7 @@
 
       <FormItem
         help='Message title cannot contain these characters: \/:*?\<>|"'
-        class="mt-3"
+        class="mt-3 w-full"
       >
         <!-- <a-input id="error"   aria-label="`message ${message.title}`" placeholder="Message Title" /> -->
 

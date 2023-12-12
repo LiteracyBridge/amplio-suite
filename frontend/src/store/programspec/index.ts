@@ -959,6 +959,16 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.changed = true;
     },
 
+    getMessageLanguages(payload: {
+      // language: string;
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+    }) {
+      const message = this.getMessage(payload);
+      return (message.languages || "").split(/[,;]/);
+    },
+
     removeMessageLanguage(payload: {
       language: string;
       deployment: Deployment;

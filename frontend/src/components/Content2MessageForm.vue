@@ -221,9 +221,14 @@ const messageLanguages = computed(() => {
       });
     });
     // props.message.languages = (store.general.languages || []).join(",");
-    return store.general.languages;
+    // return store.general.languages;
   }
-  return (props.message.languages || "").split(/[,;]/).filter((c) => c != "") || [];
+  return store.getMessageLanguages({
+    deployment: props.deployment,
+    playlist: props.playlist,
+    message: props.message,
+  });
+  // return (props.message.languages || "").split(/[,;]/).filter((c) => c != "") || [];
 });
 
 const categories = computed(() => {
