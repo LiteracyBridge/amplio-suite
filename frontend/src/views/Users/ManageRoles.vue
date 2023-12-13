@@ -50,7 +50,10 @@ const data = ["Can update TB Loader", "Can create staff"];
 </script>
 
 <template>
-  <PageHeader title="Manage Roles" @back="() => $router.go(-1)">
+  <PageHeader title="Manage Roles" @back="() => $router.go(-1)"
+    class="mb-8"
+
+  >
     <template #extra>
       <Button key="3" @click="newRoleDrawerVisible = true">New Role</Button>
       <!-- <Button key="1" type="primary">Invoice someone</Button> -->
@@ -70,7 +73,7 @@ const data = ["Can update TB Loader", "Can create staff"];
       <Tabs v-model:activeKey="roleView" size="large" :animated="false">
         <template #rightExtra>
           <Button type="primary" @click="assignmentModal.open = true"
-            >Assign Staff</Button
+            >Assign Users</Button
           >
         </template>
 
@@ -91,7 +94,7 @@ const data = ["Can update TB Loader", "Can create staff"];
           </List>
         </TabPane>
 
-        <TabPane key="2" tab="Assigned Users">
+        <TabPane key="2" tab="Assigned users">
           <Table :columns="columns" :data-source="data" size="small">
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'name'">
@@ -117,8 +120,8 @@ const data = ["Can update TB Loader", "Can create staff"];
   ></NewRoleDrawer>
 
   <!-- User role assign modal  -->
-  <Modal v-model:open="assignmentModal.open" title="Assign Users" ok-text="Assign role">
-    <FormItem label="Select users">
+  <Modal v-model:open="assignmentModal.open" title="Assign role to users" ok-text="Assign Role">
+    <FormItem label="Select users" class="pt-4">
       <Select mode="multiple" style="width: 100%" placeholder="Please select user">
         <Option value="jack">Jack (100)</Option>
         <Option value="lucy">Lucy (101)</Option>
