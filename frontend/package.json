@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "staging-build": "NODE_ENV=staging vue-cli-service build --mode staging",
-    "production-build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "serve": "vue-tsc --noEmit && vite",
+    "vite": "vite",
+    "staging-build": "vue-tsc --noEmit && vite build --mode staging",
+    "build:preview": "vue-tsc --noEmit && vite build --mode production && vite preview",
+    "production-build": "vue-tsc --noEmit && vite build --mode production",
+    "preview": "npm run build && vite preview --port 4173"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
