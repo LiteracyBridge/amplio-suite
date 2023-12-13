@@ -6,19 +6,23 @@ import {
   PageHeader,
   List,
   ListItem,
+  Modal,
   Tabs,
   TabPane,
   Row,
   Col,
   Table,
   Tag,
+  Select,
 } from "ant-design-vue";
-import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
 import NewRoleDrawer from "./NewRoleDrawer.vue";
 
 const newRoleDrawerVisible = ref(false);
 const roleView = ref("1");
+const assignmentModal = ref({
+  open: false,
+});
 
 const columns = [
   {
@@ -63,10 +67,11 @@ const data = ["Can update TB Loader", "Can create staff"];
     <TabPane key="1" tab="Tab 1">
       <!-- <Row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32 }"> -->
       <!-- <Col :span="10"> -->
-      <Tabs v-model:activeKey="roleView" animated size="large">
+      <Tabs v-model:activeKey="roleView" size="large" :animated="false">
         <template #rightExtra>
-          <Button :danger="true" class="mr-5">Delete Role</Button>
-          <Button type="primary">Assign Staff</Button>
+          <Button type="primary" @click="assignmentModal.open = true"
+            >Assign Staff</Button
+          >
         </template>
 
         <TabPane key="1" tab="Permissions">
@@ -79,10 +84,14 @@ const data = ["Can update TB Loader", "Can create staff"];
                 >What this role can access</span
               >
             </template>
+
+            <template #footer>
+              <Button :danger="true" class="mr-5 w-full">Delete Role</Button>
+            </template>
           </List>
         </TabPane>
 
-        <TabPane key="2" tab="Assigned Staff">
+        <TabPane key="2" tab="Assigned Users">
           <Table :columns="columns" :data-source="data" size="small">
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'name'">
@@ -101,8 +110,19 @@ const data = ["Can update TB Loader", "Can create staff"];
     <TabPane key="3" tab="Tab 3">Content of Tab 3</TabPane>
   </Tabs>
 
+  <!-- User invite modal -->
   <NewRoleDrawer
     :open="newRoleDrawerVisible"
     @closed="newRoleDrawerVisible = false"
   ></NewRoleDrawer>
+
+  <!-- User role assign modal  -->
+  <Modal v-model:open="assignmentModal.open" title="Assign Users" ok-text="Assign role">
+    <FormItem label="Select users">
+      <Select mode="multiple" style="width: 100%" placeholder="Please select user">
+        <Option value="jack">Jack (100)</Option>
+        <Option value="lucy">Lucy (101)</Option>
+      </Select>
+    </FormItem>
+  </Modal>
 </template>
