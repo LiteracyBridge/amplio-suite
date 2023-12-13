@@ -14,6 +14,10 @@ import {
   Tag,
 } from "ant-design-vue";
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
+import { ref } from "vue";
+import NewRoleDrawer from "./NewRoleDrawer.vue";
+const newRoleDrawerVisible = ref(false);
+
 const columns = [
   {
     name: "Name",
@@ -47,7 +51,7 @@ const data = ["Can update TB Loader", "Can create staff"];
 <template>
   <PageHeader title="Manage Roles" @back="() => $router.go(-1)">
     <template #extra>
-      <Button key="3">New Role</Button>
+      <Button key="3" @click="newRoleDrawerVisible = true">New Role</Button>
       <!-- <Button key="1" type="primary">Invoice someone</Button> -->
     </template>
 
@@ -94,4 +98,9 @@ const data = ["Can update TB Loader", "Can create staff"];
     <TabPane key="2" tab="Tab 2">Content of Tab 2</TabPane>
     <TabPane key="3" tab="Tab 3">Content of Tab 3</TabPane>
   </Tabs>
+
+  <NewRoleDrawer
+    :open="newRoleDrawerVisible"
+    @closed="newRoleDrawerVisible = false"
+  ></NewRoleDrawer>
 </template>

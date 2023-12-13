@@ -983,6 +983,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       message: Message;
     }) {
+      console.log(payload.language);
       // 'languages' is a list of comma-separated language names or codes.
       // const message = this.getMessage(payload);
       const { language, message } = payload;
