@@ -25,7 +25,7 @@
 </style>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState} from 'pinia'
 import {getTableauJwt} from '@/api/tableau.api'
 
 

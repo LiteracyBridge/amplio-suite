@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import TheNavbar from '@/components/TheNavbar'
-import TheFooter from '@/components/TheFooter'
-import TheNotification from '@/components/TheNotification'
-import TheModal from '@/components/TheModal'
+import TheNavbar from '@/components/TheNavbar.vue'
+import TheFooter from '@/components/TheFooter.vue'
+import TheNotification from '@/components/TheNotification.vue'
+import TheModal from '@/components/TheModal.vue'
 
 
 export default {

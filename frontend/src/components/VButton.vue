@@ -32,71 +32,71 @@
   </component>
 </template>
 
-<script>
-export default {
-  props: {
-    tag: {
-      type: String,
-      default: 'button',
-    },
-    variant: {
-      type: String,
-      default: 'default',
-    },
-    colors: {
-      type: String,
-      default: '',
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    ariaLabel: {
-      type: String,
-      default: '',
-    },
-    active: {
-      type: Boolean,
-      default: true
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    iconL: {
-      type: String,
-      default: '',
-    },
-    iconLPulse: {
-      type: Boolean,
-      default: false,
-    },
-    iconR: {
-      type: String,
-      default: '',
-    },
-    color: {
-      type: String,
-      default: '',
-    },
-    iconRPulse: {
-      type: Boolean,
-      default: false,
-    }
+<script setup lang="ts">
+import { computed } from "vue";
+
+const props = defineProps({
+  tag: {
+    type: String,
+    default: "button",
   },
-  computed: {
-    baseClass () {
-      // What the hell is this supposed to do?
-      return this.label === '' ? 'icon'
-        : this.tag === 'button' ? 'button'
-          : 'link'
-    },
+  variant: {
+    type: String,
+    default: "default",
   },
-  methods: {
-    handleClick () {
-      if (!this.disabled) this.$emit('click')
-    }
-  }
+  colors: {
+    type: String,
+    default: "",
+  },
+  label: {
+    type: String,
+    default: "",
+  },
+  ariaLabel: {
+    type: String,
+    default: "",
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  iconL: {
+    type: String,
+    default: "",
+  },
+  iconLPulse: {
+    type: Boolean,
+    default: false,
+  },
+  iconR: {
+    type: String,
+    default: "",
+  },
+  color: {
+    type: String,
+    default: "",
+  },
+  iconRPulse: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits<{
+  (e: "click", value: boolean): void;
+}>();
+
+const baseClass = computed(() => {
+  // What the hell is this supposed to do?
+  return props.label === "" ? "icon" : props.tag === "button" ? "button" : "link";
+});
+
+function handleClick() {
+  if (!props.disabled) emit("click", true);
 }
 </script>
 

@@ -1,4 +1,4 @@
-import store from '@/store';
+import { useAccountStore } from "@/store/account";
 
 const URL = 'https://ce3mtumbfh.execute-api.us-west-2.amazonaws.com/prod';
 const GET_JWT = '/getjwt'
@@ -10,8 +10,8 @@ function makeInit(params) {
   let init = {
     method: method,
     cache: 'no-cache',
-    headers: {Authorization: store.state.account.user.token.jwtToken}
-  };
+    headers: { Authorization:  useAccountStore().user.token }
+};
   if (data) {
     init.body = JSON.stringify(data);
     init.headers['Content-Type'] = 'application/json';

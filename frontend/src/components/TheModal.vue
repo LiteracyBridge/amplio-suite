@@ -38,13 +38,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-
+import { mapState, mapActions } from 'pinia'
+import { useUIStore } from '@/store/ui'
 import { EventBus } from '@/event-bus'
 
 export default {
   computed: {
-    ...mapState('ui', {
+    ...mapState(useUIStore, {
       isOpen: state => state.modal.isOpen,
       title: state => state.modal.title || 'closed',
         style: state => {
@@ -67,7 +67,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('ui', [
+    ...mapActions(useUIStore, [
       'closeModal'
     ]),
     handlerKeyDown (e) {

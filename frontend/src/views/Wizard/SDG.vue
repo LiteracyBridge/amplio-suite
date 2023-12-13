@@ -6,20 +6,21 @@
     title="Help us understand more about your program."
   >
     <p id="sdg" class="text-2xl font-semibold">
-      Which Sustainable Development Goals (SDGs) does your program
-      work towards? Select/Deselect all that apply.
+      Which Sustainable Development Goals (SDGs) does your program work towards?
+      Select/Deselect all that apply.
     </p>
 
     <div
       v-if="options.length > 0"
       aria-labelledby="sdg"
-      class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4">
+      class="grid grid-cols-6 gap-4 max-w-screen-lg mx-auto mt-4"
+    >
       <div
         v-for="goal in options"
         :key="goal.goalId"
         role="checkbox"
         tabindex="0"
-        :aria-checked="goals.includes(goal.goalId) ? 'true': 'false'"
+        :aria-checked="goals.includes(goal.goalId) ? 'true' : 'false'"
         :aria-describedby="`goal-${goal.goalId}`"
         class="relative s"
         @click="toggleGoal({ goal: goal.goalId, step })"
@@ -31,7 +32,7 @@
           :alt="goal.goal"
           :class="goals.includes(goal.goalId) ? 'opacity-25' : ''"
           class="block w-full cursor-pointer"
-        >
+        />
         <p :id="`goal-${goal.goalId}`" class="visually_hidden">{{ goal.goal }}</p>
         <Check
           v-if="goals.includes(goal.goalId)"
@@ -39,50 +40,44 @@
         />
       </div>
     </div>
-    <font-awesome-icon
-      v-else
-      icon="spinner"
-      size="4x"
-      pulse
-      class="mx-auto w-20 h-20"/>
+    <font-awesome-icon v-else icon="spinner" size="4x" pulse class="mx-auto w-20 h-20" />
   </Box>
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex'
+import { mapActions, mapState } from "pinia";
 
-import Box from '@/components/SetupBox'
-import Check from '@/assets/svg/check-circle.svg'
-import sustainableDevelopmentGoals from '@/data/sustainableDevelopmentGoals.json'
+import Box from "@/components/SetupBox.vue";
+import Check from "@/assets/svg/check-circle.svg";
+import sustainableDevelopmentGoals from "@/data/sustainableDevelopmentGoals.json";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: {
     step: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       options: sustainableDevelopmentGoals,
-    }
+    };
   },
   computed: {
-      ...mapState('programspec', {
-          goals: (state)=>state.general.sustainable_development_goals,
-      }),
+    ...mapState(useProgramSpecStore, {
+      goals: (state) => state.general.sustainable_development_goals,
+    }),
   },
   components: {
     Box,
-    Check
+    Check,
   },
   methods: {
-    ...mapActions('wizard', [
-      'toggleGoal'
-    ]),
+    ...mapActions(useWizardStore, ["toggleGoal"]),
     onEnterPressed() {
-      document.getElementById('nextStep').click()
-    }
-  }
-}
+      document.getElementById("nextStep").click();
+    },
+  },
+};
 </script>

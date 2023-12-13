@@ -4,16 +4,20 @@ from collections import OrderedDict
 from .programspec_constants import columns_to_members_map, VARIANT
 from .spreadsheet import Spreadsheet
 
-RECIPIENT_FIELDS = set(columns_to_members_map('recipient').values())
-RECIPIENT_FIELDS.add('row_num')
+RECIPIENT_FIELDS = set(columns_to_members_map("recipient").values())
+RECIPIENT_FIELDS.add("row_num")
+
 
 # The ProgramSpec.Program that this Reader read. If any.
 def get_program_spec_from_spreadsheet(spreadsheet: Spreadsheet, acm=None):
     if not spreadsheet.ok:
         return None
-    partner = spreadsheet.general_info['partner']
-    program_name = spreadsheet.general_info['program']
-    program = Program(spreadsheet, partner_name=partner, program_name=program_name, project_name=acm)
+
+    partner = spreadsheet.general_info["partner"]
+    program_name = spreadsheet.general_info["program"]
+    program = Program(
+        spreadsheet, partner_name=partner, program_name=program_name, project_name=acm
+    )
     for depl, depl_info in spreadsheet.deployments.items():
         program.add_deployment(depl, depl_info[0], depl_info[1], depl_info[2])
     for component_name in spreadsheet.components:
@@ -24,10 +28,17 @@ def get_program_spec_from_spreadsheet(spreadsheet: Spreadsheet, acm=None):
     for js_message in spreadsheet.content:
         deployment = program.get_deployment(js_message.deployment_num)
         playlist = deployment.get_playlist(js_message.playlist_title)
-        playlist.add_message(js_message.message_title, js_message.key_points, js_message.default_category,
-                             js_message.sdg_goals, js_message.sdg_targets, js_message.filters)
+        playlist.add_message(
+            js_message.message_title,
+            js_message.key_points,
+            js_message.default_category,
+            js_message.sdg_goals,
+            js_message.sdg_targets,
+            js_message.filters,
+        )
 
     return program
+
 
 class Program:
     """
@@ -54,7 +65,13 @@ class Program:
 
     """
 
-    def __init__(self, reader: Spreadsheet, partner_name: str, program_name: str, project_name: str = None):
+    def __init__(
+        self,
+        reader: Spreadsheet,
+        partner_name: str,
+        program_name: str,
+        project_name: str = None,
+    ):
         if project_name is None:
             project_name = program_name
         self.deployments = {}
@@ -65,19 +82,18 @@ class Program:
         self.partner = partner_name
         self.program = program_name
         self.project = project_name
-        self.affiliate = reader.general_info.get('affiliate')
-
+        self.affiliate = reader.general_info.get("affiliate")
 
     @property
     def __name__(self):
         return str(self.program)
 
     def __repr__(self):
-        result = '{} ({})'.format(self.program, self.partner)
+        result = "{} ({})".format(self.program, self.partner)
         if self.deployments:
-            result += '\n {} deployments'.format(len(self.deployments))
+            result += "\n {} deployments".format(len(self.deployments))
         if self.components:
-            result += '\n {} components'.format(len(self.components))
+            result += "\n {} components".format(len(self.components))
         return result
 
     @property
@@ -106,7 +122,9 @@ class Program:
         return component
 
     def add_deployment(self, deployment_num, start_date, end_date, filters):
-        deployment = Deployment(self, deployment_num, start_date, end_date, filters=filters)
+        deployment = Deployment(
+            self, deployment_num, start_date, end_date, filters=filters
+        )
         self.deployments[deployment_num] = deployment
         return deployment
 
@@ -140,13 +158,17 @@ class Program:
 
     @property
     def serializable(self):
-        result = {'partner': self.partner, 'program': self.program, 'project': self.project}
+        result = {
+            "partner": self.partner,
+            "program": self.program,
+            "project": self.project,
+        }
         depls, cal = self.content
-        result['deployments'] = depls
-        result['content'] = cal
+        result["deployments"] = depls
+        result["content"] = cal
 
         components = self.Xcomponents
-        result['components'] = components
+        result["components"] = components
         return result
 
     @property
@@ -155,27 +177,30 @@ class Program:
         # Deployments and content calendar
         for no in self.deployment_numbers:
             deployment = self.deployments[no]
-            depl = {'number': no,
-                    'start_date': str(deployment.start_date.date()),
-                    'end_date': str(deployment.end_date.date()),
-                    'playlists': []}
-            filters = {k:str(v) for k,v in deployment.filters.items()}
+            depl = {
+                "number": no,
+                "start_date": str(deployment.start_date.date()),
+                "end_date": str(deployment.end_date.date()),
+                "playlists": [],
+            }
+            filters = {k: str(v) for k, v in deployment.filters.items()}
             depl = {**depl, **filters}
             result.append(depl)
             for playlist in deployment.playlists:
-                pl = {'deployment': deployment.number,
-                      'playlist': playlist.title,
-                      'messages': []}
-                depl['playlists'].append(pl)
+                pl = {
+                    "deployment": deployment.number,
+                    "playlist": playlist.title,
+                    "messages": [],
+                }
+                depl["playlists"].append(pl)
                 for message in playlist.messages:
-                    msg = {'deployment': deployment.number,
-                           'playlist': playlist.title}
+                    msg = {"deployment": deployment.number, "playlist": playlist.title}
                     filters = {k: str(v) for k, v in message.filters.items()}
                     msg = {**msg, **filters}
-                    for k in ['title', 'key_points', 'sdg_goals', 'sdg_targets']:
+                    for k in ["title", "key_points", "sdg_goals", "sdg_targets"]:
                         if getattr(message, k, None) is not None:
                             msg[k] = getattr(message, k)
-                    pl['messages'].append(msg)
+                    pl["messages"].append(msg)
         return result
 
     @property
@@ -203,7 +228,9 @@ class Program:
 
 
 class Deployment:
-    def __init__(self, program: Program, deployment_num: int, start_date, end_date, filters=None):
+    def __init__(
+        self, program: Program, deployment_num: int, start_date, end_date, filters=None
+    ):
         if filters is None:
             filters = {}
         self._playlists = []
@@ -249,12 +276,16 @@ class Deployment:
         return str(self.number)
 
     def __repr__(self):
-        return '# {}, {:%y-%b-%d} - {:%y-%b-%d}'.format(self.number, self.start_date, self.end_date)
+        return "# {}, {:%y-%b-%d} - {:%y-%b-%d}".format(
+            self.number, self.start_date, self.end_date
+        )
 
 
 class DeploymentInfo:
     def __init__(self, deployment: Deployment):
-        self._name = '{}-{:%y}-{}'.format(deployment.program.program, deployment.start_date, deployment.number)
+        self._name = "{}-{:%y}-{}".format(
+            deployment.program.program, deployment.start_date, deployment.number
+        )
         self._deployment = deployment
         self._recipients = None
         self._language_codes = None
@@ -295,7 +326,7 @@ class DeploymentInfo:
             messages = {}
             # Top level organization is by language_code. Future sub-organization by tags.
             for language_code in self.language_codes:
-                base_name = '{}-{}'.format(self._name, language_code)
+                base_name = "{}-{}".format(self._name, language_code)
                 # All of the messages for a language_code; may be multiple packages.
                 messages[language_code] = self._get_messages_for_language(language_code)
 
@@ -306,8 +337,16 @@ class DeploymentInfo:
                 filters = self._get_filters_for_messages(messages[language_code])
                 tags = self._get_properties_tested_by_filters(VARIANT, tags, filters)
                 # Dictionary of {package name : tag filter}
-                pkg_list = {**{base_name: {'language_code': language_code}},
-                            **{'{}-{}'.format(base_name, tag): {VARIANT: tag, 'language_code': language_code} for tag in tags}}
+                pkg_list = {
+                    **{base_name: {"language_code": language_code}},
+                    **{
+                        "{}-{}".format(base_name, tag): {
+                            VARIANT: tag,
+                            "language_code": language_code,
+                        }
+                        for tag in tags
+                    },
+                }
                 for pkg_name, pkg_tag_filter in pkg_list.items():
                     pkg_playlists = OrderedDict()
                     cur_playlist = None
@@ -320,14 +359,18 @@ class DeploymentInfo:
                             pkg_playlists[cur_playlist].append(message)
                     # Do we have anything for this package?
                     if len(pkg_playlists) > 0:
-                        self._packages[pkg_name] = PackageInfo(self, pkg_name, language_code, pkg_playlists)
+                        self._packages[pkg_name] = PackageInfo(
+                            self, pkg_name, language_code, pkg_playlists
+                        )
 
         return self._packages
 
     # For the recipients in this deployment, gets all distinct values of some given property
     def _get_distinct_property_values(self, property_name):
         property_name = property_name.lower()
-        property_values = {v for v in [getattr(r, property_name) for r in self.recipients] if v}
+        property_values = {
+            v for v in [getattr(r, property_name) for r in self.recipients] if v
+        }
         return property_values
 
     # Gets all the messages of this deployment, filtered by a given language_code.
@@ -335,7 +378,7 @@ class DeploymentInfo:
         messages = []
         for playlist in self._deployment.playlists:
             for message in playlist.messages:
-                if message.accepts({'language_code': language_code}):
+                if message.accepts({"language_code": language_code}):
                     messages.append(message)
         return messages
 
@@ -376,6 +419,7 @@ class PackageInfo:
     def playlists(self):
         return self._playlists
 
+
 class Component:
     def __init__(self, program: Program, name: str):
         self._recipients = []
@@ -384,9 +428,9 @@ class Component:
         self.name = name
 
     def __repr__(self):
-        result = 'Component {}'.format(self.name)
+        result = "Component {}".format(self.name)
         if self._recipients:
-            result += ', {} recipients'.format(len(self._recipients))
+            result += ", {} recipients".format(len(self._recipients))
         return result
 
     def add_recipient(self, *args, **kwargs):
@@ -418,11 +462,10 @@ class Component:
         return str(self.name)
 
 
-
 # Represents a recipient in a TB program.
 class Recipient:
     def __init__(self, containing_component: Component, *args, **kwargs):
-        super().__setattr__('containing_component', containing_component)
+        super().__setattr__("containing_component", containing_component)
         self._properties = {}
         for dictionary in args:
             for key in dictionary:
@@ -432,13 +475,13 @@ class Recipient:
         self._tracker = set()
 
     def __str__(self):
-        comm = self._properties.get('community')
-        grp = self._properties.get('group_name')
-        ag = self._properties.get('agent')
+        comm = self._properties.get("community")
+        grp = self._properties.get("group_name")
+        ag = self._properties.get("agent")
         if grp:
-            comm = comm + '/' + grp
+            comm = comm + "/" + grp
         if ag:
-            comm = comm + '(' + ag + ')'
+            comm = comm + "(" + ag + ")"
         return comm
 
     @property
@@ -461,7 +504,7 @@ class Recipient:
 
     def __setattr__(self, name, value):
         if name in RECIPIENT_FIELDS:
-            if name == 'recipientid':
+            if name == "recipientid":
                 if value == self._properties.get(name, None):
                     return  # no change
                 if value is not None:
@@ -470,7 +513,7 @@ class Recipient:
 
             if self._tracker is not None and value != self._properties.get(name, None):
                 if value is None:
-                    print('setting None value')
+                    print("setting None value")
                 self._tracker.add(name)
             self._properties[name] = value
         else:
@@ -478,12 +521,16 @@ class Recipient:
 
     @property
     def __name__(self):
-        return str(self)+':'+str(self.recipientid)
+        return str(self) + ":" + str(self.recipientid)
 
     def save_changes(self, reader):
         for name in self._tracker:
-            reader.store_value(self.containing_component.name, self._properties['row_num'], name,
-                               self._properties[name])
+            reader.store_value(
+                self.containing_component.name,
+                self._properties["row_num"],
+                name,
+                self._properties[name],
+            )
 
 
 # Represents a Playlist in a Deployment. A Playlist consists of an ordered list of messages.
@@ -494,8 +541,12 @@ class Playlist:
         self.deployment = deployment
         self.title = title
 
-    def add_message(self, title, key_points, default_category, sdg_goals, sdg_targets, *args):
-        message = Message(self, title, key_points, default_category, sdg_goals, sdg_targets, *args)
+    def add_message(
+        self, title, key_points, default_category, sdg_goals, sdg_targets, *args
+    ):
+        message = Message(
+            self, title, key_points, default_category, sdg_goals, sdg_targets, *args
+        )
         self._messages.append(message)
         return message
 
@@ -510,28 +561,39 @@ class Playlist:
     def __repr__(self):
         return str(self.title)
 
+
 # This recognizes 'd' or 'd.d'. To recognize 'd.d.d', change the ? to {0,2}.
-sdg_re = re.compile('^(\d+(?:\.\d)?)')
+sdg_re = re.compile("^(\d+(?:\.\d)?)")
 # Recognizes a list of 'd' or 'd.d' separated by comma (and spaces) or spaces.
-sdg_bare_re = re.compile('^(\d+(\.\d)?)( *[ ,] *\d+(\.\d)?)*$')
+sdg_bare_re = re.compile("^(\d+(\.\d)?)( *[ ,] *\d+(\.\d)?)*$")
+
+
 # Represents a Message in a Playlist. The Message has a Title and Key_Points, and may have a
 # set of 'Filters' limiting the recipients of the message.
 class Message:
-    def __init__(self, playlist: Playlist, title: str, key_points: str, default_category: str, sdg_goals: str,
-                 sdg_targets: str, *args):
+    def __init__(
+        self,
+        playlist: Playlist,
+        title: str,
+        key_points: str,
+        default_category: str,
+        sdg_goals: str,
+        sdg_targets: str,
+        *args
+    ):
         def parse_sdg(sdg):
             if type(sdg) != str or len(sdg) == 0:
                 return None
             if sdg_bare_re.match(sdg):
-                list = re.split('[ ,]+', sdg)
+                list = re.split("[ ,]+", sdg)
             else:
-                list = sdg.split(';')
+                list = sdg.split(";")
             sdgs = []
             for s in list:
                 match = sdg_re.match(s.strip())
                 if match:
                     sdgs.append(match.group(0))
-            return ','.join(sdgs) if len(sdgs)>0 else None
+            return ",".join(sdgs) if len(sdgs) > 0 else None
 
         self.playlist = playlist
         self.title = title
@@ -567,15 +629,16 @@ class Message:
     def __repr__(self):
         result = self.title
         if self.sdg_goals:
-            result += ', sdg {}/{}'.format(self.sdg_goals, self.sdg_targets)
+            result += ", sdg {}/{}".format(self.sdg_goals, self.sdg_targets)
         if len(self._filterset) > 0:
-            result += ', filt {}'.format(self._filterset)
+            result += ", filt {}".format(self._filterset)
         return str(self.title)
+
 
 # A class that matches against a set of one or more comma-separated values. A leading ~ means 'not one of these'.
 class Filter:
     def __init__(self, values):
-        if values.startswith('~'):
+        if values.startswith("~"):
             # work as a blacklist; match targets not in the list of values
             self._whitelist = False
             values = values[1:]
@@ -583,7 +646,9 @@ class Filter:
             # work as a whitelist; match targets appearing in the list of values
             self._whitelist = True
         # separate the comma-separated items, canonicalize to lower case, and freeze.
-        self._values = frozenset([v.lower() for v in [v.strip() for v in values.split(',')] if len(v) > 0])
+        self._values = frozenset(
+            [v.lower() for v in [v.strip() for v in values.split(",")] if len(v) > 0]
+        )
 
     def __hash__(self):
         return hash((self._values, self._whitelist))
@@ -597,7 +662,7 @@ class Filter:
             return False
 
     def __repr__(self):
-        return '{}{}'.format('' if self._whitelist else '~', ','.join(self._values))
+        return "{}{}".format("" if self._whitelist else "~", ",".join(self._values))
 
     # is the test_value a match for this filter?
     def matches(self, target):
@@ -613,6 +678,7 @@ class Filter:
         target_value = value.strip().lower() if value is not None else None
         return target_value in self._values
 
+
 # Holds one or more Filters.
 #
 # dict: {filtername : filterstring}
@@ -620,7 +686,9 @@ class Filter:
 # Note that changing the contents in any way wreaks havoc on the hash value; don't change it after construction.
 class Filterset(dict):
     def __init__(self, filter_dict):
-        super().__init__({k.lower(): Filter(v) for (k, v) in filter_dict.items() if len(v) > 0})
+        super().__init__(
+            {k.lower(): Filter(v) for (k, v) in filter_dict.items() if len(v) > 0}
+        )
 
     def __hash__(self):
         rv = hash((frozenset(self), frozenset(self.values())))
@@ -654,7 +722,7 @@ class Filterset(dict):
     def matches(self, target):
         target = {k.lower(): v for (k, v) in target.items()}
         matches = True
-        for (k, v) in self.items():
+        for k, v in self.items():
             if not v.matches(target.get(k, None)):
                 matches = False
                 break
@@ -666,7 +734,7 @@ class Filterset(dict):
     def accepts(self, target):
         target = {prop.lower(): value for (prop, value) in target.items()}
         matches = True
-        for (prop, filt) in self.items():
+        for prop, filt in self.items():
             # If a property was supplied, it needs to match our filter. If no property supplied, still matching.
             if prop in target:
                 if not filt.matches(target.get(prop, None)):
@@ -682,72 +750,101 @@ class Filterset(dict):
         # If we do, what does the filter think? Otherwise, we don't care.
         return filt.tests_for_value(value) if filt else False
 
+
 # ***************************************************************************************************
 # *********                                                                                **********
 # *********                                  Test code                                     **********
 # *********                                                                                **********
 # ***************************************************************************************************
 if __name__ == "__main__":
+
     def _test_filter(filt, tests):
-        for (target, expected) in tests:
+        for target, expected in tests:
             actual = filt.matches(target)
             if actual != expected:
-                print('Expected {}, actual {}, testing {} with {}'.format(expected, actual, filt, target))
+                print(
+                    "Expected {}, actual {}, testing {} with {}".format(
+                        expected, actual, filt, target
+                    )
+                )
 
-
-    filters_spec_1 = {'component': '~NOYED', 'language_code': 'dga'}
+    filters_spec_1 = {"component": "~NOYED", "language_code": "dga"}
     filters_1 = Filterset(filters_spec_1)
-    filters_tests_1 = [({'language_code': 'dga'}, True),
-                       ({'language_code': 'en'}, False),
-                       ({'component': 'Jirapa', 'language_code': 'dga'}, True),
-                       ({'component': 'NOYED'}, False),
-                       ({'community': 'Ving Ving', 'language_code': 'dga'}, True),
-                       ({'Group Name': 'Pitu', 'language_code': 'dga'}, True),
-                       ({'community': 'Jirapa', 'language_code': 'dga'}, True),
-                       ({'Group Name': 'mother-to-mother', 'language_code': 'dga'}, True)]
+    filters_tests_1 = [
+        ({"language_code": "dga"}, True),
+        ({"language_code": "en"}, False),
+        ({"component": "Jirapa", "language_code": "dga"}, True),
+        ({"component": "NOYED"}, False),
+        ({"community": "Ving Ving", "language_code": "dga"}, True),
+        ({"Group Name": "Pitu", "language_code": "dga"}, True),
+        ({"community": "Jirapa", "language_code": "dga"}, True),
+        ({"Group Name": "mother-to-mother", "language_code": "dga"}, True),
+    ]
 
     _test_filter(filters_1, filters_tests_1)
 
-    filters_2 = filters_1.new_filter_ignoring('language_code')
-    filters_tests_2 = [({'language_code': 'dga'}, True),
-                       ({'language_code': 'en'}, True),
-                       ({'component': 'Jirapa'}, True),
-                       ({'component': 'NOYED'}, False),
-                       ({'community': 'Ving Ving'}, True),
-                       ({'Group Name': 'Pitu'}, True),
-                       ({'community': 'Jirapa'}, True),
-                       ({'Group Name': 'mother-to-mother'}, True)]
+    filters_2 = filters_1.new_filter_ignoring("language_code")
+    filters_tests_2 = [
+        ({"language_code": "dga"}, True),
+        ({"language_code": "en"}, True),
+        ({"component": "Jirapa"}, True),
+        ({"component": "NOYED"}, False),
+        ({"community": "Ving Ving"}, True),
+        ({"Group Name": "Pitu"}, True),
+        ({"community": "Jirapa"}, True),
+        ({"Group Name": "mother-to-mother"}, True),
+    ]
 
     _test_filter(filters_2, filters_tests_2)
 
-    filters_3 = filters_1.new_filter_including({'community': 'ving ving', 'group name': '~pitu'})
-    filters_tests_3 = [({'community': 'ving ving', 'language_code': 'dga'}, True),
-                       ({'language_code': 'en'}, False),
-                       ({'community': 'ving ving', 'component': 'Jirapa', 'language_code': 'dga'}, True),
-                       ({'component': 'NOYED'}, False),
-                       ({'community': 'Ving Ving', 'language_code': 'dga'}, True),
-                       ({'Group Name': 'Pitu'}, False),
-                       ({'community': 'Jirapa'}, False),
-                       ({'community': 'ving ving', 'Group Name': 'mother-to-mother', 'language_code': 'dga'}, True),
-                       ({'community': 'Ving Ving', 'group name': 'mother-to-mother', 'language_code': 'dga'}, True),
-                       ({'community': 'Jirapa', 'group name': 'mother-to-mother'}, False),
-                       ({'community': 'Ving Ving', 'group name': 'pitu'}, False),
-                       ({'community': 'Jirapa', 'group name': 'Pitu'}, False)
-                       ]
+    filters_3 = filters_1.new_filter_including(
+        {"community": "ving ving", "group name": "~pitu"}
+    )
+    filters_tests_3 = [
+        ({"community": "ving ving", "language_code": "dga"}, True),
+        ({"language_code": "en"}, False),
+        (
+            {"community": "ving ving", "component": "Jirapa", "language_code": "dga"},
+            True,
+        ),
+        ({"component": "NOYED"}, False),
+        ({"community": "Ving Ving", "language_code": "dga"}, True),
+        ({"Group Name": "Pitu"}, False),
+        ({"community": "Jirapa"}, False),
+        (
+            {
+                "community": "ving ving",
+                "Group Name": "mother-to-mother",
+                "language_code": "dga",
+            },
+            True,
+        ),
+        (
+            {
+                "community": "Ving Ving",
+                "group name": "mother-to-mother",
+                "language_code": "dga",
+            },
+            True,
+        ),
+        ({"community": "Jirapa", "group name": "mother-to-mother"}, False),
+        ({"community": "Ving Ving", "group name": "pitu"}, False),
+        ({"community": "Jirapa", "group name": "Pitu"}, False),
+    ]
 
     _test_filter(filters_3, filters_tests_3)
 
-    params = {'partner': 'unicef-2'}
+    params = {"partner": "unicef-2"}
     comp: Component = None
     recipient = Recipient(comp, params)
     partner = recipient.partner
     affiliate = recipient.affiliate
-    recipient.affiliate = 'LBG'
+    recipient.affiliate = "LBG"
     affiliate2 = recipient.affiliate
-    recipient.partner = 'Foo'
+    recipient.partner = "Foo"
     partner2 = recipient.partner
     nosuch = recipient.nosuch
-    recipient.nosuch = 'WHISHFUL'
+    recipient.nosuch = "WHISHFUL"
     nosuch2 = recipient.nosuch
 
     print(recipient)
