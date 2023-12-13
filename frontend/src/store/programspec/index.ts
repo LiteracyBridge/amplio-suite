@@ -940,11 +940,19 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       message: Message;
     }) {
+      console.log("addMessageLanguage");
+      console.log(payload);
+
       // console.log("here");
       // 'languages' is a list of comma-separated language names or codes.
-      const message = this.getMessage(payload);
-      const { language } = payload;
+      // const message = this.getMessage(payload);
+      const { language, message } = payload;
 
+      // console.log("found message");
+      // console.log(message);
+      // if (message == null) {
+      //   return;
+      // }
       // let languageCode
       // if (typeof language === "string" || language instanceof String) {
       //   languageCode = language;
@@ -959,6 +967,16 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.changed = true;
     },
 
+    getMessageLanguages(payload: {
+      // language: string;
+      deployment: Deployment;
+      playlist: Playlist;
+      message: Message;
+    }) {
+      // const message = this.getMessage(payload);
+      return (payload.message?.languages || "").split(/[,;]/);
+    },
+
     removeMessageLanguage(payload: {
       language: string;
       deployment: Deployment;
@@ -966,8 +984,8 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
     }) {
       // 'languages' is a list of comma-separated language names or codes.
-      const message = this.getMessage(payload);
-      const { language } = payload;
+      // const message = this.getMessage(payload);
+      const { language, message } = payload;
       let languageCode;
       if (typeof language === "string") {
         languageCode = language;
