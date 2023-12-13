@@ -5,6 +5,8 @@ import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { reactive, ref } from "vue";
 import { ApiRequest } from "@/api";
 
+// TODO; add user role to invite form
+
 const props = defineProps<{
   open: boolean;
 }>();
@@ -55,6 +57,7 @@ function handleCancel() {
     ok-text="Invite"
     :confirm-loading="loading"
   >
+
     <Form :model="formState" autocomplete="on" layout="vertical">
       <FormItem
         label="First Name"
