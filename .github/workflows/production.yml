@@ -3,7 +3,7 @@ name: Publish site to Production
 on:
   push:
     branches:
-      - stable
+      - master
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
       run: |
         cd frontend
         yarn install
-        yarn build:prod
+        yarn production-build
         cd ..
 
     - name: Deploy to S3

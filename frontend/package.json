@@ -3,16 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "staging-build": "NODE_ENV=staging vue-cli-service build --mode staging",
-    "production-build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "dev": "vue-tsc --noEmit && vite",
+    "serve": "vue-tsc --noEmit && vite",
     "vite": "vite",
-    "build": "vue-tsc --noEmit && vite build --mode staging",
+    "staging-build": "vue-tsc --noEmit && vite build --mode staging",
     "build:preview": "vue-tsc --noEmit && vite build --mode production && vite preview",
-    "build:prod": "vue-tsc --noEmit && vite build --mode production",
+    "production-build": "vue-tsc --noEmit && vite build --mode production",
     "preview": "npm run build && vite preview --port 4173"
   },
   "dependencies": {
