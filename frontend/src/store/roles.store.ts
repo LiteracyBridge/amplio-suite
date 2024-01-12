@@ -78,6 +78,25 @@ export const useRolesStore = defineStore("roles-store", {
           throw err;
         })
         .finally(() => (this.loading = false));
+    },
+    deleteRole(id: number) {
+      this.loading = true;
+
+      return ApiRequest.delete<Role>(`users/roles/${id}`)
+        .then(roles => {
+          this.roles = roles;
+          notification.success({
+            message: "Role deleted successfully"
+          });
+        })
+        .catch(err => {
+          notification.error({
+            message: "Error deleting role",
+            description: err.message
+          });
+          throw err;
+        })
+        .finally(() => (this.loading = false));
     }
   }
 });

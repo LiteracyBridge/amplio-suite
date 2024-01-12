@@ -19,4 +19,8 @@ export class User {
   organisation_id: number;
 
   roles: UserRole[] = [];
+
+  // TODO: add fromJSON method
+  // TODO: add function to parse roles into a map of permissions (see below)
+  // TODO: add permissions field => {[module: string]: { [action: string]: boolean}} // true by default
 }

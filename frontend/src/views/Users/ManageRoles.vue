@@ -42,7 +42,7 @@ const assignModal = ref({
   },
 });
 
-const { data: roles, run, loading } = useRequest(store.fetchRoles, {
+const { loading } = useRequest(store.fetchRoles, {
   onSuccess: (data) => {
     store.roles = data;
     roleTabKey.value = data.length > 0 ? data[0].id : undefined;
@@ -104,9 +104,19 @@ const confirmRevoke = (user_id: number, role_id: number) => {
   });
 };
 
-onMounted(() => {
-  // run();
-});
+const deleteRole = (role_id: number) => {
+  Modal.confirm({
+    title: "Are you sure you want to delete this role?",
+    icon: createVNode(ExclamationCircleFilled),
+    content:
+      "The role will be deleted from the system and all users assigned to it will no longer have access to the role and its permissions on the system!",
+    onOk() {
+      return store.deleteRole(role_id);
+    },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onCancel() {},
+  });
+};
 </script>
 
 <template>
@@ -125,7 +135,7 @@ onMounted(() => {
       :tabBarStyle="{ width: '200px' }"
     >
       <TabPane
-        v-for="role in roles"
+        v-for="role in store.roles"
         :key="role.id"
         :tab="role.name"
         v-model:activeKey="roleTabKey"
@@ -156,7 +166,9 @@ onMounted(() => {
               </template>
 
               <template #footer>
-                <Button :danger="true" class="mr-5 w-full">Delete Role</Button>
+                <Button :danger="true" class="mr-5 w-full" @click="deleteRole(role.id)"
+                  >Delete Role</Button
+                >
               </template>
             </List>
           </TabPane>
@@ -212,7 +224,7 @@ onMounted(() => {
     "
   >
     <Spin :spinning="store.loading">
-      <FormItem label="Select users" class="pt-4">
+      <FormItem class="pt-4">
         <Select
           v-model:value="assignModal.users"
           :show-search="true"
