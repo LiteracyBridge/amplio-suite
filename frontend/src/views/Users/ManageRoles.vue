@@ -55,7 +55,7 @@ const data = ["Can update TB Loader", "Can create staff"];
 
   >
     <template #extra>
-      <Button key="3" @click="newRoleDrawerVisible = true">New Role</Button>
+      <Button key="3" @click="newRoleDrawerVisible = true" id="btn-new-role">New Role</Button>
       <!-- <Button key="1" type="primary">Invoice someone</Button> -->
     </template>
   </PageHeader>
