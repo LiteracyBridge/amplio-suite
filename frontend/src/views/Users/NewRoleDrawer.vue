@@ -9,6 +9,8 @@ import {
   Input,
   notification,
   Tree,
+  Divider,
+  Spin,
 } from "ant-design-vue";
 
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
@@ -17,9 +19,9 @@ import { ApiRequest } from "@/api";
 import { watch } from "vue";
 import type { TreeProps } from "ant-design-vue";
 import { toSentenceCase, toTitleCase } from "@/utils";
+import { Role } from "@/types/role.model";
 
 const RolesTemplate = ref<{ [module: string]: { value: string; label: string }[] }>({});
-const isLoading = ref(false);
 
 const props = defineProps<{
   open: boolean;
@@ -40,7 +42,22 @@ const formState = reactive<{
   permissions: {},
 });
 
-function handleOk() {
+function createRole() {
+  console.log(formState);
+
+  loading.value = true;
+
+  ApiRequest.post<Role>("users/roles", formState)
+    .then(([resp]) => {
+      const data = resp as any;
+
+      console.warn(data);
+      emit("closed", true);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+
   // ApiRequest.post("users/invitations", formState)
   //   .then((resp) => {
   //     notification.success({
@@ -63,9 +80,9 @@ function handleOk() {
 }
 
 onMounted(() => {
-  isLoading.value = true;
+  loading.value = true;
 
-  ApiRequest.get("users/roles/template")
+  ApiRequest.get<Role>("users/roles/template")
     .then(([resp]) => {
       const data = resp as any;
 
@@ -104,39 +121,47 @@ function getModuleName(module: string) {
 </script>
 
 <template>
-  <Modal
+  <Drawer
     :open="open"
     title="Create Custom Role"
-    @ok="handleOk()"
-    @cancel="handleCancel"
+    @ok="createRole()"
+    @close="handleCancel"
     ok-text="Create Role"
+    :width="600"
     :mask-closable="false"
     :confirm-loading="loading"
   >
+    <template #extra>
+      <Button @click="createRole()">Save</Button>
+    </template>
+
     <Form :model="formState" layout="vertical">
-      <FormItem label="Role Name" required>
-        <Input v-model:value="formState.name" />
-      </FormItem>
+      <Spin :spinning="loading">
+        <FormItem label="Role Name" required>
+          <Input v-model:value="formState.name" />
+        </FormItem>
 
-      <FormItem label="Role Description">
-        <Input v-model:value="formState.description" />
-      </FormItem>
-      <template v-for="(permissions, module) in RolesTemplate">
-        <div class="mt-3">
-          <span>{{ getModuleName(module as string) }}</span>
-        </div>
+        <FormItem label="Role Description">
+          <Input v-model:value="formState.description" />
+        </FormItem>
 
-        <div class="grid grid-cols-4 gap-4">
-          <CheckboxGroup
-            class="ml-5"
-            v-model:value="formState.permissions[module]"
-            :name="module as string"
-            :options="permissions"
-          />
-        </div>
-      </template>
+        <Divider></Divider>
 
+        <template v-for="(permissions, module) in RolesTemplate">
+          <div class="mt-3">
+            <span>{{ getModuleName(module as string) }}</span>
+          </div>
+
+          <div class="grid grid-cols-4 gap-4">
+            <CheckboxGroup
+              class="ml-5"
+              v-model:value="formState.permissions[module.toString().replace('/', '_')]"
+              :name="module as string"
+              :options="permissions"
+            />
+          </div>
+        </template>
+      </Spin>
     </Form>
-
-  </Modal>
+  </Drawer>
 </template>
