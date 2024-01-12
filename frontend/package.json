@@ -32,7 +32,8 @@
     "vue-request": "^2.0.4",
     "vue-router": "^4.2.4",
     "vue-router-multiguard": "^1.0.3",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "vue-multiselect": "^3.0.0-beta.2"
   },
   "devDependencies": {
     "@types/node": "20",

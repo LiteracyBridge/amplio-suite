@@ -329,7 +329,8 @@ async function getUser() {
           email: data.attributes.email,
           name: data.attributes.email.split("@")[0],
           token: data.signInUserSession.idToken.jwtToken,
-          img: ""
+          img: "",
+          organisation_id: undefined
         };
 
         // TODO: Verify user from server

@@ -12,14 +12,14 @@ import {
   Divider,
   Spin,
 } from "ant-design-vue";
-
+import { useRequest } from "vue-request";
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import { ApiRequest } from "@/api";
 import { watch } from "vue";
-import type { TreeProps } from "ant-design-vue";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { Role } from "@/models/role";
+import { useRolesStore } from "@/store/roles.store";
 
 const RolesTemplate = ref<{ [module: string]: { value: string; label: string }[] }>({});
 
@@ -31,7 +31,8 @@ const emit = defineEmits<{
   (e: "closed", value: boolean): void;
 }>();
 
-const loading = ref(false);
+const store = useRolesStore();
+// const isLoading = ref(false);
 const formState = reactive<{
   name: string;
   description: string;
@@ -42,68 +43,65 @@ const formState = reactive<{
   permissions: {},
 });
 
+// Create role request
+const { data, run, loading: isSaving } = useRequest(store.create, {
+    defaultParams: [formState],
+    manual: true,
+  });
+
 function createRole() {
+
+  // store.loading = loading.value;
   console.log(formState);
 
-  loading.value = true;
+  // run(formState as Role);
 
-  ApiRequest.post<Role>("users/roles", formState)
-    .then(([resp]) => {
-      const data = resp as any;
-
-      console.warn(data);
-      emit("closed", true);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-
-  // ApiRequest.post("users/invitations", formState)
-  //   .then((resp) => {
-  //     notification.success({
-  //       message: "Invitation Sent!",
-  //       description: `The ${formState.name} will receive an email to complete their registration.`,
-  //     });
-  //     formState.name = "";
-  //     formState.description = "";
-  //     formState.permissions = {};
-  //     // formState.other_names = "";
-  //     console.log(resp);
-  //   })
-  //   .finally(() => {
-  //     loading.value = false;
-  //     emit("closed", true);
-  //   });
-  // // props.open = false;
-  // console.log("OK");
-  // emit("closed", true);
+  if (!isSaving.value) {
+    store.loading = false;
+    emit("closed", true);
+  }
 }
 
-onMounted(() => {
-  loading.value = true;
+onMounted(async () => {
+  await store.fetchTemplates();
+  //   // isLoading.value = true;
 
-  ApiRequest.get<Role>("users/roles/template")
-    .then(([resp]) => {
-      const data = resp as any;
+  //   // const { data, loading } = useRequest(store.fetchTemplates, {});
+  //   // isLoading.value = loading.value;
 
-      Object.keys(data).forEach((i: string) => {
-        data[i] = data[i].map((val: string) => {
-          return {
-            label: toTitleCase(toSentenceCase(val, true)),
-            value: val,
-          };
-        });
-      });
-      RolesTemplate.value = data;
-    })
-    .finally(() => {
-      loading.value = false;
-      emit("closed", true);
-    });
+  //   // if (data.value != null) {
+  //   //   store.template = Object.keys(data.value[0]).map((i: string) => {
+  //   //     return data.value[0][i].map((val: string) => {
+  //   //       return {
+  //   //         label: toTitleCase(toSentenceCase(val, true)),
+  //   //         value: val,
+  //   //       };
+  //   //     });
+  //   //   });
+  //   // }
 
-  // props.open = false;
-  console.log("OK");
-  emit("closed", true);
+  //   // ApiRequest.get<Role>("users/roles/template")
+  //   //   .then(([resp]) => {
+  //   //     const data = resp as any;
+
+  //   //     Object.keys(data).forEach((i: string) => {
+  //   //       data[i] = data[i].map((val: string) => {
+  //   //         return {
+  //   //           label: toTitleCase(toSentenceCase(val, true)),
+  //   //           value: val,
+  //   //         };
+  //   //       });
+  //   //     });
+  //   //     RolesTemplate.value = data;
+  //   //   })
+  //   //   .finally(() => {
+  //   //     isLoading.value = false;
+  //   //     emit("closed", true);
+  //   //   });
+
+  //   // props.open = false;
+  //   // console.log("OK");
+  //   // emit("closed", true);
 });
 
 function handleCancel() {
@@ -129,14 +127,14 @@ function getModuleName(module: string) {
     ok-text="Create Role"
     :width="600"
     :mask-closable="false"
-    :confirm-loading="loading"
+    :confirm-loading="store.loading"
   >
     <template #extra>
       <Button @click="createRole()">Save</Button>
     </template>
 
     <Form :model="formState" layout="vertical">
-      <Spin :spinning="loading">
+      <Spin :spinning="store.loading || isSaving">
         <FormItem label="Role Name" required>
           <Input v-model:value="formState.name" />
         </FormItem>
@@ -147,7 +145,7 @@ function getModuleName(module: string) {
 
         <Divider></Divider>
 
-        <template v-for="(permissions, module) in RolesTemplate">
+        <template v-for="(permissions, module) in store.template">
           <div class="mt-3">
             <span>{{ getModuleName(module as string) }}</span>
           </div>

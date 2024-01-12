@@ -179,7 +179,6 @@
 </template>
 
 <script setup lang="ts">
-import Multiselect from "vue-multiselect";
 import VInput from "@/components/VInput.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
 import VTooltip from "@/components/VTooltip.vue";
