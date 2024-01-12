@@ -44,9 +44,12 @@ const formState = reactive<{
 });
 
 // Create role request
-const { data, run, loading: isSaving } = useRequest(store.create, {
+const { loading: isSaving } = useRequest(store.create, {
   defaultParams: [formState],
   manual: true,
+  onSuccess: (data) => {
+    store.roles = data;
+  },
 });
 
 function createRole() {

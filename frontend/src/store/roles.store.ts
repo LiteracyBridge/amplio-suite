@@ -10,8 +10,12 @@ export const useRolesStore = defineStore("roles-store", {
     roles: [] as Role[]
   }),
   actions: {
+    // API Requests
     create(form: Role) {
       return ApiRequest.post<Role>("users/roles", form);
+    },
+    fetchRoles() {
+      return ApiRequest.get<Role>("users/roles");
     },
     fetchTemplates() {
       this.loading = true;
