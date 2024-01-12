@@ -45,12 +45,11 @@ const formState = reactive<{
 
 // Create role request
 const { data, run, loading: isSaving } = useRequest(store.create, {
-    defaultParams: [formState],
-    manual: true,
-  });
+  defaultParams: [formState],
+  manual: true,
+});
 
 function createRole() {
-
   // store.loading = loading.value;
   console.log(formState);
 
@@ -58,50 +57,16 @@ function createRole() {
 
   if (!isSaving.value) {
     store.loading = false;
+    notification.open({
+      message: "Role Created",
+      description: "Role has been created successfully",
+    });
     emit("closed", true);
   }
 }
 
 onMounted(async () => {
   await store.fetchTemplates();
-  //   // isLoading.value = true;
-
-  //   // const { data, loading } = useRequest(store.fetchTemplates, {});
-  //   // isLoading.value = loading.value;
-
-  //   // if (data.value != null) {
-  //   //   store.template = Object.keys(data.value[0]).map((i: string) => {
-  //   //     return data.value[0][i].map((val: string) => {
-  //   //       return {
-  //   //         label: toTitleCase(toSentenceCase(val, true)),
-  //   //         value: val,
-  //   //       };
-  //   //     });
-  //   //   });
-  //   // }
-
-  //   // ApiRequest.get<Role>("users/roles/template")
-  //   //   .then(([resp]) => {
-  //   //     const data = resp as any;
-
-  //   //     Object.keys(data).forEach((i: string) => {
-  //   //       data[i] = data[i].map((val: string) => {
-  //   //         return {
-  //   //           label: toTitleCase(toSentenceCase(val, true)),
-  //   //           value: val,
-  //   //         };
-  //   //       });
-  //   //     });
-  //   //     RolesTemplate.value = data;
-  //   //   })
-  //   //   .finally(() => {
-  //   //     isLoading.value = false;
-  //   //     emit("closed", true);
-  //   //   });
-
-  //   // props.open = false;
-  //   // console.log("OK");
-  //   // emit("closed", true);
 });
 
 function handleCancel() {
