@@ -17,7 +17,7 @@ import {
   Select,
   Spin,
 } from "ant-design-vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, createVNode, onMounted, ref } from "vue";
 import NewRoleDrawer from "./NewRoleDrawer.vue";
 import { useRolesStore } from "@/store/roles.store";
 import { useRequest } from "vue-request";
@@ -25,6 +25,7 @@ import { Role } from "@/models/role";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { User } from "@/models/user";
 import { useAccountStore } from "@/store/account";
+import { ExclamationCircleFilled } from "@ant-design/icons-vue";
 
 const store = useRolesStore();
 
@@ -89,6 +90,20 @@ const assignedUsers = computed(() => {
   };
 });
 
+const confirmRevoke = (user_id: number, role_id: number) => {
+  Modal.confirm({
+    title: "Are you sure you want to revoke this role from this user?",
+    icon: createVNode(ExclamationCircleFilled),
+    content:
+      "The user will no longer have access to the role and its permissions on the system and will have to be assigned again!",
+    onOk() {
+      return store.revokeRole({ user_id, role_id });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onCancel() {},
+  });
+};
+
 onMounted(() => {
   // run();
 });
@@ -149,18 +164,24 @@ onMounted(() => {
           <!-- Users assigned to the select role -->
           <TabPane key="2" tab="Assigned users">
             <Table :columns="columns" :data-source="assignedUsers(role)" size="small">
-              <template #bodyCell="{ column, record }">
+              <template #bodyCell="{ column, record: user }">
                 <template v-if="column.key === 'name'">
-                  {{ record.first_name }} {{ record.other_names || "" }}
-                  {{ record.last_name }}
+                  {{ user.first_name }} {{ user.other_names || "" }}
+                  {{ user.last_name }}
                 </template>
 
                 <template v-if="column.key === 'EMAIL'">
-                  <a mailto="{{ record.email }}"> {{ record.email }}</a>
+                  <a mailto="{{ record.email }}"> {{ user.email }}</a>
                 </template>
 
                 <template v-else-if="column.key === 'action'">
-                  <Button type="primary" :ghost="true" size="small" :danger="true"
+                  <Button
+                    type="primary"
+                    title="Revoke role from user"
+                    :ghost="true"
+                    size="small"
+                    :danger="true"
+                    @click="confirmRevoke(user.id, role.id)"
                     >Revoke
                   </Button>
                 </template>
@@ -178,7 +199,7 @@ onMounted(() => {
     @closed="newRoleDrawerVisible = false"
   ></NewRoleDrawer>
 
-  <!-- User role assign modal  -->
+  <!-- Assign role modal -->
   <Modal
     v-model:open="assignModal.open"
     title="Assign role to users"

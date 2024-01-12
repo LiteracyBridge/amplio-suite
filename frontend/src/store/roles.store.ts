@@ -59,6 +59,25 @@ export const useRolesStore = defineStore("roles-store", {
           throw err;
         })
         .finally(() => (this.loading = false));
+    },
+    revokeRole(form: { user_id: number; role_id: number }) {
+      this.loading = true;
+
+      return ApiRequest.post<User>("users/roles/revoke", form)
+        .then(users => {
+          useAccountStore().users = users;
+          notification.success({
+            message: "Role revoked successfully"
+          });
+        })
+        .catch(err => {
+          notification.error({
+            message: "Error revoking role",
+            description: err.message
+          });
+          throw err;
+        })
+        .finally(() => (this.loading = false));
     }
   }
 });
