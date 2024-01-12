@@ -12922,7 +12922,7 @@ vue-axe@^3.1.2:
   dependencies:
     prismjs "^1.21.0"
 
-vue-demi@*, vue-demi@>=0.14.5:
+vue-demi@*, vue-demi@>=0.14.5, vue-demi@latest:
   version "0.14.6"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.6.tgz#dc706582851dc1cdc17a0054f4fec2eb6df74c92"
   integrity sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==
@@ -12980,10 +12980,12 @@ vue-loader@^16.0.0:
     hash-sum "^2.0.0"
     loader-utils "^2.0.0"
 
-vue-multiselect@^3.0.0-beta.2:
-  version "3.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-3.0.0-beta.3.tgz#b1348238a84c435582c3f46f2a9c045b29bb976c"
-  integrity sha512-P7Fx+ovVF7WMERSZ0lw6N3p4H4bnQ3NcaY3ORjzFPv0r/6lpIqvFWmK9Xnwze9mgAvmNV1foI1VWrBmjnfBTLQ==
+vue-request@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/vue-request/-/vue-request-2.0.4.tgz#484672c36f46930437fe9415cc40f2fd595f98d3"
+  integrity sha512-+Tu5rDy6ItF9UdD21Mmbjiq5Pq6NZSN9juH72hNQTMn1whHh4KZPTKWVLK2YS4nzbuEnPs+82G91AA2Fgd93mg==
+  dependencies:
+    vue-demi latest
 
 vue-router-multiguard@^1.0.3:
   version "1.0.3"

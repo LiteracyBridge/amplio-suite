@@ -19,7 +19,7 @@ import { ApiRequest } from "@/api";
 import { watch } from "vue";
 import type { TreeProps } from "ant-design-vue";
 import { toSentenceCase, toTitleCase } from "@/utils";
-import { Role } from "@/types/role.model";
+import { Role } from "@/models/role";
 
 const RolesTemplate = ref<{ [module: string]: { value: string; label: string }[] }>({});
 
