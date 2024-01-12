@@ -1,17 +1,20 @@
 // import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
 import { Auth } from "aws-amplify";
-import type { User } from "@/models/user";
+import { User } from "@/models/user";
+import { ApiRequest } from "@/api";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
+    users: [] as User[],
     status: "",
     user: {
       email: "",
       name: "",
       img: "",
       token: "",
-      organisation_id: null
+      organisation_id: null,
+      roles: [],
     } as User,
     signUp: {
       send: false,
@@ -64,5 +67,11 @@ export const useAccountStore = defineStore("account", {
         }
       });
     },
+    //
+    // API Requests
+    //
+    fetchUsers() {
+      return ApiRequest.get<User>("users");
+    }
   },
 });

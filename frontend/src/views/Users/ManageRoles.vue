@@ -17,19 +17,28 @@ import {
   Select,
   Spin,
 } from "ant-design-vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import NewRoleDrawer from "./NewRoleDrawer.vue";
 import { useRolesStore } from "@/store/roles.store";
 import { useRequest } from "vue-request";
 import { Role } from "@/models/role";
 import { toSentenceCase, toTitleCase } from "@/utils";
+import { User } from "@/models/user";
+import { useAccountStore } from "@/store/account";
 
 const store = useRolesStore();
 
 const roleTabKey = ref(undefined);
 const newRoleDrawerVisible = ref(false);
-const assignmentModal = ref({
+const assignModal = ref({
   open: false,
+  role: undefined,
+  users: [],
+  close: () => {
+    assignModal.value.open = false;
+    assignModal.value.role = undefined;
+    assignModal.value.users = [];
+  },
 });
 
 const { data: roles, run, loading } = useRequest(store.fetchRoles, {
@@ -72,6 +81,14 @@ function getRolePermissions(role: Role): string[] {
   return permissions;
 }
 
+const assignedUsers = computed(() => {
+  return (role: Role): User[] => {
+    return useAccountStore().users.filter(
+      (user) => user.roles.find((r) => r.role_id == role.id) != null
+    );
+  };
+});
+
 onMounted(() => {
   // run();
 });
@@ -100,11 +117,17 @@ onMounted(() => {
       >
         <Tabs size="large" :animated="false">
           <template #rightExtra>
-            <Button type="primary" @click="assignmentModal.open = true"
+            <Button
+              type="primary"
+              @click="
+                assignModal.role = role.id;
+                assignModal.open = true;
+              "
               >Assign Users</Button
             >
           </template>
 
+          <!-- Permissions of the select role -->
           <TabPane key="1" tab="Permissions">
             <List bordered :data-source="getRolePermissions(role)">
               <template #renderItem="{ item }">
@@ -123,16 +146,23 @@ onMounted(() => {
             </List>
           </TabPane>
 
-          <!-- TODO: implement showing assigned users  -->
+          <!-- Users assigned to the select role -->
           <TabPane key="2" tab="Assigned users">
-            <Table :columns="columns" :data-source="roles" size="small">
+            <Table :columns="columns" :data-source="assignedUsers(role)" size="small">
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'name'">
-                  <a> {{ record.name }} [email as subtitle] </a>
+                  {{ record.first_name }} {{ record.other_names || "" }}
+                  {{ record.last_name }}
+                </template>
+
+                <template v-if="column.key === 'EMAIL'">
+                  <a mailto="{{ record.email }}"> {{ record.email }}</a>
                 </template>
 
                 <template v-else-if="column.key === 'action'">
-                  <span>Revoke </span>
+                  <Button type="primary" :ghost="true" size="small" :danger="true"
+                    >Revoke
+                  </Button>
                 </template>
               </template>
             </Table>
@@ -150,15 +180,34 @@ onMounted(() => {
 
   <!-- User role assign modal  -->
   <Modal
-    v-model:open="assignmentModal.open"
+    v-model:open="assignModal.open"
     title="Assign role to users"
     ok-text="Assign Role"
+    :confirm-loading="store.loading"
+    @ok="
+      store
+        .assignRole({ role_id: assignModal.role, users: assignModal.users })
+        .then(() => assignModal.close())
+    "
   >
-    <FormItem label="Select users" class="pt-4">
-      <Select mode="multiple" style="width: 100%" placeholder="Please select user">
-        <SelectOption value="jack">Jack (100)</SelectOption>
-        <SelectOption value="lucy">Lucy (101)</SelectOption>
-      </Select>
-    </FormItem>
+    <Spin :spinning="store.loading">
+      <FormItem label="Select users" class="pt-4">
+        <Select
+          v-model:value="assignModal.users"
+          :show-search="true"
+          mode="multiple"
+          style="width: 100%"
+          placeholder="Please select user(s)"
+          title="Select users to assign the role to"
+        >
+          <SelectOption
+            :value="user.id"
+            :label="user.first_name"
+            v-for="user in useAccountStore().users"
+            >{{ user.first_name }}</SelectOption
+          >
+        </Select>
+      </FormItem>
+    </Spin>
   </Modal>
 </template>

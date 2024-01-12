@@ -1,7 +1,10 @@
 import { ApiRequest } from "@/api";
 import { Role } from "@/models/role";
+import { User } from "@/models/user";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { defineStore } from "pinia";
+import { useAccountStore } from "./account";
+import { notification } from "ant-design-vue";
 
 export const useRolesStore = defineStore("roles-store", {
   state: () => ({
@@ -37,6 +40,25 @@ export const useRolesStore = defineStore("roles-store", {
         .finally(() => {
           this.loading = false;
         });
+    },
+    assignRole(form: { users: number[]; role_id: number }) {
+      this.loading = true;
+
+      return ApiRequest.post<User>("users/roles/assign", form)
+        .then(users => {
+          useAccountStore().users = users;
+          notification.success({
+            message: "Role assigned successfully"
+          });
+        })
+        .catch(err => {
+          notification.error({
+            message: "Error assigning role",
+            description: err.message
+          });
+          throw err;
+        })
+        .finally(() => (this.loading = false));
     }
   }
 });

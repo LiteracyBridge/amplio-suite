@@ -9,6 +9,7 @@ import Home from "@/views/Home.vue";
 import SignIn from "@/views/SignIn.vue";
 import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
+import { User } from "@/models/user";
 
 const routes: any = [
   {
@@ -325,13 +326,16 @@ async function getUser() {
     .then(async data => {
       console.log(data);
       if (data && data.signInUserSession) {
+        // TODO: fetch account info from server
         useAccountStore().user = {
+          id: 0,
           email: data.attributes.email,
           name: data.attributes.email.split("@")[0],
           token: data.signInUserSession.idToken.jwtToken,
           img: "",
-          organisation_id: undefined
-        };
+          organisation_id: undefined,
+          roles: []
+        } as User;
 
         // TODO: Verify user from server
         return { authorized: true };

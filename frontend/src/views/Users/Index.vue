@@ -10,6 +10,16 @@ import {
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
 import UserInviteModal from "./UserInviteModal.vue";
+import { useAccountStore } from "@/store/account";
+import { useRequest } from "vue-request";
+
+const store = useAccountStore();
+const { data: users, run, loading } = useRequest(store.fetchUsers, {
+  onSuccess: (data) => {
+    console.log(data);
+    store.users = data;
+  },
+});
 
 const modal = ref({
   open: false,
@@ -79,39 +89,26 @@ const data = [
 
     <Descriptions size="small" :column="3">
       <DescriptionsItem label="Created">Lili Qu</DescriptionsItem>
-      <!-- <a-descriptions-item label="Association">
-        <a>421421</a>
-      </a-descriptions-item>
-      <a-descriptions-item label="Creation Time">2017-01-10</a-descriptions-item>
-      <a-descriptions-item label="Effective Time">2017-10-10</a-descriptions-item>
-      <a-descriptions-item label="Remarks">
-        Gonghu Road, Xihu District, Hangzhou, Zhejiang, China
-      </a-descriptions-item> -->
     </Descriptions>
   </PageHeader>
 
-  <Table :columns="columns" :data-source="data">
-    <template #headerCell="{ column }">
+  <Table :columns="columns" :data-source="users" :loading="loading">
+    <!-- <template #headerCell="{ column }">
       <template v-if="column.key === 'name'">
         <span>
           <smile-outlined />
-          Name
+          {{ column.first_name }}
         </span>
       </template>
-    </template>
+    </template> -->
 
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         <a>
-          {{ record.name }}
+          {{ record.first_name }} {{ record.other_names || "" }} {{ record.last_name }}
         </a>
       </template>
-      <template v-else-if="column.key === 'tags'">
-        <span>
-          Working
-          <!-- {{ tag.toUpperCase() }} -->
-        </span>
-      </template>
+
       <template v-else-if="column.key === 'action'">
         <span> Come here </span>
       </template>
