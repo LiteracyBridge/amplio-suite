@@ -10,6 +10,7 @@ import SignIn from "@/views/SignIn.vue";
 import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
 import { User } from "@/models/user";
+import { useRequest } from "vue-request";
 
 const routes: any = [
   {
@@ -327,17 +328,17 @@ async function getUser() {
       console.log(data);
       if (data && data.signInUserSession) {
         // TODO: fetch account info from server
-        useAccountStore().user = {
-          id: 0,
-          email: data.attributes.email,
-          name: data.attributes.email.split("@")[0],
-          token: data.signInUserSession.idToken.jwtToken,
-          img: "",
-          organisation_id: undefined,
-          roles: []
-        } as User;
+        await useAccountStore().fetchAccountInfo(
+          data.signInUserSession!.idToken.jwtToken
+        );
 
-        // TODO: Verify user from server
+        // Account info downloaded
+        // if (response.value.length == 1 && !loading.value) {
+        //   useAccountStore().user = User.fromJSON({
+        //     ...response.value[0],
+        //     token: data.signInUserSession!.idToken.jwtToken
+        //   });
+        // }
         return { authorized: true };
       }
 
@@ -356,6 +357,8 @@ Hub.listen("auth", async data => {
   let user = null;
   // disabledConsole();
 
+  console.log("event changed");
+  console.log(data);
   console.log(data.payload.event);
   switch (data.payload.event) {
     case "signIn":

@@ -1,4 +1,4 @@
-import { createApp, h, Fragment } from "vue";
+import { createApp } from "vue";
 import PortalVue from "portal-vue";
 
 import App from "./App.vue";
@@ -7,10 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createPinia } from "pinia";
 import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
-
-// Polyfill :focus-visible
-// Remove this to restore normal focus behaviour.
-import "focus-visible";
 
 // Custom plugins
 import "./plugins/fontawesome";
@@ -25,44 +21,44 @@ import Default from "@/layouts/Default.vue";
 import Login from "@/layouts/Login.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
-    faUserSecret,
-    faTimes,
-    faSpinner,
-    faExclamationCircle,
-    faChevronDown,
-    faChevronUp,
-    faUserCircle,
-    faGripLines,
-    faCaretRight,
-    faCalendarAlt,
-    faSearch,
-    faEdit,
-    faCopy,
-    faTrashAlt,
-    faQuestionCircle,
-    faCheck,
-    faCaretDown
+  faUserSecret,
+  faTimes,
+  faSpinner,
+  faExclamationCircle,
+  faChevronDown,
+  faChevronUp,
+  faUserCircle,
+  faGripLines,
+  faCaretRight,
+  faCalendarAlt,
+  faSearch,
+  faEdit,
+  faCopy,
+  faTrashAlt,
+  faQuestionCircle,
+  faCheck,
+  faCaretDown
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
-    //@ts-ignore
-    faUserSecret,
-    faTimes,
-    faSpinner,
-    faExclamationCircle,
-    faChevronDown,
-    faChevronUp,
-    faUserCircle,
-    faGripLines,
-    faCaretRight,
-    faCalendarAlt,
-    faSearch,
-    faEdit,
-    faCopy,
-    faTrashAlt,
-    faQuestionCircle,
-    faCheck,
-    faCaretDown
+  //@ts-ignore
+  faUserSecret,
+  faTimes,
+  faSpinner,
+  faExclamationCircle,
+  faChevronDown,
+  faChevronUp,
+  faUserCircle,
+  faGripLines,
+  faCaretRight,
+  faCalendarAlt,
+  faSearch,
+  faEdit,
+  faCopy,
+  faTrashAlt,
+  faQuestionCircle,
+  faCheck,
+  faCaretDown
 );
 
 const pinia = createPinia();
@@ -86,16 +82,18 @@ app.component("default-layout", Default);
 app.component("login-layout", Login);
 
 app.use(router);
-// .use(store)
-// .use(createPinia());
-// .use(CognitoAuth, config);
 
-Amplify.configure(awsconfig);
+if (import.meta.env.DEV) {
+  // Change AWS config to use test pool
+  console.log("Using local cognito server");
+  Amplify.configure({
+    ...awsconfig,
+    aws_user_pools_web_client_id: import.meta.env
+      .VITE_APP_AWS_USER_POOLS_CLIENT_ID,
+    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID
+  });
+} else {
+  Amplify.configure(awsconfig);
+}
 
 app.mount("#app");
-// new Vue({
-//     router,
-//     store,
-//     cognitoAuth,
-//     render: h => h(App)
-// }).$mount("#app");

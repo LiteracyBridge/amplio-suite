@@ -75,6 +75,18 @@ export const useAccountStore = defineStore("account", {
     },
     fetchInvitations() {
       return ApiRequest.get<Invitation>("users/invitations")
+    },
+    fetchAccountInfo(token: string) {
+      // NB: This is add the token to request headers
+      this.user = new User();
+      this.user.token = token;
+
+      return ApiRequest.get<User>("users/me").then(([resp]) => {
+      this.user = User.fromJSON({
+          ...resp,
+          token: token
+        });
+      })
     }
   },
 });
