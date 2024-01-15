@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { Button, Modal, Form, FormItem, Input, notification } from "ant-design-vue";
+import { Button, Modal, Form, FormItem, Input, notification, Spin } from "ant-design-vue";
 
 import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { reactive, ref } from "vue";
 import { ApiRequest } from "@/api";
+import { Invitation } from "@/models/user";
 
 // TODO; add user role to invite form
 
@@ -12,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "closed", value: boolean): void;
+  (e: "closed", data: Invitation[]): void;
 }>();
 
 const loading = ref(false);
@@ -22,25 +23,25 @@ const formState = reactive({
   email: "",
 });
 
-function handleCancel() {
+function handleCancel(data?: Invitation[]) {
   formState.first_name = "";
   formState.last_name = "";
   formState.email = "";
-  emit("closed", true);
+  emit("closed", data || []);
 }
 
 function handleOk() {
   loading.value = true;
-  return ApiRequest.post("users/invitations", formState)
-    .then((_) => {
+  return ApiRequest.post<Invitation>("users/invitations", formState)
+    .then((resp) => {
       notification.success({
         message: "Invitation Sent!",
         description: `The ${formState.first_name} will receive an email to complete their registration.`,
       });
+      handleCancel(resp);
     })
     .finally(() => {
       loading.value = false;
-      handleCancel();
     });
 }
 </script>
@@ -50,34 +51,36 @@ function handleOk() {
     :open="open"
     title="Invite User"
     @ok="handleOk()"
-    @cancel="handleCancel"
+    @cancel="handleCancel()"
     ok-text="Invite"
     :confirm-loading="loading"
   >
     <Form :model="formState" autocomplete="on" layout="vertical">
-      <FormItem
-        label="First Name"
-        name="first_name"
-        :rules="[{ required: true, message: 'Please input first name!' }]"
-      >
-        <Input v-model:value="formState.first_name" required="true" />
-      </FormItem>
+      <Spin :spinning="loading">
+        <FormItem
+          label="First Name"
+          name="first_name"
+          :rules="[{ required: true, message: 'Please input first name!' }]"
+        >
+          <Input v-model:value="formState.first_name" required="true" />
+        </FormItem>
 
-      <FormItem
-        label="Last Name"
-        name="last_name"
-        :rules="[{ required: true, message: 'Please input last name!' }]"
-      >
-        <Input v-model:value="formState.last_name" required="true" />
-      </FormItem>
+        <FormItem
+          label="Last Name"
+          name="last_name"
+          :rules="[{ required: true, message: 'Please input last name!' }]"
+        >
+          <Input v-model:value="formState.last_name" required="true" />
+        </FormItem>
 
-      <FormItem
-        label="Email"
-        name="email"
-        :rules="[{ required: true, message: 'Please input email!' }]"
-      >
-        <Input v-model:value="formState.email" type="email" />
-      </FormItem>
+        <FormItem
+          label="Email"
+          name="email"
+          :rules="[{ required: true, message: 'Please input email!' }]"
+        >
+          <Input v-model:value="formState.email" type="email" />
+        </FormItem>
+      </Spin>
     </Form>
   </Modal>
 </template>

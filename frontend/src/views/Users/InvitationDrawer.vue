@@ -107,6 +107,12 @@ function deleteInvitation(email: string) {
       </template>
     </Table>
 
-    <InviteModal :open="isOpen" @closed="isOpen = false" />
+    <InviteModal
+      :open="isOpen"
+      @closed="
+        isOpen = false;
+        invitations = $event;
+      "
+    />
   </Drawer>
 </template>
