@@ -24,3 +24,13 @@ export class User {
   // TODO: add function to parse roles into a map of permissions (see below)
   // TODO: add permissions field => {[module: string]: { [action: string]: boolean}} // true by default
 }
+
+export class Invitation {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  organisation_id: number;
+  created_at: string;
+  updated_at: string;
+}

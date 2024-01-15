@@ -20,31 +20,28 @@ const formState = reactive({
   first_name: "",
   last_name: "",
   email: "",
-  other_names: "",
 });
 
+function handleCancel() {
+  formState.first_name = "";
+  formState.last_name = "";
+  formState.email = "";
+  emit("closed", true);
+}
+
 function handleOk() {
-  ApiRequest.post("users/invite", formState)
-    .then((resp) => {
+  loading.value = true;
+  return ApiRequest.post("users/invitations", formState)
+    .then((_) => {
       notification.success({
         message: "Invitation Sent!",
         description: `The ${formState.first_name} will receive an email to complete their registration.`,
       });
-      console.log(resp);
     })
     .finally(() => {
       loading.value = false;
-      emit("closed", true);
+      handleCancel();
     });
-
-  // props.open = false;
-  console.log("OK");
-  emit("closed", true);
-}
-
-function handleCancel() {
-  console.log("Cancel");
-  emit("closed", true);
 }
 </script>
 
@@ -57,7 +54,6 @@ function handleCancel() {
     ok-text="Invite"
     :confirm-loading="loading"
   >
-
     <Form :model="formState" autocomplete="on" layout="vertical">
       <FormItem
         label="First Name"
@@ -65,10 +61,6 @@ function handleCancel() {
         :rules="[{ required: true, message: 'Please input first name!' }]"
       >
         <Input v-model:value="formState.first_name" required="true" />
-      </FormItem>
-
-      <FormItem label="Other Names" name="other_names">
-        <Input v-model:value="formState.other_names" />
       </FormItem>
 
       <FormItem
