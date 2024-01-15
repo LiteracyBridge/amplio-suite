@@ -47,6 +47,7 @@ export const useRolesStore = defineStore("roles-store", {
       return ApiRequest.post<User>("users/roles/assign", form)
         .then(users => {
           useAccountStore().users = users;
+          // TODO: if user is self, reload app to update permissions
           notification.success({
             message: "Role assigned successfully"
           });

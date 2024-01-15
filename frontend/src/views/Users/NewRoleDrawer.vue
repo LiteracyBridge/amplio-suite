@@ -8,20 +8,13 @@ import {
   CheckboxGroup,
   Input,
   notification,
-  Tree,
   Divider,
   Spin,
 } from "ant-design-vue";
 import { useRequest } from "vue-request";
-import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { onMounted, reactive, ref } from "vue";
-import { ApiRequest } from "@/api";
-import { watch } from "vue";
 import { toSentenceCase, toTitleCase } from "@/utils";
-import { Role } from "@/models/role";
 import { useRolesStore } from "@/store/roles.store";
-
-const RolesTemplate = ref<{ [module: string]: { value: string; label: string }[] }>({});
 
 const props = defineProps<{
   open: boolean;
@@ -32,7 +25,6 @@ const emit = defineEmits<{
 }>();
 
 const store = useRolesStore();
-// const isLoading = ref(false);
 const formState = reactive<{
   name: string;
   description: string;
@@ -44,7 +36,7 @@ const formState = reactive<{
 });
 
 // Create role request
-const { loading: isSaving } = useRequest(store.create, {
+const { loading: isSaving, run } = useRequest(store.create, {
   defaultParams: [formState],
   manual: true,
   onSuccess: (data) => {
@@ -53,11 +45,7 @@ const { loading: isSaving } = useRequest(store.create, {
 });
 
 function createRole() {
-  // store.loading = loading.value;
-  console.log(formState);
-
-  // run(formState as Role);
-
+  run(formState);
   if (!isSaving.value) {
     store.loading = false;
     notification.open({

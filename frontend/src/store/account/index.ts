@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { Auth } from "aws-amplify";
 import { Invitation, User } from "@/models/user";
 import { ApiRequest } from "@/api";
+import { Permission } from "@/models/role";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
@@ -66,6 +67,9 @@ export const useAccountStore = defineStore("account", {
           throw new Error("No current user");
         }
       });
+    },
+    can(action: Permission): boolean {
+      return this.user.permissions[action] === true;
     },
     //
     // API Requests

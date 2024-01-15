@@ -7,10 +7,11 @@ import {
   Table,
   Modal,
 } from "ant-design-vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import InvitationDrawer from "./InvitationDrawer.vue";
 import { useAccountStore } from "@/store/account";
 import { useRequest } from "vue-request";
+import { User, UserRole } from "@/models/user";
 
 const store = useAccountStore();
 const { data: users, run, loading } = useRequest(store.fetchUsers, {
@@ -26,8 +27,7 @@ const modal = ref({
 
 const columns = [
   {
-    name: "Name",
-    dataIndex: "name",
+    title: "Name",
     key: "name",
   },
   {
@@ -41,39 +41,16 @@ const columns = [
     key: "roles",
   },
   {
-    title: "Last Login",
-    dataIndex: "lastLogin",
-    key: "lastLogin",
-  },
-  {
-    title: "Actions",
+    title: "",
     key: "action",
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+const getUserRoles = computed(() => {
+  return (user: User | Record<string, any>) => {
+    return user.roles.flatMap((role: UserRole) => role.role.name).join(", ");
+  };
+});
 </script>
 
 <template>
@@ -90,13 +67,19 @@ const data = [
   <Table :columns="columns" :data-source="users" :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
-        <a>
-          {{ record.first_name }} {{ record.other_names || "" }} {{ record.last_name }}
-        </a>
+        {{ record.first_name }} {{ record.last_name }}
+      </template>
+
+      <template v-else-if="column.key === 'email'">
+        {{ record.email }}
+      </template>
+
+      <template v-else-if="column.key === 'roles'">
+        {{ getUserRoles(record) }}
       </template>
 
       <template v-else-if="column.key === 'action'">
-        <span> Come here </span>
+        <span> </span>
       </template>
     </template>
   </Table>

@@ -21,7 +21,7 @@ import { computed, createVNode, onMounted, ref } from "vue";
 import NewRoleDrawer from "./NewRoleDrawer.vue";
 import { useRolesStore } from "@/store/roles.store";
 import { useRequest } from "vue-request";
-import { Role } from "@/models/role";
+import { Role, Permission } from "@/models/role";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { User } from "@/models/user";
 import { useAccountStore } from "@/store/account";
@@ -71,7 +71,6 @@ const columns = [
   },
 ];
 
-// const data = ["Can update TB Loader", "Can create staff"];
 function getRolePermissions(role: Role): string[] {
   const permissions: string[] = [];
   Object.keys(role.permissions).forEach((module: string) => {
@@ -166,7 +165,11 @@ const deleteRole = (role_id: number) => {
               </template>
 
               <template #footer>
-                <Button :danger="true" class="mr-5 w-full" @click="deleteRole(role.id)"
+                <Button
+                  :danger="true"
+                  class="mr-5 w-full"
+                  @click="deleteRole(role.id)"
+                  v-if="useAccountStore().can(Permission.DeleteRole)"
                   >Delete Role</Button
                 >
               </template>
@@ -233,11 +236,12 @@ const deleteRole = (role_id: number) => {
           placeholder="Please select user(s)"
           title="Select users to assign the role to"
         >
+          <!-- TODO: Filter out users already assigned to the role -->
           <SelectOption
             :value="user.id"
             :label="user.first_name"
             v-for="user in useAccountStore().users"
-            >{{ user.first_name }}</SelectOption
+            >{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</SelectOption
           >
         </Select>
       </FormItem>
