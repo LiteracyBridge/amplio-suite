@@ -7,9 +7,8 @@ import {
   Table,
   Modal,
 } from "ant-design-vue";
-import { SmileOutlined, DownOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
-import UserInviteModal from "./UserInviteModal.vue";
+import InvitationDrawer from "./InvitationDrawer.vue";
 import { useAccountStore } from "@/store/account";
 import { useRequest } from "vue-request";
 
@@ -83,8 +82,7 @@ const data = [
       <router-link to="/users/manage-roles">
         <Button key="3">Manage Roles</Button>
       </router-link>
-      <!-- <Button key="2">Add Staff</Button> -->
-      <Button key="1" type="primary" @click="modal.open = true">Invite someone</Button>
+      <Button key="1" type="primary" @click="modal.open = true">Invitations</Button>
     </template>
 
     <Descriptions size="small" :column="3">
@@ -93,15 +91,6 @@ const data = [
   </PageHeader>
 
   <Table :columns="columns" :data-source="users" :loading="loading">
-    <!-- <template #headerCell="{ column }">
-      <template v-if="column.key === 'name'">
-        <span>
-          <smile-outlined />
-          {{ column.first_name }}
-        </span>
-      </template>
-    </template> -->
-
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         <a>
@@ -115,5 +104,5 @@ const data = [
     </template>
   </Table>
 
-  <UserInviteModal :open="modal.open" @closed="modal.open = false" />
+  <InvitationDrawer :open="modal.open" @closed="modal.open = false" />
 </template>

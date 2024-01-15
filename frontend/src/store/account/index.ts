@@ -1,7 +1,7 @@
 // import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
 import { Auth } from "aws-amplify";
-import { User } from "@/models/user";
+import { Invitation, User } from "@/models/user";
 import { ApiRequest } from "@/api";
 
 export const useAccountStore = defineStore("account", {
@@ -72,6 +72,9 @@ export const useAccountStore = defineStore("account", {
     //
     fetchUsers() {
       return ApiRequest.get<User>("users");
+    },
+    fetchInvitations() {
+      return ApiRequest.get<Invitation>("users/invitations")
     }
   },
 });
