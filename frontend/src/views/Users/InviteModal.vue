@@ -54,6 +54,7 @@ function handleOk() {
     @cancel="handleCancel()"
     ok-text="Invite"
     :confirm-loading="loading"
+    :mask-closable="false"
   >
     <Form :model="formState" autocomplete="on" layout="vertical">
       <Spin :spinning="loading">

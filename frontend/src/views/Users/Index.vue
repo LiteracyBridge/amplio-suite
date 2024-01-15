@@ -77,17 +77,14 @@ const data = [
 </script>
 
 <template>
-  <PageHeader class="demo-page-header" title="Title" sub-title="This is a subtitle">
+  <PageHeader title="Users" sub-title="Manage user accounts and roles">
     <template #extra>
       <router-link to="/users/manage-roles">
-        <Button key="3">Manage Roles</Button>
+        <Button>Manage Roles</Button>
       </router-link>
-      <Button key="1" type="primary" @click="modal.open = true">Invitations</Button>
-    </template>
 
-    <Descriptions size="small" :column="3">
-      <DescriptionsItem label="Created">Lili Qu</DescriptionsItem>
-    </Descriptions>
+      <Button type="primary" @click="modal.open = true">Invitations</Button>
+    </template>
   </PageHeader>
 
   <Table :columns="columns" :data-source="users" :loading="loading">

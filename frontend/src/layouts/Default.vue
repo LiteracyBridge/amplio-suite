@@ -1,11 +1,8 @@
 <script setup lang="ts">
-// Importing required Vue and external libraries
 import { onMounted, computed, ref } from "vue";
 import { RouterView, useRoute, useRouter } from "vue-router";
 import "@aws-amplify/ui-vue/styles.css";
 import Sidebar from "./Sidebar.vue";
-// import { useUserStore } from "@/stores/user";
-// import { AppStore } from "./stores/app.store";
 import {
   Layout,
   LayoutContent,
@@ -96,7 +93,7 @@ function openDiscourse() {
 
           <LayoutContent
             :style="{
-              margin: '24px 16px 0px 16px',
+              margin: '10px 16px 0px 16px',
               padding: '24px',
               background: '#ffffff',
               minHeight: '280px',

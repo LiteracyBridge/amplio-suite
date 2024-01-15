@@ -1,6 +1,4 @@
-// import Vue from 'vue'
 import { createRouter, createWebHistory } from "vue-router";
-// import { type RouteRecordRaw } from "vue-router";
 import multiguard from "vue-router-multiguard";
 
 import { useAccountStore } from "@/store/account";
@@ -9,8 +7,6 @@ import Home from "@/views/Home.vue";
 import SignIn from "@/views/SignIn.vue";
 import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
-import { User } from "@/models/user";
-import { useRequest } from "vue-request";
 
 const routes: any = [
   {
@@ -325,41 +321,25 @@ function checkAuth(to: any, from: any, next: any) {
 async function getUser() {
   return Auth.currentAuthenticatedUser()
     .then(async data => {
-      console.log(data);
       if (data && data.signInUserSession) {
-        // TODO: fetch account info from server
         await useAccountStore().fetchAccountInfo(
           data.signInUserSession!.idToken.jwtToken
         );
 
-        // Account info downloaded
-        // if (response.value.length == 1 && !loading.value) {
-        //   useAccountStore().user = User.fromJSON({
-        //     ...response.value[0],
-        //     token: data.signInUserSession!.idToken.jwtToken
-        //   });
-        // }
         return { authorized: true };
       }
 
-      // AppStore().is_loading = false;
       return { authorized: false };
     })
     .catch(err => {
       console.error(err);
-      // AppStore().is_loading = false;
-      // useUserStore().setUser();
       return { authorized: false };
     });
 }
 
 Hub.listen("auth", async data => {
   let user = null;
-  // disabledConsole();
 
-  console.log("event changed");
-  console.log(data);
-  console.log(data.payload.event);
   switch (data.payload.event) {
     case "signIn":
       user = await getUser();
@@ -380,25 +360,8 @@ Hub.listen("auth", async data => {
       } else {
         router.push({ path: "/login" });
       }
-      // ApiRequest.post("users/", {
-      //   email: _user.username,
-      //   name: _user.name,
-      // }).then((resp) => {
-      //   // useUserStore().email = resp[0].email;
-      //   // useUserStore().name = resp[0].name;
-      //   // Auth.currentAuthenticatedUser().then((_data) => {
-      //   //   useUserStore().token = _data.signInUserSession.accessToken.jwtToken;
-      //   // });
-
-      //   // useUserStore().setUser(resp[0]);
-      //   console.log("account created");
-      //   console.warn(resp);
-      // });
-      // console.log("user signed up");
       break;
     case "signOut":
-      // user = null;
-      // useUserStore().setUser();
       router.push({ path: "/login" });
       window.location.reload();
       break;
@@ -414,20 +377,6 @@ Hub.listen("auth", async data => {
         router.push({ path: "/login" });
       }
       break;
-    //   case "confirmSignUp":
-    //     console.log(data.payload);
-    //     getUser().then(async (user) => {
-    //       console.log("Existing user: ", user);
-    //       console.log(user);
-    //       if (user?.authorized == true) {
-    //         await AppStore().downloadObjects();
-
-    //         router.push({ path: "/" });
-    //       } else {
-    //         router.push({ path: "/login" });
-    //       }
-    //     });
-    //     console.log("the Auth module is configured");
   }
 });
 
