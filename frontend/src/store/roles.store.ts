@@ -41,7 +41,7 @@ export const useRolesStore = defineStore("roles-store", {
           this.loading = false;
         });
     },
-    assignRole(form: { users: number[]; role_id: number }) {
+    assignRole(form: { users: number[]; role_id: number, program_id: number }) {
       this.loading = true;
 
       return ApiRequest.post<User>("users/roles/assign", form)

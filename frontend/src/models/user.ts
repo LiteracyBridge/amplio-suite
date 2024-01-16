@@ -32,6 +32,7 @@ export class User {
   organisation_id: number;
 
   roles: UserRole[] = [];
+  programs: userProgram[] = [];
 
   /**
    * Map of permissions that can be used to check permissions in the UI

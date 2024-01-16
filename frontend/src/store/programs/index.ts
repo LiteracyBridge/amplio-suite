@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
 import { getPrograms } from "@/api/generalQueries.api";
 import { useUIStore } from "../ui";
+import { ApiRequest } from "@/api";
+import { Program } from "@/models/program";
 
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
     status: "",
     programs: [],
-    programNames: {}
+    programNames: {},
   }),
   actions: {
     requestInit() {
@@ -35,20 +37,23 @@ export const useProgramsStore = defineStore("programs", {
         const programsList = getProgramsResult["result"]["programs"];
         const programIdsList = Object.keys(programsList).sort();
         let programNamesMap: Record<string, any> = {};
-        programIdsList.forEach(id => {
+        programIdsList.forEach((id) => {
           programNamesMap[id] = programsList[id].name;
         });
         await this.setProgramsList({
           programIds: programIdsList,
-          programNames: programNamesMap
+          programNames: programNamesMap,
         });
       } catch (error) {
         this.requestError();
         useUIStore().setNotification({
           type: "alert",
-          text: error.toString()
+          text: error.toString(),
         });
       }
-    }
-  }
+    },
+    async getSystemPrograms() {
+      return ApiRequest.get<Program>(`programs/all`);
+    },
+  },
 });

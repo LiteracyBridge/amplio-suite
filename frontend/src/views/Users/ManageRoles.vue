@@ -2,6 +2,7 @@
 import {
   Button,
   FormItem,
+  Form,
   DescriptionsItem,
   PageHeader,
   List,
@@ -26,6 +27,7 @@ import { toSentenceCase, toTitleCase } from "@/utils";
 import { User } from "@/models/user";
 import { useAccountStore } from "@/store/account";
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
+import { useProgramsStore } from "@/store/programs";
 
 const store = useRolesStore();
 
@@ -33,12 +35,18 @@ const roleTabKey = ref(undefined);
 const newRoleDrawerVisible = ref(false);
 const assignModal = ref({
   open: false,
-  role: undefined,
-  users: [],
+  form: {
+    role_id: undefined as number,
+    program_id: undefined as number,
+    users: [] as number[],
+  },
   close: () => {
     assignModal.value.open = false;
-    assignModal.value.role = undefined;
-    assignModal.value.users = [];
+    assignModal.value.form = {
+      role_id: undefined,
+      users: [],
+      program_id: undefined,
+    };
   },
 });
 
@@ -48,6 +56,9 @@ const { loading } = useRequest(store.fetchRoles, {
     roleTabKey.value = data.length > 0 ? data[0].id : undefined;
   },
 });
+const { data: programs, loading: programsLoading } = useRequest(
+  useProgramsStore().getSystemPrograms
+);
 
 const columns = [
   {
@@ -116,6 +127,15 @@ const deleteRole = (role_id: number) => {
     onCancel() {},
   });
 };
+
+const getUsersToAssign = computed(() => {
+  // TODO: Diff select roles
+  return (role: Role): User[] => {
+    return useAccountStore().users.filter(
+      (user) => user.roles.find((r) => r.role_id == role.id) == null
+    );
+  };
+});
 </script>
 
 <template>
@@ -141,14 +161,7 @@ const deleteRole = (role_id: number) => {
       >
         <Tabs size="large" :animated="false">
           <template #rightExtra>
-            <Button
-              type="primary"
-              @click="
-                assignModal.role = role.id;
-                assignModal.open = true;
-              "
-              >Assign Users</Button
-            >
+            <Button type="primary" @click="assignModal.open = true">Assign Users</Button>
           </template>
 
           <!-- Permissions of the select role -->
@@ -215,36 +228,69 @@ const deleteRole = (role_id: number) => {
   ></NewRoleDrawer>
 
   <!-- Assign role modal -->
+  <!-- TODO: Extract into separate component -->
   <Modal
     v-model:open="assignModal.open"
     title="Assign role to users"
     ok-text="Assign Role"
     :confirm-loading="store.loading"
-    @ok="
-      store
-        .assignRole({ role_id: assignModal.role, users: assignModal.users })
-        .then(() => assignModal.close())
-    "
+    @ok="store.assignRole(assignModal.form).then(() => assignModal.close())"
   >
     <Spin :spinning="store.loading">
-      <FormItem class="pt-4">
-        <Select
-          v-model:value="assignModal.users"
-          :show-search="true"
-          mode="multiple"
-          style="width: 100%"
-          placeholder="Please select user(s)"
-          title="Select users to assign the role to"
-        >
-          <!-- TODO: Filter out users already assigned to the role -->
-          <SelectOption
-            :value="user.id"
-            :label="user.first_name"
-            v-for="user in useAccountStore().users"
-            >{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</SelectOption
+      <Form layout="vertical" :model="assignModal.form">
+        <FormItem class="pt-4" label="Select role" :required="true">
+          <Select
+            v-model:value="assignModal.form.role_id"
+            :show-search="true"
+            name="roles"
+            style="width: 100%"
+            placeholder="Please select role"
           >
-        </Select>
-      </FormItem>
+            <!-- TODO: Filter out users already assigned to the role -->
+            <SelectOption :value="role.id" :label="role.name" v-for="role in store.roles">
+              {{ role.name }}
+            </SelectOption>
+          </Select>
+        </FormItem>
+
+        <FormItem label="Select users" :required="true">
+          <Select
+            v-model:value="assignModal.form.users"
+            :show-search="true"
+            name="users"
+            mode="multiple"
+            style="width: 100%"
+            placeholder="Please select user(s)"
+            title="Select users to assign the role to"
+          >
+            <!-- TODO: Filter out users already assigned to the role -->
+            <SelectOption
+              :value="user.id"
+              :label="user.first_name"
+              v-for="user in useAccountStore().users"
+              >{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</SelectOption
+            >
+          </Select>
+        </FormItem>
+
+        <FormItem
+          label="Select programs"
+          help="Selecting a program restrict the roles to only the selected program"
+          name="programs"
+        >
+          <Select
+            v-model:value="assignModal.form.program_id"
+            :show-search="true"
+            :loading="programsLoading"
+            style="width: 100%"
+            placeholder="Please select programs"
+          >
+            <SelectOption :value="p.id" :label="p.program_id" v-for="p in programs">{{
+              p.program_id
+            }}</SelectOption>
+          </Select>
+        </FormItem>
+      </Form>
     </Spin>
   </Modal>
 </template>

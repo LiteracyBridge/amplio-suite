@@ -1,4 +1,4 @@
-import type { Language } from "./language";
+import { Language } from "./language";
 
 export class Program {
   id: number;
