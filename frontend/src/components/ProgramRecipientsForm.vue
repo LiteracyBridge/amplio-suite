@@ -61,6 +61,7 @@
     <label class="mandatory-field text-right" for="language">Language</label>
     <languages-selector
       name="language"
+      class="w-full"
       :options="state.general.languages"
       :languages="recipient.language"
       @language-selected="onSetRecipientValue({ field: 'language', value: $event })"

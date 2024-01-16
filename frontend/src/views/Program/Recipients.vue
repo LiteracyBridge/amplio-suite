@@ -373,7 +373,7 @@ function onAcceptEdit() {
   onCloseModal();
   if (isRecipientInEditValid.value) {
     store.updateRecipient({ recipient: data.value.recipientInEdit });
-    data.value.recipientInEdit = null;
+    data.value.recipientInEdit = store.newRecipient();
   } else {
     onOpenModal("mandatory", "Required Fields");
   }
