@@ -3,7 +3,7 @@ name: Publish site to Production
 on:
   push:
     branches:
-      - master
+      - vue3-migration
 
 jobs:
   build:

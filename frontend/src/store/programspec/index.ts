@@ -8,7 +8,7 @@ import {
   publish,
   putProgramSpec,
   uploadSpec as uploadSpecFile,
-  approveSpec as approveSpecFile
+  approveSpec as approveSpecFile,
 } from "@/api/programspec.api";
 import { Language } from "@/models/language";
 import { Recipient } from "@/models/recipient";
@@ -35,10 +35,10 @@ export const getDefaultGeneral = () => ({
   direct_beneficiaries_map: {
     male: "Number of Male",
     female: "Number of Female",
-    youth: "Number of Youth"
+    youth: "Number of Youth",
   },
   direct_beneficiaries_additional_map: {},
-  tableau_id: null as string | number | null
+  tableau_id: null as string | number | null,
 });
 
 export const getDefaultState = () => {
@@ -52,8 +52,8 @@ export const getDefaultState = () => {
     filterText: "",
     sortTable: {
       by: "region",
-      descending: true
-    }
+      descending: true,
+    },
   };
   return defaultState;
 };
@@ -95,36 +95,36 @@ export const useProgramSpecStore = defineStore("programspec", {
   state: () => getDefaultState(),
 
   getters: {
-    labelUsed: state => {
+    labelUsed: (state) => {
       const labels = new Set();
       state.recipients.forEach(
         (recipient: { direct_beneficiaries_additional: {} }) => {
           const keys = Object.keys(recipient.direct_beneficiaries_additional);
-          keys.forEach(label => labels.add(label));
+          keys.forEach((label) => labels.add(label));
         }
       );
 
       return Array.from(labels);
     },
 
-    directBeneficiariesLabels: state => {
+    directBeneficiariesLabels: (state) => {
       const keys = Object.keys(state.general.direct_beneficiaries_map);
       return keys.map((key: any) => ({
         key,
-        value: state.general.direct_beneficiaries_map[key]
+        value: state.general.direct_beneficiaries_map[key],
       }));
     },
-    directBeneficiariesAdditionalLabels: state => {
+    directBeneficiariesAdditionalLabels: (state) => {
       const keys = Object.keys(
         state.general.direct_beneficiaries_additional_map
       );
-      return keys.map(key => ({
+      return keys.map((key) => ({
         key,
-        value: state.general.direct_beneficiaries_additional_map[key]
+        value: state.general.direct_beneficiaries_additional_map[key],
       }));
     },
 
-    filteredRecipients: state => {
+    filteredRecipients: (state) => {
       let recipients = [...state.recipients];
 
       // Sort
@@ -140,22 +140,20 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       // Filter
       let text = state.filterText;
-      recipients = recipients.filter(reci =>
+      recipients = recipients.filter((reci) =>
         Object.values(reci)
-          .filter(val => val !== null)
-          .some(val =>
-            val
-              .toString()
-              .toLowerCase()
-              .includes(text.toLowerCase())
+          .filter((val) => val !== null)
+          .some((val) =>
+            val.toString().toLowerCase().includes(text.toLowerCase())
           )
       );
 
       // return recipients.slice(0, this.recipientsToShow)
       return recipients;
     },
-
-    newRecipient: () => {
+  },
+  actions: {
+    newRecipient() {
       let newRecipient: any = {
         recipientid: null,
 
@@ -176,13 +174,10 @@ export const useProgramSpecStore = defineStore("programspec", {
         direct_beneficiaries_additional: {},
         indirect_beneficiaries: null,
         variant: "",
-        component: ""
+        component: "",
       };
       return newRecipient;
-    }
-  },
-  actions: {
-    // Mutations
+    },
 
     resetState() {
       Object.assign(this, {});
@@ -449,9 +444,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addDirectBeneficiariesAdditionalLabel() {
       const value = "New additional field";
-      const key = `field_${Math.random()
-        .toString(36)
-        .substring(7)}`;
+      const key = `field_${Math.random().toString(36).substring(7)}`;
 
       this.setDirectBeneficiariesAdditionalLabel({ value, key });
       this.setChanged(true);
@@ -630,7 +623,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.requestError();
         useUIStore().setNotification({
           type: "alert",
-          text: error.toString()
+          text: error.toString(),
         });
       }
     },
@@ -653,7 +646,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.requestError();
         useUIStore().setNotification({
           type: "alert",
-          text: error.toString()
+          text: error.toString(),
         });
       }
     },
@@ -671,7 +664,7 @@ export const useProgramSpecStore = defineStore("programspec", {
           if (newRecip.recipientid.match(TEMP_RECIPIENT_RE))
             newRecip.recipientid = null;
           return newRecip;
-        })
+        }),
       };
 
       this.requestInit();
@@ -690,7 +683,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.requestError();
         useUIStore().setNotification({
           type: "alert",
-          text: error.toString()
+          text: error.toString(),
         });
       }
     },
@@ -742,7 +735,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     setDirectBeneficiariesAdditionalLabel(payload: { value: any; key: any }) {
       const { key, value } = payload;
       const map = {
-        ...this.general.direct_beneficiaries_additional_map
+        ...this.general.direct_beneficiaries_additional_map,
       };
       map[key] = value;
 
@@ -751,10 +744,10 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     deleteDirectBeneficiariesAdditionalLabel(labelKey: string) {
       const beneficiaries = {
-        ...this.general.direct_beneficiaries_additional_map
+        ...this.general.direct_beneficiaries_additional_map,
       };
       const index = Object.keys(beneficiaries).findIndex(
-        key => key === labelKey
+        (key) => key === labelKey
       );
 
       if (index >= 0) {
@@ -914,7 +907,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const playlist = this.getPlaylist(payload);
 
       const messageIx = (payload.playlist.messages ?? []).findIndex(
-        msg => msg.title === payload.message.title
+        (msg) => msg.title === payload.message.title
       );
       payload.playlist.messages.splice(messageIx, 1);
     },
@@ -1097,7 +1090,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       if (!recipient.recipientid) {
         // Create a temporary recipientid for local use prior ot the assignment of a proper recipientid by the server.
         let tempId = 1;
-        this.recipients.forEach(recipient => {
+        this.recipients.forEach((recipient) => {
           let match = recipient.recipientid.match(TEMP_RECIPIENT_RE);
           if (match) {
             let numericId = Number(match[1]);
@@ -1118,8 +1111,8 @@ export const useProgramSpecStore = defineStore("programspec", {
       } else {
         this.recipients.push(recipient);
       }
-    }
+    },
 
     //endregion
-  }
+  },
 });
