@@ -56,7 +56,6 @@ export const useAccountStore = defineStore("account", {
     },
     async requireAuth() {
       return Auth.currentAuthenticatedUser().then((data) => {
-        // console.log(data);
         if (data && data.signInUserSession) {
           this.user.token ??= data.signInUserSession.idToken.jwtToken;
           this.user.email ??= data.attributes.email;
@@ -68,9 +67,34 @@ export const useAccountStore = defineStore("account", {
         }
       });
     },
-    can(action: Permission): boolean {
-      return this.user.permissions[action] === true;
+    /**
+     * Returns true if the user has the given permission
+     *
+     * It first checks if the user has permission for the given program ID.
+     * If not, it then checks if the user has a system wide permission ('*').
+     *
+     * @param programId The program ID to check permissions for
+     * @param permission The permission to check
+     */
+    can(programId: string | "*", permission: Permission): boolean {
+      let hasPermission = false;
+
+      let actions = this.user.permissions[programId];
+      if (this.user.permissions[programId] != null) {
+        hasPermission = actions[permission] === true;
+      }
+
+      if (hasPermission) {
+        return true;
+      }
+
+      actions = this.user.permissions["*"];
+      if (actions != null) {
+        return actions[permission] === true;
+      }
+      return false;
     },
+
     //
     // API Requests
     //
@@ -78,7 +102,7 @@ export const useAccountStore = defineStore("account", {
       return ApiRequest.get<User>("users");
     },
     fetchInvitations() {
-      return ApiRequest.get<Invitation>("users/invitations")
+      return ApiRequest.get<Invitation>("users/invitations");
     },
     fetchAccountInfo(token: string) {
       // NB: This is add the token to request headers
@@ -86,11 +110,11 @@ export const useAccountStore = defineStore("account", {
       this.user.token = token;
 
       return ApiRequest.get<User>("users/me").then(([resp]) => {
-      this.user = User.fromJSON({
+        this.user = User.fromJSON({
           ...resp,
-          token: token
+          token: token,
         });
-      })
-    }
+      });
+    },
   },
 });
