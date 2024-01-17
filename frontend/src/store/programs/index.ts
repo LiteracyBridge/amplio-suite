@@ -7,6 +7,7 @@ import { Program } from "@/models/program";
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
     status: "",
+    organisationPrograms: [] as Program[],
     programs: [],
     programNames: {},
   }),
@@ -52,7 +53,7 @@ export const useProgramsStore = defineStore("programs", {
         });
       }
     },
-    async getSystemPrograms() {
+    async getOrgPrograms() {
       return ApiRequest.get<Program>(`programs/all`);
     },
   },

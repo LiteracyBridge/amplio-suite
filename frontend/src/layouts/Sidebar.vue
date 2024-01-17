@@ -106,12 +106,6 @@ const menuItems: Array<{
 
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <MenuItem v-for="(item, index) in menuItems" :key="index">
-        <router-link v-if="item.name" :to="'/forms/' + item.params?.module">
-          <span role="link">
-            {{ item.label }}
-          </span>
-        </router-link>
-
         <router-link v-if="item.path" :to="item.path">
           <span role="link">
             {{ item.label }}
@@ -119,7 +113,28 @@ const menuItems: Array<{
         </router-link>
       </MenuItem>
 
-      <!-- <Divider :style="{ 'background-color': 'white' }"></Divider> -->
+      <!-- FIXME: Add permission check here -->
+      <Menu.SubMenu label="Settings" title="Settings" key="settings">
+        <MenuItem key="manage-users">
+          <router-link to="/settings/users">
+            <span role="link"> User Management </span>
+          </router-link>
+        </MenuItem>
+        <MenuItem key="manage-programs">
+          <router-link to="/settings/programs">
+            <span role="link"> Programs Management </span>
+          </router-link>
+        </MenuItem>
+      </Menu.SubMenu>
+
+      <Divider></Divider>
+
+      <MenuItem key="change-programs">
+        <!-- TODO: add a modal for changing system program -->
+        <router-link to="/settings/change-programs">
+          <span role="link"> Programs </span>
+        </router-link>
+      </MenuItem>
     </Menu>
   </LayoutSider>
 </template>

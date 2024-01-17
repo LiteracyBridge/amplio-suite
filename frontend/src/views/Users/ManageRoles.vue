@@ -28,6 +28,7 @@ import { User } from "@/models/user";
 import { useAccountStore } from "@/store/account";
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
 import { useProgramsStore } from "@/store/programs";
+import { RequestCacheKeys } from "@/models/constants";
 
 const store = useRolesStore();
 
@@ -57,7 +58,13 @@ const { loading } = useRequest(store.fetchRoles, {
   },
 });
 const { data: programs, loading: programsLoading } = useRequest(
-  useProgramsStore().getSystemPrograms
+  useProgramsStore().getOrgPrograms,
+  {
+    cacheKey: RequestCacheKeys.org_programs,
+    onSuccess: (data) => {
+      useProgramsStore().organisationPrograms = data;
+    },
+  }
 );
 
 const columns = [
