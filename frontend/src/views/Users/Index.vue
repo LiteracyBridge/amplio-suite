@@ -56,7 +56,7 @@ const getUserRoles = computed(() => {
 <template>
   <PageHeader title="Users" sub-title="Manage user accounts and roles">
     <template #extra>
-      <router-link to="/users/manage-roles">
+      <router-link to="/settings/roles">
         <Button>Manage Roles</Button>
       </router-link>
 

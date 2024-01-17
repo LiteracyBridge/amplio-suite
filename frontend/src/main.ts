@@ -39,6 +39,7 @@ import {
   faCheck,
   faCaretDown
 } from "@fortawesome/free-solid-svg-icons";
+import { setGlobalOptions } from "vue-request";
 
 library.add(
   //@ts-ignore
@@ -62,7 +63,12 @@ library.add(
 );
 
 const pinia = createPinia();
-let app = createApp(App);
+const app = createApp(App);
+
+// Vue Request
+setGlobalOptions({
+  cacheTime: 20 * 60 * 1000, // 20 minutes
+});
 
 // if (process.env.NODE_ENV === "development") {
 //     const VueAxe = import("vue-axe/dist/vue-axe.min");
