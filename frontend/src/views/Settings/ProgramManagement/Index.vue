@@ -8,7 +8,7 @@ import {
   Modal,
 } from "ant-design-vue";
 import { computed, ref } from "vue";
-// import InvitationDrawer from "./InvitationDrawer.vue";
+import ProgramUsers from "./ProgramUsers.vue";
 import { useProgramsStore } from "@/store/programs";
 import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
@@ -23,6 +23,8 @@ const { data: programs, run, loading } = useRequest(store.getOrgPrograms, {
 
 const modal = ref({
   open: false,
+  programId: undefined as number,
+  name: undefined as string,
 });
 
 const columns = [
@@ -63,7 +65,7 @@ const columns = [
       </template>
 
       <template v-else-if="column.key === 'partner'">
-        {{ record.partner || 'N/A' }}
+        {{ record.partner || "N/A" }}
       </template>
 
       <template v-else-if="column.key === 'country'">
@@ -71,10 +73,29 @@ const columns = [
       </template>
 
       <template v-else-if="column.key === 'action'">
-        <span> </span>
+        <Button
+          size="small"
+          type="primary"
+          :ghost="true"
+          @click="
+            modal.programId = record.id;
+            modal.name = record?.project?.name;
+            modal.open = true;
+          "
+          >Manage Users</Button
+        >
       </template>
     </template>
   </Table>
 
-  <!-- <InvitationDrawer :open="modal.open" @closed="modal.open = false" /> -->
+  <template v-if="modal.open === true">
+    <ProgramUsers
+      :open="modal.open"
+      :program-id="modal.programId"
+      :name="modal.name"
+      @closed="
+        modal.open = false;
+        modal.programId = undefined;
+      "
+  /></template>
 </template>

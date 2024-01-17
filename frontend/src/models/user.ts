@@ -1,10 +1,11 @@
 import { Program } from "./program";
 import { Permission, Role } from "./role";
 
-export class userProgram {
+export class ProgramUser {
   user_id: number;
   program_id: number;
   program: Program;
+  user: User;
 }
 
 export class UserRole {
@@ -32,7 +33,7 @@ export class User {
   organisation_id: number;
 
   roles: UserRole[] = [];
-  programs: userProgram[] = [];
+  programs: ProgramUser[] = [];
 
   /**
    * Map of permissions that can be used to check permissions in the UI

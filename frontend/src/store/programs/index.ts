@@ -3,6 +3,7 @@ import { getPrograms } from "@/api/generalQueries.api";
 import { useUIStore } from "../ui";
 import { ApiRequest } from "@/api";
 import { Program } from "@/models/program";
+import { ProgramUser } from "@/models/user";
 
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
@@ -25,6 +26,9 @@ export const useProgramsStore = defineStore("programs", {
       this.programs = values.programIds;
       this.programNames = values.programNames;
     },
+    //
+    // API Requests
+    //
     async getProgramsList() {
       if (this.status === "loading") return;
 
@@ -55,6 +59,9 @@ export const useProgramsStore = defineStore("programs", {
     },
     async getOrgPrograms() {
       return ApiRequest.get<Program>(`programs/all`);
+    },
+    async getProgramUsers(id: string | number) {
+      return ApiRequest.get<ProgramUser>(`programs/${id}/users`);
     },
   },
 });
