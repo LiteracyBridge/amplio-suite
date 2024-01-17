@@ -1,13 +1,6 @@
 <script lang="ts" setup>
-import {
-  Button,
-  Descriptions,
-  DescriptionsItem,
-  PageHeader,
-  Table,
-  Modal,
-} from "ant-design-vue";
-import { computed, ref } from "vue";
+import { Button, PageHeader, Table } from "ant-design-vue";
+import { ref } from "vue";
 import ProgramUsers from "./ProgramUsers.vue";
 import { useProgramsStore } from "@/store/programs";
 import { useRequest } from "vue-request";

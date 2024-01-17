@@ -80,7 +80,7 @@ watch(
   <Drawer :open="open" @close="handleCancel" width="800px">
     <template #title> Users of {{ props.name }} </template>
 
-    <List size="small" bordered :data-source="users">
+    <List size="small" bordered :data-source="users" :loading="loading">
       <template #renderItem="{ item }">
         <List.ListItem>
           <span>
