@@ -41,7 +41,7 @@ const columns = [
 </script>
 
 <template>
-  <PageHeader title="Users" sub-title="Manage user accounts and roles">
+  <PageHeader title="Programs" sub-title="Manage programs and program users">
     <template #extra>
       <router-link to="/users/manage-roles">
         <Button>Manage Programs</Button>

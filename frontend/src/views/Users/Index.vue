@@ -12,9 +12,10 @@ import InvitationDrawer from "./InvitationDrawer.vue";
 import { useAccountStore } from "@/store/account";
 import { useRequest } from "vue-request";
 import { User, UserRole } from "@/models/user";
+import AssignRoleModal from "./AssignRoleModal.vue";
 
 const store = useAccountStore();
-const { data: users, run, loading } = useRequest(store.fetchUsers, {
+const { loading } = useRequest(store.fetchUsers, {
   onSuccess: (data) => {
     console.log(data);
     store.users = data;
@@ -23,6 +24,10 @@ const { data: users, run, loading } = useRequest(store.fetchUsers, {
 
 const modal = ref({
   open: false,
+});
+const assignRoleModal = ref({
+  open: false,
+  user_id: undefined as number,
 });
 
 const columns = [
@@ -64,7 +69,7 @@ const getUserRoles = computed(() => {
     </template>
   </PageHeader>
 
-  <Table :columns="columns" :data-source="users" :loading="loading">
+  <Table :columns="columns" :data-source="store.users" :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         {{ record.first_name }} {{ record.last_name }}
@@ -79,10 +84,29 @@ const getUserRoles = computed(() => {
       </template>
 
       <template v-else-if="column.key === 'action'">
-        <span> </span>
+        <Button
+          size="small"
+          @click="
+            assignRoleModal.open = true;
+            assignRoleModal.user_id = record.id;
+          "
+          >Manage Roles
+        </Button>
       </template>
     </template>
   </Table>
 
   <InvitationDrawer :open="modal.open" @closed="modal.open = false" />
+
+  <!-- Assign roles modal -->
+  <template v-if="assignRoleModal.open">
+    <AssignRoleModal
+      :open="assignRoleModal.open"
+      :user-id="assignRoleModal.user_id"
+      @closed="
+        assignRoleModal.open = false;
+        assignRoleModal.user_id = undefined;
+      "
+    ></AssignRoleModal>
+  </template>
 </template>
