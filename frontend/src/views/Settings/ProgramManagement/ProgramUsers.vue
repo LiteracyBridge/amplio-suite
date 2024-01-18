@@ -10,7 +10,7 @@ import {
   ListItemMeta,
 } from "ant-design-vue";
 
-import { computed, createVNode, nextTick, reactive, ref, watch } from "vue";
+import { computed, createVNode, ref, watch } from "vue";
 import { ApiRequest } from "@/api";
 import { useRequest } from "vue-request";
 import { ProgramUser, User } from "@/models/user";
@@ -64,7 +64,6 @@ function removeUser(userId: number) {
       )
         .then(async (resp) => {
           store.users = resp;
-          await nextTick()
           notification.success({
             message: "User Remove!",
             description: `The user has been removed from the program.`,
@@ -94,16 +93,6 @@ const programUsers = computed(() => {
     ) || []
   );
 });
-
-// watch(
-//   props,
-//   (newProps, _oldProps) => {
-//     if (newProps.open) {
-//       run(props.programId);
-//     }
-//   },
-//   { deep: true }
-// );
 </script>
 
 <template>
@@ -130,10 +119,7 @@ const programUsers = computed(() => {
               >Remove</Button
             >
 
-            <Button
-              size="small"
-              type="link"
-              @click="showOrHideRoleModal(item.id, 'show')"
+            <Button size="small" type="link" @click="showOrHideRoleModal(item.id, 'show')"
               >Edit Roles</Button
             >
           </template>

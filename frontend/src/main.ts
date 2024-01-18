@@ -67,7 +67,7 @@ const app = createApp(App);
 
 // Vue Request
 setGlobalOptions({
-  cacheTime: 20 * 60 * 1000, // 20 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
 });
 
 // if (process.env.NODE_ENV === "development") {
