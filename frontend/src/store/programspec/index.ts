@@ -909,7 +909,9 @@ export const useProgramSpecStore = defineStore("programspec", {
       const messageIx = (payload.playlist.messages ?? []).findIndex(
         (msg) => msg.title === payload.message.title
       );
+
       payload.playlist.messages.splice(messageIx, 1);
+      this.$state.changed = true;
     },
 
     setMessageTitle(payload: {
