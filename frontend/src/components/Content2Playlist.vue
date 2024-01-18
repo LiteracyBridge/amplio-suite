@@ -48,12 +48,8 @@
           @end="dragging = false"
           item-key="position"
         >
-          <template #item="{ element, index: index }">
-            <div
-              v-for="message in messages"
-              :key="message.position"
-              class="flex tag-message"
-            >
+          <template #item="{ element: message, index: index }">
+            <div :key="index" class="flex tag-message">
               <content2-message
                 class="w-full"
                 :deployment="deployment"
