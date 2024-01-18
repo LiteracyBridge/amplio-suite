@@ -266,7 +266,9 @@ const routes: any = [
         path: "users",
         name: "settings.users",
         component: () =>
-          import(/* webpackChunkName: "download" */ "../views/Users/Index.vue"),
+          import(
+            /* webpackChunkName: "download" */ "../views/Settings/Users/Index.vue"
+          ),
         beforeEnter: requireAuth,
       },
       {
@@ -274,7 +276,7 @@ const routes: any = [
         name: "settings.roles",
         component: () =>
           import(
-            /* webpackChunkName: "download" */ "../views/Users/ManageRoles.vue"
+            /* webpackChunkName: "download" */ "../views/Settings/Users/ManageRoles.vue"
           ),
       },
       {

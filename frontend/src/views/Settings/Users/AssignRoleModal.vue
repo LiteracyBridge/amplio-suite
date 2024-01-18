@@ -1,27 +1,8 @@
 <script lang="ts" setup>
-import {
-  Button,
-  FormItem,
-  Form,
-  DescriptionsItem,
-  PageHeader,
-  List,
-  ListItem,
-  Modal,
-  Tabs,
-  TabPane,
-  Row,
-  Col,
-  Table,
-  Tag,
-  SelectOption,
-  Select,
-  Spin,
-} from "ant-design-vue";
+import { FormItem, Form, Modal, SelectOption, Select, Spin } from "ant-design-vue";
 import { computed, createVNode, onMounted, reactive, ref, watch } from "vue";
 import { useRolesStore } from "@/store/roles.store";
 import { useRequest } from "vue-request";
-import { useProgramsStore } from "@/store/programs";
 import { RequestCacheKeys } from "@/models/constants";
 import { useAccountStore } from "@/store/account";
 
@@ -49,15 +30,9 @@ const { loading } = useRequest(store.fetchRoles, {
   },
 });
 
-const { loading: programsLoading } = useRequest(useProgramsStore().getOrgPrograms, {
-  cacheKey: RequestCacheKeys.org_programs,
-  onSuccess: (data) => {
-    useProgramsStore().organisationPrograms = data;
-  },
-});
-
 function handleCancel() {
   form.program_id = undefined;
+  form.user_id = undefined;
   form.roles = [];
   emit("closed", true);
 }
@@ -79,7 +54,6 @@ const existingUserRoles = computed(() => {
   }
   return [];
 });
-
 
 onMounted(() => {
   if (props.open) {
@@ -132,27 +106,6 @@ onMounted(() => {
             >
           </Select>
         </FormItem>
-
-        <!-- <FormItem
-          label="Select program"
-          help="Selecting a program restrict the roles to only the selected program"
-          name="programs"
-        >
-          <Select
-            v-model:value="form.program_id"
-            :show-search="true"
-            :loading="programsLoading"
-            style="width: 100%"
-            placeholder="Please select programs"
-          >
-            <SelectOption
-              :value="p.id"
-              :label="p.program_id"
-              v-for="p in useProgramsStore().organisationPrograms"
-              >{{ p.program_id }}</SelectOption
-            >
-          </Select>
-        </FormItem> -->
       </Form>
     </Spin>
   </Modal>
