@@ -48,7 +48,7 @@
           @end="dragging = false"
           item-key="position"
         >
-          <template #item="{ element: playlist, index: index }">
+          <template #item="{ element, index: index }">
             <div
               v-for="message in messages"
               :key="message.position"
