@@ -42,13 +42,6 @@ const columns = [
 
 <template>
   <PageHeader title="Programs" sub-title="Manage programs and program users">
-    <template #extra>
-      <router-link to="/users/manage-roles">
-        <Button>Manage Programs</Button>
-      </router-link>
-
-      <Button type="primary" @click="modal.open = true">Invitations</Button>
-    </template>
   </PageHeader>
 
   <Table :columns="columns" :data-source="programs" :loading="loading">
