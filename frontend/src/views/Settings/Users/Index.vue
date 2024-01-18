@@ -16,8 +16,8 @@ import AssignRoleModal from "./AssignRoleModal.vue";
 
 const store = useAccountStore();
 const { loading } = useRequest(store.fetchUsers, {
+  cacheKey: RequestCacheKeys.org_users,
   onSuccess: (data) => {
-    console.log(data);
     store.users = data;
   },
 });
@@ -50,12 +50,6 @@ const columns = [
     key: "action",
   },
 ];
-
-const getUserRoles = computed(() => {
-  return (user: User | Record<string, any>) => {
-    return user.roles.flatMap((role: UserRole) => role.role.name).join(", ");
-  };
-});
 </script>
 
 <template>
@@ -80,7 +74,7 @@ const getUserRoles = computed(() => {
       </template>
 
       <template v-else-if="column.key === 'roles'">
-        {{ getUserRoles(record) }}
+        {{ store.rolesToString(record.roles) }}
       </template>
 
       <template v-else-if="column.key === 'action'">

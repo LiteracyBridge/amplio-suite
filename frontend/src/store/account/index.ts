@@ -1,7 +1,7 @@
 // import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
 import { Auth } from "aws-amplify";
-import { Invitation, User } from "@/models/user";
+import { Invitation, User, UserRole } from "@/models/user";
 import { ApiRequest } from "@/api";
 import { Permission } from "@/models/role";
 
@@ -66,6 +66,15 @@ export const useAccountStore = defineStore("account", {
           throw new Error("No current user");
         }
       });
+    },
+    /**
+     * Returns user roles as a comma separated string
+     *
+     */
+    rolesToString(roles: UserRole[]) {
+      return (roles || [])
+        .flatMap((role: UserRole) => role.role.name)
+        .join(", ");
     },
     /**
      * Returns true if the user has the given permission

@@ -6,16 +6,21 @@ import {
   Drawer,
   Table,
   List,
+  ListItem,
   ListItemMeta,
 } from "ant-design-vue";
 
-import { createVNode, reactive, ref, watch } from "vue";
+import { computed, createVNode, nextTick, reactive, ref, watch } from "vue";
 import { ApiRequest } from "@/api";
 import { useRequest } from "vue-request";
-import { Invitation, ProgramUser } from "@/models/user";
+import { ProgramUser, User } from "@/models/user";
 
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
 import { useProgramsStore } from "@/store/programs";
+import { useAccountStore } from "@/store/account";
+
+import AssignRoleModal from "../Users/AssignRoleModal.vue";
+import { RequestCacheKeys } from "@/models/constants";
 
 const props = defineProps<{
   open: boolean;
@@ -27,18 +32,24 @@ const emit = defineEmits<{
   (e: "closed", value: boolean): void;
 }>();
 
-const store = useProgramsStore();
+const store = useAccountStore();
+const assignRoleModal = ref({
+  open: false,
+  user_id: undefined as number,
+});
 
-const { data: users, loading, run } = useRequest(store.getProgramUsers, {
-  defaultParams: [props.programId],
-  manual: true,
+const { loading } = useRequest(store.fetchUsers, {
+  cacheKey: RequestCacheKeys.org_users,
+  onSuccess: (data) => {
+    store.users = data;
+  },
 });
 
 function handleCancel() {
   emit("closed", true);
 }
 
-function removeUser(id: number, userId: number) {
+function removeUser(userId: number) {
   Modal.confirm({
     title: "Are you sure you want to remove this user?",
     icon: createVNode(ExclamationCircleFilled),
@@ -48,11 +59,12 @@ function removeUser(id: number, userId: number) {
     cancelText: "Cancel",
     onOk: async () => {
       loading.value = true;
-      return ApiRequest.delete<ProgramUser>(
-        `programs/${props.programId}?id=${id}&user_id=${userId}`
+      return ApiRequest.delete<User>(
+        `programs/${props.programId}/users?user_id=${userId}`
       )
-        .then((resp) => {
-          users.value = resp;
+        .then(async (resp) => {
+          store.users = resp;
+          await nextTick()
           notification.success({
             message: "User Remove!",
             description: `The user has been removed from the program.`,
@@ -65,41 +77,83 @@ function removeUser(id: number, userId: number) {
   });
 }
 
-watch(
-  props,
-  (newProps, _oldProps) => {
-    if (newProps.open) {
-      run(props.programId);
-    }
-  },
-  { deep: true }
-);
+function showOrHideRoleModal(user_id: number | undefined, state: "show" | "hide") {
+  if (state === "show") {
+    assignRoleModal.value.user_id = user_id;
+    assignRoleModal.value.open = true;
+  } else {
+    assignRoleModal.value.open = false;
+    assignRoleModal.value.user_id = undefined;
+  }
+}
+
+const programUsers = computed(() => {
+  return (
+    store.users.filter(
+      (u) => u.roles.find((r) => r.program_id == props.programId) != null
+    ) || []
+  );
+});
+
+// watch(
+//   props,
+//   (newProps, _oldProps) => {
+//     if (newProps.open) {
+//       run(props.programId);
+//     }
+//   },
+//   { deep: true }
+// );
 </script>
 
 <template>
   <Drawer :open="open" @close="handleCancel" width="800px">
     <template #title> Users of {{ props.name }} </template>
 
-    <List size="small" bordered :data-source="users" :loading="loading">
-      <template #renderItem="{ item }">
-        <List.ListItem>
-          <span>
-            {{ item.user.first_name }} {{ item.user.last_name }} ({{ item.user.email }})
-          </span>
+    <template #extra>
+      <Button type="primary" @click="showOrHideRoleModal(undefined, 'show')"
+        >Add User</Button
+      >
+    </template>
 
-          <ListItemMeta description="Role 1, Role 2, Role 3"> </ListItemMeta>
+    <List size="small" bordered :data-source="programUsers" :loading="loading">
+      <template #renderItem="{ item }">
+        <ListItem>
+          <ListItemMeta :description="store.rolesToString(item.roles)">
+            <template #title>
+              <span> {{ item.first_name }} {{ item.last_name }} ({{ item.email }}) </span>
+            </template>
+          </ListItemMeta>
 
           <template #actions>
-            <Button size="small" :danger="true" @click="removeUser(item.id, item.user_id)"
+            <Button type="link" size="small" :danger="true" @click="removeUser(item.id)"
               >Remove</Button
             >
+
+            <Button
+              size="small"
+              type="link"
+              @click="showOrHideRoleModal(item.id, 'show')"
+              >Edit Roles</Button
+            >
           </template>
-        </List.ListItem>
+        </ListItem>
       </template>
 
-      <!-- <template #footer>
-        <Button :block="true">Add User</Button>
-      </template> -->
+      <template #footer>
+        <Button :block="true" @click="showOrHideRoleModal(undefined, 'show')"
+          >Add User</Button
+        >
+      </template>
     </List>
+
+    <template v-if="assignRoleModal.open">
+      <AssignRoleModal
+        :open="assignRoleModal.open"
+        :user-id="assignRoleModal.user_id"
+        :program-id="props.programId"
+        @closed="showOrHideRoleModal(undefined, 'hide')"
+      ></AssignRoleModal>
+    </template>
   </Drawer>
 </template>

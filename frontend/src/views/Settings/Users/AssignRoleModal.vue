@@ -70,6 +70,7 @@ onMounted(() => {
     :confirm-loading="store.loading"
     @cancel="handleCancel()"
     @ok="save()"
+    :mask-closable="false"
   >
     <Spin :spinning="store.loading || loading">
       <Form layout="vertical" :model="form">

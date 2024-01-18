@@ -6,6 +6,7 @@ export class ProgramUser {
   program_id: number;
   program: Program;
   user: User;
+  roles: UserRole[];
 }
 
 export class UserRole {
