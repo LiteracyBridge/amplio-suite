@@ -27,8 +27,6 @@ import { toSentenceCase, toTitleCase } from "@/utils";
 import { User } from "@/models/user";
 import { useAccountStore } from "@/store/account";
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
-import { useProgramsStore } from "@/store/programs";
-import { RequestCacheKeys } from "@/models/constants";
 
 const store = useRolesStore();
 
@@ -57,15 +55,6 @@ const { loading } = useRequest(store.fetchRoles, {
     roleTabKey.value = data.length > 0 ? data[0].id : undefined;
   },
 });
-const { data: programs, loading: programsLoading } = useRequest(
-  useProgramsStore().getOrgPrograms,
-  {
-    cacheKey: RequestCacheKeys.org_programs,
-    onSuccess: (data) => {
-      useProgramsStore().organisationPrograms = data;
-    },
-  }
-);
 
 const columns = [
   {
@@ -75,13 +64,7 @@ const columns = [
   },
   {
     title: "Email Address",
-    dataIndex: "email",
     key: "email",
-  },
-  {
-    title: "Roles",
-    dataIndex: "roles",
-    key: "roles",
   },
   {
     title: "Actions",
@@ -134,15 +117,6 @@ const deleteRole = (role_id: number) => {
     onCancel() {},
   });
 };
-
-const getUsersToAssign = computed(() => {
-  // TODO: Diff select roles
-  return (role: Role): User[] => {
-    return useAccountStore().users.filter(
-      (user) => user.roles.find((r) => r.role_id == role.id) == null
-    );
-  };
-});
 </script>
 
 <template>
@@ -167,10 +141,6 @@ const getUsersToAssign = computed(() => {
         v-model:activeKey="roleTabKey"
       >
         <Tabs size="large" :animated="false">
-          <template #rightExtra>
-            <Button type="primary" @click="assignModal.open = true">Assign Users</Button>
-          </template>
-
           <!-- Permissions of the select role -->
           <TabPane key="1" tab="Permissions">
             <List bordered :data-source="getRolePermissions(role)">
@@ -205,7 +175,7 @@ const getUsersToAssign = computed(() => {
                   {{ user.last_name }}
                 </template>
 
-                <template v-if="column.key === 'EMAIL'">
+                <template v-if="column.key === 'email'">
                   <a mailto="{{ record.email }}"> {{ user.email }}</a>
                 </template>
 
