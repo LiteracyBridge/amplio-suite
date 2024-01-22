@@ -6,6 +6,7 @@ import {
   PageHeader,
   Table,
   Modal,
+  Typography,
 } from "ant-design-vue";
 import { computed, ref } from "vue";
 import InvitationDrawer from "./InvitationDrawer.vue";
@@ -38,13 +39,11 @@ const columns = [
     key: "name",
   },
   {
-    title: "Email Address",
-    dataIndex: "email",
-    key: "email",
+    title: "Organisation",
+    key: "org",
   },
   {
     title: "Roles",
-    dataIndex: "roles",
     key: "roles",
   },
   {
@@ -68,11 +67,14 @@ const columns = [
   <Table :columns="columns" :data-source="store.users" :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
-        {{ record.first_name }} {{ record.last_name }}
+        <span class="pr-4 block text-gray-900">
+          {{ record.first_name }} {{ record.last_name }}
+        </span>
+        <Typography.Text copyable class="pl-2"> {{ record.email }}</Typography.Text>
       </template>
 
-      <template v-else-if="column.key === 'email'">
-        {{ record.email }}
+      <template v-else-if="column.key === 'org'">
+        {{ record.organisation?.name }}
       </template>
 
       <template v-else-if="column.key === 'roles'">

@@ -1,3 +1,4 @@
+import type { Organisation } from "./organisation";
 import { Program } from "./program";
 import { Permission, Role } from "./role";
 
@@ -35,6 +36,7 @@ export class User {
 
   roles: UserRole[] = [];
   programs: ProgramUser[] = [];
+  organisation: Organisation;
 
   /**
    * Map of permissions that can be used to check permissions in the UI

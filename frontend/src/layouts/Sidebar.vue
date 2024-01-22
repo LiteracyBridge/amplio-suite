@@ -20,25 +20,7 @@ const collapsed = ref(false);
 const config = ref({
   activeMenu: null,
 });
-// const isActive = (item: { name: string; path: string }) => {
-//   if (item.name) {
-//     return router.currentRoute.value.name === item.name;
-//   } else if (item.path) {
-//     return router.currentRoute.value.path === item.path;
-//   }
-//   return false;
-// };
 
-// const isExactActive = (item) => {
-//   if (item.params) {
-//     return (
-//       JSON.stringify(router.currentRoute.value.params) === JSON.stringify(item.params)
-//     );
-//   }
-//   return true;
-// };
-
-// const projectStore = useProjectStore();
 const menuItems: Array<{
   label: string;
   path?: string;
@@ -105,14 +87,6 @@ const menuItems: Array<{
     <Divider></Divider>
 
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
-      <MenuItem v-for="(item, index) in menuItems" :key="index">
-        <router-link v-if="item.path" :to="item.path">
-          <span role="link">
-            {{ item.label }}
-          </span>
-        </router-link>
-      </MenuItem>
-
       <!-- FIXME: Add permission check here -->
       <Menu.SubMenu label="Settings" title="Settings" key="settings">
         <MenuItem key="manage-users">
@@ -129,12 +103,11 @@ const menuItems: Array<{
 
       <Divider></Divider>
 
-      <MenuItem key="change-programs">
-        <!-- TODO: add a modal for changing system program -->
+      <!-- <MenuItem key="change-programs">
         <router-link to="/settings/change-programs">
           <span role="link"> Programs </span>
         </router-link>
-      </MenuItem>
+      </MenuItem> -->
     </Menu>
   </LayoutSider>
 </template>
