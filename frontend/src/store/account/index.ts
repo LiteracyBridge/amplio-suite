@@ -31,7 +31,7 @@ export const useAccountStore = defineStore("account", {
 
   getters: {
     programs: (state) => {
-      return state.user.programs.map((pu) => pu.program);
+      return (state.user.programs || []).map((pu) => pu.program);
     },
   },
   actions: {
@@ -141,7 +141,9 @@ export const useAccountStore = defineStore("account", {
         });
 
         // Set active program
-        const activeProgram = localStorage.getItem(LocalStorageKeys.active_program);
+        const activeProgram = localStorage.getItem(
+          LocalStorageKeys.active_program
+        );
         if (activeProgram != null) {
           useAppStore().setActiveProgram(JSON.parse(activeProgram).id);
         } else if (this.user.programs.length > 0) {
