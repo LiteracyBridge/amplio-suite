@@ -12,7 +12,7 @@ import {
   Typography,
   Avatar,
 } from "ant-design-vue";
-import { UserOutlined } from "@ant-design/icons-vue";
+import { DatabaseOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 
 const collapsed = ref(false);
@@ -20,54 +20,6 @@ const collapsed = ref(false);
 const config = ref({
   activeMenu: null,
 });
-
-const menuItems: Array<{
-  label: string;
-  path?: string;
-  name?: string;
-  params?: Record<string, string>;
-}> = [
-  { label: "Dashboard", path: "/" },
-  { label: "Users", path: "/users" },
-  // { label: "Background and context", path: "/background-and-context" },
-  // {
-  //   label: "Project Objectives",
-  //   path: "/project-objectives",
-  // },
-  // { label: "Audiences", path: "/audiences" },
-  // { label: "Behavioral Drivers", path: "/drivers" },
-  // { label: "SBC Approaches", path: "/interventions" },
-  // { label: "Theory of Change", path: "/toc" },
-  // { label: "Communications and Messaging", path: "/communications-and-messaging" },
-  // { label: "Monitoring and Evaluation", path: "/monitoring-and-evaluation" },
-  // {
-  //   label: "Project Management",
-  //   path: "/project-management",
-  // },
-  // { label: "Project Documents", path: "/project-documents" },
-];
-
-// const projectSelected = computed(
-//   () => projectStore.prj_id !== null && projectStore.prj_id !== undefined
-// );
-// const showSideNav = ref(projectSelected.value);
-// const store = useSideNavStore();
-// const toggleSideNav = () => {
-//   if (showSideNav.value) {
-//     store.hide();
-//   } else {
-//     store.show();
-//   }
-//   showSideNav.value = !showSideNav.value;
-// };
-
-// watch(projectSelected, (newVal) => {
-//   if (newVal) {
-//     showSideNav.value = true;
-//   } else {
-//     showSideNav.value = false;
-//   }
-// });
 </script>
 
 <template>
@@ -89,12 +41,18 @@ const menuItems: Array<{
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <!-- FIXME: Add permission check here -->
       <Menu.SubMenu label="Settings" title="Settings" key="settings">
+        <template #icon><SettingOutlined /></template>
+
         <MenuItem key="manage-users">
+          <template #icon><UserOutlined /></template>
+
           <router-link to="/settings/users">
             <span role="link"> User Management </span>
           </router-link>
         </MenuItem>
         <MenuItem key="manage-programs">
+          <template #icon> <DatabaseOutlined /> </template>
+
           <router-link to="/settings/programs">
             <span role="link"> Programs Management </span>
           </router-link>
