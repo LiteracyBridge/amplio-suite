@@ -55,11 +55,10 @@ export const useAccountStore = defineStore("account", {
     },
 
     async logout() {
-      this.setUser({ email: "", name: "", img: "", token: "" });
-      // TODO: Logout from server & redirect user to login page
-
-      // Auth.logout();
-      // cognitoAuth.logout();
+     async logout() {
+      Auth.signOut().then((_resp) => {
+        this.setUser({ email: "", name: "", img: "", token: "" });
+      });
     },
     async requireAuth() {
       return Auth.currentAuthenticatedUser().then((data) => {
