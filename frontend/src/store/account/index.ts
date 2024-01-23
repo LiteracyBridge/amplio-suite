@@ -5,6 +5,7 @@ import { Invitation, User, UserRole } from "@/models/user";
 import { ApiRequest } from "@/api";
 import { Permission } from "@/models/role";
 import { Organisation } from "@/models/organisation";
+import { useAppStore } from "../app.store";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
@@ -29,7 +30,7 @@ export const useAccountStore = defineStore("account", {
   getters: {
     programs: (state) => {
       return state.user.programs.map((pu) => pu.program);
-    }
+    },
   },
   actions: {
     authRequest() {
@@ -129,6 +130,16 @@ export const useAccountStore = defineStore("account", {
           ...resp,
           token: token,
         });
+
+        // Set active program
+        const activeProgram = localStorage.getItem("activeProgram");
+        if (activeProgram != null) {
+          useAppStore().setActiveProgram(JSON.parse(activeProgram).id);
+        } else if (this.user.programs.length > 0) {
+          useAppStore().setActiveProgram(this.user.programs[0].program.id);
+        } else {
+          // TODO: user has no programs, decide what to do
+        }
       });
     },
     fetchOrganisations() {

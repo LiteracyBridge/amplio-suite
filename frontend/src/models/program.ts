@@ -2,6 +2,7 @@ import { Language } from "./language";
 
 class Project {
   name: string;
+  code: string;
 }
 
 export class Program {

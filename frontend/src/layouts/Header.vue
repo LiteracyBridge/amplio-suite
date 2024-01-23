@@ -27,6 +27,7 @@ import {
   Divider,
   Tooltip,
   SelectOption,
+  Modal,
 } from "ant-design-vue";
 import { useAppStore } from "@/store/app.store";
 import { useAccountStore } from "@/store/account";
@@ -70,6 +71,18 @@ const profileVisible = ref(false),
 //   projectStore.setPrj(prjId, false).then(() => window.location.reload());
 //   // router.push('/forms/basic');
 // }
+
+function changeProgram(val: number) {
+  Modal.confirm({
+    title: "Are you sure you want to change program?",
+    okText: "Yes",
+    cancelText: "No",
+    onOk: () => {
+      appStore.setActiveProgram(val);
+      router.push("/");
+    },
+  });
+}
 </script>
 
 <template>
@@ -101,7 +114,7 @@ const profileVisible = ref(false),
           :filter-option="true"
           class="w-96"
           placeholder="Select a program"
-          @change="appStore.setActiveProgram($event as number)"
+          @change="changeProgram($event as number)"
         >
           <SelectOption
             v-for="item in userStore.programs"
@@ -109,15 +122,12 @@ const profileVisible = ref(false),
             :value="item.id"
             :label="item.project?.name"
           >
-            {{ item.project.name }}
+            {{ item.project.name }} ({{ item.program_id }})
           </SelectOption>
         </Select>
-
       </div>
 
       <div>
-
-
         <Dropdown trigger="hover" class="mr-5">
           <Button>
             {{ userStore.user?.name }}

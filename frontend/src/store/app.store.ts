@@ -19,6 +19,9 @@ export const useAppStore = defineStore("app-config-store", {
 
       this.activeProgram.id = +id;
       this.activeProgram.data = program;
+
+      // Save to local storage
+      localStorage.setItem("activeProgram", JSON.stringify(this.activeProgram));
     },
   },
 });
