@@ -6,3 +6,7 @@ export enum RequestCacheKeys {
   org_users = "org_users",
   orgs = "orgs",
 }
+
+export enum LocalStorageKeys {
+  active_program = "active_program",
+}

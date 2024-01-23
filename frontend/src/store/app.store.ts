@@ -2,6 +2,7 @@ import { Program } from "@/models/program";
 import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
 import { message } from "ant-design-vue";
+import { LocalStorageKeys } from "@/models/constants";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
@@ -21,7 +22,10 @@ export const useAppStore = defineStore("app-config-store", {
       this.activeProgram.data = program;
 
       // Save to local storage
-      localStorage.setItem("activeProgram", JSON.stringify(this.activeProgram));
+      localStorage.setItem(
+        LocalStorageKeys.active_program,
+        JSON.stringify(this.activeProgram)
+      );
     },
   },
 });

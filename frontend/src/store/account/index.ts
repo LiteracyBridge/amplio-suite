@@ -6,6 +6,8 @@ import { ApiRequest } from "@/api";
 import { Permission } from "@/models/role";
 import { Organisation } from "@/models/organisation";
 import { useAppStore } from "../app.store";
+import { LocalStorageKeys, RequestCacheKeys } from "@/models/constants";
+import { clearCache } from "vue-request";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
@@ -53,11 +55,19 @@ export const useAccountStore = defineStore("account", {
       this.signUp.send = false;
       this.signUp.email = "";
     },
-
     async logout() {
-     async logout() {
       Auth.signOut().then((_resp) => {
         this.setUser({ email: "", name: "", img: "", token: "" });
+
+        // Clear local storage items
+        for (const key in Object.keys(LocalStorageKeys)) {
+          localStorage.removeItem(key);
+        }
+
+        // Clear vue request cache
+        for (const key in Object.keys(RequestCacheKeys)) {
+          clearCache(key);
+        }
       });
     },
     async requireAuth() {
@@ -131,7 +141,7 @@ export const useAccountStore = defineStore("account", {
         });
 
         // Set active program
-        const activeProgram = localStorage.getItem("activeProgram");
+        const activeProgram = localStorage.getItem(LocalStorageKeys.active_program);
         if (activeProgram != null) {
           useAppStore().setActiveProgram(JSON.parse(activeProgram).id);
         } else if (this.user.programs.length > 0) {
