@@ -7,6 +7,7 @@ import {
   Table,
   Modal,
   Typography,
+  Select,
 } from "ant-design-vue";
 import { computed, ref } from "vue";
 import InvitationDrawer from "./InvitationDrawer.vue";
@@ -41,6 +42,16 @@ const columns = [
   {
     title: "Organisation",
     key: "org",
+    // customFilterDropdown: true,
+    // onFilter: (value: string, record: User) =>
+    //   record.organisation?.toString().toLowerCase().includes(value.toLowerCase()),
+    // onFilterDropdownOpenChange: (visible) => {
+    //   if (visible) {
+    //     setTimeout(() => {
+    //       searchInput.value.focus();
+    //     }, 100);
+    //   }
+    // },
   },
   {
     title: "Roles",
@@ -65,6 +76,27 @@ const columns = [
   </PageHeader>
 
   <Table :columns="columns" :data-source="store.users" :loading="loading">
+    <!-- TODO: implement org filtering -->
+    <!-- <template
+      #customFilterDropdown="{
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        column,
+      }"
+    >
+      <div style="padding: 8px" v-if="column.key == 'org'">
+        <Select
+          :allow-clear="true"
+          :options="getOrgs"
+          :show-search="true"
+          :placeholder="`Search ${column.key}`"
+        >
+        </Select>
+      </div>
+    </template> -->
+
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         <span class="pr-4 block text-gray-900">

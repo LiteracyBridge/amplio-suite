@@ -5,12 +5,20 @@ import ProgramUsers from "./ProgramUsers.vue";
 import { useProgramsStore } from "@/store/programs";
 import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
+import { useAccountStore } from "@/store/account";
 
 const store = useProgramsStore();
-const { data: programs, run, loading } = useRequest(store.getOrgPrograms, {
+const { data: programs, loading } = useRequest(store.getOrgPrograms, {
   cacheKey: RequestCacheKeys.org_programs,
   onSuccess: (data) => {
     store.organisationPrograms = data;
+  },
+});
+const {} = useRequest(useAccountStore().fetchOrganisations, {
+  cacheKey: RequestCacheKeys.orgs,
+  cacheTime: 30 * 60 * 1000, // 30 minutes
+  onSuccess: (data) => {
+    useAccountStore().organisations = data;
   },
 });
 

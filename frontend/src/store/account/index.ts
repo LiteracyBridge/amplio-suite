@@ -4,10 +4,13 @@ import { Auth } from "aws-amplify";
 import { Invitation, User, UserRole } from "@/models/user";
 import { ApiRequest } from "@/api";
 import { Permission } from "@/models/role";
+import { Organisation } from "@/models/organisation";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
     users: [] as User[],
+    organisations: [] as Organisation[],
+    invitations: [] as Invitation[],
     status: "",
     user: {
       email: "",
@@ -23,8 +26,14 @@ export const useAccountStore = defineStore("account", {
     },
   }),
 
-  getters: {},
-
+  getters: {
+    // organisations: (store) => {
+    //   return store.users.flatMap((user) => ({
+    //     label: user?.organisation.name,
+    //     value: user?.organisation_id,
+    //   }));
+    // },
+  },
   actions: {
     authRequest() {
       this.status = "loading";
@@ -124,6 +133,9 @@ export const useAccountStore = defineStore("account", {
           token: token,
         });
       });
+    },
+    fetchOrganisations() {
+      return ApiRequest.get<Organisation>("users/organisations");
     },
   },
 });

@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import { Button, Modal, notification, Drawer, Table } from "ant-design-vue";
+import {
+  Button,
+  Modal,
+  notification,
+  Drawer,
+  ListItem,
+  ListItemMeta,
+  List,
+  Typography,
+} from "ant-design-vue";
 
 import { createVNode, reactive, ref } from "vue";
 import { ApiRequest } from "@/api";
@@ -26,23 +35,11 @@ const formState = reactive({
   email: "",
 });
 
-const { data: invitations, loading } = useRequest(store.fetchInvitations, {});
-
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
+const { loading } = useRequest(store.fetchInvitations, {
+  onSuccess: (data) => {
+    store.invitations = data;
   },
-  {
-    title: "Email Address",
-    key: "email",
-  },
-  {
-    title: "",
-    key: "action",
-  },
-];
+});
 
 function handleCancel() {
   formState.first_name = "";
@@ -63,7 +60,7 @@ function deleteInvitation(email: string) {
       loading.value = true;
       return ApiRequest.delete<Invitation>(`users/invitations/${email}`)
         .then((resp) => {
-          invitations.value = resp;
+          store.invitations = resp;
           notification.success({
             message: "Invitation Deleted!",
             description: `The invitation for ${email} has been deleted.`,
@@ -83,36 +80,30 @@ function deleteInvitation(email: string) {
       <Button type="primary" @click="isOpen = true">Invite someone</Button>
     </template>
 
-    <Table :columns="columns" :data-source="invitations" size="small" :loading="loading">
-      <template #bodyCell="{ column, record: user }">
-        <template v-if="column.key === 'name'">
-          {{ user.first_name }} {{ user.last_name }}
-        </template>
+    <List bordered :data-source="store.invitations" :loading="loading">
+      <template #renderItem="{ item }">
+        <ListItem>
+          <ListItemMeta :description="item.organisation?.name">
+            <template #title>
+              <span> {{ item.first_name }} {{ item.last_name }}</span>
+              <Typography.Paragraph copyable> {{ item.email }}</Typography.Paragraph>
+            </template>
+          </ListItemMeta>
 
-        <template v-if="column.key === 'email'">
-          <a mailto="{{ record.email }}"> {{ user.email }}</a>
-        </template>
-
-        <template v-else-if="column.key === 'action'">
-          <Button
-            type="primary"
-            title="Revoke role from user"
-            :ghost="true"
-            size="small"
-            :danger="true"
-            @click="deleteInvitation(user.email)"
-            >Delete
-          </Button>
-        </template>
+          <template #actions>
+            <Button
+              type="link"
+              title="Revoke role from user"
+              size="small"
+              :danger="true"
+              @click="deleteInvitation(item.email)"
+              >Delete
+            </Button>
+          </template>
+        </ListItem>
       </template>
-    </Table>
+    </List>
 
-    <InviteModal
-      :open="isOpen"
-      @closed="
-        isOpen = false;
-        invitations = $event;
-      "
-    />
+    <InviteModal :open="isOpen" @closed="isOpen = false" />
   </Drawer>
 </template>
