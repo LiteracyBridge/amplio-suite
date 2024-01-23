@@ -27,12 +27,9 @@ export const useAccountStore = defineStore("account", {
   }),
 
   getters: {
-    // organisations: (store) => {
-    //   return store.users.flatMap((user) => ({
-    //     label: user?.organisation.name,
-    //     value: user?.organisation_id,
-    //   }));
-    // },
+    programs: (state) => {
+      return state.user.programs.map((pu) => pu.program);
+    }
   },
   actions: {
     authRequest() {

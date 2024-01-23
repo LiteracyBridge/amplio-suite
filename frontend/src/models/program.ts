@@ -27,4 +27,6 @@ export class Program {
 
   // For form fields
   new_languages: Language[] = [];
+
+  project: Project;
 }

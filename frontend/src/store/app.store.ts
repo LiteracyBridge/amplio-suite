@@ -1,7 +1,24 @@
+import { Program } from "@/models/program";
 import { defineStore } from "pinia";
+import { useAccountStore } from "./account";
+import { message } from "ant-design-vue";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
-    sidebarVisible: false
-  })
+    sidebarVisible: false,
+    activeProgram: { id: undefined as number, data: undefined as Program },
+  }),
+  actions: {
+    setActiveProgram(id: number | string) {
+      const program = useAccountStore().programs.find((p) => p.id == id);
+
+      if (program == null) {
+        message.error("Program not found");
+        return;
+      }
+
+      this.activeProgram.id = +id;
+      this.activeProgram.data = program;
+    },
+  },
 });

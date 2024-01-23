@@ -16,6 +16,7 @@ import {
 import {
   Popconfirm,
   Menu,
+  Select,
   DropdownButton,
   LayoutHeader,
   MenuItem,
@@ -25,6 +26,7 @@ import {
   message,
   Divider,
   Tooltip,
+  SelectOption,
 } from "ant-design-vue";
 import { useAppStore } from "@/store/app.store";
 import { useAccountStore } from "@/store/account";
@@ -73,8 +75,8 @@ const profileVisible = ref(false),
 <template>
   <Profile :visible="profileVisible" @close="profileVisible = false"></Profile>
 
-  <FeedbackModal :visible="feedbackModalVisible" @close="feedbackModalVisible = false">
-  </FeedbackModal>
+  <!-- <FeedbackModal :visible="feedbackModalVisible" @close="feedbackModalVisible = false">
+  </FeedbackModal> -->
 
   <LayoutHeader
     :has-sider="true"
@@ -93,85 +95,30 @@ const profileVisible = ref(false),
           @click="() => (appStore.sidebarVisible = !appStore.sidebarVisible)"
         />
 
-        <Dropdown :trigger="['click']">
-          <Tooltip title="Click to change project">
-            <a @click.prevent style="color: inherit">
-              <!-- {{ projectStore.projectName }} -->
-              [Name of Project Here]
-              <DownOutlined />
-            </a>
-          </Tooltip>
+        <Select
+          v-model:value="appStore.activeProgram.id"
+          :show-search="true"
+          :filter-option="true"
+          class="w-96"
+          placeholder="Select a program"
+          @change="appStore.setActiveProgram($event as number)"
+        >
+          <SelectOption
+            v-for="item in userStore.programs"
+            :key="item.id"
+            :value="item.id"
+            :label="item.project?.name"
+          >
+            {{ item.project.name }}
+          </SelectOption>
+        </Select>
 
-          <template #overlay>
-            <Menu>
-              <MenuItem v-for="prj in [{ name: 'me', id: 1 }]" :key="prj.id">
-                <!-- <MenuItem v-for="prj in projectStore.projects()" :key="prj.id"> -->
-                <Popconfirm
-                  title="Are you sure to switch project?"
-                  ok-text="Yes"
-                  cancel-text="No"
-                >
-                  <!-- @confirm="changeProject(prj.id)" -->
-                  <a href="javascript:;">{{ prj.name }}</a>
-                </Popconfirm>
-              </MenuItem>
-            </Menu>
-          </template>
-        </Dropdown>
       </div>
 
       <div>
-        <Space style="padding-right: 52px">
-          <!-- <router-link to="/guidance">
-            <span>Guidance</span>
-          </router-link> -->
-          <span>
-            <a
-              href="https://docs.google.com/document/d/e/2PACX-1vT9HWBBvSDDN_tir68QaYGiF0AzUP7XAZRhAf9C98pB0j6XhD_LNpzXv2szsyTk0I2OmJg9CUjuAxM1/pub"
-              target="_blank"
-              >Guidance</a
-            ></span
-          >
-          <!-- <span>Resources</span> -->
 
-          <router-link to="/partners">
-            <span>About</span>
-          </router-link>
 
-          <Divider type="vertical" style="background-color: white" />
-
-          <Dropdown>
-            <span>
-              Need Help?
-              <DownOutlined />
-            </span>
-
-            <template #overlay>
-              <Menu>
-                <MenuItem>
-                  <a href="#" @click.prevent="feedbackModalVisible = true"
-                    >Sends Us Feedback</a
-                  >
-                </MenuItem>
-
-                <MenuItem>
-                  <Tooltip
-                    title="You will be taken to a Discourse, a discussion forum for the Impact Designer"
-                  >
-                    <a
-                      href="https://sbcimpact.discourse.group"
-                      target="_blank"
-                      rel="noopener"
-                      >Join Discussion</a
-                    >
-                  </Tooltip>
-                </MenuItem>
-              </Menu>
-            </template>
-          </Dropdown>
-        </Space>
-
-        <Dropdown trigger="hover">
+        <Dropdown trigger="hover" class="mr-5">
           <Button>
             {{ userStore.user?.name }}
 
