@@ -1,6 +1,6 @@
 <template>
   <section class="relative min-h-200-px p-6 pt-0">
-    <loading v-if="specStore.status !== 'success'" class="-ml-6 rounded-b-lg" />
+    <loading v-if="specStore.status == 'loading'" class="-ml-6 rounded-b-lg" />
 
     <program-header
       title="General"
