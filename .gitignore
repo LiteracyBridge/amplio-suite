@@ -6,6 +6,7 @@ installer/jre
 # Frontend
 frontend/dist
 frontend/node_modules
+frontend/tsconfig.tsbuildinfo
 yarn-debug.log*
 yarn-error.log*
 
@@ -36,3 +37,6 @@ proxy/resolver
 output
 partial.zip
 python/
+venv
+.python-version
+*.code-workspace

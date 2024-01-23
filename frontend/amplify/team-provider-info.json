@@ -1,0 +1,31 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ampliosuite-staging-210958-authRole",
+      "UnauthRoleArn": "arn:aws:iam::856701711513:role/amplify-ampliosuite-staging-210958-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::856701711513:role/amplify-ampliosuite-staging-210958-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-ampliosuite-staging-210958-deployment",
+      "UnauthRoleName": "amplify-ampliosuite-staging-210958-unauthRole",
+      "StackName": "amplify-ampliosuite-staging-210958",
+      "StackId": "arn:aws:cloudformation:us-west-2:856701711513:stack/amplify-ampliosuite-staging-210958/84388bc0-769f-11ee-8de0-02a86556165d",
+      "AmplifyAppId": "df9mu1zl4i9h7"
+    },
+    "categories": {
+      "auth": {
+        "ampliosuitefc469802": {
+          "userPoolId": "us-west-2_3evpQGyi5",
+          "userPoolName": "Amplio",
+          "webClientId": "115fkn7c7089gveb3f2n0rop4a",
+          "nativeClientId": "115fkn7c7089gveb3f2n0rop4a"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "df9mu1zl4i9h7",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}

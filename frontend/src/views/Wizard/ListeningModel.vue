@@ -72,9 +72,9 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'pinia'
 
-import Box from '@/components/SetupBox'
+import Box from '@/components/SetupBox.vue'
 import Check from '@/assets/svg/check-circle.svg'
 import listeningModels from '@/data/listeningModels.json'
 

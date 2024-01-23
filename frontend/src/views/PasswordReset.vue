@@ -70,10 +70,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
-import VButton from '@/components/VButton'
-import VInput from '@/components/VInput'
+import VButton from '@/components/VButton.vue'
+import VInput from '@/components/VInput.vue'
 
 export default {
   components: {

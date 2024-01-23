@@ -1,28 +1,207 @@
+<script setup lang="ts">
+import { onMounted, computed, ref } from "vue";
+import { RouterView, useRoute, useRouter } from "vue-router";
+import "@aws-amplify/ui-vue/styles.css";
+import Sidebar from "./Sidebar.vue";
+import {
+  Layout,
+  LayoutContent,
+  LayoutFooter,
+  LayoutHeader,
+  Button,
+  Space,
+  FloatButton,
+  Popconfirm,
+  ConfigProvider,
+  FloatButtonGroup,
+} from "ant-design-vue";
+
+import Header from "./Header.vue";
+// import Sidebar from "./components/Layout/Sidebar.vue";
+import {
+  BugOutlined,
+  CommentOutlined,
+  QuestionOutlined,
+  WechatOutlined,
+} from "@ant-design/icons-vue";
+// import FeedbackModal from "@/components/FeedbackModal.vue";
+import axios from "axios";
+import { useAccountStore } from "@/store/account";
+
+// Set default axios headers
+axios.defaults.headers.common["Content-Type"] = "application/json";
+axios.defaults.headers.common["Accept"] = "application/json";
+axios.defaults.headers.common["Authorization"] = `Bearer ${
+  useAccountStore().user?.token
+}`;
+
+const userStore = useAccountStore();
+// const appStore = AppStore();
+
+const route = useRoute(),
+  router = useRouter();
+
+const feedbackModalVisible = ref(false);
+
+// Configure AWS Amplify with the provided configuration
+// Amplify.configure(awsconfig);
+
+// On component mount, download the lookup data if online
+onMounted(async () => {});
+
+function openDiscourse() {
+  window.open("https://sbcimpact.discourse.group", "_blank", 'rel="noopener"').focus();
+}
+</script>
+
 <template>
-  <div>
-    <TheNavbar />
-    <TheNotification />
+  <!-- TODO: add loading state to app store -->
+  <div v-if="false" id="app-loader" style="margin-top: auto">
+    <figure class="image" style="width: 300px">
+      <img src="@/assets/images/logo.png" />
+    </figure>
 
-    <router-view class="min-h-with-footer-header" />
+    <h2 class="mt-3 text-center" style="font-weight: 630; font-size: 20px">
+      Loading app, please wait...
+    </h2>
+    <!-- <GridLoader :loading="true" :use-logo="true"></GridLoader> -->
+  </div>
 
-    <TheFooter />
-    <TheModal />
+  <div v-else>
+    <!-- <div v-if="!userStore.loggedIn">
+      <router-view :key="$route.fullPath"></router-view>
+    </div> -->
+
+    <ConfigProvider
+      :theme="{
+        token: {
+          colorPrimary: '#289b6a',
+        },
+      }"
+    >
+      <Layout>
+        <FeedbackModal
+          :visible="feedbackModalVisible"
+          @close="feedbackModalVisible = false"
+        >
+        </FeedbackModal>
+
+        <Sidebar></Sidebar>
+
+        <Layout>
+          <Header></Header>
+
+          <LayoutContent
+            :style="{
+              margin: '10px 16px 0px 16px',
+              padding: '24px',
+              background: '#ffffff',
+              minHeight: '280px',
+            }"
+          >
+            <router-view :key="$route.fullPath"></router-view>
+
+            <FloatButtonGroup
+              trigger="hover"
+              type="primary"
+              tooltip="Report an issue or join the discussion forum"
+              :style="{ right: '24px' }"
+            >
+              <template #icon>
+                <QuestionOutlined />
+              </template>
+
+              <FloatButton
+                tooltip="Report an issue or send us feedback"
+                shape="square"
+                @click.prevent="feedbackModalVisible = true"
+              >
+                <template #icon>
+                  <BugOutlined />
+                </template>
+              </FloatButton>
+
+              <FloatButton
+                tooltip="Join the discussion forum"
+                @click.prevent="openDiscourse()"
+              >
+                <template #icon>
+                  <CommentOutlined />
+                </template>
+              </FloatButton>
+            </FloatButtonGroup>
+          </LayoutContent>
+
+          <LayoutFooter class="text-center">
+            <span>
+              © {{ new Date().getFullYear() }} AMPLIO NETWORK. All rights reserved.</span
+            >
+          </LayoutFooter>
+        </Layout>
+      </Layout>
+    </ConfigProvider>
   </div>
 </template>
 
-<script>
-import TheNavbar from '@/components/TheNavbar'
-import TheFooter from '@/components/TheFooter'
-import TheNotification from '@/components/TheNotification'
-import TheModal from '@/components/TheModal'
+<style>
+/* Importing required CSS libraries */
+/* @import "bulma/css/bulma.min.css"; */
 
-
-export default {
-  components: {
-    TheNavbar,
-    TheFooter,
-    TheNotification,
-    TheModal,
-  }
+html {
+  overflow-y: auto;
 }
-</script>
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.site-layout .site-layout-background {
+  background: #ffffff;
+}
+
+/* Styling for the app wrapper */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styling for the left-side-nav container */
+.left-side-nav-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+/* Styling for when left side navigation is visible */
+.has-left-side-nav {
+  margin-left: 240px;
+  flex-grow: 1;
+}
+
+/* Styling for the main content when left side navigation is not visible */
+.main-content {
+  margin-left: 0px;
+  flex-grow: 1;
+}
+
+/* Custom styling for the container */
+.custom-container {
+  max-width: 100%;
+  /* Adjust this value to your desired width */
+}
+
+#app-loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+</style>

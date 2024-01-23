@@ -23,10 +23,10 @@
       :name="name === '' ? false : name"
       :id="name === '' ? false : name"
       v-bind="$attrs"
-      v-on="$listeners"
       @focus="isFocus = true"
       @blur="handleBlur"
     >
+      <!-- v-on="$listeners" -->
   </div>
 </template>
 
