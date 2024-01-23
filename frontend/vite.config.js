@@ -15,8 +15,6 @@ export default defineConfig({
         port: 8080
     },
     define: {
-        // global: {}
-        // _global: ({}),
     },
     resolve: {
         alias: {
@@ -32,5 +30,5 @@ export default defineConfig({
                 javascriptEnabled: true
             }
         }
-    }
+    },
 });

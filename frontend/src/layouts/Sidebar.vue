@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-// import { useProjectStore } from "@/stores/projects";
-// import { useSideNavStore } from "@/stores/side-nav.store";
 import { useRouter } from "vue-router";
 import {
   MenuItem,
@@ -9,10 +7,13 @@ import {
   LayoutSider,
   Menu,
   Divider,
-  Typography,
-  Avatar,
 } from "ant-design-vue";
-import { DatabaseOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons-vue";
+import {
+  DatabaseOutlined,
+  SettingOutlined,
+  UserOutlined,
+  InsertRowRightOutlined,
+} from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 
 const collapsed = ref(false);
@@ -40,6 +41,17 @@ const config = ref({
 
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <!-- FIXME: Add permission check here -->
+
+      <MenuItem key="program-spec">
+        <template #icon>
+          <InsertRowRightOutlined />
+        </template>
+
+        <router-link to="/programs/spec">
+          <span role="link"> Program Specification </span>
+        </router-link>
+      </MenuItem>
+
       <Menu.SubMenu label="Settings" title="Settings" key="settings">
         <template #icon><SettingOutlined /></template>
 

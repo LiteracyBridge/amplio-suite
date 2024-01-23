@@ -16,6 +16,7 @@ import { Deployment } from "@/models/deployment";
 import { Program } from "@/models/program";
 import { Playlist } from "@/models/playlist";
 import { Message } from "@/models/message";
+import { ApiRequest } from "@/api";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -60,40 +61,22 @@ export const getDefaultState = () => {
 
 //region Deployment, Playlist, Message constructors
 
-// function Playlist(position: any) {
-//   const title = "";
-//   const audience = "";
-//   const messages: any[] = [];
-//   return { position, title, audience, messages };
-// }
-
-// function Message(position: any) {
-//   const title = "";
-//   const format = "";
-//   const default_category_code = "";
-//   const variant = "";
-//   const sdg_goal = "";
-//   const sdg_target = "";
-//   const key_points = "";
-//   const languages = "";
-//   const audience = "";
-//   return {
-//     position,
-//     title,
-//     format,
-//     default_category_code,
-//     variant,
-//     sdg_goal,
-//     sdg_target,
-//     key_points,
-//     languages,
-//     audience
-//   };
-// }
-
 export const useProgramSpecStore = defineStore("programspec", {
-  state: () => getDefaultState(),
+  state: () => ({
+    loading: false,
+    deployments: [] as Deployment[],
+    recipients: [] as Recipient[],
+    general: new Program(),
+    programId: "",
 
+    changed: false,
+    status: "",
+    filterText: "",
+    sortTable: {
+      by: "region",
+      descending: true,
+    },
+  }),
   getters: {
     labelUsed: (state) => {
       const labels = new Set();
@@ -300,9 +283,9 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     //region General mutations
     //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    setProgramName(payload: any) {
-      this.general.name = payload;
-    },
+    // setProgramName(payload: any) {
+    //   this.general.name = payload;
+    // },
 
     // setCountry(payload: any) {
     //     this.general.country = payload;
@@ -388,16 +371,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    // toggleListeningModel(model: any) {
-    //     // This is the program's listening models, not the global list of listening models.
-    //     const index = this.general.listening_models.indexOf(model);
-
-    //     if (index > -1) this.removeListeningModel(index);
-    //     else this.addListeningModel(model);
-
-    //     this.setChanged(true);
-    // },
-
     async setDeploymentCount(payload: any) {
       await this.setDeploymentsCount(payload);
       this.setChanged(true);
@@ -419,29 +392,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    // async setLanguages(payload) {
-    //     await this.setLanguages(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async deleteLanguage(language: any) {
-    //     await this.deleteLanguage(language);
-    //     this.setChanged(true);
-    // },
-
-    // setDirectBeneficiariesLabel(payload: any) {
-    //     this.setDirectBeneficiariesLabel(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setDirectBeneficiariesAdditionalLabel(payload: {
-    //     value: string;
-    //     key: string;
-    // }) {
-    //     this.setDirectBeneficiariesAdditionalLabel(payload);
-    //     this.setChanged(true);
-    // },
-
     addDirectBeneficiariesAdditionalLabel() {
       const value = "New additional field";
       const key = `field_${Math.random().toString(36).substring(7)}`;
@@ -450,159 +400,15 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    // deleteDirectBeneficiariesAdditionalLabel(labelKey: any) {
-    //     this.deleteDirectBeneficiariesAdditionalLabel(labelKey);
-    //     this.setChanged(true);
-    // },
-
-    //endregion
-
-    //region Deployment functions
-    // //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    // async setDeployments(payload: any) {
-    //     this.setDeployments(payload);
-    //     this.setChanged(true);
-    // },
-
-    // Adds a deployment to the end of the list
-    // async addDeployment(payload: any) {
-    //     this.addDeployment(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async removeDeployment(payload: any) {
-    //     this.removeDeployment(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async setDeploymentStartdate(payload: any) {
-    //     this.setDeploymentStartdate(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async setDeploymentEnddate(payload: any) {
-    //     this.setDeploymentEnddate(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async setDeploymentName(payload: any) {
-    //     this.setDeploymentName(payload);
-    //     this.setChanged(true);
-    // },
-    //endregion
-
-    //region Playlist functions
-    // Set the playlists for the given deployment.
-    //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    // async setPlaylists(payload: any) {
-    //     this.setPlaylists(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async addPlaylist(payload: any) {
-    //     this.addPlaylist(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async removePlaylist(payload: any) {
-    //     this.removePlaylist(payload);
-    //     this.setChanged(true);
-    // },
-
-    // Edit playlists.
-    // setPlaylistTitle(payload: any) {
-    //     this.setPlaylistTitle(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setPlaylistAudience(payload: any) {
-    //     this.setPlaylistAudience(payload);
-    //     this.setChanged(true);
-    // },
-    //endregion
-
-    //region Message functions
-    //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    // setMessages(payload: any) {
-    //     this.setMessages(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async addMessage(payload: any) {
-    //     this.addMessage(payload);
-    //     this.setChanged(true);
-    // },
-
-    // async removeMessage(payload: any) {
-    //     this.removeMessage(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageTitle(payload: any) {
-    //     this.setMessageTitle(payload);
-    //     this.setChanged(true);
-    //     // Interesting bit of code below to find a list of duplicate titles.
-    //     // const titles = state.playlists[playlistIndex].messages.map(message => message.title)
-    //     // const duplicates = titles.filter((theSet => aString => theSet.has(aString) || !theSet.add(aString))(new Set))
-    //     // this.setDuplicateMessages( duplicates)
-    // },
-
-    // addMessageLanguage(payload: any) {
-    //     this.addMessageLanguage(payload);
-    //     this.setChanged(true);
-    // },
-
-    // removeMessageLanguage(payload: any) {
-    //     this.removeMessageLanguage(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageCategory(payload: any) {
-    //     this.setMessageCategory(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageAudience(payload: any) {
-    //     this.setMessageAudience(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageVariant(payload: any) {
-    //     this.setMessageVariant(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageFormat(payload: any) {
-    //     this.setMessageFormat(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageSDGGoal(payload: any) {
-    //     this.setMessageSDGGoal(payload);
-    //     this.setMessageSDGTarget({ ...payload, target: null });
-    //     this.setChanged(true);
-    // },
-
-    // setMessageSDGTarget(payload: any) {
-    //     this.setMessageSDGTarget(payload);
-    //     this.setChanged(true);
-    // },
-
-    // setMessageKeyPoints(payload: any) {
-    //     this.setMessageKeyPoints(payload);
-    //     this.setChanged(true);
-    // },
-    //endregion
-
-    //region Recipient functions
-
-    // updateRecipient(payload: { recipient: any }) {
-    //     this.setChanged(true);
-    //     this.updateRecipient({ recipient });
-    // },
-
     // Actions
     // Fetch the content from the server. payload must have a member .programId.
+    /**
+     * @deprecated use downloadSpec instead
+     *
+     * @param   {any}  payload  [payload description]
+     *
+     * @return  {[type]}        [return description]
+     */
     async fetchSpec(payload: { programId: any }) {
       const { programId } = payload;
 
@@ -1116,5 +922,12 @@ export const useProgramSpecStore = defineStore("programspec", {
     },
 
     //endregion
+
+    //
+    // Api Request
+    //
+    async downloadSpec(programId: string) {
+      return ApiRequest.get(`program-spec/content?programid=${programId}`);
+    },
   },
 });

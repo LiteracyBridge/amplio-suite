@@ -1,5 +1,27 @@
 <template>
   <main class="container mx-auto">
+    <!-- TODO: implement spin -->
+    <Spin :spinning="loading">
+      <Tabs v-model:activeKey="activeKey" centered>
+        <template #rightExtra>
+          <div class="flex flex-col gap-2">
+            <VButton label="Discard Changes" variant="warning-light" />
+            <VButton label="Save Changes" variant="success" />
+          </div>
+        </template>
+
+        <TabPane key="general" tab="General">
+          <General
+            :program-id="appStore.activeProgram.id?.toString()"
+            v-if="store.general != null"
+          ></General>
+        </TabPane>
+
+        <TabPane key="general2" tab="Tab 1">Content of Tab Pane 1</TabPane>
+        <TabPane key="general3" tab="Tab 1">Content of Tab Pane 1</TabPane>
+      </Tabs>
+    </Spin>
+
     <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
@@ -42,17 +64,12 @@
       <!-- <transition :name="transitionName" mode="out-in">
         <router-view />
       </transition> -->
-      <router-view v-slot="{ Component }">
+      <!-- <router-view v-slot="{ Component }">
         <transition>
           <component :is="Component" />
         </transition>
-      </router-view>
+      </router-view> -->
     </div>
-
-    <footer class="py-6">
-      Need help? Contact us on
-      <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
-    </footer>
 
     <v-snackbars
       :show.sync="data.showSnackbar"
@@ -81,10 +98,19 @@ import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
+import { Spin, TabPane, Tabs } from "ant-design-vue";
 
-const props = defineProps<{ programId: string }>();
+import General from "./General.vue";
+import { useAppStore } from "@/store/app.store";
+import { useRequest } from "vue-request";
+
+// const props = defineProps<{ programId: string }>();
+
 const store = useProgramSpecStore(),
+  appStore = useAppStore(),
   route = useRoute();
+
+const activeKey = ref("general");
 
 const data = ref({
   sections: ["general", "content2", "recipients", "importExport"],
@@ -102,6 +128,18 @@ const data = ref({
   showSnackbar: false,
 });
 
+// Download spec
+const { loading } = useRequest(store.downloadSpec, {
+  defaultParams: [appStore.activeProgram.data.program_id],
+  onSuccess: (data: any) => {
+    console.log(data);
+
+    store.setSpec({
+      programId: appStore.activeProgram.data.program_id,
+      programspec: data[0],
+    });
+  },
+});
 const programName = computed(() => {
   return useProgramSpecStore().general.name;
 });
@@ -154,7 +192,7 @@ onMounted(async () => {
     console.log("no user");
   }
 
-  await store.fetchSpec({ programId: route.params.programId });
+  await store.fetchSpec({ programId: appStore.activeProgram.data.program_id });
 });
 
 onBeforeRouteUpdate((to, from, next) => {

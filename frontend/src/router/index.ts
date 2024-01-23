@@ -257,6 +257,11 @@ const routes: any = [
       import(/* webpackChunkName: "download" */ "../views/Download.vue"),
     beforeEnter: requireAuth,
   },
+  // Program spec
+  {
+    path: "/programs/spec",
+    component: () => import("../views/Program/Index.vue"),
+  },
   // Settings
   {
     path: "/settings",
@@ -265,27 +270,18 @@ const routes: any = [
       {
         path: "users",
         name: "settings.users",
-        component: () =>
-          import(
-            /* webpackChunkName: "download" */ "../views/Settings/Users/Index.vue"
-          ),
-        beforeEnter: requireAuth,
+        component: () => import("../views/Settings/Users/Index.vue"),
       },
       {
         path: "roles",
         name: "settings.roles",
-        component: () =>
-          import(
-            /* webpackChunkName: "download" */ "../views/Settings/Users/ManageRoles.vue"
-          ),
+        component: () => import("../views/Settings/Users/ManageRoles.vue"),
       },
       {
         path: "programs",
         name: "settings.Programs",
         component: () =>
-          import(
-            /* webpackChunkName: "settings" */ "../views/Settings/ProgramManagement/Index.vue"
-          ),
+          import("../views/Settings/ProgramManagement/Index.vue"),
       },
     ],
   },
