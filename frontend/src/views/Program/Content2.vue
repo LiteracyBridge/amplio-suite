@@ -1,17 +1,5 @@
 <template>
-  <section class="relative content2 p-6 pt-0">
-    <!-- <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" /> -->
-
-    <!-- This is the common header, with program name, this panel's title, and save & discard buttons -->
-    <!-- <program-header
-      class="mb-2"
-      title="Deployments & Content"
-      :changed="hasChanges"
-      :canSave="canSave"
-      :description="description"
-      :onSaveChanges="onSaveChanges"
-      :onDiscardChanges="onDiscardChanges"
-    /> -->
+  <section>
 
     <div
       id="deployments-container"
@@ -63,11 +51,8 @@ import { mapState, mapActions } from "pinia";
 
 import Content2Deployment from "@/components/Content2Deployment.vue";
 import draggable from "vuedraggable/dist/vuedraggable.common";
-import Loading from "@/components/Loading.vue";
-import ProgramHeader from "@/components/ProgramHeader.vue";
 import VButton from "@/components/VButton.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useLanguagesStore } from "@/store/languages";
 import { useCategoriesStore } from "@/store/categories";
 import { ref } from "vue";
 import { useRequest } from "vue-request";

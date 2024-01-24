@@ -1,6 +1,5 @@
 <template>
   <main class="container mx-auto">
-    <!-- TODO: implement spin -->
     <Spin :spinning="store.loading">
       <Tabs v-model:activeKey="activeKey" centered>
         <template #rightExtra>
