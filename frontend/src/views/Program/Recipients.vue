@@ -201,15 +201,15 @@ const showModal = ref({
   mandatory: false,
 });
 
-const selectedRecipient = computed(() => {
-  return store.recipients.find(
-    (recipient) => recipient.recipientid === data.value.selectedRecipientId
-  );
-});
+// const selectedRecipient = computed(() => {
+//   return store.recipients.find(
+//     (recipient) => recipient.recipientid === data.value.selectedRecipientId
+//   );
+// });
 
-const tableIsFilter = computed(() => {
-  return store.sortTable.by !== "" || store.filterText !== "";
-});
+// const tableIsFilter = computed(() => {
+//   return store.sortTable.by !== "" || store.filterText !== "";
+// });
 
 const isRecipientInEditValid = computed(() => {
   // nothing selected; can't be valid
@@ -299,15 +299,6 @@ const invalidBeneficiaries = computed(() => {
   return invalid;
 });
 
-// function onSaveChanges() {
-//   console.log("onSaveChanges");
-//   store.updateSpec();
-// }
-
-// function onDiscardChanges() {
-//   console.log("onDiscardChanges");
-//   store.fetchSpec({ programId: props.programId });
-// }
 
 function onCloseModal() {
   data.value.recipientEdited = false;
