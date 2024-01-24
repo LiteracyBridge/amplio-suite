@@ -4,10 +4,17 @@
     <Spin :spinning="loading">
       <Tabs v-model:activeKey="activeKey" centered>
         <template #rightExtra>
-          <div class="flex flex-col gap-2">
-            <VButton label="Discard Changes" variant="warning-light" />
-            <VButton label="Save Changes" variant="success" />
+          <div class="flex flex-row gap-2">
+            <!-- TODO: implement save & discard buttons -->
+            <Button :ghost="true" :danger="true" type="primary"> Discard Changes </Button>
+            <Button type="primary"> Save Changes </Button>
           </div>
+        </template>
+
+        <template #leftExtra>
+          <Button :disabled="!canPublish" @click="onPublish" type="primary"
+            >Publish</Button
+          >
         </template>
 
         <TabPane key="general" tab="General">
@@ -17,12 +24,29 @@
           ></General>
         </TabPane>
 
-        <TabPane key="general2" tab="Tab 1">Content of Tab Pane 1</TabPane>
-        <TabPane key="general3" tab="Tab 1">Content of Tab Pane 1</TabPane>
+        <TabPane key="deployment-and-content" tab="Deployments & Content">
+          <Content2
+            :program-id="appStore.activeProgram.id?.toString()"
+            v-if="store.deployments != null"
+          ></Content2>
+        </TabPane>
+
+        <TabPane key="recipients" tab="Recipients">
+          <Recipients
+            :program-id="appStore.activeProgram.id?.toString()"
+            v-if="store.recipients != null"
+          ></Recipients>
+        </TabPane>
+
+        <TabPane key="import-export" tab="Import/Export">
+          <ImportExport
+            :program-id="appStore.activeProgram.id?.toString()"
+          ></ImportExport>
+        </TabPane>
       </Tabs>
     </Spin>
 
-    <div class="py-6 flex justify-between">
+    <!-- <div class="py-6 flex justify-between">
       <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
 
       <div class="flex">
@@ -43,10 +67,10 @@
           <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
         </v-tooltip>
       </div>
-    </div>
+    </div> -->
 
     <!-- <div class="bg-white rounded-lg shadow-box"> -->
-      <!-- <nav aria-label="Program sections" class="flex border-b">
+    <!-- <nav aria-label="Program sections" class="flex border-b">
         <router-link
           v-for="(section, index) in data.sections"
           :key="section"
@@ -61,10 +85,10 @@
         </router-link>
       </nav> -->
 
-      <!-- <transition :name="transitionName" mode="out-in">
+    <!-- <transition :name="transitionName" mode="out-in">
         <router-view />
       </transition> -->
-      <!-- <router-view v-slot="{ Component }">
+    <!-- <router-view v-slot="{ Component }">
         <transition>
           <component :is="Component" />
         </transition>
@@ -98,9 +122,12 @@ import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
-import { Spin, TabPane, Tabs } from "ant-design-vue";
+import { Button, Spin, TabPane, Tabs } from "ant-design-vue";
 
 import General from "./General.vue";
+import Content2 from "./Content2.vue";
+import Recipients from "./Recipients.vue";
+import ImportExport from "./ImportExport.vue";
 import { useAppStore } from "@/store/app.store";
 import { useRequest } from "vue-request";
 

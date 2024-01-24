@@ -283,9 +283,9 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     //region General mutations
     //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    // setProgramName(payload: any) {
-    //   this.general.name = payload;
-    // },
+    setProgramName(payload: any) {
+      this.general.name = payload;
+    },
 
     // setCountry(payload: any) {
     //     this.general.country = payload;

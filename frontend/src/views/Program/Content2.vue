@@ -1,9 +1,9 @@
 <template>
   <section class="relative content2 p-6 pt-0">
-    <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" />
+    <!-- <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg" /> -->
 
     <!-- This is the common header, with program name, this panel's title, and save & discard buttons -->
-    <program-header
+    <!-- <program-header
       class="mb-2"
       title="Deployments & Content"
       :changed="hasChanges"
@@ -11,7 +11,7 @@
       :description="description"
       :onSaveChanges="onSaveChanges"
       :onDiscardChanges="onDiscardChanges"
-    />
+    /> -->
 
     <div
       id="deployments-container"
@@ -86,17 +86,6 @@ export default {
     hasChanges() {
       return this.changed;
     },
-
-    // deployments: {
-    //   get() {
-    //     return this.deployments;
-    //   },
-    //   set(newValue) {
-    //     this.printData(this.deployments, "From");
-    //     this.setDeployments({ deployments: newValue });
-    //     this.printData(this.deployments, "To");
-    //   },
-    // },
   },
 
   data() {
