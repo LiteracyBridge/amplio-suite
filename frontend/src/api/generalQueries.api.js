@@ -38,16 +38,16 @@ async function getPrograms() {
     return fetch_response.json();
 }
 
-async function getLanguages(programId = null) {
-    const init = makeInit();
-    let url = `${URL}${SUPPORTED_LANGUAGES}`;
-    if (programId) {
-        url += `?programid=${programId}`;
-    }
-    const fetch_response = await fetch(url, init);
-    let result = await fetch_response.json();
-    return result;
-}
+// async function getLanguages(programId = null) {
+//     const init = makeInit();
+//     let url = `${URL}${SUPPORTED_LANGUAGES}`;
+//     if (programId) {
+//         url += `?programid=${programId}`;
+//     }
+//     const fetch_response = await fetch(url, init);
+//     let result = await fetch_response.json();
+//     return result;
+// }
 
 const getRoadmap = async programid => {
     const init = makeInit();
@@ -93,7 +93,7 @@ const getTbStatusBy = async (programid, selector) => {
 
 export {
     getPrograms,
-    getLanguages,
+    // getLanguages,
     getCategories,
     getRoadmap,
     putRoadmap,

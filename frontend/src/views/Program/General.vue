@@ -235,8 +235,6 @@ import VButton from "@/components/VButton.vue";
 import VInput from "@/components/VInput.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
-import Loading from "@/components/Loading.vue";
-import ProgramHeader from "@/components/ProgramHeader.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import countries from "@/data/countries.json";
 import listeningModels from "@/data/listeningModels.json";
@@ -258,7 +256,6 @@ const props = defineProps<{
   programId: string;
 }>();
 const specStore = useProgramSpecStore(),
-  uiStore = useUIStore(),
   languageStore = useLanguagesStore();
 
 const data = ref({
@@ -298,8 +295,6 @@ function onLanguageDeleted(code: string) {
       specStore.deleteLanguage(code);
     },
   });
-  //   data.value.languageToDelete = language;
-  //   uiStore.setModal(`Delete Language ${language?.name}`);
 }
 
 function addNewLanguage() {
@@ -351,8 +346,6 @@ onMounted(() => {
   data.value.regionOptions = (specStore.general.region || []).map((i: string) => ({
     value: i,
   }));
-
-  languageStore.fetchLanguages(props.programId);
 
   //   Watch for state changes
   // this subscription will be kept even after the component is unmounted

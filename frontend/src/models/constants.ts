@@ -5,6 +5,7 @@ export enum RequestCacheKeys {
   org_roles = "org_roles",
   org_users = "org_users",
   orgs = "orgs",
+  supported_languages = "supported_languages",
 }
 
 export enum LocalStorageKeys {
