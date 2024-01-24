@@ -110,7 +110,7 @@
           gather custom information regarding the recipients
         </p>
         <div
-          v-for="(opt, index) in specStore.directBeneficiariesLabels"
+          v-for="(opt, index) in specStore.directBeneficiariesLabels()"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''"> Field {{ index + 1 }} </span>
@@ -131,7 +131,7 @@
         <span class="col-span-2" />
 
         <div
-          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels"
+          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels()"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''">

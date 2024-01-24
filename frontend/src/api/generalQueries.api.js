@@ -32,11 +32,11 @@ function makeInit(params) {
     return init;
 }
 
-async function getPrograms() {
-    const init = makeInit();
-    const fetch_response = await fetch(`${API_URL}/programs`, init);
-    return fetch_response.json();
-}
+// async function getPrograms() {
+//     const init = makeInit();
+//     const fetch_response = await fetch(`${API_URL}/programs`, init);
+//     return fetch_response.json();
+// }
 
 // async function getLanguages(programId = null) {
 //     const init = makeInit();
@@ -92,7 +92,7 @@ const getTbStatusBy = async (programid, selector) => {
 };
 
 export {
-    getPrograms,
+    // getPrograms,
     // getLanguages,
     getCategories,
     getRoadmap,

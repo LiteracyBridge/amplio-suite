@@ -80,11 +80,11 @@ function openDiscourse() {
       }"
     >
       <Layout>
-        <FeedbackModal
+        <!-- <FeedbackModal
           :visible="feedbackModalVisible"
           @close="feedbackModalVisible = false"
         >
-        </FeedbackModal>
+        </FeedbackModal> -->
 
         <Sidebar></Sidebar>
 

@@ -1,5 +1,4 @@
 import { ApiRequest } from "@/api";
-import { getLanguages } from "@/api/generalQueries.api";
 import { Language } from "@/models/language";
 import { defineStore } from "pinia";
 

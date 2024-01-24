@@ -1,7 +1,7 @@
 <template>
   <main class="container mx-auto">
     <!-- TODO: implement spin -->
-    <Spin :spinning="loading">
+    <Spin :spinning="store.loading">
       <Tabs v-model:activeKey="activeKey" centered>
         <template #rightExtra>
           <div class="flex flex-row gap-2">
@@ -12,16 +12,17 @@
         </template>
 
         <template #leftExtra>
-          <Button :disabled="!canPublish" @click="onPublish" type="primary"
-            >Publish</Button
-          >
+          <div v-if="!store.loading">
+            <Button :disabled="!store.canPublish" @click="onPublish" type="primary"
+              >Publish</Button
+            >
+          </div>
         </template>
 
         <TabPane key="general" tab="General">
-          <General
-            :program-id="appStore.activeProgram.id?.toString()"
-            v-if="store.general != null"
-          ></General>
+          <div v-if="!store.loading && store.general != null">
+            <General :program-id="appStore.activeProgram.id?.toString()"></General>
+          </div>
         </TabPane>
 
         <TabPane key="deployment-and-content" tab="Deployments & Content">
@@ -156,38 +157,36 @@ const data = ref({
 });
 
 // Download spec
-const { loading } = useRequest(store.downloadSpec, {
+const {  } = useRequest(store.downloadSpec, {
   defaultParams: [appStore.activeProgram.data.program_id],
-  onSuccess: (data: any) => {
-    console.log(data);
-
+  onSuccess: (data) => {
     store.setSpec({
       programId: appStore.activeProgram.data.program_id,
       programspec: data[0],
     });
   },
 });
-const programName = computed(() => {
-  return useProgramSpecStore().general.name;
-});
+// const programName = computed(() => {
+//   return useProgramSpecStore().general.name;
+// });
 
 const anyTabChanged = computed(() => {
   return useProgramSpecStore().changed;
 });
 
-const canPublish = computed(() => {
-  const deployments = useProgramSpecStore().deployments;
-  const recipients = useProgramSpecStore().recipients;
-  const changed = useProgramSpecStore().changed;
-  const hasOneMessage = deployments.some((depl) =>
-    depl.playlists.some((pl: any) => pl.messages.length > 0)
-  );
-  const hasOneRecipient = recipients.length > 0;
-  return hasOneMessage && hasOneRecipient && !changed;
-});
+// const canPublish = computed(() => {
+//   const deployments = useProgramSpecStore().deployments;
+//   const recipients = useProgramSpecStore().recipients;
+//   const changed = useProgramSpecStore().changed;
+//   const hasOneMessage = deployments.some((depl) =>
+//     depl.playlists.some((pl: any) => pl.messages.length > 0)
+//   );
+//   const hasOneRecipient = recipients.length > 0;
+//   return hasOneMessage && hasOneRecipient && !changed;
+// });
 
 async function onPublish() {
-  if (!canPublish.value) return;
+  if (!store.canPublish) return;
 
   data.value.publishStatus = "loading";
   data.value.publishStatus = await store.publishSpec();
@@ -219,7 +218,7 @@ onMounted(async () => {
     console.log("no user");
   }
 
-  await store.fetchSpec({ programId: appStore.activeProgram.data.program_id });
+  // await store.fetchSpec({ programId: appStore.activeProgram.data.program_id });
 });
 
 onBeforeRouteUpdate((to, from, next) => {

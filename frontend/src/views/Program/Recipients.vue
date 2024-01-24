@@ -47,7 +47,7 @@
     <!--      <p>Add recipients here.</p>-->
     <!--    </div>-->
 
-    <div v-if="store.filteredRecipients.length > 0" class="block pt-2 overflow-x-auto">
+    <div v-if="store.filteredRecipients().length > 0" class="block pt-2 overflow-x-auto">
       <table class="w-full table-auto overflow-x-auto">
         <thead>
           <tr>
@@ -75,7 +75,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="(recipient, index) in store.filteredRecipients"
+            v-for="(recipient, index) in store.filteredRecipients()"
             :key="recipient.recipientid"
             :class="index % 2 === 0 ? '' : 'bg-gray-200'"
             class="hover:bg-gray-400"

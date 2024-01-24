@@ -44,14 +44,14 @@ async function publish(programid) {
  * @param programid
  * @returns {Promise<any>}
  */
-async function getProgramSpec(programid) {
-  const init = makeInit();
-  const fetch_response = await fetch(
-    `${API_URL}/program-spec/content?programid=${programid}`,
-    init
-  );
-  return fetch_response.json();
-}
+// async function getProgramSpec(programid) {
+//   const init = makeInit();
+//   const fetch_response = await fetch(
+//     `${API_URL}/program-spec/content?programid=${programid}`,
+//     init
+//   );
+//   return fetch_response.json();
+// }
 
 async function putProgramSpec(programid, programspec) {
   const init = makeInit({ method: "PUT", data: programspec });
@@ -93,7 +93,7 @@ async function approveSpec(programid, publish) {
 
 export {
   publish,
-  getProgramSpec,
+  // getProgramSpec,
   putProgramSpec,
   // getContent,
   // getContent2,

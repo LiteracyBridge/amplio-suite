@@ -33,7 +33,7 @@ import { useRequest } from "vue-request";
 
 const props = defineProps<{
   options?: string[];
-  languages: string | string[];
+  languages?: string | string[];
   labelBy?: string;
   autofocus?: boolean;
   multiple: boolean;

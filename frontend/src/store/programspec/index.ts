@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { useUIStore } from "../ui";
 import {
   getDownloadLink,
-  getProgramSpec,
+  // getProgramSpec,
   publish,
   putProgramSpec,
   uploadSpec as uploadSpecFile,
@@ -78,41 +78,32 @@ export const useProgramSpecStore = defineStore("programspec", {
     },
   }),
   getters: {
-    labelUsed: (state) => {
-      const labels = new Set();
-      state.recipients.forEach(
-        (recipient: { direct_beneficiaries_additional: {} }) => {
-          const keys = Object.keys(recipient.direct_beneficiaries_additional);
-          keys.forEach((label) => labels.add(label));
-        }
+    canPublish: (state) => {
+      const hasOneMessage = (state.deployments || []).some((depl) =>
+        depl.playlists.some((pl: any) => pl.messages.length > 0)
       );
+      const hasOneRecipient = (state.recipients || []).length > 0;
+      return hasOneMessage && hasOneRecipient && !state.changed;
+    },
+    labelUsed: (state) => {
+      console.log(state.recipients);
+
+      const labels = new Set();
+      (state.recipients || []).forEach((r) => {
+        const keys = Object.keys(r.direct_beneficiaries_additional || {});
+        keys.forEach((label) => labels.add(label));
+      });
 
       return Array.from(labels);
     },
-
-    directBeneficiariesLabels: (state) => {
-      const keys = Object.keys(state.general.direct_beneficiaries_map);
-      return keys.map((key: any) => ({
-        key,
-        value: state.general.direct_beneficiaries_map[key],
-      }));
-    },
-    directBeneficiariesAdditionalLabels: (state) => {
-      const keys = Object.keys(
-        state.general.direct_beneficiaries_additional_map
-      );
-      return keys.map((key) => ({
-        key,
-        value: state.general.direct_beneficiaries_additional_map[key],
-      }));
-    },
-
-    filteredRecipients: (state) => {
-      let recipients = [...state.recipients];
+  },
+  actions: {
+    filteredRecipients() {
+      let recipients = [...this.recipients];
 
       // Sort
-      const column = state.sortTable.by;
-      const direction = state.sortTable.descending ? 1 : -1;
+      const column = this.sortTable.by;
+      const direction = this.sortTable.descending ? 1 : -1;
       recipients = recipients.sort(
         (a, b) =>
           direction *
@@ -122,7 +113,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
 
       // Filter
-      let text = state.filterText;
+      let text = this.filterText;
       recipients = recipients.filter((reci) =>
         Object.values(reci)
           .filter((val) => val !== null)
@@ -134,8 +125,24 @@ export const useProgramSpecStore = defineStore("programspec", {
       // return recipients.slice(0, this.recipientsToShow)
       return recipients;
     },
-  },
-  actions: {
+    directBeneficiariesLabels() {
+      console.log(this.general);
+      const keys = Object.keys(this.general.direct_beneficiaries_map);
+      return keys.map((key: any) => ({
+        key,
+        value: this.general.direct_beneficiaries_map[key],
+      }));
+    },
+    directBeneficiariesAdditionalLabels() {
+      const keys = Object.keys(
+        this.general.direct_beneficiaries_additional_map
+      );
+      return keys.map((key) => ({
+        key,
+        value: this.general.direct_beneficiaries_additional_map[key],
+      }));
+    },
+
     newRecipient() {
       let newRecipient: any = {
         recipientid: null,
@@ -263,12 +270,12 @@ export const useProgramSpecStore = defineStore("programspec", {
      *************************************************************************************************************/
     setSpec(payload: { programId: any; programspec: any }) {
       this.changed = false;
-      this.status = "success";
+
       this.programId = payload.programId;
       this.general = payload.programspec.general;
-      // this.general = Object.assign({}, this.general, payload.programspec.general)
       this.recipients = payload.programspec.recipients;
       this.deployments = payload.programspec.deployments;
+
       this.deployments.forEach((d: { playlists: any[] }) => {
         d.playlists.forEach(
           (p: { position: any; messages: any[] }, ix: number) => {
@@ -279,6 +286,8 @@ export const useProgramSpecStore = defineStore("programspec", {
           }
         );
       });
+
+      this.loading = false;
     },
 
     //region General mutations
@@ -409,53 +418,53 @@ export const useProgramSpecStore = defineStore("programspec", {
      *
      * @return  {[type]}        [return description]
      */
-    async fetchSpec(payload: { programId: any }) {
-      const { programId } = payload;
+    // async fetchSpec(payload: { programId: any }) {
+    //   const { programId } = payload;
 
-      if (this.status === "loading") return;
-      // Not loading: '', success, or error
-      if (this.programId === programId && !this.changed) return;
+    //   if (this.status === "loading") return;
+    //   // Not loading: '', success, or error
+    //   if (this.programId === programId && !this.changed) return;
 
-      console.log(`Fetching spec for ${programId}`);
-      this.requestInit();
+    //   console.log(`Fetching spec for ${programId}`);
+    //   this.requestInit();
 
-      try {
-        const programspec = await getProgramSpec(programId);
-        await this.setSpec({ programId, programspec });
-        console.log(
-          `Done fetching spec for ${programId} status is ${this.status}`
-        );
-      } catch (error) {
-        this.requestError();
-        useUIStore().setNotification({
-          type: "alert",
-          text: error.toString(),
-        });
-      }
-    },
+    //   try {
+    //     const programspec = await getProgramSpec(programId);
+    //     await this.setSpec({ programId, programspec });
+    //     console.log(
+    //       `Done fetching spec for ${programId} status is ${this.status}`
+    //     );
+    //   } catch (error) {
+    //     this.requestError();
+    //     useUIStore().setNotification({
+    //       type: "alert",
+    //       text: error.toString(),
+    //     });
+    //   }
+    // },
 
-    async ensureSpec(payload: { programId: any }) {
-      const { programId } = payload;
-      if (this.status === "loading") return; // may be wrong program?
-      if (this.programId === programId) return;
+    // async ensureSpec(payload: { programId: any }) {
+    //   const { programId } = payload;
+    //   if (this.status === "loading") return; // may be wrong program?
+    //   if (this.programId === programId) return;
 
-      console.log(`Ensure spec fetching for ${programId}`);
-      this.requestInit();
+    //   console.log(`Ensure spec fetching for ${programId}`);
+    //   this.requestInit();
 
-      try {
-        const programspec = await getProgramSpec(programId);
-        await this.setSpec({ programId, programspec });
-        console.log(
-          `Done fetching spec for ${programId} status is ${this.status}`
-        );
-      } catch (error) {
-        this.requestError();
-        useUIStore().setNotification({
-          type: "alert",
-          text: error.toString(),
-        });
-      }
-    },
+    //   try {
+    //     const programspec = await getProgramSpec(programId);
+    //     await this.setSpec({ programId, programspec });
+    //     console.log(
+    //       `Done fetching spec for ${programId} status is ${this.status}`
+    //     );
+    //   } catch (error) {
+    //     this.requestError();
+    //     useUIStore().setNotification({
+    //       type: "alert",
+    //       text: error.toString(),
+    //     });
+    //   }
+    // },
 
     // Update the server with any new & updated content.
     async updateSpec() {
@@ -927,6 +936,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     // Api Request
     //
     async downloadSpec(programId: string) {
+      this.loading = true;
       return ApiRequest.get(`program-spec/content?programid=${programId}`);
     },
   },
