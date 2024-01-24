@@ -308,15 +308,15 @@ const invalidBeneficiaries = computed(() => {
   return invalid;
 });
 
-function onSaveChanges() {
-  console.log("onSaveChanges");
-  store.updateSpec();
-}
+// function onSaveChanges() {
+//   console.log("onSaveChanges");
+//   store.updateSpec();
+// }
 
-function onDiscardChanges() {
-  console.log("onDiscardChanges");
-  store.fetchSpec({ programId: props.programId });
-}
+// function onDiscardChanges() {
+//   console.log("onDiscardChanges");
+//   store.fetchSpec({ programId: props.programId });
+// }
 
 function onCloseModal() {
   data.value.recipientEdited = false;
@@ -379,7 +379,7 @@ function onAcceptEdit() {
   }
 }
 
-onMounted(() => {
-  store.ensureSpec({ programId: props.programId });
-});
+// onMounted(() => {
+//   store.ensureSpec({ programId: props.programId });
+// });
 </script>

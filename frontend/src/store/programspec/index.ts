@@ -412,7 +412,6 @@ export const useProgramSpecStore = defineStore("programspec", {
     // Actions
     // Fetch the content from the server. payload must have a member .programId.
     /**
-     * @deprecated use downloadSpec instead
      *
      * @param   {any}  payload  [payload description]
      *

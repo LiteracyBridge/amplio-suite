@@ -22,7 +22,7 @@
       <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
       <draggable
         id="deployments-draggable"
-        v-model="deployments"
+        v-model="store.deployments"
         :animation="200"
         handle=".handle"
         ghost-class="moving-item"
@@ -32,9 +32,9 @@
       >
         <template #item="{ element: deployment, index: index }">
           <div class="flex mb-1">
-            <content2-deployment
+            <Content2Deployment
               :deployment="deployment"
-              :canRemove="index === deployments.length - 1"
+              :canRemove="index === store.deployments.length - 1"
               :index="index"
             />
           </div>
@@ -45,7 +45,8 @@
     <VButton tag="span" label="+ Add Deployment" @click="onAddDeployment" />
 
     <!-- For modal components -->
-    <portal to="modalBody" v-if="showModal">
+    <!-- TODO: REWRITE MODAL IN ANT -->
+    <!-- <portal to="modalBody" v-if="showModal">
       <p class="text-xl">{{ modalBody }}</p>
     </portal>
 
@@ -53,11 +54,11 @@
       <footer class="flex flex-row-reverse justify-between pt-20">
         <VButton label="Close" @click="onCloseModal" />
       </footer>
-    </portal>
+    </portal> -->
   </section>
 </template>
 
-<script>
+<script setup lang="ts">
 import { mapState, mapActions } from "pinia";
 
 import Content2Deployment from "@/components/Content2Deployment.vue";
@@ -68,96 +69,117 @@ import VButton from "@/components/VButton.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useLanguagesStore } from "@/store/languages";
 import { useCategoriesStore } from "@/store/categories";
+import { ref } from "vue";
+import { useRequest } from "vue-request";
 
 // FIXME: deployments order is not preserved when dragging -> Related to state management?
-export default {
-  props: ["programId"],
 
-  computed: {
-    ...mapState(useProgramSpecStore, ["status", "changed", "deployments"]),
-    ...mapState(useLanguagesStore, {
-      supportedLanguages: (state) => state.languages,
-    }),
+const props = defineProps<{
+  programId: string;
+}>();
 
-    canSave() {
-      return this.changed;
-    },
+const store = useProgramSpecStore();
 
-    hasChanges() {
-      return this.changed;
-    },
+const description = ref("Edit your deployment playlists & content on this page."),
+  showModal = ref(false),
+  dragging = ref(false);
+
+// Download categories
+useRequest(useCategoriesStore().fetchCategories, {
+  // defaultParams: [],
+  onSuccess: (data) => {
+    useCategoriesStore().categories = data;
   },
+});
 
-  data() {
-    return {
-      description: "Edit your deployment playlists & content on this page.",
-      showModal: false,
-    };
-  },
+// export default {
+// props: ["programId"],
 
-  /* External components used in this one */
-  components: {
-    Content2Deployment,
-    draggable,
-    Loading,
-    ProgramHeader,
-    VButton,
-  },
-  methods: {
-    ...mapActions(useProgramSpecStore, [
-      "ensureSpec",
-      "fetchSpec",
-      "updateSpec",
+// computed: {
+//   ...mapState(useProgramSpecStore, ["status", "changed", "deployments"]),
+//   ...mapState(useLanguagesStore, {
+//     supportedLanguages: (state) => state.languages,
+//   }),
 
-      "setDeployments",
-      "addDeployment",
-    ]),
-    ...mapActions(useLanguagesStore, ["fetchLanguages"]),
-    // ...mapActions('program', [
-    //   'fetchProgram',
-    // ]),
-    ...mapActions(useCategoriesStore, ["fetchCategories"]),
+//   canSave() {
+//     return this.changed;
+//   },
 
-    onAddDeployment() {
-      console.log("Add deployment");
-      this.addDeployment();
-    },
+//   hasChanges() {
+//     return this.changed;
+//   },
+// },
 
-    onSaveChanges() {
-      console.log("onSaveChanges");
-      this.printData(this.deployments);
-      this.updateSpec();
-    },
+// data() {
+//   return {
 
-    onDiscardChanges() {
-      console.log("onDiscardChanges");
-      this.fetchSpec({ programId: this.programId });
-    },
+//   };
+// },
 
-    printData(deployments, title) {
-      if (title) {
-        console.log(title);
-      }
-      deployments.forEach((depl, ix) => {
-        console.log(
-          `Deployment ${depl.deploymentnumber} @ ${ix}, ${depl.playlists.length} playlists`
-        );
-        depl.playlists.forEach((pl, ix) => {
-          console.log(
-            `    Playlist ${pl.title}, #${pl.position} @ ${ix}, ${pl.messages.length} messages`
-          );
-        });
-      });
-    },
-  },
+/* External components used in this one */
+// components: {
+//   Content2Deployment,
+//   draggable,
+//   Loading,
+//   ProgramHeader,
+//   VButton,
+// },
+// methods: {
+//   ...mapActions(useProgramSpecStore, [
+//     "ensureSpec",
+//     "fetchSpec",
+//     "updateSpec",
 
-  created() {
-    this.ensureSpec({ programId: this.programId });
-    this.fetchCategories();
-    this.fetchLanguages();
-    console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`);
-  },
-};
+//     "setDeployments",
+//     "addDeployment",
+//   ]),
+//   ...mapActions(useLanguagesStore, ["fetchLanguages"]),
+//   // ...mapActions('program', [
+//   //   'fetchProgram',
+//   // ]),
+//   ...mapActions(useCategoriesStore, ["fetchCategories"]),
+
+function onAddDeployment() {
+  console.log("Add deployment");
+  store.addDeployment();
+}
+
+function onSaveChanges() {
+  console.log("onSaveChanges");
+  // store.printData(store.deployments);
+  store.updateSpec();
+}
+
+// onMounted
+// function onDiscardChanges() {
+//   console.log("onDiscardChanges");
+//   store.fetchSpec({ programId: store.programId });
+// }
+
+//  function printData(deployments, title) {
+//     if (title) {
+//       console.log(title);
+//     }
+//     deployments.forEach((depl, ix) => {
+//       console.log(
+//         `Deployment ${depl.deploymentnumber} @ ${ix}, ${depl.playlists.length} playlists`
+//       );
+//       depl.playlists.forEach((pl, ix) => {
+//         console.log(
+//           `    Playlist ${pl.title}, #${pl.position} @ ${ix}, ${pl.messages.length} messages`
+//         );
+//       });
+//     });
+//   },
+// },
+
+// created() {
+//   this.ensureSpec({ programId: this.programId });
+//   this.fetchCategories();
+//   // this.fetchLanguages();
+//   // console.log(`Fetched languages, got ${this.supportedLanguages.length} languages.`);
+// },
+// };
 </script>
 
 <style scoped>

@@ -32,18 +32,17 @@ export class Deployment {
       enddate = new Date(startdate);
       enddate = new Date(enddate.setDate(startdate.getDate() + 90));
     }
-    let start = startdate.toISOString().substring(0, 10);
-    let end = enddate.toISOString().substring(0, 10);
     let deploymentname = `${programId}-${startdate.getFullYear() %
       100}-${deploymentnumber}`;
     console.log(
       `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`
     );
 
+    console.log(startdate)
     const deployment = new Deployment();
     deployment.deploymentnumber = deploymentnumber;
-    deployment.startdate = startdate;
-    deployment.enddate = enddate;
+    deployment.startdate = startdate
+    deployment.enddate = enddate
     deployment.project = programId;
     deployment.deployment = deploymentname;
     deployment.playlists = playlists;

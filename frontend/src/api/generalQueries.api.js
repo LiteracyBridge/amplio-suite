@@ -71,16 +71,16 @@ const putRoadmap = async (programid, completed) => {
     return result;
 };
 
-async function getCategories(programid) {
-    const init = makeInit();
-    let url = `${API_URL}/categories/supported`;
-    if (programid) {
-        url += `?programid=${programid}`;
-    }
-    const fetch_response = await fetch(url, init);
-    let result = fetch_response.json();
-    return result;
-}
+// async function getCategories(programid) {
+//     const init = makeInit();
+//     let url = `${API_URL}/categories/supported`;
+//     if (programid) {
+//         url += `?programid=${programid}`;
+//     }
+//     const fetch_response = await fetch(url, init);
+//     let result = fetch_response.json();
+//     return result;
+// }
 
 const getTbStatusBy = async (programid, selector) => {
     const init = makeInit();
@@ -94,7 +94,7 @@ const getTbStatusBy = async (programid, selector) => {
 export {
     // getPrograms,
     // getLanguages,
-    getCategories,
+    // getCategories,
     getRoadmap,
     putRoadmap,
     getTbStatusBy
