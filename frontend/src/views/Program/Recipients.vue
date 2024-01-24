@@ -1,21 +1,5 @@
 <template>
   <section class="relative min-h-200-px p-6 pt-0">
-    <!-- <loading v-if="store.status !== 'success'" class="-ml-6 rounded-b-lg" /> -->
-
-    <!-- This is the common header, with program name, this panel's title, and save & discard buttons -->
-    <!-- <program-header
-      class="mb-4"
-      title="Recipients"
-      :changed="store.changed"
-      :canSave="store.changed"
-      :description="data.description"
-      :onSaveChanges="onSaveChanges"
-      :onDiscardChanges="onDiscardChanges"
-    /> -->
-
-    <!-- Separater line between heading and content -->
-    <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
-
     <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">Recipients</h2>
 
@@ -118,30 +102,33 @@
     </div>
 
     <!-- Edit modal -->
-    <portal to="modalBody" v-if="showModal.edit">
-      <program-recipients-form
+    <!-- New language modal -->
+    <Modal
+      v-model:open="modal.open"
+      title="Add New Language"
+      ok-text="Save"
+      @ok="onAcceptEdit"
+      @cancel="onCloseModal()"
+      :width="850"
+      :ok-button-props="{ disabled: isDuplicateRecipient || invalidBeneficiaries }"
+    >
+      <ProgramRecipientsForm
         :recipient="data.recipientInEdit"
         :isDuplicateRecipient="isDuplicateRecipient"
         :invalidBeneficiaries="invalidBeneficiaries"
         @changed="onRecipientEdited"
         :invalid-constraint="true"
       />
-    </portal>
 
-    <portal to="modalFooter" v-if="showModal.edit">
-      <footer v-if="data.recipientInEdit" class="flex justify-end gap-4">
-        <VButton label="Cancel" variant="warning" @click="onCancelEdit" />
-        <VButton
-          type="success"
-          label="OK"
-          :disabled="isDuplicateRecipient || invalidBeneficiaries"
-          @click="onAcceptEdit"
-        />
-        <!--        <VButton-->
-        <!--          v-if="selectedRecipient.id" label="Close" variant="success" :disabled="recipientEdited" @click="onCloseModal"-->
-        <!--        />-->
-      </footer>
-    </portal>
+      <!-- <FormItem id="code" label="Language Code">
+          <Input
+            name="code"
+            type="text"
+            placeholder="eg. en"
+            v-model:value="newLanguage.form.code"
+          />
+        </FormItem> -->
+    </Modal>
 
     <!-- Delete modal -->
     <portal to="modalBody" v-if="showModal.delete">
@@ -171,14 +158,13 @@
 
 <script lang="ts" setup>
 import VButton from "@/components/VButton.vue";
-import Loading from "@/components/Loading.vue";
 import VTooltip from "@/components/VTooltip.vue";
 import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
-import ProgramHeader from "@/components/ProgramHeader.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
-import type { Recipient } from "@/models/recipient";
+import { Recipient } from "@/models/recipient";
+import { Form, Modal, notification } from "ant-design-vue";
 
 const columns: Array<{ label: string; key: keyof Recipient }> = [
   { label: "Region/State", key: "region" },
@@ -204,6 +190,11 @@ const data = ref({
   description: "Add and edit recipients here.",
   columns,
 });
+const modal = ref({
+  open: false,
+  state: undefined as "edit" | "new",
+});
+
 const showModal = ref({
   edit: false,
   delete: false,
@@ -323,17 +314,21 @@ function onCloseModal() {
   showModal.value.edit = false;
   showModal.value.delete = false;
   showModal.value.mandatory = false;
-  ui.closeModal();
+
+  data.value.recipientInEdit = store.newRecipient();
+  modal.value.state = "new";
+  modal.value.open = false;
 }
 
-function handleModalEscape() {
-  onCloseModal();
-  data.value.recipientInEdit = null;
-}
+// function handleModalEscape() {
+//   onCloseModal();
+//   data.value.recipientInEdit = null;
+// }
 
 function onCancelEdit() {
-  onCloseModal();
-  data.value.recipientInEdit = null;
+  data.value.recipientInEdit = store.newRecipient();
+  modal.value.state = "new";
+  modal.value.open = false;
 }
 
 function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
@@ -345,7 +340,9 @@ function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
 function editRecipient(recipient: Recipient, index?: number) {
   console.log(`Edit ${JSON.stringify(recipient)}`);
   data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-  onOpenModal("edit", "Recipient Details");
+
+  modal.value.state = "edit";
+  modal.value.open = true;
 }
 
 function duplicateRecipient(recipient: { [x: string]: any }) {
@@ -370,12 +367,14 @@ function onRecipientEdited(value: boolean) {
 }
 
 function onAcceptEdit() {
-  onCloseModal();
   if (isRecipientInEditValid.value) {
     store.updateRecipient({ recipient: data.value.recipientInEdit });
-    data.value.recipientInEdit = store.newRecipient();
+    onCloseModal();
   } else {
-    onOpenModal("mandatory", "Required Fields");
+    notification.error({
+      message: "Required Fields",
+      description: "Please complete all of the mandatory fields.",
+    });
   }
 }
 

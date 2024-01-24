@@ -1,13 +1,11 @@
 <template>
   <section>
-
     <div
       id="deployments-container"
       class="line col-span-9"
       style="font-family: system-ui"
     >
       <!-- Separater line between heading and content -->
-      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
       <draggable
         id="deployments-draggable"
         v-model="store.deployments"

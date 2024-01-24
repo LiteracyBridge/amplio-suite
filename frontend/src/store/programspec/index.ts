@@ -432,6 +432,8 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       try {
         console.log(`Updating spec for ${programId}`);
+        this.loading = true;
+
         const updateResult = await putProgramSpec(programId, newSpec);
         const programspec = updateResult && updateResult.updated;
         this.setSpec({ programId, programspec });
@@ -832,8 +834,10 @@ export const useProgramSpecStore = defineStore("programspec", {
         // Create a temporary recipientid for local use prior ot the assignment of a proper recipientid by the server.
         let tempId = 1;
         this.recipients.forEach((recipient) => {
-          let match = recipient.recipientid.match(TEMP_RECIPIENT_RE);
-          if (match) {
+          if (
+            recipient.recipientid != null &&
+            recipient.recipientid.match(TEMP_RECIPIENT_RE)
+          ) {
             let numericId = Number(match[1]);
             if (numericId >= tempId) {
               tempId = numericId + 1;
