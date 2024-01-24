@@ -1,7 +1,5 @@
 <template>
   <section class="relative min-h-200-px p-6 pt-0">
-    <!-- <loading v-if="specStore.status !== 'success'" class="-ml-6 rounded-b-lg" /> -->
-
     <!-- <program-header
       title="General"
       :changed="specStore.changed"
@@ -11,223 +9,125 @@
       :onSaveChanges="specStore.updateSpec"
     /> -->
 
-    <div class="">
-      <!-- Separater line between heading and content -->
-      <!-- <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" /> -->
-      <div>
-        <Form
-          layout="vertical"
-          :model="specStore.general"
-          @values-change="specStore.changed = true"
-        >
-          <Row :gutter="8">
-            <Col :span="8">
-              <FormItem label="Program Name">
-                <Input
-                  name="programName"
-                  type="text"
-                  placeholder="Enter Program Name"
-                  v-model:value="specStore.general.name"
-                /> </FormItem
-            ></Col>
-            <Col :span="8">
-              <FormItem label="Country">
-                <Select
-                  id="country"
-                  v-model:value="specStore.general.country"
-                  placeholder="Select one country"
-                  aria-label="Select one country"
-                  :show-search="true"
-                >
-                  <SelectOption v-for="name in countries" :value="name">{{
-                    name
-                  }}</SelectOption></Select
-                >
-              </FormItem>
-            </Col>
+    <Form
+      layout="vertical"
+      :model="specStore.general"
+      @values-change="specStore.changed = true"
+    >
+      <Row :gutter="8">
+        <Col :span="8">
+          <FormItem label="Program Name">
+            <Input
+              name="programName"
+              type="text"
+              placeholder="Enter Program Name"
+              v-model:value="specStore.general.name"
+            /> </FormItem
+        ></Col>
+        <Col :span="8">
+          <FormItem label="Country">
+            <Select
+              id="country"
+              v-model:value="specStore.general.country"
+              placeholder="Select one country"
+              aria-label="Select one country"
+              :show-search="true"
+            >
+              <SelectOption v-for="name in countries" :value="name">{{
+                name
+              }}</SelectOption></Select
+            >
+          </FormItem>
+        </Col>
 
-            <Col :span="8">
-              <FormItem label="Region/State">
-                <Select
-                  mode="tags"
-                  id="region"
-                  tag-placeholder="Add this as new region"
-                  placeholder="Search or add a region"
-                  v-model:value="specStore.general.region"
-                  :options="data.regionOptions"
-                >
-                </Select
-              ></FormItem>
-            </Col>
-          </Row>
-
-          <Row :gutter="8">
-            <Col :span="8">
-              <FormItem label="Languages">
-                <LanguagesSelector
-                  :languages="specStore.general.languages"
-                  :onLanguageSelected="onLanguageSelected"
-                  :onLanguageDeleted="onLanguageDeleted"
-                  :multiple="true"
-                />
-                <Button type="link" @click.prevent="newLanguage.modal = true"
-                  >Not in list? Click to create new language</Button
-                >
-              </FormItem>
-            </Col>
-            <Col :span="8">
-              <FormItem label="Listening Models">
-                <Select
-                  v-if="listeningModels.length > 0"
-                  id="listeningModel"
-                  :options="listeningModels"
-                  v-model:value="specStore.general.listening_models"
-                  mode="multiple"
-                  :field-names="{ label: 'label', value: 'label' }"
-                  :preserve-search="true"
-                  placeholder="Select the listening model"
-                ></Select>
-              </FormItem>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-
-      <Row>
-        <Col :span="12">
-          <List bordered>
-            <template #header>
-              <span class="font-bold">Direct Beneficiaries</span>
-              <p class="col-span-2 md:col-span-4 text-sm text-blue">
-                The direct beneficiaries properties apply to the Recipients tab, and allow
-                to gather custom information regarding the recipients
-              </p>
-            </template>
-
-            <template v-for="item in specStore.directBeneficiariesLabels">
-              <ListItem>
-                <Input v-model:value="item.value"></Input>
-              </ListItem>
-            </template>
-
-            <template v-for="item in specStore.directBeneficiariesAdditionalLabels">
-              <ListItem>
-                <template #actions>
-                  <!-- TODO: show pop confirm -->
-                  <Button
-                    type="link"
-                    :danger="true"
-                    @click="specStore.deleteDirectBeneficiariesAdditionalLabel(item.key)"
-                    >Delete</Button
-                  >
-                </template>
-
-                <Input v-model:value="item.value"></Input>
-              </ListItem>
-            </template>
-
-            <template #footer>
-              <Button
-                block
-                type="primary"
-                :ghost="true"
-                @click="newBeneficiary.open = true"
-                >+ Add Optional Field</Button
-              >
-            </template>
-          </List>
+        <Col :span="8">
+          <FormItem label="Region/State">
+            <Select
+              mode="tags"
+              id="region"
+              tag-placeholder="Add this as new region"
+              placeholder="Search or add a region"
+              v-model:value="specStore.general.region"
+              :options="data.regionOptions"
+            >
+            </Select
+          ></FormItem>
         </Col>
       </Row>
 
-      <div class="w-full inline-flex items-center mt-10 text-left">
-        <span class="font-bold mr-4">Direct Beneficiaries</span>
-        <Button type="text" @click="data.beneficiariesIsOpen = !data.beneficiariesIsOpen">
-          {{ data.beneficiariesIsOpen ? "Hide Details" : "Show Details" }}
-
-          <font-awesome-icon
-            :icon="data.beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
-            class="w-6 h-6"
-          />
-        </Button>
-      </div>
-
-      <div
-        :class="data.beneficiariesIsOpen ? 'visible' : 'hidden'"
-        class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left pl-10"
-      >
-        <p class="col-span-2 md:col-span-4 text-sm text-blue">
-          The direct beneficiaries properties apply to the Recipients tab, and allow to
-          gather custom information regarding the recipients
-        </p>
-        <div
-          v-for="(opt, index) in specStore.directBeneficiariesLabels"
-          :key="`${opt.key}-label`"
-        >
-          <span :class="index % 2 === 1 ? 'md:pl-4' : ''"> Field {{ index + 1 }} </span>
-          <v-input
-            type="text"
-            :value="opt.value"
-            @input="
-              specStore.setDirectBeneficiariesLabel({
-                key: opt.key,
-                value: $event.target.value,
-              })
-            "
-            mx="mx-0"
-            class="w-full"
-          />
-        </div>
-
-        <span class="col-span-2" />
-
-        <div
-          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels"
-          :key="`${opt.key}-label`"
-        >
-          <span :class="index % 2 === 1 ? 'md:pl-4' : ''">
-            Additional Field {{ index + 1 }}
-          </span>
-          <div class="flex items-center">
-            <v-input
-              type="text"
-              :value="opt.value"
-              @input="
-                specStore.setDirectBeneficiariesAdditionalLabel({
-                  key: opt.key,
-                  value: $event.target.value,
-                })
-              "
-              mx="mx-0 mr-2"
-              class="w-full"
+      <Row :gutter="8">
+        <Col :span="8">
+          <FormItem label="Languages">
+            <LanguagesSelector
+              :languages="specStore.general.languages"
+              :onLanguageSelected="onLanguageSelected"
+              :onLanguageDeleted="onLanguageDeleted"
+              :multiple="true"
             />
-
-            <VButton
-              variant="warning"
-              iconL="trash-alt"
-              :disabled="specStore.labelUsed.includes(opt.key)"
-              :ariaLabel="`Delete option field ${opt.value}`"
-              @click="specStore.deleteDirectBeneficiariesAdditionalLabel(opt.key)"
-            />
-
-            <v-tooltip
-              v-if="specStore.labelUsed.includes(opt.key)"
-              text="Field used in multiple recipients"
-              class="my-auto"
+            <Button type="link" @click.prevent="newLanguage.modal = true"
+              >Not in list? Click to create new language</Button
             >
-              <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
-            </v-tooltip>
-          </div>
-        </div>
+          </FormItem>
+        </Col>
+        <Col :span="8">
+          <FormItem label="Listening Models">
+            <Select
+              v-if="listeningModels.length > 0"
+              id="listeningModel"
+              :options="listeningModels"
+              v-model:value="specStore.general.listening_models"
+              mode="multiple"
+              :field-names="{ label: 'label', value: 'label' }"
+              :preserve-search="true"
+              placeholder="Select the listening model"
+            ></Select>
+          </FormItem>
+        </Col>
+      </Row>
+    </Form>
 
-        <div class="col-span-4">
-          <VButton
-            tag="span"
-            label="+ Add Optional Field"
-            @click="specStore.addDirectBeneficiariesAdditionalLabel"
-          />
-        </div>
-      </div>
-    </div>
+    <!-- Direct beneficiaries -->
+    <Row>
+      <Col :span="12">
+        <List bordered>
+          <template #header>
+            <span class="font-bold">Direct Beneficiaries</span>
+            <p class="col-span-2 md:col-span-4 text-sm text-blue">
+              The direct beneficiaries properties apply to the Recipients tab, and allow
+              to gather custom information regarding the recipients
+            </p>
+          </template>
+
+          <template v-for="item in specStore.directBeneficiariesLabels">
+            <ListItem>
+              <Input v-model:value="item.value"></Input>
+            </ListItem>
+          </template>
+
+          <template v-for="item in specStore.directBeneficiariesAdditionalLabels">
+            <ListItem>
+              <template #actions>
+                <!-- TODO: show pop confirm -->
+                <Button
+                  type="link"
+                  :danger="true"
+                  @click="specStore.deleteDirectBeneficiariesAdditionalLabel(item.key)"
+                  >Delete</Button
+                >
+              </template>
+
+              <Input v-model:value="item.value"></Input>
+            </ListItem>
+          </template>
+
+          <template #footer>
+            <Button block type="primary" :ghost="true" @click="newBeneficiary.open = true"
+              >+ Add Optional Field</Button
+            >
+          </template>
+        </List>
+      </Col>
+    </Row>
 
     <!-- New direct beneficiary modal -->
     <Modal
@@ -276,14 +176,10 @@
 </template>
 
 <script lang="ts" setup>
-import VButton from "@/components/VButton.vue";
-import VInput from "@/components/VInput.vue";
-import VTooltip from "@/components/VTooltip.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import countries from "@/data/countries.json";
 import listeningModels from "@/data/listeningModels.json";
-import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
 import { computed, createVNode, onMounted, ref } from "vue";
 import {
@@ -305,6 +201,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 const props = defineProps<{
   programId: string;
 }>();
+
 const specStore = useProgramSpecStore(),
   languageStore = useLanguagesStore();
 
@@ -384,7 +281,6 @@ function addNewLanguage() {
   // Update program languages
   onLanguageSelected(language.code);
 
-  //   newLanguage.value.modal = false;
   newLanguage.value = {
     modal: false,
     form: {
@@ -410,16 +306,5 @@ onMounted(() => {
   data.value.regionOptions = (specStore.general.region || []).map((i: string) => ({
     value: i,
   }));
-
-  //   Watch for state changes
-  // this subscription will be kept even after the component is unmounted
-  specStore.$subscribe(
-    (mutation, state) => {
-      if (state.changed == false) {
-        specStore.changed = true;
-      }
-    },
-    { detached: true }
-  );
 });
 </script>

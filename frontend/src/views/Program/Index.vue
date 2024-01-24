@@ -203,7 +203,16 @@ onMounted(async () => {
     console.log("no user");
   }
 
-  // await store.fetchSpec({ programId: appStore.activeProgram.data.program_id });
+  //   Watch for state changes
+  // this subscription will be kept even after the component is unmounted
+  store.$subscribe(
+    (mutation, state) => {
+      if (state.changed == false) {
+        store.changed = true;
+      }
+    },
+    { detached: true }
+  );
 });
 
 onBeforeRouteUpdate((to, from, next) => {
