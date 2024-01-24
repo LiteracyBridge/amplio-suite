@@ -28,8 +28,6 @@
                   type="text"
                   placeholder="Enter Program Name"
                   v-model:value="specStore.general.name"
-                  mx="mx-0"
-                  class="w-full"
                 /> </FormItem
             ></Col>
             <Col :span="8">
@@ -95,6 +93,52 @@
         </Form>
       </div>
 
+      <Row>
+        <Col :span="12">
+          <List bordered>
+            <template #header>
+              <span class="font-bold">Direct Beneficiaries</span>
+              <p class="col-span-2 md:col-span-4 text-sm text-blue">
+                The direct beneficiaries properties apply to the Recipients tab, and allow
+                to gather custom information regarding the recipients
+              </p>
+            </template>
+
+            <template v-for="item in specStore.directBeneficiariesLabels">
+              <ListItem>
+                <Input v-model:value="item.value"></Input>
+              </ListItem>
+            </template>
+
+            <template v-for="item in specStore.directBeneficiariesAdditionalLabels">
+              <ListItem>
+                <template #actions>
+                  <!-- TODO: show pop confirm -->
+                  <Button
+                    type="link"
+                    :danger="true"
+                    @click="specStore.deleteDirectBeneficiariesAdditionalLabel(item.key)"
+                    >Delete</Button
+                  >
+                </template>
+
+                <Input v-model:value="item.value"></Input>
+              </ListItem>
+            </template>
+
+            <template #footer>
+              <Button
+                block
+                type="primary"
+                :ghost="true"
+                @click="newBeneficiary.open = true"
+                >+ Add Optional Field</Button
+              >
+            </template>
+          </List>
+        </Col>
+      </Row>
+
       <div class="w-full inline-flex items-center mt-10 text-left">
         <span class="font-bold mr-4">Direct Beneficiaries</span>
         <Button type="text" @click="data.beneficiariesIsOpen = !data.beneficiariesIsOpen">
@@ -116,7 +160,7 @@
           gather custom information regarding the recipients
         </p>
         <div
-          v-for="(opt, index) in specStore.directBeneficiariesLabels()"
+          v-for="(opt, index) in specStore.directBeneficiariesLabels"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''"> Field {{ index + 1 }} </span>
@@ -137,7 +181,7 @@
         <span class="col-span-2" />
 
         <div
-          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels()"
+          v-for="(opt, index) in specStore.directBeneficiariesAdditionalLabels"
           :key="`${opt.key}-label`"
         >
           <span :class="index % 2 === 1 ? 'md:pl-4' : ''">
@@ -185,6 +229,21 @@
       </div>
     </div>
 
+    <!-- New direct beneficiary modal -->
+    <Modal
+      v-model:open="newBeneficiary.open"
+      title="Add New Field"
+      ok-tex="Add"
+      :mask-closable="false"
+      @ok="newBeneficiary.addField()"
+      @cancel="newBeneficiary.name = null"
+    >
+      <FormItem>
+        <Input v-model:value="newBeneficiary.name"></Input>
+      </FormItem>
+    </Modal>
+
+    <!-- New language modal -->
     <Modal
       v-model:open="newLanguage.modal"
       title="Add New Language"
@@ -211,28 +270,8 @@
             v-model:value="newLanguage.form.code"
           />
         </FormItem>
-        <!-- <FormItem id="comments" label="Language comments">
-          <Input
-            name="comments"
-            type="text"
-            placeholder="eg. en"
-            v-model:value="newLanguage.form.code"
-          />
-        </FormItem> -->
       </Form>
     </Modal>
-
-    <!-- For modal components -->
-    <!-- <portal to="modalBody" v-if="data.languageToDelete">
-      <p>This language will be deleted.</p>
-    </portal>
-
-    <portal to="modalFooter" v-if="data.languageToDelete">
-      <footer class="flex flex-row-reverse justify-between">
-        <VButton label="Confirm" variant="warning" @click="confirmLanguageDeletion" />
-        <VButton label="Cancel" @click="cancelLanguageDeletion" />
-      </footer>
-    </portal> -->
   </section>
 </template>
 
@@ -249,6 +288,7 @@ import { useLanguagesStore } from "@/store/languages";
 import { computed, createVNode, onMounted, ref } from "vue";
 import {
   Row,
+  ListItemMeta,
   Col,
   Button,
   Modal,
@@ -257,6 +297,8 @@ import {
   Form,
   FormItem,
   Input,
+  List,
+  ListItem,
 } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
@@ -282,6 +324,20 @@ const newLanguage = ref({
   form: {
     name: null,
     code: null,
+  },
+});
+const newBeneficiary = ref({
+  open: false,
+  name: null,
+  addField() {
+    const key = `field_${Math.random().toString(36).substring(7)}`;
+
+    specStore.setDirectBeneficiariesAdditionalLabel({
+      key: key,
+      value: newBeneficiary.value.name,
+    });
+    newBeneficiary.value.open = false;
+    newBeneficiary.value.name = null;
   },
 });
 

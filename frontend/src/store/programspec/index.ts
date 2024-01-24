@@ -96,6 +96,23 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       return Array.from(labels);
     },
+    directBeneficiariesAdditionalLabels: (state) => {
+      const keys = Object.keys(
+        state.general.direct_beneficiaries_additional_map
+      );
+      return keys.map((key) => ({
+        key,
+        value: state.general.direct_beneficiaries_additional_map[key],
+      }));
+    },
+    directBeneficiariesLabels: (state) => {
+      console.log(state.general);
+      const keys = Object.keys(state.general.direct_beneficiaries_map);
+      return keys.map((key: any) => ({
+        key,
+        value: state.general.direct_beneficiaries_map[key],
+      }));
+    },
   },
   actions: {
     filteredRecipients() {
@@ -124,23 +141,6 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       // return recipients.slice(0, this.recipientsToShow)
       return recipients;
-    },
-    directBeneficiariesLabels() {
-      console.log(this.general);
-      const keys = Object.keys(this.general.direct_beneficiaries_map);
-      return keys.map((key: any) => ({
-        key,
-        value: this.general.direct_beneficiaries_map[key],
-      }));
-    },
-    directBeneficiariesAdditionalLabels() {
-      const keys = Object.keys(
-        this.general.direct_beneficiaries_additional_map
-      );
-      return keys.map((key) => ({
-        key,
-        value: this.general.direct_beneficiaries_additional_map[key],
-      }));
     },
 
     newRecipient() {
@@ -273,6 +273,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       this.programId = payload.programId;
       this.general = payload.programspec.general;
+      this.general.name = payload.programspec.name;
       this.recipients = payload.programspec.recipients;
       this.deployments = payload.programspec.deployments;
 
@@ -292,9 +293,9 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     //region General mutations
     //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    setProgramName(payload: any) {
-      this.general.name = payload;
-    },
+    // setProgramName(payload: any) {
+    //   this.general.name = payload;
+    // },
 
     // setCountry(payload: any) {
     //     this.general.country = payload;
@@ -546,7 +547,10 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general.direct_beneficiaries_map[key] = value;
     },
 
-    setDirectBeneficiariesAdditionalLabel(payload: { value: any; key: any }) {
+    setDirectBeneficiariesAdditionalLabel(payload: {
+      value: string;
+      key: string;
+    }) {
       const { key, value } = payload;
       const map = {
         ...this.general.direct_beneficiaries_additional_map,
