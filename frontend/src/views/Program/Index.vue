@@ -6,8 +6,16 @@
         <template #rightExtra>
           <div class="flex flex-row gap-2">
             <!-- TODO: implement save & discard buttons -->
-            <Button :ghost="true" :danger="true" type="primary"> Discard Changes </Button>
-            <Button type="primary"> Save Changes </Button>
+            <Button
+              :ghost="true"
+              :danger="true"
+              type="primary"
+              @click="store.downloadSpec(appStore.activeProgram?.data.program_id)"
+            >
+              Discard Changes
+            </Button>
+
+            <Button type="primary" @click="store.updateSpec"> Save Changes </Button>
           </div>
         </template>
 

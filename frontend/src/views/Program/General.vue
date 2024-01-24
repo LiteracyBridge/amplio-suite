@@ -1,14 +1,5 @@
 <template>
-  <section class="relative min-h-200-px p-6 pt-0">
-    <!-- <program-header
-      title="General"
-      :changed="specStore.changed"
-      :canSave="specStore.changed"
-      :description="data.description"
-      :onDiscardChanges="() => specStore.fetchSpec({ programId: programId })"
-      :onSaveChanges="specStore.updateSpec"
-    /> -->
-
+  <div>
     <Form
       layout="vertical"
       :model="specStore.general"
@@ -100,48 +91,51 @@
 
           <template v-for="item in specStore.directBeneficiariesLabels">
             <ListItem>
-              <Input v-model:value="item.value"></Input>
+              <Input
+                v-model:value="item.value"
+                @change="
+                  specStore.setDirectBeneficiariesLabel({
+                    key: item.key,
+                    value: $event.target.value,
+                  })
+                "
+              ></Input>
             </ListItem>
           </template>
 
           <template v-for="item in specStore.directBeneficiariesAdditionalLabels">
             <ListItem>
               <template #actions>
-                <!-- TODO: show pop confirm -->
-                <Button
-                  type="link"
-                  :danger="true"
-                  @click="specStore.deleteDirectBeneficiariesAdditionalLabel(item.key)"
-                  >Delete</Button
+                <Popconfirm
+                  title="Are you sure to delete this field?"
+                  ok-text="Yes"
+                  cancel-text="No"
+                  @confirm="specStore.deleteDirectBeneficiariesAdditionalLabel(item.key)"
                 >
+                  <Button type="link" :danger="true">Delete</Button>
+                </Popconfirm>
               </template>
 
-              <Input v-model:value="item.value"></Input>
+              <Input
+                v-model:value="item.value"
+                @change="
+                  specStore.setDirectBeneficiariesAdditionalLabel({
+                    key: item.key,
+                    value: $event.target.value,
+                  })
+                "
+              ></Input>
             </ListItem>
           </template>
 
           <template #footer>
-            <Button block type="primary" :ghost="true" @click="newBeneficiary.open = true"
+            <Button block type="primary" :ghost="true" @click="addField()"
               >+ Add Optional Field</Button
             >
           </template>
         </List>
       </Col>
     </Row>
-
-    <!-- New direct beneficiary modal -->
-    <Modal
-      v-model:open="newBeneficiary.open"
-      title="Add New Field"
-      ok-tex="Add"
-      :mask-closable="false"
-      @ok="newBeneficiary.addField()"
-      @cancel="newBeneficiary.name = null"
-    >
-      <FormItem>
-        <Input v-model:value="newBeneficiary.name"></Input>
-      </FormItem>
-    </Modal>
 
     <!-- New language modal -->
     <Modal
@@ -172,7 +166,7 @@
         </FormItem>
       </Form>
     </Modal>
-  </section>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -195,6 +189,7 @@ import {
   Input,
   List,
   ListItem,
+  Popconfirm,
 } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
@@ -221,20 +216,6 @@ const newLanguage = ref({
   form: {
     name: null,
     code: null,
-  },
-});
-const newBeneficiary = ref({
-  open: false,
-  name: null,
-  addField() {
-    const key = `field_${Math.random().toString(36).substring(7)}`;
-
-    specStore.setDirectBeneficiariesAdditionalLabel({
-      key: key,
-      value: newBeneficiary.value.name,
-    });
-    newBeneficiary.value.open = false;
-    newBeneficiary.value.name = null;
   },
 });
 
@@ -295,6 +276,15 @@ function addNewLanguage() {
       language,
     ];
   }
+}
+
+function addField() {
+  const key = `field_${Math.random().toString(36).substring(7)}`;
+
+  specStore.setDirectBeneficiariesAdditionalLabel({
+    key: key,
+    value: "New Optional Field",
+  });
 }
 
 onMounted(() => {

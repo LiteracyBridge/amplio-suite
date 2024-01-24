@@ -1,5 +1,3 @@
-// import mutations from "./mutations";
-// import actions from "./actions";
 import { defineStore } from "pinia";
 import { useUIStore } from "../ui";
 import {
@@ -106,7 +104,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       }));
     },
     directBeneficiariesLabels: (state) => {
-      console.log(state.general);
       const keys = Object.keys(state.general.direct_beneficiaries_map);
       return keys.map((key: any) => ({
         key,
@@ -410,62 +407,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    // Actions
-    // Fetch the content from the server. payload must have a member .programId.
-    /**
-     *
-     * @param   {any}  payload  [payload description]
-     *
-     * @return  {[type]}        [return description]
-     */
-    // async fetchSpec(payload: { programId: any }) {
-    //   const { programId } = payload;
-
-    //   if (this.status === "loading") return;
-    //   // Not loading: '', success, or error
-    //   if (this.programId === programId && !this.changed) return;
-
-    //   console.log(`Fetching spec for ${programId}`);
-    //   this.requestInit();
-
-    //   try {
-    //     const programspec = await getProgramSpec(programId);
-    //     await this.setSpec({ programId, programspec });
-    //     console.log(
-    //       `Done fetching spec for ${programId} status is ${this.status}`
-    //     );
-    //   } catch (error) {
-    //     this.requestError();
-    //     useUIStore().setNotification({
-    //       type: "alert",
-    //       text: error.toString(),
-    //     });
-    //   }
-    // },
-
-    // async ensureSpec(payload: { programId: any }) {
-    //   const { programId } = payload;
-    //   if (this.status === "loading") return; // may be wrong program?
-    //   if (this.programId === programId) return;
-
-    //   console.log(`Ensure spec fetching for ${programId}`);
-    //   this.requestInit();
-
-    //   try {
-    //     const programspec = await getProgramSpec(programId);
-    //     await this.setSpec({ programId, programspec });
-    //     console.log(
-    //       `Done fetching spec for ${programId} status is ${this.status}`
-    //     );
-    //   } catch (error) {
-    //     this.requestError();
-    //     useUIStore().setNotification({
-    //       type: "alert",
-    //       text: error.toString(),
-    //     });
-    //   }
-    // },
-
     // Update the server with any new & updated content.
     async updateSpec() {
       const { programId, general, deployments, recipients } = this.$state;
@@ -476,8 +417,13 @@ export const useProgramSpecStore = defineStore("programspec", {
         recipients: recipients.map((recip: any) => {
           let newRecip = Object.assign({}, recip);
           // If this recipient has a temporary ID, set it to null so the server can supply a proper id.
-          if (newRecip.recipientid.match(TEMP_RECIPIENT_RE))
+
+          if (
+            newRecip.recipientid != null &&
+            newRecip.recipientid.match(TEMP_RECIPIENT_RE)
+          ) {
             newRecip.recipientid = null;
+          }
           return newRecip;
         }),
       };
@@ -502,16 +448,6 @@ export const useProgramSpecStore = defineStore("programspec", {
         });
       }
     },
-
-    //region toggleListening
-    // addListeningModel(payload: any) {
-    //     this.general.listening_models.push(payload);
-    // },
-
-    // removeListeningModel(index: any) {
-    //     this.general.listening_models.splice(index, 1);
-    // },
-    //endregion
 
     setDeploymentsCount(payload: any) {
       this.general.deployments_count = payload;
@@ -713,10 +649,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist.messages.push(message);
     },
 
-    // , setDuplicateMessage(payload) {
-    //   state.duplicateMessage = payload
-    // }
-
     removeMessage(payload: {
       message: Message;
       playlist: Playlist;
@@ -761,17 +693,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       // const message = this.getMessage(payload);
       const { language, message } = payload;
 
-      // console.log("found message");
-      // console.log(message);
-      // if (message == null) {
-      //   return;
-      // }
-      // let languageCode
-      // if (typeof language === "string" || language instanceof String) {
-      //   languageCode = language;
-      // } else {
-      //   languageCode = language.code;
-      // }
       let languages = message.languages;
       const list = languages == null ? [] : languages.split(/[,;]/);
       if (list.indexOf(language) === -1) list.push(language);
