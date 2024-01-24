@@ -45,8 +45,8 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-box">
-      <nav aria-label="Program sections" class="flex border-b">
+    <!-- <div class="bg-white rounded-lg shadow-box"> -->
+      <!-- <nav aria-label="Program sections" class="flex border-b">
         <router-link
           v-for="(section, index) in data.sections"
           :key="section"
@@ -59,7 +59,7 @@
         >
           {{ ` ${data.sectionTitles[section] || section} ` }}
         </router-link>
-      </nav>
+      </nav> -->
 
       <!-- <transition :name="transitionName" mode="out-in">
         <router-view />
@@ -69,7 +69,7 @@
           <component :is="Component" />
         </transition>
       </router-view> -->
-    </div>
+    <!-- </div> -->
 
     <v-snackbars
       :show.sync="data.showSnackbar"
