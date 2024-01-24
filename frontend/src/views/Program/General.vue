@@ -11,82 +11,88 @@
       :onSaveChanges="specStore.updateSpec"
     /> -->
 
-    <div class="min-h-200-px my-5 text-center">
+    <div class="">
       <!-- Separater line between heading and content -->
-      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
-      <div
-        class="grid grid-cols-form-2 md:grid-cols-form-4 row-gap-2 items-center text-left"
-      >
-        <label for="programName">Program Name</label>
-        <v-input
-          id="programName"
-          ref="programName"
-          name="programName"
-          type="text"
-          placeholder="Enter Program Name"
-          :value="specStore.general.name"
-          @input="(event) => specStore.setProgramName(event.target.value)"
-          mx="mx-0"
-          class="w-full"
-        />
-
-        <span class="col-span-2" />
-
-        <label for="country">Country</label>
-        <Select
-          id="country"
-          v-model:value="specStore.general.country"
-          placeholder="Select one country"
-          aria-label="Select one country"
-          :show-search="true"
+      <!-- <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" /> -->
+      <div>
+        <Form
+          layout="vertical"
+          :model="specStore.general"
+          @values-change="specStore.changed = true"
         >
-          <SelectOption v-for="name in countries" :value="name">{{
-            name
-          }}</SelectOption></Select
-        >
+          <Row :gutter="8">
+            <Col :span="8">
+              <FormItem label="Program Name">
+                <Input
+                  name="programName"
+                  type="text"
+                  placeholder="Enter Program Name"
+                  v-model:value="specStore.general.name"
+                  mx="mx-0"
+                  class="w-full"
+                /> </FormItem
+            ></Col>
+            <Col :span="8">
+              <FormItem label="Country">
+                <Select
+                  id="country"
+                  v-model:value="specStore.general.country"
+                  placeholder="Select one country"
+                  aria-label="Select one country"
+                  :show-search="true"
+                >
+                  <SelectOption v-for="name in countries" :value="name">{{
+                    name
+                  }}</SelectOption></Select
+                >
+              </FormItem>
+            </Col>
 
-        <label class="md:pl-4" for="region">Region/State</label>
-        <Select
-          mode="tags"
-          id="region"
-          tag-placeholder="Add this as new region"
-          placeholder="Search or add a region"
-          v-model:value="specStore.general.region"
-          :options="data.regionOptions"
-        >
-        </Select>
+            <Col :span="8">
+              <FormItem label="Region/State">
+                <Select
+                  mode="tags"
+                  id="region"
+                  tag-placeholder="Add this as new region"
+                  placeholder="Search or add a region"
+                  v-model:value="specStore.general.region"
+                  :options="data.regionOptions"
+                >
+                </Select
+              ></FormItem>
+            </Col>
+          </Row>
 
-        <span id="langs">Languages</span>
-        <div>
-          <LanguagesSelector
-            :languages="specStore.general.languages"
-            :onLanguageSelected="onLanguageSelected"
-            :onLanguageDeleted="onLanguageDeleted"
-            :multiple="true"
-          />
-          <Button type="link" @click.prevent="newLanguage.modal = true"
-            >Not in list? Click to create new language</Button
-          >
-        </div>
-
-        <label class="md:pl-4" for="listeningModel">Listening Model</label>
-        <Select
-          v-if="listeningModels.length > 0"
-          id="listeningModel"
-          :options="listeningModels"
-          v-model:value="specStore.general.listening_models"
-          mode="multiple"
-          :field-names="{ label: 'label', value: 'label' }"
-          :preserve-search="true"
-          placeholder="Select the listening model"
-        ></Select>
-        <font-awesome-icon
-          v-else
-          icon="spinner"
-          size="2x"
-          pulse
-          class="block w-10 h-10 mt-2 text-left"
-        />
+          <Row :gutter="8">
+            <Col :span="8">
+              <FormItem label="Languages">
+                <LanguagesSelector
+                  :languages="specStore.general.languages"
+                  :onLanguageSelected="onLanguageSelected"
+                  :onLanguageDeleted="onLanguageDeleted"
+                  :multiple="true"
+                />
+                <Button type="link" @click.prevent="newLanguage.modal = true"
+                  >Not in list? Click to create new language</Button
+                >
+              </FormItem>
+            </Col>
+            <Col :span="8">
+              <FormItem label="Listening Models">
+                <Select
+                  v-if="listeningModels.length > 0"
+                  id="listeningModel"
+                  :options="listeningModels"
+                  v-model:value="specStore.general.listening_models"
+                  mode="multiple"
+                  :field-names="{ label: 'label', value: 'label' }"
+                  :preserve-search="true"
+                  placeholder="Select the listening model"
+                ></Select>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
       </div>
 
       <div class="w-full inline-flex items-center mt-10 text-left">
@@ -242,6 +248,8 @@ import { useUIStore } from "@/store/ui";
 import { useLanguagesStore } from "@/store/languages";
 import { computed, createVNode, onMounted, ref } from "vue";
 import {
+  Row,
+  Col,
   Button,
   Modal,
   Select,

@@ -116,7 +116,6 @@
 
 <script lang="ts" setup>
 import VButton from "@/components/VButton.vue";
-import VTooltip from "@/components/VTooltip.vue";
 import VSnackbars from "@/components/VSnackbars.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
@@ -157,7 +156,7 @@ const data = ref({
 });
 
 // Download spec
-const {  } = useRequest(store.downloadSpec, {
+const {} = useRequest(store.downloadSpec, {
   defaultParams: [appStore.activeProgram.data.program_id],
   onSuccess: (data) => {
     store.setSpec({
@@ -166,24 +165,10 @@ const {  } = useRequest(store.downloadSpec, {
     });
   },
 });
-// const programName = computed(() => {
-//   return useProgramSpecStore().general.name;
-// });
 
 const anyTabChanged = computed(() => {
   return useProgramSpecStore().changed;
 });
-
-// const canPublish = computed(() => {
-//   const deployments = useProgramSpecStore().deployments;
-//   const recipients = useProgramSpecStore().recipients;
-//   const changed = useProgramSpecStore().changed;
-//   const hasOneMessage = deployments.some((depl) =>
-//     depl.playlists.some((pl: any) => pl.messages.length > 0)
-//   );
-//   const hasOneRecipient = recipients.length > 0;
-//   return hasOneMessage && hasOneRecipient && !changed;
-// });
 
 async function onPublish() {
   if (!store.canPublish) return;

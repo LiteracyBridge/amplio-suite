@@ -7,7 +7,7 @@ class Project {
 
 export class Program {
   id: number;
-  name?: string;
+  name: string;
   country: string;
   region: string[];
   program_id: string;
