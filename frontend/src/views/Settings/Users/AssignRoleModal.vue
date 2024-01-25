@@ -66,7 +66,7 @@ onMounted(() => {
   <Modal
     :open="open"
     :title="programId ? 'Add User' : 'Update Roles'"
-    ok-text="Save Roles"
+    :ok-text="programId ? 'Add User' : 'Save Roles'"
     :confirm-loading="store.loading"
     @cancel="handleCancel()"
     @ok="save()"
