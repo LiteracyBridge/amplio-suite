@@ -49,15 +49,14 @@ export const useRolesStore = defineStore("roles-store", {
       this.loading = true;
 
       const path =
-        form.program_id != null
-          ? `programs/${form.program_id}/users`
-          : `users/roles/assign`;
+        form.program_id != null ? `programs/users` : `users/roles/assign`;
       return ApiRequest.post<User>(path, form)
         .then((users) => {
           useAccountStore().users = users;
-          // TODO: if user is self, reload app to update permissions
           notification.success({
-            message: "Role assigned successfully",
+            message: `${
+              form.program_id ? "Program added" : "Role assigned"
+            } successfully`,
           });
         })
         .catch((err) => {

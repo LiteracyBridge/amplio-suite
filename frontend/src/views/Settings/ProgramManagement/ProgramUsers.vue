@@ -89,7 +89,7 @@ function showOrHideRoleModal(user_id: number | undefined, state: "show" | "hide"
 const programUsers = computed(() => {
   return (
     store.users.filter(
-      (u) => u.roles.find((r) => r.program_id == props.programId) != null
+      (u) => u.programs.find((r) => r.program_id == props.programId) != null
     ) || []
   );
 });
