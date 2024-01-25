@@ -1,91 +1,70 @@
 <template>
-  <section class="relative min-h-200-px p-6 pt-0">
-    <loading v-if="isLoading" class="-ml-6 rounded-b-lg" />
+  <Table :columns="columns" :data-source="tableData" :loading="loading">
+    <template #title>
+      <div class="flex justify-between">
+      <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
 
-    <monitor-header title="Deployments" :description="description" />
+        <Button type="primary" @click="fetchData('ByDepl')" :ghost="true">
+          <ReloadOutlined /> Refresh Data
+        </Button>
+      </div>
+    </template>
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'deploymentnumber'">
+        {{ record.deploymentnumber }}
+      </template>
 
-    <div class="min-h-200-px my-5">
-      <!-- Separater line between heading and content -->
-      <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600" />
+      <template v-if="column.key === 'earliest'">
+        {{ record.earliest }}
+      </template>
 
-      <a-data-table :tableData="tableData" :columnLabels="columnLabels"> </a-data-table>
-    </div>
+      <template v-if="column.key === 'latest'">
+        {{ record.latest }}
+      </template>
 
-    <!-- For modal components -->
-  </section>
+      <template v-if="column.key === 'deployed'">
+        {{ record.deployed }}
+      </template>
+
+      <template v-if="column.key === 'collected'">
+        {{ record.collected }}
+      </template>
+    </template>
+  </Table>
 </template>
 
 <script setup lang="ts">
-// import { mapState, mapActions } from "pinia";
-
-// import { getTbStatusBy } from "@/api/generalQueries.api";
-import ADataTable from "@/components/ADataTable.vue";
-import Loading from "@/components/Loading.vue";
-import MonitorHeader from "@/components/MonitorHeader.vue";
-// import { useProgramSpecStore } from "@/store/programspec";
-// import { useUIStore } from "@/store/ui";
-import { ref } from "vue";
 import { useRequest } from "vue-request";
 import { useProgramsStore } from "@/store/programs";
+import { Table, TypographyTitle, Button } from "ant-design-vue";
+import { ReloadOutlined } from "@ant-design/icons-vue";
 
 const store = useProgramsStore();
 
-const description = ref("Talking Book Deployment Activity"),
-  isLoading = ref(true),
-  columnLabels = {
-    deploymentnumber: "Deployment",
-    earliest: "Earliest",
-    latest: "Latest",
-    deployed: "# TBs instaled",
-    collected: "# TBs reporting data",
-  };
+const columns = [
+  {
+    title: "Deployment",
+    key: "deploymentnumber",
+  },
+  {
+    title: "Earliest",
+    key: "earliest",
+  },
+  {
+    title: "Latest",
+    key: "latest",
+  },
+  {
+    title: "# TBs Instaled",
+    key: "deployed",
+  },
+  {
+    title: "# TBs reporting data",
+    key: "collected",
+  },
+];
 
-const { loading, data: tableData } = useRequest(store.getTbStatusBy, {
+const { loading, data: tableData, run: fetchData } = useRequest(store.getTbStatusBy, {
   defaultParams: ["ByDepl"],
 });
-
-// export default {
-//   props: ["programId"],
-//   created() {
-//     this.getStatus(this, this.programId);
-//     // this.tableData = this.deployments
-//   this.columnLabels = {
-//     deploymentnumber: "Deployment",
-//     earliest: "Earliest",
-//     latest: "Latest",
-//     deployed: "# TBs instaled",
-//     collected: "# TBs reporting data",
-//   };
-// },
-
-// data() {
-//   return {
-//     description: "Talking Book Deployment Activity",
-
-//     tableData: null,
-//     columnLabels: null,
-//     isLoading: true,
-//   };
-// },
-// computed: {
-//   ...mapState(useProgramSpecStore, {
-//     status: (state) => state.status,
-
-//     programName: (state) => state.general.name,
-//   }),
-// },
-//   components: {
-//     ADataTable,
-//     Loading,
-//     MonitorHeader,
-//   },
-//   methods: {
-//     ...mapActions(useUIStore, ["setModal", "closeModal"]),
-//     getStatus: async (self, programid) => {
-//       let status = await getTbStatusBy(programid, "ByDepl");
-//       self.tableData = status;
-//       self.isLoading = false;
-//     },
-//   },
-// };
 </script>
