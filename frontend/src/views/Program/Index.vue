@@ -1,31 +1,45 @@
 <template>
+  <PageHeader
+    title="Program Specification"
+    sub-title="Define your requirements and complete/modify the program specification document."
+  >
+    <template #extra>
+      <Button
+        key="1"
+        :ghost="true"
+        :danger="true"
+        type="primary"
+        @click="store.downloadSpec(appStore.activeProgram?.data.program_id)"
+      >
+        Discard Changes
+      </Button>
+
+      <Button key="2" type="primary" @click="store.updateSpec" :disabled="!store.changed">
+        Save Changes
+      </Button>
+
+      <Popconfirm
+        title="Are you sure you want to publish this program specification to the ACM?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="onPublish"
+      >
+        <Button key="3" :disabled="!store.canPublish" :ghost="true" type="primary"
+          >Publish</Button
+        >
+      </Popconfirm>
+    </template>
+
+    <Alert
+      v-if="!store.canPublish"
+      message="There must be at least one deployment with a message and one recipient before this can be published to the ACM"
+      type="warning"
+    />
+  </PageHeader>
+
   <main class="container mx-auto">
     <Spin :spinning="store.loading">
-      <Tabs v-model:activeKey="activeKey" centered>
-        <template #rightExtra>
-          <div class="flex flex-row gap-2">
-            <!-- TODO: implement save & discard buttons -->
-            <Button
-              :ghost="true"
-              :danger="true"
-              type="primary"
-              @click="store.downloadSpec(appStore.activeProgram?.data.program_id)"
-            >
-              Discard Changes
-            </Button>
-
-            <Button type="primary" @click="store.updateSpec"> Save Changes </Button>
-          </div>
-        </template>
-
-        <template #leftExtra>
-          <div v-if="!store.loading">
-            <Button :disabled="!store.canPublish" @click="onPublish" type="primary"
-              >Publish</Button
-            >
-          </div>
-        </template>
-
+      <Tabs v-model:activeKey="activeKey" centered size="large">
         <TabPane key="general" tab="General">
           <div v-if="!store.loading && store.general != null">
             <General :program-id="appStore.activeProgram.id?.toString()"></General>
@@ -103,13 +117,13 @@
       </router-view> -->
     <!-- </div> -->
 
-    <v-snackbars
+    <!-- <v-snackbars
       :show.sync="data.showSnackbar"
       label="The program specification was successfully published to the ACM."
-    />
+    /> -->
 
     <!-- For modal components -->
-    <portal to="modalBody" v-if="data.isModalOpen">
+    <!-- <portal to="modalBody" v-if="data.isModalOpen">
       <p class="text-xl">Save or discard the change before continue.</p>
     </portal>
 
@@ -117,7 +131,7 @@
       <footer class="flex flex-row-reverse justify-between pt-20">
         <VButton label="Ok" @click="handleCloseModal" />
       </footer>
-    </portal>
+    </portal> -->
   </main>
 </template>
 
@@ -126,10 +140,20 @@ import VButton from "@/components/VButton.vue";
 import VSnackbars from "@/components/VSnackbars.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
-import { computed, onMounted, ref } from "vue";
+import { computed, h, onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
-import { Button, Spin, TabPane, Tabs } from "ant-design-vue";
+import {
+  Alert,
+  Button,
+  Modal,
+  PageHeader,
+  Popconfirm,
+  Space,
+  Spin,
+  TabPane,
+  Tabs,
+} from "ant-design-vue";
 
 import General from "./General.vue";
 import Content2 from "./Content2.vue";
@@ -173,9 +197,9 @@ const {} = useRequest(store.downloadSpec, {
   },
 });
 
-const anyTabChanged = computed(() => {
-  return useProgramSpecStore().changed;
-});
+// const anyTabChanged = computed(() => {
+//   return useProgramSpecStore().changed;
+// });
 
 async function onPublish() {
   if (!store.canPublish) return;
@@ -185,15 +209,15 @@ async function onPublish() {
   if (data.value.publishStatus === "success") data.value.showSnackbar = true;
 }
 
-function handleOpenModal() {
-  data.value.isModalOpen = true;
-  useUIStore().setModal("Save or discard the change");
-}
+// function handleOpenModal() {
+//   data.value.isModalOpen = true;
+//   useUIStore().setModal("Save or discard the change");
+// }
 
-function handleCloseModal() {
-  data.value.isModalOpen = false;
-  useUIStore().closeModal();
-}
+// function handleCloseModal() {
+//   data.value.isModalOpen = false;
+//   useUIStore().closeModal();
+// }
 
 onMounted(async () => {
   try {
@@ -222,34 +246,45 @@ onMounted(async () => {
   );
 });
 
-onBeforeRouteUpdate((to, from, next) => {
-  const sTo = to.path.split("/");
-  const sFrom = from.path.split("/");
-  const toName = sTo[sTo.length - 1];
-  const fromName = sFrom[sFrom.length - 1];
+// onBeforeRouteUpdate((to, from, next) => {
+//   const sTo = to.path.split("/");
+//   const sFrom = from.path.split("/");
+//   const toName = sTo[sTo.length - 1];
+//   const fromName = sFrom[sFrom.length - 1];
 
-  const isInternalNavigation = () =>
-    (data.value.internal[fromName] as any) && (data.value.internal[toName] as any);
+//   const isInternalNavigation = () =>
+//     (data.value.internal[fromName] as any) && (data.value.internal[toName] as any);
 
-  data.value.transitionName =
-    data.value.sections.indexOf(toName) < data.value.sections.indexOf(fromName)
-      ? "slide-right"
-      : "slide-left";
+//   data.value.transitionName =
+//     data.value.sections.indexOf(toName) < data.value.sections.indexOf(fromName)
+//       ? "slide-right"
+//       : "slide-left";
 
-  // Check if the data is save
-  if (anyTabChanged.value && !isInternalNavigation()) {
-    handleOpenModal();
-    next(false);
-  } else {
-    next();
-  }
-});
+//   // Check if the data is save
+//   if (anyTabChanged.value && !isInternalNavigation()) {
+//     handleOpenModal();
+//     next(false);
+//   } else {
+//     next();
+//   }
+// });
 
 onBeforeRouteLeave((to, from, next) => {
-  // Check if the data is save
-  if (anyTabChanged.value) {
-    handleOpenModal();
-    next(false);
+  // Check if the data is saved
+  if (store.changed) {
+    Modal.confirm({
+      title: "Save or discard the change before continue.",
+      okText: "Save",
+      cancelText: "Discard Changes",
+      onOk: () => {
+        return store.updateSpec().then(() => {
+          next();
+        });
+      },
+      onCancel: () => {
+        next();
+      },
+    });
   } else {
     next();
   }

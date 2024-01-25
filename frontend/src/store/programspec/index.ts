@@ -15,6 +15,7 @@ import { Program } from "@/models/program";
 import { Playlist } from "@/models/playlist";
 import { Message } from "@/models/message";
 import { ApiRequest } from "@/api";
+import { notification } from "ant-design-vue";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -359,6 +360,13 @@ export const useProgramSpecStore = defineStore("programspec", {
       try {
         console.log(`Calling publish(${this.programId}).`);
         await publish(this.programId);
+
+        notification.success({
+          message: "Program published successfully",
+          description:
+            "The program specification was successfully published to the ACM.",
+        });
+
         return "success";
       } catch (error) {
         console.log(error);
