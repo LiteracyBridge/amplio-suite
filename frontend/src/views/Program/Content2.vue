@@ -48,7 +48,7 @@
 import { mapState, mapActions } from "pinia";
 
 import Content2Deployment from "@/components/Content2Deployment.vue";
-import draggable from "vuedraggable/dist/vuedraggable.common";
+import draggable from "vuedraggable";
 import VButton from "@/components/VButton.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useCategoriesStore } from "@/store/categories";

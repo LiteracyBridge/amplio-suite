@@ -41,10 +41,18 @@ export const useRolesStore = defineStore("roles-store", {
           this.loading = false;
         });
     },
-    assignRole(form: { user_id: number; roles: number[]; program_id: number }) {
+    assignRole(form: {
+      user_id: number;
+      roles: number[];
+      program_id?: number;
+    }) {
       this.loading = true;
 
-      return ApiRequest.post<User>("users/roles/assign", form)
+      const path =
+        form.program_id != null
+          ? `programs/${form.program_id}/users`
+          : `users/roles/assign`;
+      return ApiRequest.post<User>(path, form)
         .then((users) => {
           useAccountStore().users = users;
           // TODO: if user is self, reload app to update permissions

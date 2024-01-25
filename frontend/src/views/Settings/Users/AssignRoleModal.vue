@@ -74,7 +74,13 @@ onMounted(() => {
   >
     <Spin :spinning="store.loading || loading">
       <Form layout="vertical" :model="form">
-        <FormItem class="pt-4" label="Select roles" :required="true">
+        <!-- TODO: hide roles if opened from programs page -->
+        <FormItem
+          class="pt-4"
+          label="Select roles"
+          :required="true"
+          v-if="programId != null"
+        >
           <Select
             v-model:value="form.roles"
             :show-search="true"
