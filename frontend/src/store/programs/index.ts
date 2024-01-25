@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-import { useUIStore } from "../ui";
 import { ApiRequest } from "@/api";
 import { Program } from "@/models/program";
 import { ProgramUser } from "@/models/user";
+import { useAppStore } from "@/store/app.store";
 
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
@@ -33,7 +33,7 @@ export const useProgramsStore = defineStore("programs", {
      * TODO: remove this function
      */
     async getProgramsList() {
-      return
+      return;
       // if (this.status === "loading") return;
 
       // await this.requestInit();
@@ -66,6 +66,13 @@ export const useProgramsStore = defineStore("programs", {
     },
     async getProgramUsers(id: string | number) {
       return ApiRequest.get<ProgramUser>(`programs/${id}/users`);
+    },
+    async getTbStatusBy(selector: string) {
+      return ApiRequest.get<Record<string, any>>(
+        `dashboard-queries/${
+          useAppStore().programCode
+        }/status?selector=${selector}`
+      );
     },
   },
 });

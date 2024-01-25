@@ -82,14 +82,14 @@ const putRoadmap = async (programid, completed) => {
 //     return result;
 // }
 
-const getTbStatusBy = async (programid, selector) => {
-    const init = makeInit();
-    let url = `${URL}${STATUS}?selector=${selector}&programid=${programid}`;
-    const fetch_promise = fetch(url, init);
-    const fetch_response = await fetch_promise;
-    let result = await fetch_response.json();
-    return result;
-};
+// const getTbStatusBy = async (programid, selector) => {
+//     const init = makeInit();
+//     let url = `${URL}${STATUS}?selector=${selector}&programid=${programid}`;
+//     const fetch_promise = fetch(url, init);
+//     const fetch_response = await fetch_promise;
+//     let result = await fetch_response.json();
+//     return result;
+// };
 
 export {
     // getPrograms,
@@ -97,5 +97,5 @@ export {
     // getCategories,
     getRoadmap,
     putRoadmap,
-    getTbStatusBy
+    // getTbStatusBy
 };

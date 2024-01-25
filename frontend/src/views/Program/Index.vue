@@ -67,80 +67,12 @@
         </TabPane>
       </Tabs>
     </Spin>
-
-    <!-- <div class="py-6 flex justify-between">
-      <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
-
-      <div class="flex">
-        <VButton
-          label="Publish"
-          variant="submit"
-          :disabled="!canPublish"
-          :iconL="data.publishStatus === 'loading' ? 'spinner' : ''"
-          :iconLPulse="data.publishStatus === 'loading'"
-          @click="onPublish"
-        />
-        <v-tooltip
-          v-if="!canPublish"
-          text="There must be at least one deployment with a message and one recipient before this can be published to the ACM"
-          position="right"
-          class="my-2 ml-2"
-        >
-          <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
-        </v-tooltip>
-      </div>
-    </div> -->
-
-    <!-- <div class="bg-white rounded-lg shadow-box"> -->
-    <!-- <nav aria-label="Program sections" class="flex border-b">
-        <router-link
-          v-for="(section, index) in data.sections"
-          :key="section"
-          :to="`/programs/${programId}/settings/${section}`"
-          :class="[
-            $route.path.endsWith(section) ? 'bg-amplio-green text-white' : 'text-black',
-            index === 0 ? 'rounded-tl-lg' : '',
-          ]"
-          class="p-4 text-lg uppercase hover:bg-amplio-green hover:text-white"
-        >
-          {{ ` ${data.sectionTitles[section] || section} ` }}
-        </router-link>
-      </nav> -->
-
-    <!-- <transition :name="transitionName" mode="out-in">
-        <router-view />
-      </transition> -->
-    <!-- <router-view v-slot="{ Component }">
-        <transition>
-          <component :is="Component" />
-        </transition>
-      </router-view> -->
-    <!-- </div> -->
-
-    <!-- <v-snackbars
-      :show.sync="data.showSnackbar"
-      label="The program specification was successfully published to the ACM."
-    /> -->
-
-    <!-- For modal components -->
-    <!-- <portal to="modalBody" v-if="data.isModalOpen">
-      <p class="text-xl">Save or discard the change before continue.</p>
-    </portal>
-
-    <portal to="modalFooter" v-if="data.isModalOpen">
-      <footer class="flex flex-row-reverse justify-between pt-20">
-        <VButton label="Ok" @click="handleCloseModal" />
-      </footer>
-    </portal> -->
   </main>
 </template>
 
 <script lang="ts" setup>
-import VButton from "@/components/VButton.vue";
-import VSnackbars from "@/components/VSnackbars.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
-import { computed, h, onMounted, ref } from "vue";
+import {  onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 import {

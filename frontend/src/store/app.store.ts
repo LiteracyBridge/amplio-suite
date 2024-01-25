@@ -9,6 +9,14 @@ export const useAppStore = defineStore("app-config-store", {
     sidebarVisible: false,
     activeProgram: { id: undefined as number, data: undefined as Program },
   }),
+  getters: {
+    programCode: (state) => {
+      return state.activeProgram.data?.program_id;
+    },
+    programName: (state) => {
+      return state.activeProgram.data?.project?.name;
+    },
+  },
   actions: {
     setActiveProgram(id: number | string) {
       const program = useAccountStore().programs.find((p) => p.id == id);

@@ -52,6 +52,16 @@ const config = ref({
         </router-link>
       </MenuItem>
 
+      <MenuItem key="monitoring">
+        <template #icon>
+          <InsertRowRightOutlined />
+        </template>
+
+        <router-link to="/programs/monitor">
+          <span role="link">TB Monitoring Center </span>
+        </router-link>
+      </MenuItem>
+
       <Menu.SubMenu label="Settings" title="Settings" key="settings">
         <template #icon><SettingOutlined /></template>
 

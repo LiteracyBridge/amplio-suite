@@ -153,36 +153,7 @@ const routes: any = [
       },
     ],
   },
-  {
-    path: "/programs/:programId/monitor",
-    redirect: (to: any) => {
-      return {
-        name: "monitor:status-by-deployment",
-        params: to.params,
-      };
-    },
-    props: true,
-    name: "monitor",
-    component: () => import("../views/Monitor/Index.vue"),
-    beforeEnter: requireAuth,
-    meta: {
-      layout: "default",
-    },
-    children: [
-      {
-        name: "monitor:status-by-deployment",
-        path: "StatusByDepl",
-        props: true,
-        component: () => import("../views/Monitor/StatusByDepl.vue"),
-      },
-      {
-        path: "StatusByTb",
-        name: "monitor:status-by-tb",
-        props: true,
-        component: () => import("../views/Monitor/StatusByTb.vue"),
-      },
-    ],
-  },
+
   {
     path: "/programs/:programId/settings",
     name: "programspec.settings",
@@ -261,6 +232,15 @@ const routes: any = [
   {
     path: "/programs/spec",
     component: () => import("../views/Program/Index.vue"),
+  },
+  // Monitoring Center,
+  {
+    path: "/programs/monitor",
+    name: "monitor",
+    component: () => import("../views/Monitor/Index.vue"),
+    // meta: {
+    //   layout: "default",
+    // },
   },
   // Settings
   {

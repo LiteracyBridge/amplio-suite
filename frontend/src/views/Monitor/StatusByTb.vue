@@ -18,7 +18,7 @@
 <script>
 import { mapState, mapActions } from "pinia";
 
-import { getTbStatusBy } from "@/api/generalQueries.api";
+// import { getTbStatusBy } from "@/api/generalQueries.api";
 import ADataTable from "@/components/ADataTable.vue";
 import Loading from "@/components/Loading.vue";
 import MonitorHeader from "@/components/MonitorHeader.vue";

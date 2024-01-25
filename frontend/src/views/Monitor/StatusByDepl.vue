@@ -15,58 +15,77 @@
   </section>
 </template>
 
-<script>
-import { mapState, mapActions } from "pinia";
+<script setup lang="ts">
+// import { mapState, mapActions } from "pinia";
 
-import { getTbStatusBy } from "@/api/generalQueries.api";
+// import { getTbStatusBy } from "@/api/generalQueries.api";
 import ADataTable from "@/components/ADataTable.vue";
 import Loading from "@/components/Loading.vue";
 import MonitorHeader from "@/components/MonitorHeader.vue";
-import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
+// import { useProgramSpecStore } from "@/store/programspec";
+// import { useUIStore } from "@/store/ui";
+import { ref } from "vue";
+import { useRequest } from "vue-request";
+import { useProgramsStore } from "@/store/programs";
 
-export default {
-  props: ["programId"],
-  created() {
-    this.getStatus(this, this.programId);
-    // this.tableData = this.deployments
-    this.columnLabels = {
-      deploymentnumber: "Deployment",
-      earliest: "Earliest",
-      latest: "Latest",
-      deployed: "# TBs instaled",
-      collected: "# TBs reporting data",
-    };
-  },
+const store = useProgramsStore();
 
-  data() {
-    return {
-      description: "Talking Book Deployment Activity",
+const description = ref("Talking Book Deployment Activity"),
+  isLoading = ref(true),
+  columnLabels = {
+    deploymentnumber: "Deployment",
+    earliest: "Earliest",
+    latest: "Latest",
+    deployed: "# TBs instaled",
+    collected: "# TBs reporting data",
+  };
 
-      tableData: null,
-      columnLabels: null,
-      isLoading: true,
-    };
-  },
-  computed: {
-    ...mapState(useProgramSpecStore, {
-      status: (state) => state.status,
+const { loading, data: tableData } = useRequest(store.getTbStatusBy, {
+  defaultParams: ["ByDepl"],
+});
 
-      programName: (state) => state.general.name,
-    }),
-  },
-  components: {
-    ADataTable,
-    Loading,
-    MonitorHeader,
-  },
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal"]),
-    getStatus: async (self, programid) => {
-      let status = await getTbStatusBy(programid, "ByDepl");
-      self.tableData = status;
-      self.isLoading = false;
-    },
-  },
-};
+// export default {
+//   props: ["programId"],
+//   created() {
+//     this.getStatus(this, this.programId);
+//     // this.tableData = this.deployments
+//   this.columnLabels = {
+//     deploymentnumber: "Deployment",
+//     earliest: "Earliest",
+//     latest: "Latest",
+//     deployed: "# TBs instaled",
+//     collected: "# TBs reporting data",
+//   };
+// },
+
+// data() {
+//   return {
+//     description: "Talking Book Deployment Activity",
+
+//     tableData: null,
+//     columnLabels: null,
+//     isLoading: true,
+//   };
+// },
+// computed: {
+//   ...mapState(useProgramSpecStore, {
+//     status: (state) => state.status,
+
+//     programName: (state) => state.general.name,
+//   }),
+// },
+//   components: {
+//     ADataTable,
+//     Loading,
+//     MonitorHeader,
+//   },
+//   methods: {
+//     ...mapActions(useUIStore, ["setModal", "closeModal"]),
+//     getStatus: async (self, programid) => {
+//       let status = await getTbStatusBy(programid, "ByDepl");
+//       self.tableData = status;
+//       self.isLoading = false;
+//     },
+//   },
+// };
 </script>
