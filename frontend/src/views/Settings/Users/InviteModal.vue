@@ -18,8 +18,6 @@ import { useAccountStore } from "@/store/account";
 import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
 
-// TODO; add user role to invite form
-
 const props = defineProps<{
   open: boolean;
 }>();
@@ -54,6 +52,8 @@ function handleCancel() {
 
 async function handleOk() {
   loading.value = true;
+  formState.organisation_id ??= store.user.organisation_id;
+
   return ApiRequest.post<Invitation>("users/invitations", formState)
     .then((resp) => {
       store.invitations = resp;
@@ -110,6 +110,7 @@ async function handleOk() {
           name="organisation_id"
           :required="true"
           :rules="[{ required: true, message: 'Please select an organisation!' }]"
+          v-if="store.organisations.length > 1"
         >
           <Select
             v-model:value="formState.organisation_id"
