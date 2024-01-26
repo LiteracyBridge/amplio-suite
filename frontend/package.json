@@ -23,6 +23,7 @@
     "ant-design-vue": "^4.1.1",
     "aws-amplify": "^5.3.11",
     "axios": "^0.19.2",
+    "lodash": "^4.17.21",
     "papaparse": "^5.4.1",
     "pinia": "^2.1.7",
     "portal-vue": "^3.0.0",
@@ -35,6 +36,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
     "@types/node": "20",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/cli-plugin-babel": "~4.3.0",

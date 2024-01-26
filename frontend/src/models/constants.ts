@@ -10,4 +10,6 @@ export enum RequestCacheKeys {
 
 export enum LocalStorageKeys {
   active_program = "active_program",
+  active_deployment = "active_deployment",
+  active_language = "active_language",
 }

@@ -228,6 +228,23 @@ const routes: any = [
       import(/* webpackChunkName: "download" */ "../views/Download.vue"),
     beforeEnter: requireAuth,
   },
+  // User feedback
+  {
+    path: "/user-feedback",
+    name: "user_feedback",
+    children: [
+      {
+        path: "analyze",
+        name: "user_feedback.analyze",
+        component: () => import("../views/UserFeedback/Analysis/Index.vue"),
+      },
+      {
+        path: "survey-builder",
+        name: "user_feedback.survey-builder",
+        component: () => import("../views/UserFeedback/SurveyBuilder/Index.vue"),
+      },
+    ],
+  },
   // Program spec
   {
     path: "/programs/spec",
@@ -238,9 +255,6 @@ const routes: any = [
     path: "/programs/monitor",
     name: "monitor",
     component: () => import("../views/Monitor/Index.vue"),
-    // meta: {
-    //   layout: "default",
-    // },
   },
   // Settings
   {

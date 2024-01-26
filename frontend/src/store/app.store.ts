@@ -16,6 +16,9 @@ export const useAppStore = defineStore("app-config-store", {
     programName: (state) => {
       return state.activeProgram.data?.project?.name;
     },
+    deployments: (state) => {
+      return state.activeProgram.data?.deployments_count;
+    },
   },
   actions: {
     setActiveProgram(id: number | string) {
