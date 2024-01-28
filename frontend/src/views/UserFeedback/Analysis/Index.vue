@@ -194,15 +194,6 @@ async function handleOnMounted() {
   }
 }
 
-onMounted(async () => {
-  // surveyStore.download().then(() => {
-  //   config.value.loading = true;
-
-  //   handleOnMounted();
-  // });
-  handleOnMounted();
-});
-
 function validateResponse(feedback: Analysis) {
   let isValid = true;
 
@@ -292,6 +283,18 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
 
   handleOnMounted();
 };
+
+onMounted(async () => {
+  if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
+    onLanguageDeploymentChanged(
+      store.deployments[0]?.deploymentnumber,
+      store.languages[0]
+    );
+    return;
+  }
+
+  handleOnMounted();
+});
 </script>
 
 <template>
@@ -348,7 +351,7 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
     </RouterLink>
   </Empty>
 
-  <Card v-else :loading="isLoading">
+  <Card v-else :loading="isLoading" :bordered="false">
     <template #extra>
       <a :href="getReportUrl" target="_top">
         <Button type="link" @click="">Download Analysis Report</Button>
