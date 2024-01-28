@@ -37,14 +37,12 @@ import { Survey } from "@/models/survey";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
-import { storeToRefs } from "pinia";
 import { API_URL } from "@/models/constants";
 import { DownOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore(),
   surveyStore = useSurveyBuilder();
-// { userFeedback: globalContext } = storeToRefs(store);
 
 const config = ref({
   activeSection: "transcription",
@@ -64,17 +62,10 @@ const uuid = ref(""),
   progress = ref(new Progress()),
   audioKey = ref(0),
   audio = ref(),
-  checkboxes = ref([]),
   nextUUID = ref<string>(),
   startTime = ref<Date>(null),
   transcription = ref(null),
   selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
-
-// const isChoiceSelected = computed(() => {
-//   return (choiceId: string | number) => {
-//     return selectedChoice.value[choiceId] == true;
-//   };
-// });
 
 const skipCurrentMessage = () => {
   feedbackStore.skipped_messages = [...feedbackStore.skipped_messages, uuid.value];
@@ -123,7 +114,6 @@ function updateUrl(uuidSkip?: boolean) {
     .catch((err) => {
       console.log("caught:" + err);
       uuid.value = "";
-      // store.connected = false;
     });
 }
 
@@ -135,16 +125,6 @@ watch(nextUUID, (newUUID) => {
     audioMetadata.value.url = "";
   }
 });
-
-// watch(
-//   globalContext,
-//   (_newContext) => {
-//     // FIXME: this is wrong. we should refresh page if program changes
-//     // Program changed, reload page to get the program surveys
-//     handleOnMounted();
-//   },
-//   { deep: true }
-// );
 
 function analyse(survey: Survey | number) {
   config.value.loading = true;
@@ -171,16 +151,6 @@ async function handleOnMounted() {
     config.value.loading = false;
     return;
   }
-
-  // Look for survey that matches the current deployment and language
-  // const results =
-  //   surveys.filter((s) => s.deployment.deployment == store.userFeedback.deployment) || [];
-
-  // // Only 1 survey was found
-  // if (results.length == 1) {
-  //   analyse(results[0]);
-  //   return;
-  // }
 
   // Multiple surveys were found, ask the user to select one
   if (surveys.length >= 1) {
@@ -327,7 +297,8 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
-      <a
+      <!-- TODO:Enable report download when API is ready -->
+      <!-- <a
         :href="getReportUrl"
         target="_top"
         v-if="feedbackStore.survey != null"
@@ -339,7 +310,7 @@ onMounted(async () => {
           </template>
           Download Report</Button
         >
-      </a>
+      </a> -->
     </template>
 
     <Alert type="info" :closable="true">
@@ -557,10 +528,6 @@ onMounted(async () => {
                     </FormItem>
                   </template>
                 </Card>
-
-                <!-- <div class="flex justify-center items-center mt-5 mb-10">
-                <Button type="primary" :ghost="true"> Save </Button>
-              </div> -->
               </TabPane>
             </Tabs>
           </div>
