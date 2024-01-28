@@ -20,6 +20,7 @@ import {
   PageHeader,
   Empty,
   Tabs,
+  Skeleton,
 } from "ant-design-vue";
 import type { FormInstance } from "ant-design-vue";
 import { computed, h, onMounted, ref } from "vue";
@@ -95,82 +96,73 @@ onMounted(() => {
 
 <template>
   <PageHeader title="Surveys">
-  <template #extra>
-  </template>
-
+    <template #extra>
+      <Button type="primary" @click="newSurveyModal.visible = true"> New Survey</Button>
+    </template>
   </PageHeader>
 
-  <div class="mx-16">
-    <Card title="Surveys" :bordered="false" :loading="store.loading">
-      <!-- TODO: display list of surveys -->
-      <template #extra>
+  <Skeleton v-if="store.loading" :loading="store.loading"></Skeleton>
+
+  <Tabs :centered="true" v-model:activeKey="activeTab" v-else>
+    <TabPane key="draft" tab="Drafts">
+      <Empty v-if="store.drafts.length == 0">
+        <template #description>
+          <span> You do not have any surveys </span>
+        </template>
+
         <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
-          New Survey</Button
+          Create Survey</Button
         >
-      </template>
+      </Empty>
 
-      <Tabs :centered="true" v-model:activeKey="activeTab">
-        <TabPane key="draft" tab="Drafts">
-          <Empty v-if="store.drafts.length == 0">
-            <template #description>
-              <span> You do not have any surveys </span>
-            </template>
+      <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
+        <SurveyItemCard
+          @click="edit(survey)"
+          v-for="survey in store.drafts"
+          :survey="survey"
+        ></SurveyItemCard>
+      </div>
+    </TabPane>
 
-            <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
-              Create Survey</Button
-            >
-          </Empty>
+    <TabPane key="published" tab="Published">
+      <Empty v-if="store.published.length == 0">
+        <template #description>
+          <span> You do not have any surveys </span>
+        </template>
 
-          <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
-            <SurveyItemCard
-              @click="edit(survey)"
-              v-for="survey in store.drafts"
-              :survey="survey"
-            ></SurveyItemCard>
-          </div>
-        </TabPane>
+        <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
+          Create Survey</Button
+        >
+      </Empty>
 
-        <TabPane key="published" tab="Published">
-          <Empty v-if="store.published.length == 0">
-            <template #description>
-              <span> You do not have any surveys </span>
-            </template>
+      <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
+        <SurveyItemCard
+          @click="edit(survey)"
+          v-for="survey in store.published"
+          :survey="survey"
+        ></SurveyItemCard>
+      </div>
+    </TabPane>
 
-            <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
-              Create Survey</Button
-            >
-          </Empty>
+    <TabPane key="archived" tab="Archived">
+      <Empty v-if="store.archived.length == 0">
+        <template #description>
+          <span> You do not have any surveys </span>
+        </template>
 
-          <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
-            <SurveyItemCard
-              @click="edit(survey)"
-              v-for="survey in store.published"
-              :survey="survey"
-            ></SurveyItemCard>
-          </div>
-        </TabPane>
+        <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
+          Create Survey</Button
+        >
+      </Empty>
 
-        <TabPane key="archived" tab="Archived">
-          <Empty v-if="store.archived.length == 0">
-            <template #description>
-              <span> You do not have any surveys </span>
-            </template>
-
-            <Button type="primary" :ghost="true" @click="newSurveyModal.visible = true">
-              Create Survey</Button
-            >
-          </Empty>
-
-          <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
-            <SurveyItemCard
-              @click="edit(survey)"
-              v-for="survey in store.archived"
-              :survey="survey"
-            ></SurveyItemCard></div
-        ></TabPane>
-      </Tabs>
-    </Card>
-  </div>
+      <div v-else class="grid grid-flow-row-dense grid-cols-4 gap-4">
+        <SurveyItemCard
+          @click="edit(survey)"
+          v-for="survey in store.archived"
+          :survey="survey"
+        ></SurveyItemCard></div
+    ></TabPane>
+  </Tabs>
 
   <!-- New Section Modal -->
   <Modal

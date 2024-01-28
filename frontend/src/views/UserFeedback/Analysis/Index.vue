@@ -318,7 +318,7 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
       </Dropdown>
     </template>
 
-    <Alert type="info">
+    <Alert type="info" :closable="true">
       <template #message>
         <span>
           Analysing user feedback for
