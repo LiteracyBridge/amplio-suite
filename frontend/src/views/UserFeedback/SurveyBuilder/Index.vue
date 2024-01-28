@@ -81,7 +81,7 @@ function createSurvey() {
 
 function edit(survey: Survey) {
   store.setSurvey(survey);
-  router.push({ name: "user_feedback/surveys"});
+  router.push({ name: "user_feedback.survey-builder"});
 }
 
 function analyse(survey: Survey) {

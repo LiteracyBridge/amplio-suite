@@ -17,7 +17,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
   }),
   getters: {
     published: (state) =>
-      state.surveys.filter((s) => s.status == SurveyStatus.published),
+      state.surveys.filter((s) => s.status == SurveyStatus.published) || [],
     drafts: (state) =>
       state.surveys.filter(
         (s) => s.status == SurveyStatus.draft || s.status == null
