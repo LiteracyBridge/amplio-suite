@@ -130,7 +130,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
 
       // Fetch statis
       ApiRequest.get<Statistics>(
-        `analysis/${survey.id}/statistics?email=${
+        `user-feedback/analysis/${survey.id}/statistics?email=${
           useAccountStore().email
         }&language=${useAppStore().userFeedback.language}&deployment=${
           useAppStore().userFeedback.deployment
@@ -304,14 +304,17 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       // TODO: implement saving of analysis
       // const survey = this.$state.survey;
       this.$state.loading = true;
-      return ApiRequest.post<Analysis>(`analysis/${this.$state.survey.id}`, {
-        questions: this.$state.questions,
-        submit_time: new Date(),
-        ...extra,
-        is_useless: extra.is_useless || false,
-        analyst_email: useAccountStore().email,
-        transaction: extra.transcription,
-      })
+      return ApiRequest.post<Analysis>(
+        `user-feedback/analysis/${this.$state.survey.id}`,
+        {
+          questions: this.$state.questions,
+          submit_time: new Date(),
+          ...extra,
+          is_useless: extra.is_useless || false,
+          analyst_email: useAccountStore().email,
+          transaction: extra.transcription,
+        }
+      )
         .then(([resp]) => {
           // Reset all responses
           this.resetResponses();

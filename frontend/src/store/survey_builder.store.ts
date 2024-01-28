@@ -98,7 +98,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
       });
       this.$state.activeSurvey = survey;
     },
-    reorderQuestions(data: Question[]){
+    reorderQuestions(data: Question[]) {
       this.$state.activeSurvey.questions = data;
       return this.$state.activeSurvey.questions;
     },
@@ -194,7 +194,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     async download() {
       this.$state.loading = true;
       return ApiRequest.get<Survey>(
-        `surveys/${useAppStore().programCode}`
+        `user-feedback/surveys/${useAppStore().programCode}`
       )
         .then((resp) => {
           this.$state.surveys = resp.map((s) => {
@@ -221,7 +221,10 @@ export const useSurveyBuilder = defineStore("survey-builder", {
       const survey = this.$state.activeSurvey;
       this.$state.loading = true;
 
-      return ApiRequest.post<Survey>(`surveys/${survey.id}/questions`, survey)
+      return ApiRequest.post<Survey>(
+        `user-feedback/surveys/${survey.id}/questions`,
+        survey
+      )
         .then(([resp]) => {
           this.setSurvey(resp);
           this.$state.surveys = this.$state.surveys.map((s) =>
@@ -242,7 +245,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
       this.$state.loading = true;
 
       return ApiRequest.put<Survey>(
-        `surveys/${survey.id}/status?status=${status}`,
+        `user-feedback/surveys/${survey.id}/status?status=${status}`,
         {}
       )
         .then(([resp]) => {
