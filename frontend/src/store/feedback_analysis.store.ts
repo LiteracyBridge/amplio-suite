@@ -9,6 +9,8 @@ import {
   Question,
 } from "@/models/question";
 import { Survey } from "@/models/survey";
+import { useAppStore } from "./app.store";
+import { useAccountStore } from "./account";
 
 class Statistics {
   user_feedback: 0;
@@ -87,51 +89,52 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
   actions: {
     setSurvey(survey: Survey) {
       this.$state.survey = survey;
-      this.$state.questions = orderBy(survey.questions, (q: Question) => q.order).map(
-        (question: Question) => {
-          question.choices = question.choices;
-          // .map((c) => {
-          //   c.sub_options = question.choices.filter(
-          //     (c2) => c2.parent_id == c.choice_id
-          //   );
-          //   return c;
-          // })
-          // .filter((c) => c.parent_id == null);
+      this.$state.questions = orderBy(
+        survey.questions,
+        (q: Question) => q.order
+      ).map((question: Question) => {
+        question.choices = question.choices;
+        // .map((c) => {
+        //   c.sub_options = question.choices.filter(
+        //     (c2) => c2.parent_id == c.choice_id
+        //   );
+        //   return c;
+        // })
+        // .filter((c) => c.parent_id == null);
 
-          // console.log(question.choices);
-          let show = true;
-          if (question.conditions?.action == ConditionAction.show) {
-            show = false;
-          }
-
-          return {
-            id: null,
-            choices: [],
-            question_id: question.id,
-            choice_id: null,
-            response: null,
-            is_useless: false,
-            question: question,
-            show: show,
-            meta: { show: show, required: question.required },
-            single_choice:
-              question.type == QuestionType.single_choice
-                ? {
-                    value: null,
-                    sub_choice: null,
-                  }
-                : null,
-          };
+        // console.log(question.choices);
+        let show = true;
+        if (question.conditions?.action == ConditionAction.show) {
+          show = false;
         }
-      );
+
+        return {
+          id: null,
+          choices: [],
+          question_id: question.id,
+          choice_id: null,
+          response: null,
+          is_useless: false,
+          question: question,
+          show: show,
+          meta: { show: show, required: question.required },
+          single_choice:
+            question.type == QuestionType.single_choice
+              ? {
+                  value: null,
+                  sub_choice: null,
+                }
+              : null,
+        };
+      });
 
       // Fetch statis
       ApiRequest.get<Statistics>(
         `analysis/${survey.id}/statistics?email=${
-          useGlobalStore().email
-        }&language=${
-          useGlobalStore().context.selectedLanguageCode
-        }&deployment=${useGlobalStore().context.selectedDeployment}`
+          useAccountStore().email
+        }&language=${useAppStore().userFeedback.language}&deployment=${
+          useAppStore().userFeedback.deployment
+        }`
       ).then(([stats]) => {
         this.$state.statistics = stats;
       });
@@ -306,7 +309,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         submit_time: new Date(),
         ...extra,
         is_useless: extra.is_useless || false,
-        analyst_email: useGlobalStore().email,
+        analyst_email: useAccountStore().email,
         transaction: extra.transcription,
       })
         .then(([resp]) => {

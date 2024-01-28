@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFeedbackAnalysis } from "@/stores/feedback_analysis.store";
+import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import { Row, Col, Statistic, Card } from "ant-design-vue";
 
 const store = useFeedbackAnalysis();

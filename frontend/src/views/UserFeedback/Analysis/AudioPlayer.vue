@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import type { AudioMetadata } from "../types";
 import { Button, Card, Descriptions, DescriptionsItem } from "ant-design-vue";
 import Instructions from "./Instructions.vue";
+import type { AudioMetadata } from "@/models/analysis";
 
 const props = defineProps<{
   audioMetadata: AudioMetadata;
@@ -15,7 +15,7 @@ const $emit = defineEmits<{
   (e: "useless", status: boolean): void;
 }>();
 
-const router = useRouter();
+// const router = useRouter();
 
 const connected = ref(false),
   speed = ref(1),

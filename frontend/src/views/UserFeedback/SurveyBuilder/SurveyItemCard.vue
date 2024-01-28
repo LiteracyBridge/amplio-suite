@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Survey } from "@/models/survey";
 import { Card, CardMeta } from "ant-design-vue";
-import { Survey } from "./types";
 
 const props = defineProps<{
   survey: Survey;

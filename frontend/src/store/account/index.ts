@@ -33,6 +33,7 @@ export const useAccountStore = defineStore("account", {
     programs: (state) => {
       return (state.user.programs || []).map((pu) => pu.program);
     },
+    email: (state) => state.user.email,
   },
   actions: {
     authRequest() {

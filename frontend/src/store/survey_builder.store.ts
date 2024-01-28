@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { groupBy } from "lodash";
 import { message, notification } from "ant-design-vue";
-import { useGlobalStore } from "./app.store";
+import { useAppStore } from "./app.store";
 import { ApiRequest } from "@/api";
 import { Question } from "@/models/question";
 import { Survey, SurveyStatus } from "@/models/survey";
@@ -194,7 +194,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     async download() {
       this.$state.loading = true;
       return ApiRequest.get<Survey>(
-        `surveys/${useGlobalStore().context.selectedProgramCode}`
+        `surveys/${useAppStore().programCode}`
       )
         .then((resp) => {
           this.$state.surveys = resp.map((s) => {

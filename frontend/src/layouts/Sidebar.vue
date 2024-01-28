@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import {
-  MenuItem,
-  Image,
-  LayoutSider,
-  Menu,
-  Divider,
-} from "ant-design-vue";
+import { MenuItem, Image, LayoutSider, Menu, Divider } from "ant-design-vue";
 import {
   DatabaseOutlined,
   SettingOutlined,
   UserOutlined,
   InsertRowRightOutlined,
+  SoundOutlined,
+  DotChartOutlined,
+  MonitorOutlined,
+  BuildOutlined
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 
@@ -54,13 +52,34 @@ const config = ref({
 
       <MenuItem key="monitoring">
         <template #icon>
-          <InsertRowRightOutlined />
+          <MonitorOutlined />
         </template>
 
         <router-link to="/programs/monitor">
           <span role="link">TB Monitoring Center </span>
         </router-link>
       </MenuItem>
+
+      <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
+        <template #icon>
+          <SoundOutlined />
+        </template>
+
+        <MenuItem key="analyze">
+          <template #icon> <DotChartOutlined /> </template>
+
+          <router-link to="/user-feedback/analyze">
+            <span role="link"> Analyze </span>
+          </router-link>
+        </MenuItem>
+
+        <MenuItem key="survey-builder">
+          <template #icon> <BuildOutlined /> </template>
+          <router-link to="/user-feedback/survey-builder">
+            <span role="link"> Survey Builder </span>
+          </router-link>
+        </MenuItem>
+      </Menu.SubMenu>
 
       <Menu.SubMenu label="Settings" title="Settings" key="settings">
         <template #icon><SettingOutlined /></template>

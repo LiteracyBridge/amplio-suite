@@ -17,6 +17,7 @@ import {
   CardMeta,
   Spin,
   message,
+  PageHeader,
   Empty,
   Tabs,
 } from "ant-design-vue";
@@ -93,7 +94,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <NavBar /> -->
+  <PageHeader title="Surveys">
+  <template #extra>
+  </template>
+
+  </PageHeader>
 
   <div class="mx-16">
     <Card title="Surveys" :bordered="false" :loading="store.loading">

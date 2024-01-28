@@ -18,23 +18,26 @@ import {
   Select,
   SelectOption,
   notification,
+  PageHeader,
 } from "ant-design-vue";
-import NavBar from "@/components/NavBar.vue";
 import { computed, h, onMounted, ref, watch } from "vue";
-import { QuestionType, Survey, Progress, QuestionChoice, Analysis } from "../types";
-import { useFeedbackAnalysis } from "@/stores/feedback_analysis.store";
-import { AudioMetadata } from "../types";
+import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import AudioPlayer from "./AudioPlayer.vue";
-import { useGlobalStore } from "@/stores/app.store";
-import { storeToRefs } from "pinia";
 import Stats from "./Stats.vue";
-import { useSurveyBuilder } from "@/stores/survey_builder.store";
-import { ApiRequest, API_URL } from "@/helpers/api";
+import { useSurveyBuilder } from "@/store/survey_builder.store";
+import { AudioMetadata, Analysis, Progress } from "@/models/analysis";
+import { QuestionChoice, QuestionType } from "@/models/question";
+import { Survey } from "@/models/survey";
+import { useAppStore } from "@/store/app.store";
+import { ApiRequest } from "@/api";
+import { useAccountStore } from "@/store/account";
+import { storeToRefs } from "pinia";
+import { API_URL } from "@/models/constants";
 
 const feedbackStore = useFeedbackAnalysis(),
-  globalStore = useGlobalStore(),
-  surveyStore = useSurveyBuilder(),
-  { context: globalContext } = storeToRefs(globalStore);
+  store = useAppStore(),
+  surveyStore = useSurveyBuilder();
+// { userFeedback: globalContext } = storeToRefs(store);
 
 const config = ref({
   activeSection: "transcription",
@@ -56,7 +59,6 @@ const uuid = ref(""),
   audio = ref(),
   checkboxes = ref([]),
   nextUUID = ref<string>(),
-  store = useGlobalStore(),
   startTime = ref<Date>(null),
   transcription = ref(null),
   selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
@@ -75,14 +77,13 @@ const skipCurrentMessage = () => {
 function updateUrl(uuidSkip?: boolean) {
   transcription.value = null;
 
-  return ApiRequest.get("messages", {
-    email: store.email,
-    program: store.context.selectedProgramCode,
-    deployment: store.context.selectedDeployment,
-    language: store.context.selectedLanguageCode,
-    uuid: uuid.value || uuidSkip || "",
-    skipped_messages: feedbackStore.skipped_messages,
-  })
+  return ApiRequest.get(
+    `messages?email=${useAccountStore().email}&program=${store.programCode}&deployment=${
+      store.userFeedback.deployment
+    }&language=${store.userFeedback.language}&uuid=${
+      uuid.value || uuidSkip || ""
+    }&skipped_messages=${feedbackStore.skipped_messages}`
+  )
     .then(([response]: any) => {
       // TODO: check for not empty response [when there are no messages ]
 
@@ -113,19 +114,19 @@ function updateUrl(uuidSkip?: boolean) {
     .catch((err) => {
       console.log("caught:" + err);
       uuid.value = "";
-      store.connected = false;
+      // store.connected = false;
     });
 }
 
-function setCheckboxes(list: any[]) {
-  // this is used to pass to lambda fct when requesting a specific uuid form submission
-  // some fields need to be in an array (checkboxes); while others should not (select boxes)
-  checkboxes.value = list;
-}
+// function setCheckboxes(list: any[]) {
+//   // this is used to pass to lambda fct when requesting a specific uuid form submission
+//   // some fields need to be in an array (checkboxes); while others should not (select boxes)
+//   checkboxes.value = list;
+// }
 
-function updateConnected(isConnected: boolean) {
-  store.connected = isConnected;
-}
+// function updateConnected(isConnected: boolean) {
+//   store.connected = isConnected;
+// }
 
 const showNoAudios = computed(() => {
   let message = "NONE";
@@ -177,15 +178,15 @@ watch(nextUUID, (newUUID) => {
   }
 });
 
-watch(
-  globalContext,
-  (_newContext) => {
-    // FIXME: this is wrong. we should refresh page if program changes
-    // Program changed, reload page to get the program surveys
-    handleOnMounted();
-  },
-  { deep: true }
-);
+// watch(
+//   globalContext,
+//   (_newContext) => {
+//     // FIXME: this is wrong. we should refresh page if program changes
+//     // Program changed, reload page to get the program surveys
+//     handleOnMounted();
+//   },
+//   { deep: true }
+// );
 
 function analyse(survey: Survey | number) {
   config.value.loading = true;
@@ -215,9 +216,7 @@ async function handleOnMounted() {
 
   // Look for survey that matches the current deployment and language
   const results =
-    surveys.filter(
-      (s) => s.deployment.deployment == globalContext.value.selectedDeployment
-    ) || [];
+    surveys.filter((s) => s.deployment.deployment == store.userFeedback.deployment) || [];
 
   // Only 1 survey was found
   if (results.length == 1) {
@@ -324,12 +323,38 @@ const isLoading = computed(() => {
 
 const getReportUrl = computed(() => {
   if (feedbackStore.survey == null) return null;
-  return `${API_URL}/reports/${feedbackStore.survey.id}?deployment=${globalContext.value.selectedDeployment}&language=${globalContext.value.selectedLanguageCode}`;
+  return `${API_URL}/reports/${feedbackStore.survey.id}?deployment=${store.userFeedback.deployment}&language=${store.userFeedback.language}`;
 });
 </script>
 
 <template>
   <!-- <NavBar /> -->
+  <PageHeader title="User Feedback Analysis" sub-title="Analyse user feedback">
+    <template #extra>
+      <a-dropdown>
+        <a class="ant-dropdown-link" @click.prevent>
+          Cascading menu
+          <DownOutlined />
+        </a>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item>1st menu item</a-menu-item>
+            <a-menu-item>2nd menu item</a-menu-item>
+            <a-sub-menu key="sub1" title="sub menu">
+              <a-menu-item>3rd menu item</a-menu-item>
+              <a-menu-item>4th menu item</a-menu-item>
+            </a-sub-menu>
+            <a-sub-menu key="sub2" title="disabled sub menu" disabled>
+              <a-menu-item>5d menu item</a-menu-item>
+              <a-menu-item>6th menu item</a-menu-item>
+            </a-sub-menu>
+          </a-menu>
+        </template>
+      </a-dropdown>
+    </template>
+
+    <!-- TODO: show a banner with selected deployment & language -->
+  </PageHeader>
 
   <Empty v-if="(useSurveyBuilder().published || []).length == 0 && !isLoading">
     <template #description>
@@ -381,7 +406,6 @@ const getReportUrl = computed(() => {
         <AudioPlayer
           :key="audioKey"
           @srcError="updateUrl"
-          @network="updateConnected"
           @next="skipCurrentMessage"
           @useless="save($event)"
           ref="audio"

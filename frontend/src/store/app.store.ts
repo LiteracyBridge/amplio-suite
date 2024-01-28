@@ -8,6 +8,11 @@ export const useAppStore = defineStore("app-config-store", {
   state: () => ({
     sidebarVisible: false,
     activeProgram: { id: undefined as number, data: undefined as Program },
+    userFeedback: {
+      deployment: undefined as undefined | number | string,
+      language: undefined as undefined | string,
+      surveyId: undefined as undefined | number,
+    },
   }),
   getters: {
     programCode: (state) => {
