@@ -24,6 +24,7 @@ import {
   SubMenu,
   Alert,
   Menu,
+  Skeleton,
 } from "ant-design-vue";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
@@ -38,7 +39,7 @@ import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
 import { storeToRefs } from "pinia";
 import { API_URL } from "@/models/constants";
-import { DownOutlined } from "@ant-design/icons-vue";
+import { DownOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore(),
@@ -325,6 +326,20 @@ onMounted(async () => {
           <DownOutlined />
         </Button>
       </Dropdown>
+
+      <a
+        :href="getReportUrl"
+        target="_top"
+        v-if="feedbackStore.survey != null"
+        class="ml-4"
+      >
+        <Button type="primary" :ghost="true">
+          <template #icon>
+            <DownloadOutlined />
+          </template>
+          Download Report</Button
+        >
+      </a>
     </template>
 
     <Alert type="info" :closable="true">
@@ -339,7 +354,13 @@ onMounted(async () => {
         </span>
       </template>
     </Alert>
+
+    <template v-if="!isLoading">
+      <Stats class="my-2" />
+    </template>
   </PageHeader>
+
+  <Skeleton :loading="isLoading"></Skeleton>
 
   <Empty v-if="(useSurveyBuilder().published || []).length == 0 && !isLoading">
     <template #description>
@@ -351,17 +372,7 @@ onMounted(async () => {
     </RouterLink>
   </Empty>
 
-  <Card v-else :loading="isLoading" :bordered="false">
-    <template #extra>
-      <a :href="getReportUrl" target="_top">
-        <Button type="link" @click="">Download Analysis Report</Button>
-      </a>
-    </template>
-
-    <div class="mx-20">
-      <Stats />
-    </div>
-
+  <div v-else>
     <!-- No feedback messages -->
     <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url == ''">
       <template #description>
@@ -371,7 +382,7 @@ onMounted(async () => {
 
     <div v-else>
       <div
-        class="flex justify-center mt-5"
+        class="flex justify-center"
         v-if="audioMetadata.url != '' || audioMetadata.url != null"
       >
         <AudioPlayer
@@ -573,7 +584,7 @@ onMounted(async () => {
         </div>
       </Form>
     </div>
-  </Card>
+  </div>
 
   <!-- Survey selection modal Modal -->
   <Modal
