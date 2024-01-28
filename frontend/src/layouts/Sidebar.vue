@@ -75,7 +75,7 @@ const config = ref({
 
         <MenuItem key="survey-builder">
           <template #icon> <BuildOutlined /> </template>
-          <router-link to="/user-feedback/survey-builder">
+          <router-link to="/user-feedback/surveys">
             <span role="link"> Survey Builder </span>
           </router-link>
         </MenuItem>

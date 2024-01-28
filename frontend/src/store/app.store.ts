@@ -22,7 +22,10 @@ export const useAppStore = defineStore("app-config-store", {
       return state.activeProgram.data?.project?.name;
     },
     deployments: (state) => {
-      return state.activeProgram.data?.deployments_count;
+      return state.activeProgram.data?.deployments_count || 0;
+    },
+    languages: (state) => {
+      return state.activeProgram.data?.languages || [];
     },
   },
   actions: {

@@ -19,6 +19,11 @@ import {
   SelectOption,
   notification,
   PageHeader,
+  Dropdown,
+  MenuItem,
+  SubMenu,
+  Alert,
+  Menu,
 } from "ant-design-vue";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
@@ -33,6 +38,7 @@ import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
 import { storeToRefs } from "pinia";
 import { API_URL } from "@/models/constants";
+import { DownOutlined } from "@ant-design/icons-vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore(),
@@ -117,57 +123,6 @@ function updateUrl(uuidSkip?: boolean) {
       // store.connected = false;
     });
 }
-
-// function setCheckboxes(list: any[]) {
-//   // this is used to pass to lambda fct when requesting a specific uuid form submission
-//   // some fields need to be in an array (checkboxes); while others should not (select boxes)
-//   checkboxes.value = list;
-// }
-
-// function updateConnected(isConnected: boolean) {
-//   store.connected = isConnected;
-// }
-
-const showNoAudios = computed(() => {
-  let message = "NONE";
-  if (uuid.value == "" || uuid.value == null) {
-    // Must be in Responses.vue, which is telling us that we are at the end of the list.
-    return "Finished!  There are no more responses to review.";
-  }
-  if (progress.value.totalReceivedMessages != -1) {
-    // -1 indicated that this number hasn't been loaded yet.
-    if (progress.value.totalReceivedMessages == 0) {
-      message = "No messages are ready to process yet.";
-    } else {
-      let remaining =
-        progress.value.totalReceivedMessages -
-        (progress.value.others_recordings + progress.value.users_recordings);
-      if (remaining == 0) {
-        message = "Finished! There are no more messages to process!";
-      } else {
-        var isAre;
-        var itThey;
-        if (remaining == 1) {
-          isAre = "is ";
-          itThey = "It ";
-        } else {
-          isAre = "are ";
-          itThey = "They ";
-        }
-        message =
-          "There " +
-          isAre +
-          String(remaining) +
-          " remaining message" +
-          (remaining > 1 ? "s" : "") +
-          " still being processed by others.<BR/>" +
-          itThey +
-          "will be available for you to process within 5 minutes.";
-      }
-    }
-  }
-  return message;
-});
 
 watch(nextUUID, (newUUID) => {
   uuid.value = newUUID;
@@ -307,6 +262,7 @@ function save(is_useless: boolean = false) {
     })
     .then(() => updateUrl(true));
 }
+
 const isOptionOther = computed(() => {
   return (choices: QuestionChoice[], option_id: number | string) => {
     const option = choices.find((c) => c.choice_id == option_id);
@@ -325,35 +281,55 @@ const getReportUrl = computed(() => {
   if (feedbackStore.survey == null) return null;
   return `${API_URL}/reports/${feedbackStore.survey.id}?deployment=${store.userFeedback.deployment}&language=${store.userFeedback.language}`;
 });
+
+const onLanguageDeploymentChanged = (deployment: number, language: string) => {
+  store.userFeedback ??= { deployment, language, surveyId: null };
+  store.userFeedback.deployment = deployment;
+  store.userFeedback.language = language;
+
+  handleOnMounted();
+};
 </script>
 
 <template>
   <!-- <NavBar /> -->
   <PageHeader title="User Feedback Analysis" sub-title="Analyse user feedback">
     <template #extra>
-      <a-dropdown>
-        <a class="ant-dropdown-link" @click.prevent>
-          Cascading menu
-          <DownOutlined />
-        </a>
+      <Dropdown>
         <template #overlay>
-          <a-menu>
-            <a-menu-item>1st menu item</a-menu-item>
-            <a-menu-item>2nd menu item</a-menu-item>
-            <a-sub-menu key="sub1" title="sub menu">
-              <a-menu-item>3rd menu item</a-menu-item>
-              <a-menu-item>4th menu item</a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu key="sub2" title="disabled sub menu" disabled>
-              <a-menu-item>5d menu item</a-menu-item>
-              <a-menu-item>6th menu item</a-menu-item>
-            </a-sub-menu>
-          </a-menu>
+          <Menu>
+            <SubMenu :key="d" v-for="d in Array.from(Array(store.deployments).keys())">
+              <template #title>
+                <span>Deployment {{ d }}</span>
+              </template>
+              <MenuItem
+                :key="lang"
+                v-for="lang in store.languages"
+                @click="onLanguageDeploymentChanged(d, lang)"
+                >{{ lang }}</MenuItem
+              >
+            </SubMenu>
+          </Menu>
         </template>
-      </a-dropdown>
+        <Button>
+          Change Deployment
+          <DownOutlined />
+        </Button>
+      </Dropdown>
     </template>
 
-    <!-- TODO: show a banner with selected deployment & language -->
+    <Alert type="info">
+      <template #message>
+        <span>
+          Analysing user feedback for
+          <span class="font-bold text-lg">{{ store.programName }}</span
+          >, deployment
+          <span class="font-bold text-lg">{{ store.userFeedback.deployment }}</span>
+          and language
+          <span class="font-bold text-lg">{{ store.userFeedback.language }}</span>
+        </span>
+      </template>
+    </Alert>
   </PageHeader>
 
   <Empty v-if="(useSurveyBuilder().published || []).length == 0 && !isLoading">
@@ -361,7 +337,7 @@ const getReportUrl = computed(() => {
       <span> You do not have any surveys </span>
     </template>
 
-    <RouterLink to="/surveys">
+    <RouterLink to="/user-feedback/surveys">
       <Button type="primary" :ghost="false"> Create Survey</Button>
     </RouterLink>
   </Empty>
