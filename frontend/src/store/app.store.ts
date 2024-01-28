@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
 import { message } from "ant-design-vue";
 import { LocalStorageKeys } from "@/models/constants";
+import { Deployment } from "@/models/deployment";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
@@ -21,8 +22,8 @@ export const useAppStore = defineStore("app-config-store", {
     programName: (state) => {
       return state.activeProgram.data?.project?.name;
     },
-    deployments: (state) => {
-      return state.activeProgram.data?.deployments_count || 0;
+    deployments: (state): Deployment[] => {
+      return state.activeProgram.data?.project.deployments || [];
     },
     languages: (state) => {
       return state.activeProgram.data?.languages || [];

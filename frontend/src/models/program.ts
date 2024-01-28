@@ -1,8 +1,11 @@
+import { Deployment } from "./deployment";
 import { Language } from "./language";
 
 class Project {
   name: string;
   code: string;
+
+  deployments: Deployment[] = []
 }
 
 export class Program {

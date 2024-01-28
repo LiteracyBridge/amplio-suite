@@ -298,14 +298,14 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
       <Dropdown>
         <template #overlay>
           <Menu>
-            <SubMenu :key="d" v-for="d in Array.from(Array(store.deployments).keys())">
+            <SubMenu :key="d.deploymentnumber" v-for="d in store.deployments">
               <template #title>
-                <span>Deployment {{ d }}</span>
+                <span>Deployment {{ d.deploymentnumber }}</span>
               </template>
               <MenuItem
                 :key="lang"
                 v-for="lang in store.languages"
-                @click="onLanguageDeploymentChanged(d, lang)"
+                @click="onLanguageDeploymentChanged(d.deploymentnumber, lang)"
                 >{{ lang }}</MenuItem
               >
             </SubMenu>
