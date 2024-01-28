@@ -46,22 +46,22 @@ const newSurveyModal = ref({
   }),
   activeTab = ref("draft");
 
-const deployments = computed(() => {
-  return Array.from(Array(appStore.deployments || 0).keys());
-});
+// const deployments = computed(() => {
+//   return Array.from(Array(appStore.deployments || 0).keys());
+// });
 
-const languages = computed(() => {
-  return [];
-  // TODO: implement this
-  // const program = appStore.defaultProgram;
+// const languages = computed(() => {
+//   return [];
+//   // TODO: implement this
+//   // const program = appStore.defaultProgram;
 
-  // const languageCodes =
-  //   program.deployments.find((d: any) => d.number == appStore.context.selectedDeployment)
-  //     ?.languages || [];
+//   // const languageCodes =
+//   //   program.deployments.find((d: any) => d.number == appStore.context.selectedDeployment)
+//   //     ?.languages || [];
 
-  // const languages = program.languages.filter((l: any) => languageCodes.includes(l.code));
-  // return languages;
-});
+//   // const languages = program.languages.filter((l: any) => languageCodes.includes(l.code));
+//   // return languages;
+// });
 
 function createSurvey() {
   formInstance.value.validateFields().then((_) => {
@@ -81,7 +81,7 @@ function createSurvey() {
 
 function edit(survey: Survey) {
   store.setSurvey(survey);
-  router.push({ name: "survey-builder", params: { id: survey.id } });
+  router.push({ name: "user_feedback/surveys"});
 }
 
 function analyse(survey: Survey) {
@@ -184,7 +184,7 @@ onMounted(() => {
           <Input v-model:value="newSurveyModal.form.name" placeholder="" />
         </FormItem>
 
-        <FormItem
+        <!-- <FormItem
           label="Deployment"
           :required="true"
           name="deployment_id"
@@ -207,7 +207,6 @@ onMounted(() => {
           name="language"
           :rules="[{ required: true, message: 'Please select language!' }]"
         >
-          <!-- TODO: populate languages list -->
           <Select v-model:value="newSurveyModal.form.language">
             <SelectOption
               v-for="language in languages"
@@ -217,7 +216,7 @@ onMounted(() => {
               {{ language.name }}
             </SelectOption>
           </Select>
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="Brief Description" name="description" :required="false">
           <Textarea

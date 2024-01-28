@@ -240,8 +240,13 @@ const routes: any = [
       },
       {
         path: "surveys",
-        name: "user_feedback.survey-builder",
+        name: "user_feedback.surveys",
         component: () => import("../views/UserFeedback/SurveyBuilder/Index.vue"),
+      },
+      {
+        path: "survey-builder",
+        name: "user_feedback.survey-builder",
+        component: () => import("../views/UserFeedback/SurveyBuilder/SurveyBuilder.vue"),
       },
     ],
   },

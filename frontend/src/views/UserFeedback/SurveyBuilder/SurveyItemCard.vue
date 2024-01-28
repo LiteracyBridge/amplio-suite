@@ -22,9 +22,9 @@ const $emit = defineEmits<{
     <CardMeta :title="survey.name" :description="survey.description"> </CardMeta>
 
     <div class="mt-4">
-      <span>Deployment: </span>{{ survey.deployment.deployment }}
+      <!-- <span>Deployment: </span>{{ survey.deployment.deployment }}
       <br />
-      <p><span>Language: </span>{{ survey.language }}</p>
+      <p><span>Language: </span>{{ survey.language }}</p> -->
       <p><span>Questions: </span>{{ survey.questions?.length || 0 }}</p>
     </div>
   </Card>

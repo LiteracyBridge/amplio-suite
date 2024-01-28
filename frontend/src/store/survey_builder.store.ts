@@ -210,10 +210,10 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     },
     async createSurvey(form: Partial<Survey>): Promise<Survey> {
       this.$state.loading = true;
-      return ApiRequest.post<Survey>("surveys", form)
-        .then((resp) => {
-          this.$state.surveys = [...this.$state.surveys, resp[0]];
-          return resp[0];
+      return ApiRequest.post<Survey>("user-feedback/surveys", form)
+        .then(([resp]) => {
+          this.$state.surveys = [...this.$state.surveys, resp];
+          return resp;
         })
         .finally(() => (this.$state.loading = false));
     },

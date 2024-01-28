@@ -4,7 +4,7 @@ import {
   Button,
   Dropdown,
   Menu,
-  MenuItem,
+  PageHeader,
   Form,
   FormItem,
   Input,
@@ -20,6 +20,7 @@ import {
   Typography,
   Tabs,
   TabPane,
+  Popconfirm,
 } from "ant-design-vue";
 import { DownOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
 
@@ -80,35 +81,56 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <NavBar /> -->
-
-  <!-- New Section Modal -->
-  <Modal
-    title="New Section"
-    v-model:open="config.sectionModal.visible"
-    @cancel="config.sectionModal.close()"
-    @close="config.sectionModal.close()"
-    ok-text="Add Section"
-    @ok="config.sectionModal.save()"
-  >
-    <Form layout="vertical">
-      <FormItem
-        label="Section Name"
-        :required="true"
-        :rules="[{ required: true, message: 'Please enter section name!' }]"
+  <PageHeader title="Survey Builder">
+    <template #extra>
+      <Popconfirm
+        title="Publishing this survey will make it available for analysis. Are you sure you want to publish this survey?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="store.updateStatus(SurveyStatus.published)"
       >
-        <Input
-          v-model:value="config.sectionModal.form.name"
-          placeholder="Section Name"
-          :required="true"
-        />
-      </FormItem>
-    </Form>
-  </Modal>
+        <Button
+          type="primary"
+          :ghost="true"
+          v-if="
+            store.activeSurvey.status == SurveyStatus.draft ||
+            store.activeSurvey.status == null
+          "
+        >
+          Publish</Button
+        >
+      </Popconfirm>
+
+      <Popconfirm
+        title="Are you sure you want to unpublish this survey?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="store.updateStatus(SurveyStatus.draft)"
+      >
+        <Button
+          type="primary"
+          :ghost="true"
+          :danger="true"
+          v-if="store.activeSurvey.status == SurveyStatus.published"
+        >
+          Unpublish
+        </Button>
+      </Popconfirm>
+
+      <Popconfirm
+        title="Are you sure you want to archive this survey?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="store.updateStatus(SurveyStatus.archived)"
+      >
+        <Button type="primary" :danger="true" :ghost="true"> Archive</Button>
+      </Popconfirm>
+    </template>
+  </PageHeader>
 
   <div class="mt-5 block">
     <Spin :spinning="store.loading">
-      <div class="flex justify-between mx-5 mt-10">
+      <!-- <div class="flex justify-between mx-5 mt-10">
         <Typography.Title :level="5"> Custom Survey Builder</Typography.Title>
 
         <Space>
@@ -118,41 +140,8 @@ onMounted(() => {
         </Space>
 
         <Space>
-          <!-- TODO: add pop confirm -->
-          <Button
-            type="primary"
-            :ghost="true"
-            v-if="
-              store.activeSurvey.status == SurveyStatus.draft ||
-              store.activeSurvey.status == null
-            "
-            @click="store.updateStatus(SurveyStatus.published)"
-          >
-            Publish</Button
-          >
-
-          <!-- TODO: add pop confirm -->
-          <Button
-            type="primary"
-            :ghost="true"
-            :danger="true"
-            @click="store.updateStatus(SurveyStatus.draft)"
-            v-if="store.activeSurvey.status == SurveyStatus.published"
-          >
-            Unpublish</Button
-          >
-
-          <!-- TODO: add pop confirm -->
-          <Button
-            type="primary"
-            :danger="true"
-            :ghost="true"
-            @click="store.updateStatus(SurveyStatus.archived)"
-          >
-            Archive</Button
-          >
         </Space>
-      </div>
+      </div> -->
       <Divider></Divider>
 
       <div class="grid grid-cols-1 gap-4 content-center">
@@ -260,6 +249,30 @@ onMounted(() => {
       </div>
     </Spin>
   </div>
+
+  <!-- New section modal -->
+  <Modal
+    title="New Section"
+    v-model:open="config.sectionModal.visible"
+    @cancel="config.sectionModal.close()"
+    @close="config.sectionModal.close()"
+    ok-text="Add Section"
+    @ok="config.sectionModal.save()"
+  >
+    <Form layout="vertical">
+      <FormItem
+        label="Section Name"
+        :required="true"
+        :rules="[{ required: true, message: 'Please enter section name!' }]"
+      >
+        <Input
+          v-model:value="config.sectionModal.form.name"
+          placeholder="Section Name"
+          :required="true"
+        />
+      </FormItem>
+    </Form>
+  </Modal>
 </template>
 
 <style scoped>
