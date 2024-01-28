@@ -8,10 +8,10 @@ import { RequestCacheKeys } from "@/models/constants";
 import { useAccountStore } from "@/store/account";
 
 const store = useProgramsStore();
-const { data: programs, loading } = useRequest(store.getOrgPrograms, {
+const { loading } = useRequest(store.getOrgPrograms, {
   cacheKey: RequestCacheKeys.org_programs,
   onSuccess: (data) => {
-    store.organisationPrograms = data;
+    store.setProgramsList(data);
   },
 });
 const {} = useRequest(useAccountStore().fetchOrganisations, {
@@ -52,7 +52,7 @@ const columns = [
   <PageHeader title="Programs" sub-title="Manage programs and program users">
   </PageHeader>
 
-  <Table :columns="columns" :data-source="programs" :loading="loading">
+  <Table :columns="columns" :data-source="store.organisationPrograms" :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         {{ record.project?.name }} ({{ record.program_id }})

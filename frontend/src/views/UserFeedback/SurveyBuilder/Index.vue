@@ -27,7 +27,6 @@ import { computed, h, onMounted, ref } from "vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
 import { useRouter } from "vue-router";
 import { useAppStore } from "@/store/app.store";
-import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import SurveyItemCard from "./SurveyItemCard.vue";
 import { Survey } from "@/models/survey";
 
@@ -45,23 +44,6 @@ const newSurveyModal = ref({
     },
   }),
   activeTab = ref("draft");
-
-// const deployments = computed(() => {
-//   return Array.from(Array(appStore.deployments || 0).keys());
-// });
-
-// const languages = computed(() => {
-//   return [];
-//   // TODO: implement this
-//   // const program = appStore.defaultProgram;
-
-//   // const languageCodes =
-//   //   program.deployments.find((d: any) => d.number == appStore.context.selectedDeployment)
-//   //     ?.languages || [];
-
-//   // const languages = program.languages.filter((l: any) => languageCodes.includes(l.code));
-//   // return languages;
-// });
 
 function createSurvey() {
   formInstance.value.validateFields().then((_) => {
@@ -81,12 +63,7 @@ function createSurvey() {
 
 function edit(survey: Survey) {
   store.setSurvey(survey);
-  router.push({ name: "user_feedback.survey-builder"});
-}
-
-function analyse(survey: Survey) {
-  useFeedbackAnalysis().setSurvey(survey);
-  router.push({ name: "feedback-analysis", params: { id: survey.id } });
+  router.push({ name: "user_feedback.survey-builder" });
 }
 
 onMounted(() => {
@@ -183,40 +160,6 @@ onMounted(() => {
         >
           <Input v-model:value="newSurveyModal.form.name" placeholder="" />
         </FormItem>
-
-        <!-- <FormItem
-          label="Deployment"
-          :required="true"
-          name="deployment_id"
-          :rules="[{ required: true, message: 'Please select deployment!' }]"
-        >
-          <Select v-model:value="newSurveyModal.form.deployment_id">
-            <SelectOption
-              v-for="deployment in deployments"
-              :value="deployment"
-              :key="deployment"
-            >
-              {{ deployment }}
-            </SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem
-          label="Language"
-          :required="true"
-          name="language"
-          :rules="[{ required: true, message: 'Please select language!' }]"
-        >
-          <Select v-model:value="newSurveyModal.form.language">
-            <SelectOption
-              v-for="language in languages"
-              :value="language.code"
-              :key="language.code"
-            >
-              {{ language.name }}
-            </SelectOption>
-          </Select>
-        </FormItem> -->
 
         <FormItem label="Brief Description" name="description" :required="false">
           <Textarea

@@ -3,13 +3,13 @@ import { ApiRequest } from "@/api";
 import { Program } from "@/models/program";
 import { ProgramUser } from "@/models/user";
 import { useAppStore } from "@/store/app.store";
+import { sortBy } from "lodash";
 
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
     status: "",
     organisationPrograms: [] as Program[],
     programs: [],
-    programNames: {},
   }),
   actions: {
     requestInit() {
@@ -20,10 +20,8 @@ export const useProgramsStore = defineStore("programs", {
       this.status = "error";
     },
 
-    setProgramsList(values: { programIds: any; programNames: any }) {
-      this.status = "success";
-      this.programs = values.programIds;
-      this.programNames = values.programNames;
+    setProgramsList(data: Program[]) {
+      this.organisationPrograms = sortBy(data, (p) => p.project.name);
     },
     //
     // API Requests

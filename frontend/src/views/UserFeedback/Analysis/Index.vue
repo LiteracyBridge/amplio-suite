@@ -84,11 +84,13 @@ function updateUrl(uuidSkip?: boolean) {
   transcription.value = null;
 
   return ApiRequest.get(
-    `messages?email=${useAccountStore().email}&program=${store.programCode}&deployment=${
-      store.userFeedback.deployment
-    }&language=${store.userFeedback.language}&uuid=${
-      uuid.value || uuidSkip || ""
-    }&skipped_messages=${feedbackStore.skipped_messages}`
+    `user-feedback/messages?email=${useAccountStore().email}&program=${
+      store.programCode
+    }&deployment=${store.userFeedback.deployment}&language=${
+      store.userFeedback.language
+    }&uuid=${uuid.value || uuidSkip || ""}&skipped_messages=${
+      feedbackStore.skipped_messages
+    }`
   )
     .then(([response]: any) => {
       // TODO: check for not empty response [when there are no messages ]
@@ -293,7 +295,7 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
 </script>
 
 <template>
-  <PageHeader title="User Feedback Analysis" sub-title="Analyse user feedback messages">
+  <PageHeader sub-title="Analyse user feedback messages">
     <template #title>
       <span> {{ feedbackStore.survey?.name || "" }} Analysis </span>
     </template>
@@ -358,7 +360,7 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
     </div>
 
     <!-- No feedback messages -->
-    <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url != ''">
+    <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url == ''">
       <template #description>
         <span class="text-lg">There are no user feedback messages to analyse </span>
       </template>
@@ -553,8 +555,11 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
         <Divider />
         <div class="flex items-end justify-center my-4 mx-3">
           <Space>
-            <Button type="primary" @click="save()">Submit and Continue</Button>
+            <Button type="primary" size="large" @click="save()"
+              >Submit and Continue</Button
+            >
             <Button
+              size="large"
               type="primary"
               :ghost="true"
               :danger="true"
