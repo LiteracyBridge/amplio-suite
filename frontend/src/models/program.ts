@@ -1,11 +1,20 @@
 import { Deployment } from "./deployment";
 import { Language } from "./language";
+import { Organisation } from "./organisation";
+import { ProgramUser } from "./user";
 
 class Project {
   name: string;
   code: string;
 
-  deployments: Deployment[] = []
+  deployments: Deployment[] = [];
+}
+
+class OrganisationProgram {
+  organisation_id: number;
+  program_id: number;
+
+  organisation: Organisation;
 }
 
 export class Program {
@@ -33,4 +42,6 @@ export class Program {
   new_languages: Language[] = [];
 
   project: Project;
+  users: ProgramUser[] = [];
+  organisations: OrganisationProgram[] = [];
 }

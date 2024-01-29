@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Button, PageHeader, Table } from "ant-design-vue";
 import { ref } from "vue";
-import ProgramUsers from "./ProgramUsers.vue";
+import ProgramDetails from "./ProgramDetails.vue";
 import { useProgramsStore } from "@/store/programs";
 import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
@@ -83,7 +83,7 @@ const columns = [
   </Table>
 
   <template v-if="modal.open === true">
-    <ProgramUsers
+    <ProgramDetails
       :open="modal.open"
       :program-id="modal.programId"
       :name="modal.name"

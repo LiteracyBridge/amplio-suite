@@ -5,6 +5,8 @@ import { toSentenceCase, toTitleCase } from "@/utils";
 import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
 import { notification } from "ant-design-vue";
+import { Program } from "@/models/program";
+import { useProgramsStore } from "./programs";
 
 export const useRolesStore = defineStore("roles-store", {
   state: () => ({
@@ -50,9 +52,14 @@ export const useRolesStore = defineStore("roles-store", {
 
       const path =
         form.program_id != null ? `programs/users` : `users/roles/assign`;
-      return ApiRequest.post<User>(path, form)
-        .then((users) => {
-          useAccountStore().users = users;
+      return ApiRequest.post<User | Program>(path, form)
+        .then((resp) => {
+          if (form.program_id != null) {
+            useProgramsStore().organisationPrograms = resp as Program[];
+          } else {
+            useAccountStore().users = resp as User[];
+          }
+
           notification.success({
             message: `${
               form.program_id ? "Program added" : "Role assigned"
