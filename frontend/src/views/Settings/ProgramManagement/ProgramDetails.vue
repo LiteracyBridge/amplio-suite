@@ -13,16 +13,18 @@ import {
   Form,
   FormItem,
   Spin,
+  SelectOption,
 } from "ant-design-vue";
 
 import { computed, createVNode, ref, watch } from "vue";
 import { ApiRequest } from "@/api";
 import { useRequest } from "vue-request";
 import { ProgramUser, User } from "@/models/user";
-
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
+
 import { useProgramsStore } from "@/store/programs";
 import { useAccountStore } from "@/store/account";
+import { useRolesStore } from "@/store/roles.store";
 
 import AssignRoleModal from "../Users/AssignRoleModal.vue";
 import { RequestCacheKeys } from "@/models/constants";
@@ -42,11 +44,11 @@ const store = useAccountStore(),
   programStore = useProgramsStore();
 
 const activeTab = ref("1");
-const assignRoleModal = ref({
+const addUserModal = ref({
   open: false,
   user_id: undefined as number,
 });
-const org_modal = ref({
+const orgModal = ref({
   open: false,
   organisation_id: undefined as number,
 });
@@ -57,6 +59,13 @@ const { loading: isFetchingOrgs } = useRequest(useAccountStore().fetchOrganisati
   onSuccess: (data) => {
     useAccountStore().organisations = data;
   },
+});
+const {
+  loading: isFetchingOrgUsers,
+  data: organisationUsers,
+  run: fetchOrgUsers,
+} = useRequest(programStore.fetchOrgUsers, {
+  defaultParams: [props.programId],
 });
 
 function handleCancel() {
@@ -99,11 +108,11 @@ function removeOrg(orgId: number) {
 
 function showOrHideRoleModal(user_id: number | undefined, state: "show" | "hide") {
   if (state === "show") {
-    assignRoleModal.value.user_id = user_id;
-    assignRoleModal.value.open = true;
+    addUserModal.value.user_id = user_id;
+    addUserModal.value.open = true;
   } else {
-    assignRoleModal.value.open = false;
-    assignRoleModal.value.user_id = undefined;
+    addUserModal.value.open = false;
+    addUserModal.value.user_id = undefined;
   }
 }
 
@@ -156,21 +165,12 @@ const getProgramOrgs = computed(() => {
                   @click="removeUser(item.user.id)"
                   >Remove</Button
                 >
-
-                <Button
-                  size="small"
-                  type="link"
-                  @click="showOrHideRoleModal(item.user.id, 'show')"
-                  >Edit Roles</Button
-                >
               </template>
             </ListItem>
           </template>
 
           <template #footer>
-            <Button :block="true" @click="showOrHideRoleModal(undefined, 'show')"
-              >Add User</Button
-            >
+            <Button :block="true" @click="addUserModal.open = true">Add User</Button>
           </template>
         </List>
       </Tabs.TabPane>
@@ -205,45 +205,86 @@ const getProgramOrgs = computed(() => {
           </template>
 
           <template #footer>
-            <Button :block="true" @click="org_modal.open = true">Add Organisation</Button>
+            <Button :block="true" @click="orgModal.open = true">Add Organisation</Button>
           </template>
         </List>
       </Tabs.TabPane>
     </Tabs>
 
-    <template v-if="assignRoleModal.open">
-      <AssignRoleModal
-        :open="assignRoleModal.open"
-        :user-id="assignRoleModal.user_id"
-        :program-id="props.programId"
-        @closed="showOrHideRoleModal(undefined, 'hide')"
-      ></AssignRoleModal>
-    </template>
-
+    <!-- Add user to program modal -->
     <Modal
-      :open="org_modal.open"
+      :open="addUserModal.open"
+      title="Add User to Program"
+      ok-text="Save"
+      :confirm-loading="programStore.loading"
+      @cancel="addUserModal.open = false"
+      @ok="
+        useRolesStore()
+          .assignRole({
+            user_id: addUserModal.user_id,
+            program_id: props.programId,
+            roles: [],
+          })
+          .then((_) => {
+            addUserModal.open = false;
+            addUserModal.user_id = undefined;
+          })
+      "
+      :mask-closable="false"
+    >
+      <Spin :spinning="useRolesStore().loading">
+        <Form layout="vertical" :model="addUserModal">
+          <FormItem label="Select user" :required="true">
+            <Select
+              v-model:value="addUserModal.user_id"
+              :show-search="true"
+              :filter-option="true"
+              name="user_id"
+              style="width: 100%"
+              placeholder="Please select user"
+              :loading="isFetchingOrgUsers"
+            >
+              <SelectOption
+                :value="user.id"
+                :label="user.first_name + ' ' + user.last_name"
+                v-for="user in organisationUsers.filter(
+                  (u) => program.users.find((i) => i.user_id == u.id) == null
+                )"
+              >
+                {{ user.first_name }} {{ user.last_name }} ({{ user.email }})
+              </SelectOption>
+            </Select>
+          </FormItem>
+        </Form>
+      </Spin>
+    </Modal>
+
+    <!-- Add organisation modal -->
+    <Modal
+      :open="orgModal.open"
       title="Add Organisation to Program"
       ok-text="Save"
       :confirm-loading="programStore.loading"
-      @cancel="handleCancel()"
+      @cancel="orgModal.open = false"
       @ok="
         programStore
           .addOrganisationToProgram({
-            organisation_id: org_modal.organisation_id,
+            organisation_id: orgModal.organisation_id,
             program_id: props.programId,
           })
           .then((_) => {
-            org_modal.open = false;
-            org_modal.organisation_id = undefined;
+            orgModal.open = false;
+            orgModal.organisation_id = undefined;
+            fetchOrgUsers(programId);
           })
       "
       :mask-closable="false"
     >
       <Spin :spinning="programStore.loading">
-        <Form layout="vertical" :model="org_modal">
+        <Form layout="vertical" :model="orgModal">
           <FormItem label="Select organisation" :required="true">
             <Select
-              v-model:value="org_modal.organisation_id"
+              v-model:value="orgModal.organisation_id"
               :show-search="true"
               :filter-option="true"
               :field-names="{ label: 'name', value: 'id' }"

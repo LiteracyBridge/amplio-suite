@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ApiRequest } from "@/api";
 import { Program } from "@/models/program";
-import { ProgramUser } from "@/models/user";
+import { ProgramUser, User } from "@/models/user";
 import { useAppStore } from "@/store/app.store";
 import { sortBy } from "lodash";
 import { notification } from "ant-design-vue";
@@ -60,11 +60,16 @@ export const useProgramsStore = defineStore("programs", {
       //   });
       // }
     },
+    //
+    // API Requests
+    //
     async getOrgPrograms() {
       return ApiRequest.get<Program>(`programs/all`);
     },
-    async getProgramUsers(id: string | number) {
-      return ApiRequest.get<ProgramUser>(`programs/${id}/users`);
+    async fetchOrgUsers(programId: string | number) {
+      return ApiRequest.get<User>(
+        `programs/${programId}/organisation-users`
+      );
     },
     async getTbStatusBy(selector: string) {
       return ApiRequest.get<Record<string, any>>(
