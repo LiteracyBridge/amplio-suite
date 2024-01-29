@@ -9,6 +9,10 @@ import {
   ListItem,
   ListItemMeta,
   Tabs,
+  Select,
+  Form,
+  FormItem,
+  Spin,
 } from "ant-design-vue";
 
 import { computed, createVNode, ref, watch } from "vue";
@@ -22,7 +26,7 @@ import { useAccountStore } from "@/store/account";
 
 import AssignRoleModal from "../Users/AssignRoleModal.vue";
 import { RequestCacheKeys } from "@/models/constants";
-import type { Program } from "@/models/program";
+import { Program } from "@/models/program";
 
 const props = defineProps<{
   open: boolean;
@@ -34,17 +38,24 @@ const emit = defineEmits<{
   (e: "closed", value: boolean): void;
 }>();
 
-const store = useAccountStore();
+const store = useAccountStore(),
+  programStore = useProgramsStore();
+
 const activeTab = ref("1");
 const assignRoleModal = ref({
   open: false,
   user_id: undefined as number,
 });
+const org_modal = ref({
+  open: false,
+  organisation_id: undefined as number,
+});
 
-const { loading } = useRequest(store.fetchUsers, {
-  cacheKey: RequestCacheKeys.org_users,
+const { loading: isFetchingOrgs } = useRequest(useAccountStore().fetchOrganisations, {
+  cacheKey: RequestCacheKeys.orgs,
+  cacheTime: 50 * 60 * 1000, // 50 minutes
   onSuccess: (data) => {
-    store.users = data;
+    useAccountStore().organisations = data;
   },
 });
 
@@ -56,25 +67,32 @@ function removeUser(userId: number) {
   Modal.confirm({
     title: "Are you sure you want to remove this user?",
     icon: createVNode(ExclamationCircleFilled),
-    content: `The user has been removed from the program.`,
+    content: `The user  will be removed from the program.`,
     okText: "Remove",
     okType: "danger",
     cancelText: "Cancel",
     onOk: async () => {
-      loading.value = true;
-      return ApiRequest.delete<Program>(
-        `programs/${props.programId}/users?user_id=${userId}`
-      )
-        .then(async (resp) => {
-          useProgramsStore().organisationPrograms = resp;
-          notification.success({
-            message: "User Remove!",
-            description: `The user has been removed from the program.`,
-          });
-        })
-        .finally(() => {
-          loading.value = false;
-        });
+      return programStore.removeUserFromProgram({
+        userId,
+        programId: props.programId,
+      });
+    },
+  });
+}
+
+function removeOrg(orgId: number) {
+  Modal.confirm({
+    title: "Are you sure you want to remove this organisation?",
+    icon: createVNode(ExclamationCircleFilled),
+    content: `The organisation will be removed from the program.`,
+    okText: "Remove",
+    okType: "danger",
+    cancelText: "Cancel",
+    onOk: async () => {
+      return programStore.removeOrganisationFromProgram({
+        organisationId: orgId,
+        programId: props.programId,
+      });
     },
   });
 }
@@ -90,7 +108,13 @@ function showOrHideRoleModal(user_id: number | undefined, state: "show" | "hide"
 }
 
 const program = computed(() => {
-  return useProgramsStore().organisationPrograms.find((o) => o.id == props.programId);
+  return programStore.organisationPrograms.find((o) => o.id == props.programId);
+});
+
+const getProgramOrgs = computed(() => {
+  return useAccountStore().organisations.filter(
+    (o) => program.value.organisations.find((org) => org.organisation_id == o.id) == null
+  );
 });
 </script>
 
@@ -106,7 +130,12 @@ const program = computed(() => {
 
     <Tabs v-model:active-key="activeTab" centered>
       <Tabs.TabPane key="1" tab="Program Users">
-        <List size="small" bordered :data-source="program.users" :loading="loading">
+        <List
+          size="small"
+          bordered
+          :data-source="program.users"
+          :loading="programStore.loading || isFetchingOrgs"
+        >
           <template #renderItem="{ item }">
             <ListItem>
               <ListItemMeta>
@@ -147,12 +176,11 @@ const program = computed(() => {
       </Tabs.TabPane>
 
       <Tabs.TabPane key="2" tab="Program Organisations">
-        <!-- TODO: implement this -->
         <List
           size="small"
           bordered
           :data-source="program.organisations"
-          :loading="loading"
+          :loading="programStore.loading"
         >
           <template #renderItem="{ item }">
             <ListItem>
@@ -165,23 +193,19 @@ const program = computed(() => {
               </ListItemMeta>
 
               <template #actions>
-                <!-- TODO: implement removin org -->
-                <!-- <Button
+                <Button
                   type="link"
                   size="small"
                   :danger="true"
-                  @click="removeUser(item.id)"
+                  @click="removeOrg(item.organisation_id)"
                   >Remove</Button
-                > -->
+                >
               </template>
             </ListItem>
           </template>
 
           <template #footer>
-            <!-- TODO: implement adding org -->
-            <Button :block="true" @click="showOrHideRoleModal(undefined, 'show')"
-              >Add Organisation</Button
-            >
+            <Button :block="true" @click="org_modal.open = true">Add Organisation</Button>
           </template>
         </List>
       </Tabs.TabPane>
@@ -195,5 +219,43 @@ const program = computed(() => {
         @closed="showOrHideRoleModal(undefined, 'hide')"
       ></AssignRoleModal>
     </template>
+
+    <Modal
+      :open="org_modal.open"
+      title="Add Organisation to Program"
+      ok-text="Save"
+      :confirm-loading="programStore.loading"
+      @cancel="handleCancel()"
+      @ok="
+        programStore
+          .addOrganisationToProgram({
+            organisation_id: org_modal.organisation_id,
+            program_id: props.programId,
+          })
+          .then((_) => {
+            org_modal.open = false;
+            org_modal.organisation_id = undefined;
+          })
+      "
+      :mask-closable="false"
+    >
+      <Spin :spinning="programStore.loading">
+        <Form layout="vertical" :model="org_modal">
+          <FormItem label="Select organisation" :required="true">
+            <Select
+              v-model:value="org_modal.organisation_id"
+              :show-search="true"
+              :filter-option="true"
+              :field-names="{ label: 'name', value: 'id' }"
+              name="organisation_id"
+              style="width: 100%"
+              placeholder="Please select organisation"
+              :options="getProgramOrgs"
+            >
+            </Select>
+          </FormItem>
+        </Form>
+      </Spin>
+    </Modal>
   </Drawer>
 </template>

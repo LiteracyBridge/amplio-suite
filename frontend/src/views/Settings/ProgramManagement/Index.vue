@@ -16,7 +16,7 @@ const { loading } = useRequest(store.getOrgPrograms, {
 });
 const {} = useRequest(useAccountStore().fetchOrganisations, {
   cacheKey: RequestCacheKeys.orgs,
-  cacheTime: 30 * 60 * 1000, // 30 minutes
+  cacheTime: 50 * 60 * 1000, // 50 minutes
   onSuccess: (data) => {
     useAccountStore().organisations = data;
   },

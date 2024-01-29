@@ -4,21 +4,22 @@ import { Program } from "@/models/program";
 import { ProgramUser } from "@/models/user";
 import { useAppStore } from "@/store/app.store";
 import { sortBy } from "lodash";
+import { notification } from "ant-design-vue";
 
 export const useProgramsStore = defineStore("programs", {
   state: () => ({
-    status: "",
+    loading: false,
     organisationPrograms: [] as Program[],
     programs: [],
   }),
   actions: {
-    requestInit() {
-      this.status = "loading";
-    },
+    // requestInit() {
+    //   this.status = "loading";
+    // },
 
-    requestError() {
-      this.status = "error";
-    },
+    // requestError() {
+    //   this.status = "error";
+    // },
 
     setProgramsList(data: Program[]) {
       this.organisationPrograms = sortBy(data, (p) => p.project.name);
@@ -71,6 +72,55 @@ export const useProgramsStore = defineStore("programs", {
           useAppStore().programCode
         }/status?selector=${selector}`
       );
+    },
+    async addOrganisationToProgram(form: {
+      organisation_id: number;
+      program_id: number;
+    }) {
+      this.loading = true;
+      return ApiRequest.post<Program>(`programs/organisations`, form)
+        .then((resp) => {
+          this.organisationPrograms = resp;
+        })
+        .finally(() => (this.loading = false));
+    },
+    async removeOrganisationFromProgram(opts: {
+      organisationId: number;
+      programId: number;
+    }) {
+      this.loading = true;
+
+      return ApiRequest.delete<Program>(
+        `programs/${opts.programId}/organisations/${opts.organisationId}`
+      )
+        .then(async (resp) => {
+          this.organisationPrograms = resp;
+          notification.success({
+            message: "Organisation Removed!",
+            description: `The organisation has been removed from the program.`,
+          });
+          return resp;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    async removeUserFromProgram(opts: { programId: number; userId: number }) {
+      this.loading = true;
+      return ApiRequest.delete<Program>(
+        `programs/${opts.programId}/users?user_id=${opts.userId}`
+      )
+        .then(async (resp) => {
+          this.organisationPrograms = resp;
+          notification.success({
+            message: "User Remove!",
+            description: `The user has been removed from the program.`,
+          });
+          return resp;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
 });
