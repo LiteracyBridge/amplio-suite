@@ -129,7 +129,7 @@ const getProgramOrgs = computed(() => {
 
 <template>
   <Drawer :open="open" @close="handleCancel" width="50vw">
-    <template #title> Users of {{ program.name }} </template>
+    <template #title> Users of {{ name }} </template>
 
     <template #extra>
       <Button type="primary" @click="showOrHideRoleModal(undefined, 'show')"
