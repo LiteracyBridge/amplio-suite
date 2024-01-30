@@ -228,6 +228,18 @@ const routes: any = [
       import(/* webpackChunkName: "download" */ "../views/Download.vue"),
     beforeEnter: requireAuth,
   },
+  // TB Analytics
+  {
+    path: "/tb-analytics",
+    name: "tb_analytics",
+    children: [
+      {
+        path: "installations",
+        name: "tb_analytics.installations",
+        component: () => import("../views/TalkingBookAnalytics/Installation.vue"),
+      },
+    ]
+  },
   // User feedback
   {
     path: "/user-feedback",

@@ -1,9 +1,9 @@
 export class Recipient {
-    recipientid: string;
+    id: string;
     project: string;
     partner?: string;
-    communityname: string;
-    groupname: string;
+    community_name: string;
+    group_name: string;
     affiliate?: string;
     component?: string;
     country: string;
@@ -25,4 +25,6 @@ export class Recipient {
     direct_beneficiaries?: number;
     direct_beneficiaries_additional: any;
     indirect_beneficiaries?: number;
+
+    // todo: ADD talking_books_deployed, -> deployments
 }

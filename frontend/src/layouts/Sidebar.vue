@@ -60,6 +60,20 @@ const config = ref({
         </router-link>
       </MenuItem>
 
+      <Menu.SubMenu label="Talking Book Analytics" title="Talking Book Analytics" key="tb-analytics">
+        <template #icon>
+          <SoundOutlined />
+        </template>
+
+        <MenuItem key="installations">
+          <template #icon> <DotChartOutlined /> </template>
+
+          <router-link to="/tb-analytics/installations">
+            <span role="link"> Installations </span>
+          </router-link>
+        </MenuItem>
+      </Menu.SubMenu>
+
       <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
         <template #icon>
           <SoundOutlined />
