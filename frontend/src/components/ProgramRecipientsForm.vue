@@ -70,7 +70,7 @@
               :value="recipient.community_name"
               @change="
                 onSetRecipientValue({
-                  field: 'communityname',
+                  field: 'community_name',
                   value: $event.target.value,
                 })
               "
@@ -86,7 +86,7 @@
               type="text"
               :value="recipient.group_name"
               @change="
-                onSetRecipientValue({ field: 'groupname', value: $event.target.value })
+                onSetRecipientValue({ field: 'group_name', value: $event.target.value })
               "
             />
           </FormItem>
@@ -203,7 +203,7 @@
             <Input
               name="supportEntity"
               type="text"
-              :value="recipient.supportentity"
+              :value="recipient.support_entity"
               @change="
                 onSetRecipientValue({
                   field: 'support_entity',
@@ -506,17 +506,17 @@ const deployments = computed(() => {
   return (state.deployments || []).map((item) => ({ value: item.deploymentnumber }));
 });
 
-const listeningModelSelected = computed(() => {
-  return listeningModels.find((opt) => opt.label === props.recipient.listening_model);
-});
+// const listeningModelSelected = computed(() => {
+//   return listeningModels.find((opt) => opt.label === props.recipient.listening_model);
+// });
 
-const recipientIndex = computed(() => {
-  return state.recipients
-    .map((recipient) => recipient.id)
-    .indexOf(props.recipient.id);
-});
+// const recipientIndex = computed(() => {
+//   return state.recipients
+//     .map((recipient) => recipient.id)
+//     .indexOf(props.recipient.id);
+// });
 
-function onSetRecipientValue(payload: { field: any; value: any }) {
+function onSetRecipientValue(payload: { field: keyof Recipient; value: any }) {
   let { field, value } = payload;
   // @ts-ignore
   props.recipient[field] = value;
