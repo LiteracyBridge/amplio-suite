@@ -5,6 +5,7 @@ import { ProgramUser, User } from "@/models/user";
 import { useAppStore } from "@/store/app.store";
 import { sortBy } from "lodash";
 import { notification } from "ant-design-vue";
+import type { Recipient } from "@/models/recipient";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
   state: () => ({
@@ -20,7 +21,7 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
     async getRecipients() {
       this.loading = true;
 
-      return ApiRequest.get<Record<string, any>>(
+      return ApiRequest.get<Recipient>(
         `dashboard-queries/${useAppStore().programCode
         }/recipients`
       ).then((resp) => resp)

@@ -2,8 +2,17 @@
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 import { Tag, Row, Tooltip, Table } from "ant-design-vue";
 import { groupBy, sumBy } from "lodash";
-
+import { DateTime } from "luxon";
 import { onMounted, ref } from "vue";
+
+enum Colors {
+  excess = "bg-purple-500",
+  great = "bg-pink-500",
+  acceptable = "bg-orange-500",
+  unacceptable = "bg-green-500",
+  failed = "bg-cyan-500",
+  dead = "bg-blue-500",
+}
 
 const store = useTalkingBookAnalyticStore();
 const columns = [
@@ -36,6 +45,41 @@ const columns = [
     // width: "30%",
     key: "installed",
   },
+  {
+    title: "% Installed",
+    dataIndex: "percent_installed",
+    key: "percent_installed",
+  },
+  {
+    title: "Days to Install",
+    dataIndex: "days_to_install",
+    key: "days_to_install",
+  },
+  {
+    title: "Support Entity",
+    dataIndex: "support_entity",
+    key: "support_entity",
+  },
+  {
+    title: "Listening Model",
+    dataIndex: "listening_model",
+    key: "listening_model",
+  },
+  {
+    title: "Language",
+    dataIndex: "language",
+    key: "language",
+  },
+  {
+    title: "Updated By",
+    dataIndex: "agent",
+    key: "agent",
+  },
+  {
+    title: "TBLoader ID",
+    dataIndex: "talkingbook_id",
+    key: "talkingbook_id",
+  },
 ];
 
 interface DataItem {
@@ -56,10 +100,10 @@ interface Item {
   percent_installed: number;
   days_to_install: number;
   support_entity: string;
-  model: string;
+  listening_model: string;
   language: string;
-  updated_by: string;
-  tbloader_id: string;
+  agent: string;
+  talkingbook_id: string;
   children: Item[];
 }
 
@@ -71,10 +115,40 @@ onMounted(async () => {
   const byGroup = groupBy(data, "community_name");
 
   const temp: Item[] = [];
+  const now = DateTime.now();
   const mapped = Object.keys(byGroup).map((name) => {
     const recipients = (byGroup[name] || []).map((r) => {
+      // @ts-ignore
       r.key = r.id;
-      // r.days_to_install =
+
+      // Sort tb deployed by date and pick the last one
+      const sorted = (r.talkingbooks_deployed || []).sort((a, b) => {
+        return (
+          new Date(b.deployed_timestamp).getTime() -
+          new Date(a.deployed_timestamp).getTime()
+        );
+      });
+
+      // Calculate days to install since deployment start date
+      // @ts-ignore
+      r.days_to_install = 0;
+
+      if (sorted.length > 0) {
+        // @ts-ignore
+        r.days_to_install = Math.round(
+          (new Date().getTime() - new Date(sorted[0].deployed_timestamp).getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+      }
+
+      // @ts-ignore
+      r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
+
+      // @ts-ignore
+      r.installed = r.talkingbooks_deployed.length || 0;
+
+      // @ts-ignore
+      r.percent_installed = Math.round((r.installed / r.num_tbs) * 100);
       return r;
     });
 
@@ -90,7 +164,7 @@ onMounted(async () => {
     community.group_name = recipients[0].community_name;
     community.num_tbs = sumBy(recipients, "num_tbs");
     community.num_households = sumBy(recipients, "num_households");
-    community.children = ((recipients || []) as Item[]).map((r) => {
+    community.children = (((recipients || []) as unknown) as Item[]).map((r) => {
       r.district = "";
       return r;
     });
@@ -274,5 +348,38 @@ const rowSelection = ref({
     </template>
   </Table> -->
 
-  <Table :columns="columns" :data-source="rows" :row-selection="rowSelection" />
+  <p class="bg-red-500"></p>
+  <Table :columns="columns" :data-source="rows" size="small">
+    <template #bodyCell="{ record, column }">
+      <template v-if="column.key === 'percent_installed'">
+        <Tag class="w-full text-center" v-if="record.percent_installed > 100" color="purple">
+          {{ record.installed }}
+        </Tag>
+        <Tag class="w-full text-center" v-else-if="record.percent_installed == 100" color="pink">
+          {{ record.installed }}
+        </Tag>
+        <Tag class="w-full text-center"
+          v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
+          color="orange"
+        >
+          {{ record.installed }}
+        </Tag>
+        <Tag class="w-full text-center"
+          v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
+          color="green"
+        >
+          {{ record.installed }}
+        </Tag>
+        <Tag class="w-full text-center"
+          v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
+          color="cyan"
+        >
+          {{ record.installed }}
+        </Tag>
+        <Tag class="w-full text-center" v-else color="blue">
+          {{ record.installed }}
+        </Tag>
+      </template>
+    </template>
+  </Table>
 </template>
