@@ -72,8 +72,9 @@ onMounted(async () => {
 
   const temp: Item[] = [];
   const mapped = Object.keys(byGroup).map((name) => {
-    const recipients = byGroup[name].map((r) => {
+    const recipients = (byGroup[name] || []).map((r) => {
       r.key = r.id;
+      // r.days_to_install =
       return r;
     });
 
@@ -85,6 +86,7 @@ onMounted(async () => {
     // @ts-ignore
     const community: Item = Object.assign({}, recipients[0]);
     community.key = Math.random() * 9999999 + 1; // Generates a random number between 1 and 9999999
+
     community.group_name = recipients[0].community_name;
     community.num_tbs = sumBy(recipients, "num_tbs");
     community.num_households = sumBy(recipients, "num_households");
@@ -93,6 +95,7 @@ onMounted(async () => {
       return r;
     });
     // TODO: calculate percent installed
+    // TODO: calculate installed
 
     return community;
   });

@@ -67,7 +67,7 @@
               name="community"
               type="text"
               mx="mx-0 w-full"
-              :value="recipient.communityname"
+              :value="recipient.community_name"
               @change="
                 onSetRecipientValue({
                   field: 'communityname',
@@ -84,7 +84,7 @@
             <Input
               name="group-name"
               type="text"
-              :value="recipient.groupname"
+              :value="recipient.group_name"
               @change="
                 onSetRecipientValue({ field: 'groupname', value: $event.target.value })
               "

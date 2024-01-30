@@ -60,7 +60,7 @@
         <tbody>
           <tr
             v-for="(recipient, index) in store.filteredRecipients()"
-            :key="recipient.recipientid"
+            :key="recipient.id"
             :class="index % 2 === 0 ? '' : 'bg-gray-200'"
             class="hover:bg-gray-400"
             @dblclick="editRecipient(recipient, index)"
@@ -77,14 +77,14 @@
                 <v-tooltip :width="100" :text="`Edit`">
                   <VButton
                     iconL="edit"
-                    :ariaLabel="`Edit recipient ${recipient.recipientid}`"
+                    :ariaLabel="`Edit recipient ${recipient.id}`"
                     @click="editRecipient(recipient)"
                   />
                 </v-tooltip>
                 <v-tooltip :width="100" :text="`Duplicate`">
                   <VButton
                     iconL="copy"
-                    :ariaLabel="`Duplicate recipient ${recipient.recipientid}`"
+                    :ariaLabel="`Duplicate recipient ${recipient.id}`"
                     @click="duplicateRecipient(recipient)"
                   />
                 </v-tooltip>
@@ -169,8 +169,8 @@ import { Form, Modal, notification } from "ant-design-vue";
 const columns: Array<{ label: string; key: keyof Recipient }> = [
   { label: "Region/State", key: "region" },
   { label: "District/County", key: "district" },
-  { label: "Community", key: "communityname" },
-  { label: "Group", key: "groupname" },
+  { label: "Community", key: "community_name" },
+  { label: "Group", key: "group_name" },
   { label: "Agent", key: "agent" },
   { label: "Language", key: "language" },
   { label: "# TBs", key: "numtbs" },
@@ -218,7 +218,7 @@ const isRecipientInEditValid = computed(() => {
   const requiredFields = [
     "region",
     "district",
-    "communityname",
+    "community_name",
     "language",
     // 'listeningModel', 'numTbs',
     // 'deployments', 'directBeneficiaries'
@@ -236,19 +236,11 @@ const isRecipientInEditValid = computed(() => {
 
 const isDuplicateRecipient = computed(() => {
   // All the recipients are from the current program, so don't have a "program" property.
-  // Construct a concatenation of country-region-district-communityname-groupname-agent-language
-  function key(recipient: {
-    country: any;
-    region: any;
-    district: any;
-    communityname: any;
-    groupname: any;
-    agent: any;
-    language: any;
-  }) {
+  // Construct a concatenation of country-region-district-community_name-group_name-agent-language
+  function key(recipient: Recipient) {
     return (
       `${recipient.country}-${recipient.region}-${recipient.district}-` +
-      `${recipient.communityname}-${recipient.groupname}-${recipient.agent}-${recipient.language}`
+      `${recipient.community_name}-${recipient.group_name}-${recipient.agent}-${recipient.language}`
     );
   }
 
@@ -260,7 +252,7 @@ const isDuplicateRecipient = computed(() => {
   store.recipients.forEach((recip) => {
     if (
       key(recip) === thisKey &&
-      recip.id !== data.value.recipientInEdit.recipientid
+      recip.id !== data.value.recipientInEdit.id
     )
       isDuplicate = true;
   });

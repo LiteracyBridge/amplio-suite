@@ -836,10 +836,10 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     //region Recipient mutations
 
-    updateRecipient(payload: { recipient: any }) {
+    updateRecipient(payload: { recipient: Recipient }) {
       let { recipient } = payload;
-      if (!recipient.recipientid) {
-        // Create a temporary recipientid for local use prior ot the assignment of a proper recipientid by the server.
+      if (!recipient.id) {
+        // Create a temporary id for local use prior ot the assignment of a proper id by the server.
         let tempId = 1;
         this.recipients.forEach((recipient) => {
           if (recipient.id != null) {
@@ -850,12 +850,12 @@ export const useProgramSpecStore = defineStore("programspec", {
             }
           }
         });
-        recipient.recipientid = TEMP_RECIPIENT_PREFIX + tempId;
+        recipient.id = TEMP_RECIPIENT_PREFIX + tempId;
         this.setChanged(true);
       }
 
       let ix = this.recipients.findIndex(
-        (r: { recipientid: any }) => recipient.recipientid === r.recipientid
+        (r) => recipient.id === r.id
       );
       if (ix >= 0) {
         Object.assign(this.recipients[ix], recipient);
