@@ -260,7 +260,7 @@ const isDuplicateRecipient = computed(() => {
   store.recipients.forEach((recip) => {
     if (
       key(recip) === thisKey &&
-      recip.recipientid !== data.value.recipientInEdit.recipientid
+      recip.id !== data.value.recipientInEdit.recipientid
     )
       isDuplicate = true;
   });

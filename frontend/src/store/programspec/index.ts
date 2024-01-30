@@ -842,8 +842,8 @@ export const useProgramSpecStore = defineStore("programspec", {
         // Create a temporary recipientid for local use prior ot the assignment of a proper recipientid by the server.
         let tempId = 1;
         this.recipients.forEach((recipient) => {
-          if (recipient.recipientid != null) {
-            const match = recipient.recipientid.match(TEMP_RECIPIENT_RE);
+          if (recipient.id != null) {
+            const match = recipient.id.match(TEMP_RECIPIENT_RE);
             let numericId = Number(match[1]);
             if (numericId >= tempId) {
               tempId = numericId + 1;

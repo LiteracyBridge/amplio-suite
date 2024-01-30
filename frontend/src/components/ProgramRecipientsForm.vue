@@ -512,8 +512,8 @@ const listeningModelSelected = computed(() => {
 
 const recipientIndex = computed(() => {
   return state.recipients
-    .map((recipient) => recipient.recipientid)
-    .indexOf(props.recipient.recipientid);
+    .map((recipient) => recipient.id)
+    .indexOf(props.recipient.id);
 });
 
 function onSetRecipientValue(payload: { field: any; value: any }) {
