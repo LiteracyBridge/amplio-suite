@@ -46,11 +46,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRequest } from "vue-request";
-import { useProgramsStore } from "@/store/programs";
 import { Table, TypographyTitle, Button } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
+import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 
-const store = useProgramsStore();
+const store = useTalkingBookAnalyticStore();
 
 const tableData = ref([]);
 const columns = [

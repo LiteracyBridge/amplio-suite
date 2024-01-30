@@ -71,13 +71,6 @@ export const useProgramsStore = defineStore("programs", {
         `programs/${programId}/organisation-users`
       );
     },
-    async getTbStatusBy(selector: string) {
-      return ApiRequest.get<Record<string, any>>(
-        `dashboard-queries/${
-          useAppStore().programCode
-        }/status?selector=${selector}`
-      );
-    },
     async addOrganisationToProgram(form: {
       organisation_id: number;
       program_id: number;
