@@ -612,7 +612,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
     },
 
-    removePlaylist(payload: { playlist:Playlist, deployment: Deployment}) {
+    removePlaylist(payload: { playlist: Playlist, deployment: Deployment }) {
       const { playlist, deployment } = payload;
 
       // const deployment = this.getDeployment(payload);
@@ -750,49 +750,49 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    setMessageCategory(payload: {
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-      code: string;
-    }) {
-      const message = this.getMessage(payload);
-      message.default_category_code = payload.code;
-      this.setChanged(true);
-    },
+    // setMessageCategory(payload: {
+    //   deployment: Deployment;
+    //   playlist: Playlist;
+    //   message: Message;
+    //   code: string;
+    // }) {
+    //   const message = this.getMessage(payload);
+    //   message.default_category_code = payload.code;
+    //   this.setChanged(true);
+    // },
 
-    setMessageAudience(payload: {
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-      audience: any;
-    }) {
-      const message = this.getMessage(payload);
-      const { audience } = payload;
-      message.audience = audience;
-    },
+    // setMessageAudience(payload: {
+    //   deployment: Deployment;
+    //   playlist: Playlist;
+    //   message: Message;
+    //   audience: any;
+    // }) {
+    //   const message = this.getMessage(payload);
+    //   const { audience } = payload;
+    //   message.audience = audience;
+    // },
 
-    setMessageVariant(payload: {
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-      variant: any;
-    }) {
-      const message = this.getMessage(payload);
-      const { variant } = payload;
-      message.variant = variant;
-    },
+    // setMessageVariant(payload: {
+    //   deployment: Deployment;
+    //   playlist: Playlist;
+    //   message: Message;
+    //   variant: any;
+    // }) {
+    //   const message = this.getMessage(payload);
+    //   const { variant } = payload;
+    //   message.variant = variant;
+    // },
 
-    setMessageFormat(payload: {
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-      format: any;
-    }) {
-      const message = this.getMessage(payload);
-      const { format } = payload;
-      message.format = format;
-    },
+    // setMessageFormat(payload: {
+    //   deployment: Deployment;
+    //   playlist: Playlist;
+    //   message: Message;
+    //   format: any;
+    // }) {
+    //   const message = this.getMessage(payload);
+    //   const { format } = payload;
+    //   message.format = format;
+    // },
 
     setMessageSDGGoal(payload: {
       deployment: Deployment;
@@ -800,8 +800,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
       goal: any;
     }) {
-      const message = this.getMessage(payload);
-      const { goal } = payload;
+      const { goal, message } = payload;
       message.sdg_goal_id = goal;
       message.sdg_goal = goal;
 
@@ -814,8 +813,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
       target: number;
     }) {
-      const message = this.getMessage(payload);
-      const { target } = payload;
+      const { target, message } = payload;
       if (target === null || target === undefined) {
         message.sdg_target_id = null;
         message.sdg_target = null;
@@ -826,16 +824,16 @@ export const useProgramSpecStore = defineStore("programspec", {
       }
     },
 
-    setMessageKeyPoints(payload: {
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-      text: string;
-    }) {
-      const message = this.getMessage(payload);
-      const { text } = payload;
-      message.key_points = text;
-    },
+    // setMessageKeyPoints(payload: {
+    //   deployment: Deployment;
+    //   playlist: Playlist;
+    //   message: Message;
+    //   text: string;
+    // }) {
+    //   const message = this.getMessage(payload);
+    //   const { text } = payload;
+    //   message.key_points = text;
+    // },
     //endregion
 
     //region Recipient mutations

@@ -44,7 +44,7 @@
     </Col>
   </Row>
 
-  <div class="my-4 ml-20 w-full">
+  <div class="my-4 ml-20 ">
     <div v-if="expanded">
       <draggable
         v-model="messages"

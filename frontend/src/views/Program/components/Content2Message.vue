@@ -83,13 +83,13 @@
     <!-- </div> -->
 
     <!-- Form for editing the details of a message -->
-    <div class="pl-10">
+    <div class="px-10">
       <div
         :class="expanded ? 'h-104 md:h-96' : 'h-0'"
         class="transition-all duration-300"
       >
         <content2-message-form
-          v-if="expanded"
+          v-if="expanded && message != null"
           :deployment="deployment"
           :playlist="playlist"
           :message="message"
@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import Content2MessageForm from "@/components/Content2MessageForm.vue";
+import Content2MessageForm from "./Content2MessageForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
