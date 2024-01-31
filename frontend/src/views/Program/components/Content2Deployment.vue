@@ -1,6 +1,6 @@
 <template>
   <Row :gutter="8">
-    <Col :span="5">
+    <Col :sm="6" :lg="6" :xl="4">
       <div class="flex">
         <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
           <font-awesome-icon icon="grip-lines" />
@@ -37,7 +37,7 @@
       />
     </Col>
 
-    <Col :span="6" align="end">
+    <Col :span="5" align="end">
       <Button
         v-if="expanded"
         type="primary"
@@ -55,7 +55,7 @@
         cancel-text="No"
         @confirm="onRemoveDeployment()"
       >
-        <Button v-if="canRemoveDeployment" :danger="true"> Delete Deployment </Button>
+        <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
       </Popconfirm>
 
       <!-- <VButton

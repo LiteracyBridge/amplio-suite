@@ -1,6 +1,6 @@
 <template>
   <Row :gutter="8">
-    <Col :span="3">
+    <Col :sm="6" :lg="5" :xl="4">
       <div class="flex">
         <div class="cursor-grab pl-handle ml-10 mr-2">
           <font-awesome-icon icon="grip-lines" />

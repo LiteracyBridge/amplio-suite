@@ -2,7 +2,7 @@
   <Form layout="vertical">
     <Row :gutter="10">
       <Col :span="12">
-        <FormItem label="Language" required :labelCol="{ span: 5 }" labelAlign="left">
+        <FormItem label="Language">
           <languages-selector
             :options="store.general.languages"
             :languages="messageLanguages"
@@ -30,7 +30,7 @@
       </Col>
 
       <Col :span="12">
-        <FormItem label="Default Category" required :labelCol="{ span: 5 }">
+        <FormItem label="Default Category" required>
           <Select
             name="defaultCat"
             :options="categories"
@@ -45,13 +45,9 @@
       </Col>
     </Row>
 
-    <Row>
-
-    </Row>
-
-    <Row>
-      <Col :span="10">
-        <FormItem label="SDG Goals" required :labelCol="{ span: 5 }" labelAlign="left">
+    <Row :gutter="8">
+      <Col :span="12">
+        <FormItem label="SDG Goals">
           <Select
             name="sdgGoals"
             :options="goals"
@@ -75,18 +71,16 @@
           </Select>
         </FormItem>
       </Col>
-    </Row>
-
-    <Row>
-      <Col :span="10">
-        <FormItem label="Audience" required :labelCol="{ span: 5 }" labelAlign="left">
+      <Col :span="12">
+        <FormItem label="Audience">
           <Input v-model:value="message.audience" />
         </FormItem>
       </Col>
     </Row>
-    <Row>
-      <Col :span="10">
-        <FormItem label="SDG Target" required :labelCol="{ span: 5 }" labelAlign="left">
+
+    <Row :gutter="8">
+      <Col :span="12">
+        <FormItem label="SDG Target">
           <Select
             name="sdgTarget"
             class="md:col-span-3"
@@ -118,24 +112,9 @@
           </Select>
         </FormItem>
       </Col>
-    </Row>
-    <Row>
-      <Col :span="10">
-        <FormItem label="SDG Target" required :labelCol="{ span: 5 }" labelAlign="left">
-          <Textarea
-            name="key_points"
-            :cols="30"
-            :rows="3"
-            v-model:value="message.key_points"
-          >
-          </Textarea>
-        </FormItem>
-      </Col>
-    </Row>
 
-    <Row>
-      <Col :span="10">
-        <FormItem label="Format" required :labelCol="{ span: 5 }" labelAlign="left">
+      <Col :span="12">
+        <FormItem label="Format">
           <Select
             name="format"
             v-model:value="message.format"
@@ -146,9 +125,9 @@
       </Col>
     </Row>
 
-    <Row>
-      <Col :span="10">
-        <FormItem label="Variant" required :labelCol="{ span: 5 }" labelAlign="left">
+    <Row :gutter="8">
+      <Col :span="12">
+        <FormItem label="Variant">
           <Input name="variant" type="text" v-model:value="message.variant">
             <template #suffix>
               <Tooltip
@@ -160,18 +139,19 @@
           </Input>
         </FormItem>
       </Col>
-    </Row>
 
-    <!-- <label for="variant" class="px-2">Variant</label>
-    <div>
-      <v-tooltip
-        v-if="message.variant && message.variant.length > 2"
-        text="Please keep the variant short and abbreviated. For example, use 'T' instead of Test."
-        class="my-auto ml-2"
-      >
-        <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
-      </v-tooltip>
-    </div> -->
+      <Col :span="12">
+        <FormItem label="Key Points">
+          <Textarea
+            name="key_points"
+            :cols="30"
+            :rows="3"
+            v-model:value="message.key_points"
+          >
+          </Textarea>
+        </FormItem>
+      </Col>
+    </Row>
   </Form>
 </template>
 
