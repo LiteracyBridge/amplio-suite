@@ -1,6 +1,6 @@
 <template>
   <Row :gutter="8">
-    <Col :span="6">
+    <Col :span="5">
       <div class="flex">
         <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
           <font-awesome-icon icon="grip-lines" />
@@ -27,12 +27,6 @@
         type="date"
         :aria-label="`Start of deployment ${deployment.deploymentname}`"
         v-model:value="deployment.startdate"
-        @change="
-          store.setDeploymentStartdate({
-            deployment: deployment,
-            startdate: $event.target.value,
-          })
-        "
       />
     </Col>
     <Col :span="3">
@@ -175,7 +169,7 @@ import { computed, ref } from "vue";
 const props = defineProps<{
   deployment: Deployment;
   canRemove: boolean;
-  index: number;
+  // index: number;
 }>();
 
 const store = useProgramSpecStore();
@@ -203,6 +197,10 @@ const name = computed(() => {
   //   store.setDeploymentName({ deployment: props.deployment, deploymentname: newValue });
   // },
 });
+
+// const canRemove = computed(() => {
+//   return (props.deployment.playlists || []).length > 1;
+// });
 
 const canAddPlaylist = computed(() => {
   // No playlists at all, or some playlists and final playlist has a name.

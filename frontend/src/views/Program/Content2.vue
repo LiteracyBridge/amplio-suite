@@ -1,9 +1,6 @@
 <template>
   <section>
-    <div
-      id="deployments-container"
-      style="font-family: system-ui"
-    >
+    <div id="deployments-container" style="font-family: system-ui">
       <!-- Separater line between heading and content -->
       <draggable
         id="deployments-draggable"
@@ -20,7 +17,6 @@
             <Content2Deployment
               :deployment="deployment"
               :canRemove="index === store.deployments.length - 1"
-              :index="index"
             />
           </div>
         </template>
@@ -161,8 +157,3 @@ function onSaveChanges() {
 // },
 // };
 </script>
-
-<style scoped>
-.content2 {
-}
-</style>

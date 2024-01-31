@@ -1,18 +1,20 @@
 <template>
-    <draggable
-      v-model="playlists"
-      :animation="200"
-      handle=".pl-handle"
-      group="playlists"
-      ghost-class="moving-item"
-      @start="dragging = true"
-      @end="dragging = false"
-      item-key="position"
-    >
-      <template #item="{ element: playlist, index: index }">
-        <content2-playlist :deployment="deployment" :playlist="playlist" :key="index" />
-      </template>
-    </draggable>
+  <draggable
+    v-model="playlists"
+    :animation="200"
+    handle=".pl-handle"
+    group="playlists"
+    ghost-class="moving-item"
+    @start="dragging = true"
+    @end="dragging = false"
+    item-key="position"
+  >
+    <template #item="{ element: playlist, index: index }">
+      <div>
+        <content2-playlist :deployment="deployment" :playlist="playlist" />
+      </div>
+    </template>
+  </draggable>
 </template>
 
 <script setup lang="ts">
@@ -39,5 +41,4 @@ const playlists = computed({
     store.setPlaylists({ deployment: props.deployment, playlists: newValue });
   },
 });
-
 </script>

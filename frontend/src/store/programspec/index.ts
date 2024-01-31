@@ -578,20 +578,20 @@ export const useProgramSpecStore = defineStore("programspec", {
       // console.log(this.deployments);
     },
 
-    setDeploymentStartdate(payload: any) {
-      const deployment = this.getDeployment(payload);
-      deployment.startdate = payload.startdate;
-    },
+    // setDeploymentStartdate(payload: any) {
+    //   const deployment = this.getDeployment(payload);
+    //   deployment.startdate = payload.startdate;
+    // },
 
-    setDeploymentEnddate(payload: { enddate: any }) {
-      const deployment = this.getDeployment(payload);
-      deployment.enddate = payload.enddate;
-    },
+    // setDeploymentEnddate(payload: { enddate: any }) {
+    //   const deployment = this.getDeployment(payload);
+    //   deployment.enddate = payload.enddate;
+    // },
 
-    setDeploymentName(payload: { deploymentname: any }) {
-      const deployment = this.getDeployment(payload);
-      deployment.deploymentname = payload.deploymentname;
-    },
+    // setDeploymentName(payload: { deploymentname: any }) {
+    //   const deployment = this.getDeployment(payload);
+    //   deployment.deploymentname = payload.deploymentname;
+    // },
     //endregion
 
     //region Playlist mutations
@@ -612,8 +612,10 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
     },
 
-    removePlaylist(payload: { playlist: { position: any } }) {
-      const deployment = this.getDeployment(payload);
+    removePlaylist(payload: { playlist:Playlist, deployment: Deployment}) {
+      const { playlist, deployment } = payload;
+
+      // const deployment = this.getDeployment(payload);
       const playlistIx = deployment.playlists.findIndex(
         (pl: { position: any }) => pl.position === payload.playlist.position
       );
@@ -624,11 +626,11 @@ export const useProgramSpecStore = defineStore("programspec", {
     //   state.duplicatePlaylists = payload
     // }
 
-    setPlaylistTitle(payload: { title: any }) {
-      const playlist = this.getPlaylist(payload);
-      const { title } = payload;
-      playlist.title = title;
-    },
+    // setPlaylistTitle(payload: { title: any }) {
+    //   const playlist = this.getPlaylist(payload);
+    //   const { title } = payload;
+    //   playlist.title = title;
+    // },
 
     setPlaylistAudience(payload: { audience: any }) {
       const playlist = this.getPlaylist(payload);
@@ -638,9 +640,8 @@ export const useProgramSpecStore = defineStore("programspec", {
     //endregion
 
     //region Message mutations
-    setMessages(payload: { messages: any }) {
-      const playlist = this.getPlaylist(payload);
-      const { messages } = payload;
+    setMessages(payload: { messages: Message[], playlist: Playlist }) {
+      const { messages, playlist } = payload;
       // Ensure ascending positions.
       messages.forEach(
         (m: { position: any }, ix: number) => (m.position = ix + 1)
