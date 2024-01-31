@@ -365,20 +365,31 @@ export const useProgramSpecStore = defineStore("programspec", {
     // Update the server with any new & updated content.
     async updateSpec() {
       const { programId, general, deployments, recipients } = this.$state;
-      // Make a copy of recipients, because we may modify some of the recipientids.
       const newSpec = {
         general: general,
-        deployments: deployments,
-        recipients: recipients.map((recip: any) => {
-          let newRecip = Object.assign({}, recip);
-          // If this recipient has a temporary ID, set it to null so the server can supply a proper id.
+        deployments: deployments.map((depl) => {
+          const dup: any = Object.assign({}, depl);
 
+          // Renamed fields
+          dup.startdate = depl.start_date;
+          dup.enddate = depl.end_date;
+        }),
+        recipients: recipients.map((recip) => {
+          // If this recipient has a temporary ID, set it to null so the server can supply a proper id.
           if (
-            newRecip.recipientid != null &&
-            newRecip.recipientid.match(TEMP_RECIPIENT_RE)
+            recip.id != null &&
+            recip.id.match(TEMP_RECIPIENT_RE)
           ) {
-            newRecip.recipientid = null;
+            recip.id = null;
           }
+
+          // Make a copy of recipients, because we may modify some of the ids.
+          const newRecip: any = Object.assign({}, recip);
+
+          // Renamed fields
+          newRecip.recipientid = newRecip.id;
+          newRecip.supportentity = recip.support_entity;
+
           return newRecip;
         }),
       };
