@@ -58,8 +58,6 @@ export const getDefaultState = () => {
   return defaultState;
 };
 
-//region Deployment, Playlist, Message constructors
-
 export const useProgramSpecStore = defineStore("programspec", {
   state: () => ({
     loading: false,
@@ -82,7 +80,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         depl.playlists.some((pl: any) => pl.messages.length > 0)
       );
       const hasOneRecipient = (state.recipients || []).length > 0;
-      return hasOneMessage && hasOneRecipient && !state.changed;
+      return hasOneMessage && hasOneRecipient;
     },
     labelUsed: (state) => {
       console.log(state.recipients);
@@ -142,29 +140,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     },
 
     newRecipient() {
-      let newRecipient: any = {
-        recipientid: null,
-
-        communityname: "",
-        groupname: "",
-        region: "",
-        district: "",
-        numtbs: null,
-        supportentity: "",
-        language: "",
-        agent: "",
-        numhouseholds: 0,
-        group_size: 0,
-        deployments: [],
-        listening_model: "",
-        agent_gender: "",
-        direct_beneficiaries: null,
-        direct_beneficiaries_additional: {},
-        indirect_beneficiaries: null,
-        variant: "",
-        component: "",
-      };
-      return newRecipient;
+      return new Recipient();
     },
 
     resetState() {
@@ -263,6 +239,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       }
       return playlist.messages[messageIx];
     },
+
     /*
      * End of access helpers
      *************************************************************************************************************/
@@ -288,20 +265,6 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       this.loading = false;
     },
-
-    //region General mutations
-    //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    // setProgramName(payload: any) {
-    //   this.general.name = payload;
-    // },
-
-    // setCountry(payload: any) {
-    //     this.general.country = payload;
-    // },
-
-    // addRegion(region: any) {
-    //     this.general.region = [...this.general.region, region];
-    // },
 
     removeRegion(region: any) {
       const index = this.general.region.indexOf(region);
@@ -344,11 +307,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       if (this.status === "loading") return;
       this.resetState();
 
-      // FIXME: cannot find vuex state
-      // commit("recipients/resetState", null, { root: true });
-      // commit("programData/resetState", null, { root: true });
-      // commit("program/resetState", null, { root: true });
-
       try {
         return await approveSpecFile(programId, publish);
       } catch (error) {
@@ -388,17 +346,6 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     async setDeploymentCount(payload: any) {
       await this.setDeploymentsCount(payload);
-      this.setChanged(true);
-    },
-
-    async setDeploymentLength(payload: any) {
-      await this.setDeploymentsLength(payload);
-      this.setChanged(true);
-    },
-
-    async setDeploymentsFirstDate(payload: any) {
-      this.setDeploymentsFirst(payload);
-      // await commit('setDeploymentsFirst', payload)
       this.setChanged(true);
     },
 
@@ -461,14 +408,6 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     setDeploymentsCount(payload: any) {
       this.general.deployments_count = payload;
-    },
-
-    setDeploymentsLength(payload: any) {
-      this.general.deployments_length = payload;
-    },
-
-    setDeploymentsFirst(payload: any) {
-      this.general.deployments_first = payload;
     },
 
     setFeedbackFrequently(payload: any) {

@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { useProgramSpecStore } from "@/store/programspec";
-import {  onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 import {
@@ -168,14 +168,11 @@ onMounted(async () => {
 
   //   Watch for state changes
   // this subscription will be kept even after the component is unmounted
-  store.$subscribe(
-    (mutation, state) => {
-      if (state.changed == false) {
-        store.changed = true;
-      }
-    },
-    { detached: true }
-  );
+  store.$subscribe((mutation, state) => {
+    if (state.changed == false) {
+      store.changed = true;
+    }
+  });
 });
 
 // onBeforeRouteUpdate((to, from, next) => {

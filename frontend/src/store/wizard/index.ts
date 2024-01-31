@@ -113,29 +113,29 @@ export const useWizardStore = defineStore("wizard", {
       await this.check(attrs, step);
     },
 
-    async setDeploymentsLength(payload: any) {
-      const { length, step } = payload;
-      const attrs = [
-        "deploymentsCount",
-        "deploymentsLength",
-        "deploymentsFirst",
-      ];
+    // async setDeploymentsLength(payload: any) {
+    //   const { length, step } = payload;
+    //   const attrs = [
+    //     "deploymentsCount",
+    //     "deploymentsLength",
+    //     "deploymentsFirst",
+    //   ];
 
-      await useProgramSpecStore().setDeploymentsLength(length);
-      await this.check(attrs, step);
-    },
+    //   await useProgramSpecStore().setDeploymentsLength(length);
+    //   await this.check(attrs, step);
+    // },
 
-    async setDeploymentsFirst(payload: any) {
-      const { first, step } = payload;
-      const attrs = [
-        "deploymentsCount",
-        "deploymentsLength",
-        "deploymentsFirst",
-      ];
+    // async setDeploymentsFirst(payload: any) {
+    //   const { first, step } = payload;
+    //   const attrs = [
+    //     "deploymentsCount",
+    //     "deploymentsLength",
+    //     "deploymentsFirst",
+    //   ];
 
-      await useProgramSpecStore().setDeploymentsFirst(first);
-      await this.check(attrs, step);
-    },
+    //   await useProgramSpecStore().setDeploymentsFirst(first);
+    //   await this.check(attrs, step);
+    // },
 
     // step-feedback
     async setFeedbackFrequently(payload: any) {
