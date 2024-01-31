@@ -539,60 +539,21 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.deployments.length > 0
           ? this.deployments[this.deployments.length - 1]
           : undefined;
-      this.deployments.push(
-        Deployment.create(this.deployments.length + 1, this.programId, previous)
-      );
+
+      this.deployments = [...this.deployments,
+      Deployment.create(this.deployments.length + 1, this.programId, previous)
+      ];
     },
 
     removeDeployment(
       deployment: Deployment
     ) {
-      // const {deployment } = payload;
-
       const index = this.deployments.findIndex(
         (d) => d.deploymentnumber === deployment.deploymentnumber
       );
 
       if (index > -1) this.deployments.splice(index, 1);
-      // if (
-      //   deploymentIx === undefined &&
-      //   payload.deploymentnumber !== undefined
-      // ) {
-      //   deploymentIx = this.deployments.findIndex(
-      //     (d: { deploymentnumber: any }) =>
-      //       d.deploymentnumber === payload.deploymentnumber
-      //   );
-      // }
-      // if (
-      //   deploymentIx === undefined &&
-      //   payload.deployment &&
-      //   payload.deployment.deploymentnumber !== undefined
-      // ) {
-      //   deploymentIx = this.deployments.findIndex(
-      //     (d: { deploymentnumber: any }) =>
-      //       d.deploymentnumber === payload.deployment.deploymentnumber
-      //   );
-      // }
-      // console.log(this.deployments);
-      // this.deployments.splice(deploymentIx, 1);
-      // console.log(this.deployments);
     },
-
-    // setDeploymentStartdate(payload: any) {
-    //   const deployment = this.getDeployment(payload);
-    //   deployment.startdate = payload.startdate;
-    // },
-
-    // setDeploymentEnddate(payload: { enddate: any }) {
-    //   const deployment = this.getDeployment(payload);
-    //   deployment.enddate = payload.enddate;
-    // },
-
-    // setDeploymentName(payload: { deploymentname: any }) {
-    //   const deployment = this.getDeployment(payload);
-    //   deployment.deploymentname = payload.deploymentname;
-    // },
-    //endregion
 
     //region Playlist mutations
     setPlaylists(payload: { deployment: Deployment, playlists: Playlist[] }) {
@@ -621,23 +582,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
       deployment.playlists.splice(playlistIx, 1);
     },
-
-    // , setDuplicatePlaylists(payload) {
-    //   state.duplicatePlaylists = payload
-    // }
-
-    // setPlaylistTitle(payload: { title: any }) {
-    //   const playlist = this.getPlaylist(payload);
-    //   const { title } = payload;
-    //   playlist.title = title;
-    // },
-
-    setPlaylistAudience(payload: { audience: any }) {
-      const playlist = this.getPlaylist(payload);
-      const { audience } = payload;
-      playlist.audience = audience;
-    },
-    //endregion
 
     //region Message mutations
     setMessages(payload: { messages: Message[], playlist: Playlist }) {
@@ -668,8 +612,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       deployment: Deployment;
     }) {
-      const playlist = this.getPlaylist(payload);
-
       const messageIx = (payload.playlist.messages ?? []).findIndex(
         (msg) => msg.title === payload.message.title
       );
@@ -699,12 +641,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       playlist: Playlist;
       message: Message;
     }) {
-      console.log("addMessageLanguage");
-      console.log(payload);
-
-      // console.log("here");
       // 'languages' is a list of comma-separated language names or codes.
-      // const message = this.getMessage(payload);
       const { language, message } = payload;
 
       let languages = message.languages;
@@ -750,50 +687,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.setChanged(true);
     },
 
-    // setMessageCategory(payload: {
-    //   deployment: Deployment;
-    //   playlist: Playlist;
-    //   message: Message;
-    //   code: string;
-    // }) {
-    //   const message = this.getMessage(payload);
-    //   message.default_category_code = payload.code;
-    //   this.setChanged(true);
-    // },
-
-    // setMessageAudience(payload: {
-    //   deployment: Deployment;
-    //   playlist: Playlist;
-    //   message: Message;
-    //   audience: any;
-    // }) {
-    //   const message = this.getMessage(payload);
-    //   const { audience } = payload;
-    //   message.audience = audience;
-    // },
-
-    // setMessageVariant(payload: {
-    //   deployment: Deployment;
-    //   playlist: Playlist;
-    //   message: Message;
-    //   variant: any;
-    // }) {
-    //   const message = this.getMessage(payload);
-    //   const { variant } = payload;
-    //   message.variant = variant;
-    // },
-
-    // setMessageFormat(payload: {
-    //   deployment: Deployment;
-    //   playlist: Playlist;
-    //   message: Message;
-    //   format: any;
-    // }) {
-    //   const message = this.getMessage(payload);
-    //   const { format } = payload;
-    //   message.format = format;
-    // },
-
     setMessageSDGGoal(payload: {
       deployment: Deployment;
       playlist: Playlist;
@@ -824,20 +717,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       }
     },
 
-    // setMessageKeyPoints(payload: {
-    //   deployment: Deployment;
-    //   playlist: Playlist;
-    //   message: Message;
-    //   text: string;
-    // }) {
-    //   const message = this.getMessage(payload);
-    //   const { text } = payload;
-    //   message.key_points = text;
-    // },
-    //endregion
-
-    //region Recipient mutations
-
     updateRecipient(payload: { recipient: Recipient }) {
       let { recipient } = payload;
       if (!recipient.id) {
@@ -865,8 +744,6 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.recipients.push(recipient);
       }
     },
-
-    //endregion
 
     //
     // Api Request

@@ -26,14 +26,14 @@
       <Input
         type="date"
         :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.startdate"
+        v-model:value="deployment.start_date"
       />
     </Col>
     <Col :span="3">
       <Input
         type="date"
         :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.enddate"
+        v-model:value="deployment.end_date"
       />
     </Col>
 

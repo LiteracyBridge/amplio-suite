@@ -213,30 +213,13 @@ const messageLanguages = computed(() => {
     playlist: props.playlist,
     message: props.message,
   });
-  // return (props.message.languages || "").split(/[,;]/).filter((c) => c != "") || [];
 });
 
 const categories = computed(() => {
   return (useCategoriesStore().categories || []).filter((cat) => cat.isleafnode);
 });
 
-// const audience = computed({
-//   get() {
-//     if (!props.message.audience || props.message.audience === "null") return "";
-//     return props.message.audience;
-//   },
-//   set(newValue) {
-//     store.setMessageAudience({
-//       deployment: props.deployment,
-//       playlist: props.playlist,
-//       message: props.message,
-//       audience: newValue,
-//     });
-//   },
-// });
-
 const targets = computed(() => {
-  // noinspection EqualityComparisonWithCoercionJS
   const goal = goals.value.find((goal) => goal.goalId == props.message.sdg_goal_id);
 
   if (goal) return goal.targets;
