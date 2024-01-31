@@ -595,12 +595,11 @@ export const useProgramSpecStore = defineStore("programspec", {
     //endregion
 
     //region Playlist mutations
-    setPlaylists(payload: { playlists: any }) {
-      const deployment = this.getDeployment(payload);
-      const { playlists } = payload;
+    setPlaylists(payload: { deployment: Deployment, playlists: Playlist[] }) {
+      const { playlists, deployment } = payload;
       // Ensure ascending positions.
       playlists.forEach(
-        (p: { position: any }, ix: number) => (p.position = ix + 1)
+        (p, ix: number) => (p.position = ix + 1)
       );
       deployment.playlists = playlists;
     },

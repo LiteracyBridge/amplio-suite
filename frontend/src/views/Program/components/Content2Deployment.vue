@@ -77,7 +77,7 @@
 
   <!-- <div class="w-full">
     <div class="flex my-2"> -->
-      <!-- <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
+  <!-- <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
         <font-awesome-icon icon="grip-lines" />
       </div>
       <div
@@ -87,7 +87,7 @@
       >
         <font-awesome-icon :icon="icon" size="lg" />
       </div> -->
-      <!-- <div>
+  <!-- <div>
         <p class="font-light text-2xl text-gray-800">
           Deployment {{ deployment.deploymentnumber }}
         </p>
@@ -110,7 +110,7 @@
         "
       /> -->
 
-      <!-- <v-input
+  <!-- <v-input
         class="-mt-1 mx-2"
         type="date"
         iconLeft="calendar-alt"
@@ -124,7 +124,7 @@
         "
         mx="mx-0"
       /> -->
-      <!-- <v-input
+  <!-- <v-input
         class="-mt-1 mx-2"
         type="date"
         iconLeft="calendar-alt"
@@ -139,7 +139,7 @@
         mx="mx-0"
       /> -->
 
-      <!-- <button
+  <!-- <button
         v-if="expanded"
         class="btn"
         @click="onAddPlaylist()"
@@ -158,17 +158,15 @@
       />
     </div> -->
 
-    <!-- If expanded, show the playlists in the deployment -->
-    <div class="my-2" v-if="expanded">
-      <content2-playlists :deployment="deployment" />
-    </div>
+  <!-- If expanded, show the playlists in the deployment -->
+  <div class="my-5" v-if="expanded">
+    <content2-playlists :deployment="deployment" />
+  </div>
   <!-- </div> -->
 </template>
 
 <script setup lang="ts">
-import Content2Playlists from "@/components/Content2Playlists.vue";
-import VButton from "@/components/VButton.vue";
-import VInput from "@/components/VInput.vue";
+import Content2Playlists from "./Content2Playlists.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
 import { Deployment } from "@/models/deployment";
