@@ -16,6 +16,7 @@ import { Playlist } from "@/models/playlist";
 import { Message } from "@/models/message";
 import { ApiRequest } from "@/api";
 import { notification } from "ant-design-vue";
+import { orderBy } from "lodash";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -250,7 +251,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general = payload.programspec.general;
       this.general.name = payload.programspec.name;
       this.recipients = payload.programspec.recipients;
-      this.deployments = payload.programspec.deployments;
+      this.deployments = orderBy(payload.programspec.deployments, "deploymentnumber")
 
       this.deployments.forEach((d: { playlists: any[] }) => {
         d.playlists.forEach(
@@ -264,6 +265,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       });
 
       this.loading = false;
+      this.changed = false;
     },
 
     removeRegion(region: any) {
@@ -365,6 +367,8 @@ export const useProgramSpecStore = defineStore("programspec", {
     // Update the server with any new & updated content.
     async updateSpec() {
       const { programId, general, deployments, recipients } = this.$state;
+
+      general.deployments_count = deployments.length
       const newSpec = {
         general: general,
         deployments: deployments.map((depl) => {
@@ -373,6 +377,11 @@ export const useProgramSpecStore = defineStore("programspec", {
           // Renamed fields
           dup.startdate = depl.start_date;
           dup.enddate = depl.end_date;
+
+          delete dup.start_date
+          delete dup.end_date
+
+          return dup;
         }),
         recipients: recipients.map((recip) => {
           // If this recipient has a temporary ID, set it to null so the server can supply a proper id.
@@ -387,8 +396,15 @@ export const useProgramSpecStore = defineStore("programspec", {
           const newRecip: any = Object.assign({}, recip);
 
           // Renamed fields
-          newRecip.recipientid = newRecip.id;
+          newRecip.recipientid = recip.id;
           newRecip.supportentity = recip.support_entity;
+          newRecip.communityname = recip.community_name
+          newRecip.groupname = recip.group_name
+
+          delete newRecip.id
+          delete newRecip.support_entity
+          delete newRecip.community_name
+          delete newRecip.group_name
 
           return newRecip;
         }),
@@ -396,25 +412,23 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       this.requestInit();
 
-      try {
-        console.log(`Updating spec for ${programId}`);
-        this.loading = true;
-
-        const updateResult = await putProgramSpec(programId, newSpec);
-        const programspec = updateResult && updateResult.updated;
-        this.setSpec({ programId, programspec });
-        console.log(
-          `Done updating spec for ${programId} status is ${this.status}`
-        );
-        // commit('setChanged', false)
-        // commit('requestSuccess')
-      } catch (error) {
-        this.requestError();
-        useUIStore().setNotification({
-          type: "alert",
-          text: error.toString(),
-        });
-      }
+      this.loading = true;
+      return ApiRequest.put(`program-spec/content?programid=${programId}`, newSpec)
+        .then(([resp]) => {
+          this.setSpec({ programId, programspec: resp });
+          notification.success({
+            message: "Success",
+            description: "Program specification updated successfully.",
+          });
+        })
+        .catch((error) => {
+          notification.error({
+            message: "Error",
+            description: error.message,
+          });
+        }).finally(() => {
+          this.loading = false;
+        })
     },
 
     setDeploymentsCount(payload: any) {
@@ -473,11 +487,11 @@ export const useProgramSpecStore = defineStore("programspec", {
     //endregion
 
     //region Deployment mutations
-    setDeployments(payload: { deployments: any }) {
+    setDeployments(payload: { deployments: Deployment[] }) {
       let deployments = payload.deployments;
       // Ensure ascending deployment numbers.
       deployments.forEach(
-        (d: { deploymentnumber: any }, ix: number) =>
+        (d, ix: number) =>
           (d.deploymentnumber = ix + 1)
       );
       this.deployments = deployments;
