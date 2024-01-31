@@ -544,34 +544,38 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
     },
 
-    removeDeployment(payload: {
-      deploymentIx: any;
-      deploymentnumber: any;
-      deployment: { deploymentnumber: any };
-    }) {
-      let deploymentIx = payload.deploymentIx;
-      if (
-        deploymentIx === undefined &&
-        payload.deploymentnumber !== undefined
-      ) {
-        deploymentIx = this.deployments.findIndex(
-          (d: { deploymentnumber: any }) =>
-            d.deploymentnumber === payload.deploymentnumber
-        );
-      }
-      if (
-        deploymentIx === undefined &&
-        payload.deployment &&
-        payload.deployment.deploymentnumber !== undefined
-      ) {
-        deploymentIx = this.deployments.findIndex(
-          (d: { deploymentnumber: any }) =>
-            d.deploymentnumber === payload.deployment.deploymentnumber
-        );
-      }
-      console.log(this.deployments);
-      this.deployments.splice(deploymentIx, 1);
-      console.log(this.deployments);
+    removeDeployment(
+      deployment: Deployment
+    ) {
+      // const {deployment } = payload;
+
+      const index = this.deployments.findIndex(
+        (d) => d.deploymentnumber === deployment.deploymentnumber
+      );
+
+      if (index > -1) this.deployments.splice(index, 1);
+      // if (
+      //   deploymentIx === undefined &&
+      //   payload.deploymentnumber !== undefined
+      // ) {
+      //   deploymentIx = this.deployments.findIndex(
+      //     (d: { deploymentnumber: any }) =>
+      //       d.deploymentnumber === payload.deploymentnumber
+      //   );
+      // }
+      // if (
+      //   deploymentIx === undefined &&
+      //   payload.deployment &&
+      //   payload.deployment.deploymentnumber !== undefined
+      // ) {
+      //   deploymentIx = this.deployments.findIndex(
+      //     (d: { deploymentnumber: any }) =>
+      //       d.deploymentnumber === payload.deployment.deploymentnumber
+      //   );
+      // }
+      // console.log(this.deployments);
+      // this.deployments.splice(deploymentIx, 1);
+      // console.log(this.deployments);
     },
 
     setDeploymentStartdate(payload: any) {

@@ -2,7 +2,6 @@
   <section>
     <div
       id="deployments-container"
-      class="line col-span-9"
       style="font-family: system-ui"
     >
       <!-- Separater line between heading and content -->
@@ -17,7 +16,7 @@
         item-key="deploymentnumber"
       >
         <template #item="{ element: deployment, index: index }">
-          <div class="flex mb-1">
+          <div class="">
             <Content2Deployment
               :deployment="deployment"
               :canRemove="index === store.deployments.length - 1"
@@ -45,9 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { mapState, mapActions } from "pinia";
-
-import Content2Deployment from "@/components/Content2Deployment.vue";
+import Content2Deployment from "./components/Content2Deployment.vue";
 import draggable from "vuedraggable";
 import VButton from "@/components/VButton.vue";
 import { useProgramSpecStore } from "@/store/programspec";

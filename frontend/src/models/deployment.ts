@@ -5,8 +5,8 @@ export class Deployment {
   deployment: string;
   deploymentname?: string;
   deploymentnumber: number;
-  startdate?: Date | string;
-  enddate?: Date | string;
+  startdate?: string;
+  enddate?: string;
   distribution?: string;
   comment?: string;
   component?: string;
