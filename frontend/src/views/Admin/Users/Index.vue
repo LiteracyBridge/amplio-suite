@@ -57,7 +57,7 @@ const columns = [
 <template>
   <PageHeader title="Users" sub-title="Manage user accounts and roles">
     <template #extra>
-      <router-link to="/settings/roles">
+      <router-link to="/admin/roles">
         <Button>Manage Roles</Button>
       </router-link>
 

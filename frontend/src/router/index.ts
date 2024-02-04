@@ -275,24 +275,24 @@ const routes: any = [
   },
   // Settings
   {
-    path: "/settings",
-    name: "settings",
+    path: "/admin",
+    name: "admin",
     children: [
       {
         path: "users",
-        name: "settings.users",
-        component: () => import("../views/Settings/Users/Index.vue"),
+        name: "admin.users",
+        component: () => import("../views/Admin/Users/Index.vue"),
       },
       {
         path: "roles",
-        name: "settings.roles",
-        component: () => import("../views/Settings/Users/ManageRoles.vue"),
+        name: "admin.roles",
+        component: () => import("../views/Admin/Users/ManageRoles.vue"),
       },
       {
         path: "programs",
-        name: "settings.Programs",
+        name: "admin.Programs",
         component: () =>
-          import("../views/Settings/ProgramManagement/Index.vue"),
+          import("../views/Admin/Programs/Index.vue"),
       },
     ],
   },

@@ -93,23 +93,23 @@ const config = ref({
             <span role="link"> Survey Builder </span>
           </router-link>
         </MenuItem>
-      </Menu.SubMenu>
+      </Menu.SubMenu> -->
 
-      <Menu.SubMenu label="Settings" title="Settings" key="settings">
+      <Menu.SubMenu label="Admin" title="Admin" key="admin">
         <template #icon><SettingOutlined /></template>
 
         <MenuItem key="manage-users">
           <template #icon><UserOutlined /></template>
 
-          <router-link to="/settings/users">
-            <span role="link"> User Management </span>
+          <router-link to="/admin/users">
+            <span role="link"> Manage Users  </span>
           </router-link>
         </MenuItem>
         <MenuItem key="manage-programs">
           <template #icon> <DatabaseOutlined /> </template>
 
-          <router-link to="/settings/programs">
-            <span role="link"> Programs Management </span>
+          <router-link to="/admin/programs">
+            <span role="link"> Manage Programs  </span>
           </router-link>
         </MenuItem>
       </Menu.SubMenu>
@@ -117,7 +117,7 @@ const config = ref({
       <Divider></Divider>
 
       <!-- <MenuItem key="change-programs">
-        <router-link to="/settings/change-programs">
+        <router-link to="/admin/change-programs">
           <span role="link"> Programs </span>
         </router-link>
       </MenuItem> -->
