@@ -17,18 +17,14 @@ import {
 } from "ant-design-vue";
 
 import { computed, createVNode, ref, watch } from "vue";
-import { ApiRequest } from "@/api";
 import { useRequest } from "vue-request";
-import { ProgramUser, User } from "@/models/user";
 import { ExclamationCircleFilled } from "@ant-design/icons-vue";
 
 import { useProgramsStore } from "@/store/programs";
 import { useAccountStore } from "@/store/account";
 import { useRolesStore } from "@/store/roles.store";
 
-import AssignRoleModal from "../Users/AssignRoleModal.vue";
 import { RequestCacheKeys } from "@/models/constants";
-import { Program } from "@/models/program";
 
 const props = defineProps<{
   open: boolean;
@@ -131,12 +127,6 @@ const getProgramOrgs = computed(() => {
   <Drawer :open="open" @close="handleCancel" width="50vw">
     <template #title> Users of {{ name }} </template>
 
-    <template #extra>
-      <Button type="primary" @click="showOrHideRoleModal(undefined, 'show')"
-        >Add User</Button
-      >
-    </template>
-
     <Tabs v-model:active-key="activeTab" centered>
       <Tabs.TabPane key="1" tab="Program Users">
         <List
@@ -170,7 +160,13 @@ const getProgramOrgs = computed(() => {
           </template>
 
           <template #footer>
-            <Button :block="true" @click="addUserModal.open = true">Add User</Button>
+            <Button
+              :block="true"
+              @click="addUserModal.open = true"
+              type="primary"
+              :ghost="true"
+              >Add User</Button
+            >
           </template>
         </List>
       </Tabs.TabPane>
@@ -205,7 +201,13 @@ const getProgramOrgs = computed(() => {
           </template>
 
           <template #footer>
-            <Button :block="true" @click="orgModal.open = true">Add Organisation</Button>
+            <Button
+              :block="true"
+              @click="orgModal.open = true"
+              type="primary"
+              :ghost="true"
+              >Add Organisation</Button
+            >
           </template>
         </List>
       </Tabs.TabPane>

@@ -34,8 +34,8 @@ const columns = [
     key: "name",
   },
   {
-    title: "Partner",
-    key: "partner",
+    title: "Organisations",
+    key: "organisations",
   },
   {
     title: "Country",
@@ -58,7 +58,7 @@ const columns = [
         {{ record.project?.name }} ({{ record.program_id }})
       </template>
 
-      <template v-else-if="column.key === 'partner'">
+      <template v-else-if="column.key === 'organisations'">
         {{ record.partner || "N/A" }}
       </template>
 

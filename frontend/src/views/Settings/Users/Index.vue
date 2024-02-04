@@ -1,19 +1,9 @@
 <script lang="ts" setup>
-import {
-  Button,
-  Descriptions,
-  DescriptionsItem,
-  PageHeader,
-  Table,
-  Modal,
-  Typography,
-  Select,
-} from "ant-design-vue";
+import { Button, PageHeader, Table, Modal, Typography, Select } from "ant-design-vue";
 import { computed, ref } from "vue";
 import InvitationDrawer from "./InvitationDrawer.vue";
 import { useAccountStore } from "@/store/account";
 import { useRequest } from "vue-request";
-import { User, UserRole } from "@/models/user";
 import { RequestCacheKeys } from "@/models/constants";
 
 import AssignRoleModal from "./AssignRoleModal.vue";
@@ -115,12 +105,12 @@ const columns = [
 
       <template v-else-if="column.key === 'action'">
         <Button
-          size="small"
+          type="link"
           @click="
             assignRoleModal.open = true;
             assignRoleModal.user_id = record.id;
           "
-          >Manage Roles
+          >Assign Roles
         </Button>
       </template>
     </template>
