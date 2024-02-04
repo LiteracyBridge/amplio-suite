@@ -16,16 +16,8 @@ import {
 import { groupBy, sumBy } from "lodash";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
-import type { Deployment } from "@/models/deployment";
-
-enum Colors {
-  excess = "bg-purple-500",
-  great = "bg-pink-500",
-  acceptable = "bg-orange-500",
-  unacceptable = "bg-green-500",
-  failed = "bg-cyan-500",
-  dead = "bg-blue-500",
-}
+import { Deployment } from "@/models/deployment";
+import { DownOutlined } from "@ant-design/icons-vue";
 
 const store = useTalkingBookAnalyticStore(),
   appStore = useAppStore();
@@ -95,10 +87,11 @@ const columns = [
     title: "TBLoader ID",
     dataIndex: "talkingbook_id",
     key: "talkingbook_id",
+    ellipsis: true,
   },
 ];
 
-interface Item {
+interface DataItem {
   key: string | number;
   district: string;
   group_name: string;
@@ -112,24 +105,15 @@ interface Item {
   language: string;
   agent: string;
   talkingbook_id: string;
-  children: Item[];
+  children: DataItem[];
 }
 
-const rows = ref<Item[]>([]);
+const rows = ref<DataItem[]>([]);
 
 async function fetchStats(deployment: Deployment) {
   selectedDeployment.value = deployment.deployment;
-}
 
-onMounted(async () => {
-  if (selectedDeployment.value == null) {
-    const count = appStore.deployments.length;
-    if (count > 1) {
-      selectedDeployment.value = appStore.deployments[count - 1]?.deployment;
-    }
-  }
-
-  const data = await store.getRecipients();
+  const data = await store.getRecipients(deployment.deployment);
 
   const byGroup = groupBy(data, "community_name");
 
@@ -159,7 +143,7 @@ onMounted(async () => {
       }
 
       // @ts-ignore
-      // r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
+      r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
 
       // @ts-ignore
       r.installed = r.talkingbooks_deployed.length || 0;
@@ -174,13 +158,13 @@ onMounted(async () => {
     }
 
     // @ts-ignore
-    const community: Item = Object.assign({}, recipients[0]);
+    const community: DataItem = Object.assign({}, recipients[0]);
     community.key = Math.random() * 9999999 + 1; // Generates a random number between 1 and 9999999
 
     community.group_name = recipients[0].community_name;
     community.num_tbs = sumBy(recipients, "num_tbs");
     community.num_households = sumBy(recipients, "num_households");
-    community.children = (((recipients || []) as unknown) as Item[]).map((r) => {
+    community.children = (((recipients || []) as unknown) as DataItem[]).map((r) => {
       r.district = "";
       return r;
     });
@@ -189,6 +173,15 @@ onMounted(async () => {
   });
 
   rows.value = [...mapped];
+}
+
+onMounted(async () => {
+  if (selectedDeployment.value == null) {
+    const count = appStore.deployments.length;
+    if (count > 1) {
+      await fetchStats(appStore.deployments[count - 1]);
+    }
+  }
 });
 </script>
 
@@ -200,7 +193,7 @@ onMounted(async () => {
           <Menu>
             <MenuItem
               :key="d.deploymentnumber"
-              v-for="d in useAppStore().deployments"
+              v-for="d in appStore.deployments"
               @click="fetchStats(d)"
             >
               <span>Deployment {{ d.deploymentnumber }}</span>
@@ -260,7 +253,7 @@ onMounted(async () => {
     </Tooltip>
   </Row>
 
-  <Table :columns="columns" :data-source="rows" size="small">
+  <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading">
     <template #bodyCell="{ record, column }">
       <template v-if="column.key === 'percent_installed'">
         <Tag

@@ -18,12 +18,12 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
         }/status?selector=${selector}`
       );
     },
-    async getRecipients() {
+    async getRecipients(deployment: string) {
       this.loading = true;
 
       return ApiRequest.get<Recipient>(
         `dashboard-queries/${useAppStore().programCode
-        }/recipients`
+        }/recipients/${deployment}`
       ).then((resp) => resp)
         .finally(() => this.loading = false);
     }

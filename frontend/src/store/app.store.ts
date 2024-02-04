@@ -4,6 +4,7 @@ import { useAccountStore } from "./account";
 import { message } from "ant-design-vue";
 import { LocalStorageKeys } from "@/models/constants";
 import { Deployment } from "@/models/deployment";
+import { orderBy } from "lodash";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
@@ -23,7 +24,7 @@ export const useAppStore = defineStore("app-config-store", {
       return state.activeProgram.data?.project?.name;
     },
     deployments: (state): Deployment[] => {
-      return state.activeProgram.data?.project.deployments || [];
+      return orderBy(state.activeProgram.data?.project.deployments || [], (d) => d.deploymentnumber)
     },
     languages: (state) => {
       return state.activeProgram.data?.languages || [];
