@@ -185,7 +185,7 @@ const store = useProgramSpecStore(),
 
 const data = ref({
   selectedRecipientId: null,
-  recipientInEdit: null,
+  recipientInEdit: null as Recipient,
   recipientEdited: false,
   description: "Add and edit recipients here.",
   columns,
@@ -250,10 +250,7 @@ const isDuplicateRecipient = computed(() => {
   // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
   let isDuplicate = false;
   store.recipients.forEach((recip) => {
-    if (
-      key(recip) === thisKey &&
-      recip.id !== data.value.recipientInEdit.id
-    )
+    if (key(recip) === thisKey && recip.id !== data.value.recipientInEdit.id)
       isDuplicate = true;
   });
 
@@ -266,7 +263,7 @@ const invalidBeneficiaries = computed(() => {
 
   let invalid = false;
   // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
-  Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional).forEach(
+  Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional || {}).forEach(
     (key) => {
       let val = data.value.recipientInEdit.direct_beneficiaries_additional[key];
       if (val > data.value.recipientInEdit.direct_beneficiaries) {
@@ -290,7 +287,6 @@ const invalidBeneficiaries = computed(() => {
 
   return invalid;
 });
-
 
 function onCloseModal() {
   data.value.recipientEdited = false;

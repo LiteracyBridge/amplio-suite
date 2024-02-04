@@ -25,7 +25,7 @@ export class Recipient {
   deployments: number[] = [];
   agent_gender?: string;
   direct_beneficiaries?: number;
-  direct_beneficiaries_additional: any;
+  direct_beneficiaries_additional: any = {};
   indirect_beneficiaries?: number;
 
   // todo: ADD talking_books_deployed, -> deployments
