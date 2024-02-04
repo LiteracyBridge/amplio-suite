@@ -10,7 +10,7 @@ import {
   SoundOutlined,
   DotChartOutlined,
   MonitorOutlined,
-  BuildOutlined
+  BuildOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 
@@ -60,7 +60,11 @@ const config = ref({
         </router-link>
       </MenuItem>
 
-      <Menu.SubMenu label="Talking Book Analytics" title="Talking Book Analytics" key="tb-analytics">
+      <Menu.SubMenu
+        label="Talking Book Analytics"
+        title="Talking Book Analytics"
+        key="tb-analytics"
+      >
         <template #icon>
           <SoundOutlined />
         </template>
@@ -74,7 +78,7 @@ const config = ref({
         </MenuItem>
       </Menu.SubMenu>
 
-      <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
+      <!-- <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
         <template #icon>
           <SoundOutlined />
         </template>
@@ -102,14 +106,14 @@ const config = ref({
           <template #icon><UserOutlined /></template>
 
           <router-link to="/admin/users">
-            <span role="link"> Manage Users  </span>
+            <span role="link"> Manage Users </span>
           </router-link>
         </MenuItem>
         <MenuItem key="manage-programs">
           <template #icon> <DatabaseOutlined /> </template>
 
           <router-link to="/admin/programs">
-            <span role="link"> Manage Programs  </span>
+            <span role="link"> Manage Programs </span>
           </router-link>
         </MenuItem>
       </Menu.SubMenu>

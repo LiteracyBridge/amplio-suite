@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
-import { Tag, Row, Tooltip, Table } from "ant-design-vue";
+import {
+  Tag,
+  Row,
+  Tooltip,
+  Table,
+  PageHeader,
+  Divider,
+  Button,
+  Dropdown,
+  MenuItem,
+  Alert,
+  Menu,
+} from "ant-design-vue";
 import { groupBy, sumBy } from "lodash";
-import { DateTime } from "luxon";
 import { onMounted, ref } from "vue";
+import { useAppStore } from "@/store/app.store";
+import type { Deployment } from "@/models/deployment";
 
 enum Colors {
   excess = "bg-purple-500",
@@ -14,7 +27,10 @@ enum Colors {
   dead = "bg-blue-500",
 }
 
-const store = useTalkingBookAnalyticStore();
+const store = useTalkingBookAnalyticStore(),
+  appStore = useAppStore();
+
+const selectedDeployment = ref(undefined);
 const columns = [
   {
     title: "District",
@@ -82,14 +98,6 @@ const columns = [
   },
 ];
 
-interface DataItem {
-  key: number;
-  name: string;
-  age: number;
-  address: string;
-  children?: DataItem[];
-}
-
 interface Item {
   key: string | number;
   district: string;
@@ -109,13 +117,22 @@ interface Item {
 
 const rows = ref<Item[]>([]);
 
+async function fetchStats(deployment: Deployment) {
+  selectedDeployment.value = deployment.deployment;
+}
+
 onMounted(async () => {
+  if (selectedDeployment.value == null) {
+    const count = appStore.deployments.length;
+    if (count > 1) {
+      selectedDeployment.value = appStore.deployments[count - 1]?.deployment;
+    }
+  }
+
   const data = await store.getRecipients();
 
   const byGroup = groupBy(data, "community_name");
 
-  const temp: Item[] = [];
-  const now = DateTime.now();
   const mapped = Object.keys(byGroup).map((name) => {
     const recipients = (byGroup[name] || []).map((r) => {
       // @ts-ignore
@@ -142,7 +159,7 @@ onMounted(async () => {
       }
 
       // @ts-ignore
-      r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
+      // r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
 
       // @ts-ignore
       r.installed = r.talkingbooks_deployed.length || 0;
@@ -153,7 +170,6 @@ onMounted(async () => {
     });
 
     if (recipients.length == 0) {
-      // TODO: handle this case
       return;
     }
 
@@ -168,131 +184,46 @@ onMounted(async () => {
       r.district = "";
       return r;
     });
-    // TODO: calculate percent installed
-    // TODO: calculate installed
 
     return community;
   });
 
-  console.log(mapped);
-
   rows.value = [...mapped];
 });
-const data: DataItem[] = [
-  {
-    key: 1,
-    name: "John Brown sr.",
-    age: 60,
-    address: "New York No. 1 Lake Park",
-    children: [
-      {
-        key: 11,
-        name: "John Brown",
-        age: 42,
-        address: "New York No. 2 Lake Park",
-      },
-      {
-        key: 12,
-        name: "John Brown jr.",
-        age: 30,
-        address: "New York No. 3 Lake Park",
-        children: [
-          {
-            key: 121,
-            name: "Jimmy Brown",
-            age: 16,
-            address: "New York No. 3 Lake Park",
-          },
-        ],
-      },
-      {
-        key: 13,
-        name: "Jim Green sr.",
-        age: 72,
-        address: "London No. 1 Lake Park",
-        children: [
-          {
-            key: 131,
-            name: "Jim Green",
-            age: 42,
-            address: "London No. 2 Lake Park",
-            children: [
-              {
-                key: 1311,
-                name: "Jim Green jr.",
-                age: 25,
-                address: "London No. 3 Lake Park",
-              },
-              {
-                key: 1312,
-                name: "Jimmy Green sr.",
-                age: 18,
-                address: "London No. 4 Lake Park",
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    key: 2,
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-  },
-];
-
-const rowSelection = ref({
-  checkStrictly: false,
-  onChange: (selectedRowKeys: (string | number)[], selectedRows: Item[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
-  },
-  onSelect: (record: Item, selected: boolean, selectedRows: Item[]) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected: boolean, selectedRows: Item[], changeRows: Item[]) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-});
-
-// const columns = [
-//   { title: "Name", dataIndex: "name", key: "name", fixed: true },
-//   { title: "Age", dataIndex: "age", key: "age" },
-//   { title: "Address", dataIndex: "address", key: "address" },
-//   { title: "Action", key: "action" },
-// ];
-
-// const data = [
-//   {
-//     key: 1,
-//     name: "John Brown",
-//     age: 32,
-//     address: "New York No. 1 Lake Park",
-//     description:
-//       "My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.",
-//   },
-//   {
-//     key: 2,
-//     name: "Jim Green",
-//     age: 42,
-//     address: "London No. 1 Lake Park",
-//     description:
-//       "My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.",
-//   },
-//   {
-//     key: 3,
-//     name: "Joe Black",
-//     age: 32,
-//     address: "Sidney No. 1 Lake Park",
-//     description:
-//       "My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.",
-//   },
-// ];
 </script>
 
 <template>
-  <Row>
+  <PageHeader title="TB Installations" sub-title="Track talking book installations">
+    <template #extra>
+      <Dropdown>
+        <template #overlay>
+          <Menu>
+            <MenuItem
+              :key="d.deploymentnumber"
+              v-for="d in useAppStore().deployments"
+              @click="fetchStats(d)"
+            >
+              <span>Deployment {{ d.deploymentnumber }}</span>
+            </MenuItem>
+          </Menu>
+        </template>
+        <Button>
+          Change Deployment
+          <DownOutlined />
+        </Button>
+      </Dropdown>
+    </template>
+
+    <Alert type="info" :closable="true" v-if="selectedDeployment != null">
+      <template #message>
+        You'r viewing talking books installation for
+        {{ selectedDeployment }} deployment
+      </template>
+    </Alert>
+  </PageHeader>
+
+  <!-- <Divider></Divider> -->
+  <Row class="my-5">
     <Tooltip>
       <template #title
         >An excess of Talking Books seem to have been installed. This may be fine, but
@@ -329,48 +260,39 @@ const rowSelection = ref({
     </Tooltip>
   </Row>
 
-  <!-- <Table :columns="columns" :data-source="data">
-    <template #bodyCell="{ column }">
-      <template v-if="column.key === 'action'">
-        <a>Delete</a>
-      </template>
-    </template>
-
-    <template #expandedRowRender="{ record, index, indent, expanded }">
-      <p>{{ indent }}</p>
-
-      <p style="margin: 0">
-        {{ record.description }}
-      </p>
-    </template>
-    <template #expandColumnTitle>
-      <span style="color: red">More</span>
-    </template>
-  </Table> -->
-
-  <p class="bg-red-500"></p>
   <Table :columns="columns" :data-source="rows" size="small">
     <template #bodyCell="{ record, column }">
       <template v-if="column.key === 'percent_installed'">
-        <Tag class="w-full text-center" v-if="record.percent_installed > 100" color="purple">
+        <Tag
+          class="w-full text-center"
+          v-if="record.percent_installed > 100"
+          color="purple"
+        >
           {{ record.installed }}
         </Tag>
-        <Tag class="w-full text-center" v-else-if="record.percent_installed == 100" color="pink">
+        <Tag
+          class="w-full text-center"
+          v-else-if="record.percent_installed == 100"
+          color="pink"
+        >
           {{ record.installed }}
         </Tag>
-        <Tag class="w-full text-center"
+        <Tag
+          class="w-full text-center"
           v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
           color="orange"
         >
           {{ record.installed }}
         </Tag>
-        <Tag class="w-full text-center"
+        <Tag
+          class="w-full text-center"
           v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
           color="green"
         >
           {{ record.installed }}
         </Tag>
-        <Tag class="w-full text-center"
+        <Tag
+          class="w-full text-center"
           v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
           color="cyan"
         >
