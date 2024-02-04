@@ -220,11 +220,12 @@ const isRecipientInEditValid = computed(() => {
     "district",
     "community_name",
     "language",
+    "language",
     // 'listeningModel', 'numTbs',
     // 'deployments', 'directBeneficiaries'
   ];
 
-  const partial = requiredFields.map((field) => {
+  const partial = requiredFields.map((field: keyof Recipient) => {
     const value = data.value.recipientInEdit[field];
     if (typeof value === "string" || value instanceof String) return value !== "";
     else if (typeof value === "number") return value >= 0;
@@ -277,7 +278,7 @@ const invalidBeneficiaries = computed(() => {
 
   // Is either of these properties greater than "direct beneficiaries"?
   const keys = ["numhouseholds", "group_size"];
-  keys.forEach((key) => {
+  keys.forEach((key: keyof Recipient) => {
     let val = data.value.recipientInEdit[key];
     if (val > data.value.recipientInEdit.direct_beneficiaries) {
       invalid = true;
@@ -330,7 +331,7 @@ function duplicateRecipient(recipient: { [x: string]: any }) {
     .join(", ");
   console.log(`Duplicate ${JSON.stringify(recip)}`);
   data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-  data.value.recipientInEdit.recipientid = null;
+  data.value.recipientInEdit.id = null;
   onOpenModal("edit", "Duplicated Recipient Details");
 }
 
