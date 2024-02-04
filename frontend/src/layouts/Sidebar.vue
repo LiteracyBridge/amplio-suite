@@ -60,7 +60,7 @@ const config = ref({
         </router-link>
       </MenuItem>
 
-      <Menu.SubMenu
+      <!-- <Menu.SubMenu
         label="Talking Book Analytics"
         title="Talking Book Analytics"
         key="tb-analytics"
@@ -76,9 +76,9 @@ const config = ref({
             <span role="link"> Installations </span>
           </router-link>
         </MenuItem>
-      </Menu.SubMenu>
+      </Menu.SubMenu> -->
 
-      <!-- <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
+       <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
         <template #icon>
           <SoundOutlined />
         </template>
@@ -97,7 +97,7 @@ const config = ref({
             <span role="link"> Survey Builder </span>
           </router-link>
         </MenuItem>
-      </Menu.SubMenu> -->
+      </Menu.SubMenu>
 
       <Menu.SubMenu label="Admin" title="Admin" key="admin">
         <template #icon><SettingOutlined /></template>
