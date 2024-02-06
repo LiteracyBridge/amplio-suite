@@ -24,6 +24,7 @@
     "aws-amplify": "^5.3.11",
     "axios": "^0.19.2",
     "chart.js": "^4.4.1",
+    "exceljs": "^4.4.0",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
     "papaparse": "^5.4.1",

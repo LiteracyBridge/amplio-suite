@@ -5,6 +5,7 @@ export class Role {
   permissions: { [module: string]: string[] }; // { module: [permissions] }
 }
 
+// TODO: update permissions
 export enum Permission {
   // ACM/TB Loader
   ManageDeployment = "manage-deployment",

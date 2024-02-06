@@ -39,6 +39,7 @@ import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
 import { API_URL } from "@/models/constants";
 import { DownOutlined, DownloadOutlined } from "@ant-design/icons-vue";
+import AnalysisReport from "../components/AnalysisReport.vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore(),
@@ -275,6 +276,8 @@ onMounted(async () => {
     </template>
 
     <template #extra>
+      <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
+
       <Dropdown>
         <template #overlay>
           <Menu>

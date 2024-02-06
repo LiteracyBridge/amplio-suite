@@ -35,6 +35,7 @@ export const useAccountStore = defineStore("account", {
     },
     email: (state) => state.user.email,
     isAmplioStaff: (state) => state.user.email.split("@")[1] === "amplio.org",
+    fullName: (state) => (state.user.first_name || '') + " " + (state.user.last_name || ""),
   },
   actions: {
     authRequest() {
