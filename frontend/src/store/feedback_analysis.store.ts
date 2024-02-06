@@ -11,6 +11,7 @@ import {
 import { Survey } from "@/models/survey";
 import { useAppStore } from "./app.store";
 import { useAccountStore } from "./account";
+import { notification } from "ant-design-vue";
 
 class Statistics {
   user_feedback: 0;
@@ -45,9 +46,9 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     // },
     findById:
       (state) =>
-      (id: string | number): null | Analysis => {
-        return state.questions.find((q) => q.id == id);
-      },
+        (id: string | number): null | Analysis => {
+          return state.questions.find((q) => q.id == id);
+        },
     subQuestions: (state) => {
       return (parentId: string | number): Analysis[] => {
         return state.questions.filter((q) => q.question.parent_id == parentId);
@@ -121,19 +122,17 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           single_choice:
             question.type == QuestionType.single_choice
               ? {
-                  value: null,
-                  sub_choice: null,
-                }
+                value: null,
+                sub_choice: null,
+              }
               : null,
         };
       });
 
       // Fetch statis
       ApiRequest.get<Statistics>(
-        `user-feedback/analysis/${survey.id}/statistics?email=${
-          useAccountStore().email
-        }&language=${useAppStore().userFeedback.language}&deployment=${
-          useAppStore().userFeedback.deployment
+        `user-feedback/analysis/${survey.id}/statistics?email=${useAccountStore().email
+        }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
         }`
       ).then(([stats]) => {
         this.$state.statistics = stats;
@@ -257,17 +256,6 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         // };
       }
     },
-    // recordResponse(
-    //   question: Analysis,
-    //   response: string,
-    //   choice_id?: string | number
-    // ) {
-    //   // question.choice_id = choice_id;
-    //   question.response = response;
-
-    //   const index = this.getQuestionIndexById(question.id);
-    //   this.$state.questions[index] = question;
-    // },
     async download() {
       // TODO: implement downloading of analysis
       // this.$state.loading = true;
@@ -295,6 +283,9 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         return q;
       });
     },
+    ///
+    /// API Requests
+    ///
     saveChanges(extra: {
       message_uuid: string;
       is_useless?: boolean;
@@ -328,5 +319,20 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         })
         .finally(() => (this.$state.loading = false));
     },
+    async fetchAnalysisReport() {
+      this.loading = true;
+      return ApiRequest.get<Array<string>>(
+        `user-feedback/reports/${this.$state.survey.id}?language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment}`,
+      )
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
+    }
   },
 });

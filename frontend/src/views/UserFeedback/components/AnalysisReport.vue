@@ -4,12 +4,29 @@ import { useAppStore } from "@/store/app.store";
 import { Workbook } from "exceljs";
 import { ref } from "vue";
 import { DownloadOutlined } from "@ant-design/icons-vue";
-import { Button } from "ant-design-vue";
+import { Button, notification } from "ant-design-vue";
+import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 
-const store = useAppStore();
-const loading = ref(false);
+const store = useFeedbackAnalysis();
 
 async function downloadReport() {
+  store.loading = true;
+  notification.info({
+    message: "Downloading Report",
+    description: "Please wait while we prepare the report for you.",
+  });
+
+  // Fetch report from server
+  const data = await store.fetchAnalysisReport();
+  if (data.length == 0) {
+    notification.error({
+      message: "No Data Found",
+      description: "No analysis data found to generate report!",
+    });
+    store.loading = false;
+    return;
+  }
+
   const workbook = new Workbook();
   workbook.creator = useAccountStore().user?.name || useAccountStore().email;
   workbook.lastModifiedBy = workbook.creator;
@@ -18,19 +35,12 @@ async function downloadReport() {
   workbook.lastPrinted = new Date();
 
   const sheet = workbook.addWorksheet("Feedback Analysis Report");
-  sheet.columns = [
-    { header: "Id", key: "id", width: 10 },
-    { header: "Name", key: "name", width: 32 },
-    { header: "D.O.B.", key: "DOB", width: 10, outlineLevel: 1 },
-  ];
 
-  // Add an array of rows
-  const rows = [
-    [5, "Bob", new Date()], // row by array
-    { id: 6, name: "Barbara", dob: new Date() },
-  ];
-  // add new rows and return them as array of row objects
-  const newRows = sheet.addRows(rows);
+  // First array item is the header
+  sheet.columns = data[0].flatMap((r) => ({ header: r, key: r }));
+
+  // Add remaining rows to the sheet
+  sheet.addRows(data.slice(1));
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
@@ -42,11 +52,13 @@ async function downloadReport() {
   a.download = "Feedback Analysis Report.xlsx";
   a.click();
   window.URL.revokeObjectURL(url);
+
+  store.loading = false;
 }
 </script>
 
 <template>
-  <Button type="primary" :ghost="true" @click="downloadReport()" :loading="loading">
+  <Button type="primary" :ghost="true" @click="downloadReport()" :loading="store.loading">
     <template #icon>
       <DownloadOutlined />
     </template>
