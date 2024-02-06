@@ -34,6 +34,7 @@ export const useAccountStore = defineStore("account", {
       return (state.user.programs || []).map((pu) => pu.program);
     },
     email: (state) => state.user.email,
+    isAmplioStaff: (state) => state.user.email.split("@")[1] === "amplio.org",
   },
   actions: {
     authRequest() {

@@ -36,8 +36,7 @@ const emit = defineEmits<{
   (e: "closed", value: boolean): void;
 }>();
 
-const store = useAccountStore(),
-  programStore = useProgramsStore();
+const programStore = useProgramsStore();
 
 const activeTab = ref("1");
 const addUserModal = ref({
@@ -100,16 +99,6 @@ function removeOrg(orgId: number) {
       });
     },
   });
-}
-
-function showOrHideRoleModal(user_id: number | undefined, state: "show" | "hide") {
-  if (state === "show") {
-    addUserModal.value.user_id = user_id;
-    addUserModal.value.open = true;
-  } else {
-    addUserModal.value.open = false;
-    addUserModal.value.user_id = undefined;
-  }
 }
 
 const program = computed(() => {
@@ -190,6 +179,7 @@ const getProgramOrgs = computed(() => {
 
               <template #actions>
                 <Button
+                  v-if="useAccountStore().isAmplioStaff"
                   type="link"
                   size="small"
                   :danger="true"
@@ -202,6 +192,7 @@ const getProgramOrgs = computed(() => {
 
           <template #footer>
             <Button
+              v-if="useAccountStore().isAmplioStaff"
               :block="true"
               @click="orgModal.open = true"
               type="primary"
