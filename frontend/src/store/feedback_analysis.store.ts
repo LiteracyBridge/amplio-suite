@@ -103,7 +103,6 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         // })
         // .filter((c) => c.parent_id == null);
 
-        // console.log(question.choices);
         let show = true;
         if (question.conditions?.action == ConditionAction.show) {
           show = false;

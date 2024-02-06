@@ -24,7 +24,7 @@ import {
   SubMenu,
   Alert,
   Menu,
-  Skeleton,
+  Spin,
 } from "ant-design-vue";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
@@ -47,7 +47,7 @@ const feedbackStore = useFeedbackAnalysis(),
 
 const config = ref({
   activeSection: "transcription",
-  loading: true,
+  // loading: true,
   noMessages: false,
 });
 
@@ -68,12 +68,8 @@ const uuid = ref(""),
   transcription = ref(null),
   selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
 
-const skipCurrentMessage = () => {
-  feedbackStore.skipped_messages = [...feedbackStore.skipped_messages, uuid.value];
-  updateUrl(true);
-};
-
 function updateUrl(uuidSkip?: boolean) {
+  feedbackStore.loading = true;
   transcription.value = null;
 
   return ApiRequest.get(
@@ -115,20 +111,19 @@ function updateUrl(uuidSkip?: boolean) {
     .catch((err) => {
       console.log("caught:" + err);
       uuid.value = "";
+    })
+    .finally(() => {
+      feedbackStore.loading = false;
     });
 }
 
-watch(nextUUID, (newUUID) => {
-  uuid.value = newUUID;
-  if (newUUID != "") {
-    updateUrl();
-  } else {
-    audioMetadata.value.url = "";
-  }
-});
+const skipCurrentMessage = () => {
+  feedbackStore.skipped_messages = [...feedbackStore.skipped_messages, uuid.value];
+  updateUrl(true);
+};
 
 function analyse(survey: Survey | number) {
-  config.value.loading = true;
+  feedbackStore.loading = true;
 
   if (typeof survey === "number") {
     survey = useSurveyBuilder().published.find((s) => s.id == survey);
@@ -139,29 +134,30 @@ function analyse(survey: Survey | number) {
   updateUrl();
 
   modal.value.visible = false;
-  config.value.loading = false;
+  feedbackStore.loading = false;
 }
 
 async function handleOnMounted() {
+  feedbackStore.loading = true;
+
   await useSurveyBuilder().download();
 
   // Fetch surveys of the program
   const surveys = useSurveyBuilder().published;
+  modal.value.matchedSurveys = surveys;
 
   if ((surveys || []).length == 0) {
-    config.value.loading = false;
+    feedbackStore.loading = false;
     return;
   }
 
   // Multiple surveys were found, ask the user to select one
   if (surveys.length >= 1) {
-    modal.value.matchedSurveys = surveys;
     modal.value.visible = true;
     return;
   }
 
   if (surveys.length == 0 && surveys != null) {
-    modal.value.matchedSurveys = surveys;
     modal.value.visible = true;
   }
 }
@@ -239,15 +235,6 @@ const isOptionOther = computed(() => {
   };
 });
 
-const isLoading = computed(() => {
-  return config.value.loading || feedbackStore.loading || surveyStore.loading;
-});
-
-const getReportUrl = computed(() => {
-  if (feedbackStore.survey == null) return null;
-  return `${API_URL}/reports/${feedbackStore.survey.id}?deployment=${store.userFeedback.deployment}&language=${store.userFeedback.language}`;
-});
-
 const onLanguageDeploymentChanged = (deployment: number, language: string) => {
   store.userFeedback ??= { deployment, language, surveyId: null };
   store.userFeedback.deployment = deployment;
@@ -255,6 +242,15 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
 
   handleOnMounted();
 };
+
+watch(nextUUID, (newUUID) => {
+  uuid.value = newUUID;
+  if (newUUID != "") {
+    updateUrl();
+  } else {
+    audioMetadata.value.url = "";
+  }
+});
 
 onMounted(async () => {
   if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
@@ -299,21 +295,6 @@ onMounted(async () => {
           <DownOutlined />
         </Button>
       </Dropdown>
-
-      <!-- TODO:Enable report download when API is ready -->
-      <!-- <a
-        :href="getReportUrl"
-        target="_top"
-        v-if="feedbackStore.survey != null"
-        class="ml-4"
-      >
-        <Button type="primary" :ghost="true">
-          <template #icon>
-            <DownloadOutlined />
-          </template>
-          Download Report</Button
-        >
-      </a> -->
     </template>
 
     <Alert type="info" :closable="true">
@@ -329,232 +310,238 @@ onMounted(async () => {
       </template>
     </Alert>
 
-    <template v-if="!isLoading">
+    <template v-if="!feedbackStore.loading">
       <Stats class="my-2" />
     </template>
   </PageHeader>
 
-  <Skeleton :loading="isLoading"></Skeleton>
-
-  <Empty v-if="(useSurveyBuilder().published || []).length == 0 && !isLoading">
-    <template #description>
-      <span> You do not have any surveys </span>
-    </template>
-
-    <RouterLink to="/user-feedback/surveys">
-      <Button type="primary" :ghost="false"> Create Survey</Button>
-    </RouterLink>
-  </Empty>
-
-  <div v-else>
-    <!-- No feedback messages -->
-    <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url == ''">
+  <Spin :spinning="feedbackStore.loading">
+    <Empty
+      v-if="(useSurveyBuilder().published || []).length == 0 && !feedbackStore.loading"
+    >
       <template #description>
-        <span class="text-lg">There are no user feedback messages to analyse </span>
+        <span> You do not have any surveys </span>
       </template>
+
+      <RouterLink to="/user-feedback/surveys">
+        <Button type="primary" :ghost="false"> Create Survey</Button>
+      </RouterLink>
     </Empty>
 
     <div v-else>
-      <div
-        class="flex justify-center"
-        v-if="audioMetadata.url != '' || audioMetadata.url != null"
-      >
-        <AudioPlayer
-          :key="audioKey"
-          @srcError="updateUrl"
-          @next="skipCurrentMessage"
-          @useless="save($event)"
-          ref="audio"
-          :audioMetadata="audioMetadata"
-        />
-      </div>
+      <!-- No feedback messages -->
+      <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url == ''">
+        <template #description>
+          <span class="text-lg">There are no user feedback messages to analyse </span>
+        </template>
+      </Empty>
 
-      <Form layout="vertical" class="mt-5 block">
-        <div class="flex justify-center">
-          <div class="grid grid-cols-1 gap-4 content-center">
-            <Tabs
-              v-model:activeKey="config.activeSection"
-              :bordered="true"
-              tab-position="left"
-            >
-              <TabPane key="transcription" tab="Transcription">
-                <Card type="inner" size="small" class="mb-6" style="width: 58vw">
-                  <FormItem
-                    key="field-transcription"
-                    label="Feedback Message Transcription"
-                  >
-                    <Textarea
-                      class="my-2"
-                      :rows="20"
-                      placeholder="Transcription..."
-                      v-model:value="transcription"
-                    ></Textarea>
-                  </FormItem>
-                </Card>
-              </TabPane>
+      <div v-else>
+        <div
+          class="flex justify-center"
+          v-if="audioMetadata.url != '' || audioMetadata.url != null"
+        >
+          <AudioPlayer
+            :key="audioKey"
+            @srcError="updateUrl"
+            @next="skipCurrentMessage"
+            @useless="save($event)"
+            ref="audio"
+            :audioMetadata="audioMetadata"
+          />
+        </div>
 
-              <TabPane
-                :key="section.id"
-                :tab="section.name"
-                v-for="section in feedbackStore.sections"
+        <Form layout="vertical" class="mt-5 block">
+          <div class="flex justify-center">
+            <div class="grid grid-cols-1 gap-4 content-center">
+              <Tabs
+                v-model:activeKey="config.activeSection"
+                :bordered="true"
+                tab-position="left"
               >
-                <Card type="inner" size="small" class="mb-6" style="width: 58vw">
-                  <template v-for="(analysis, index) in feedbackStore.questions">
+                <TabPane key="transcription" tab="Transcription">
+                  <Card type="inner" size="small" class="mb-6" style="width: 58vw">
                     <FormItem
-                      :key="analysis.id"
-                      :required="analysis.question.required"
-                      v-if="analysis.show"
-                      @change="
-                        feedbackStore.updateQuestionConditions(analysis.question_id);
-                        validateResponse(analysis);
-                      "
+                      key="field-transcription"
+                      label="Feedback Message Transcription"
                     >
-                      <template #label>
-                        {{ index + 1 }}. {{ analysis.question.question_label }}
-                      </template>
+                      <Textarea
+                        class="my-2"
+                        :rows="20"
+                        placeholder="Transcription..."
+                        v-model:value="transcription"
+                      ></Textarea>
+                    </FormItem>
+                  </Card>
+                </TabPane>
 
-                      <!-- Open Ended Question -->
-                      <div v-if="analysis.question.type === QuestionType.open_ended">
-                        <Textarea
-                          class="my-2"
-                          placeholder="Open ended response..."
-                          v-model:value="
-                            feedbackStore.questions[
-                              feedbackStore.getQuestionIndexById(analysis.question_id)
-                            ].response
-                          "
-                          @change="
-                            feedbackStore.updateQuestionConditions(analysis.question_id);
-                            validateResponse(analysis);
-                          "
-                          :required="analysis.question.required"
-                        ></Textarea>
-                      </div>
+                <TabPane
+                  :key="section.id"
+                  :tab="section.name"
+                  v-for="section in feedbackStore.sections"
+                >
+                  <Card type="inner" size="small" class="mb-6" style="width: 58vw">
+                    <template v-for="(analysis, index) in feedbackStore.questions">
+                      <FormItem
+                        :key="analysis.id"
+                        :required="analysis.question.required"
+                        v-if="analysis.show"
+                        @change="
+                          feedbackStore.updateQuestionConditions(analysis.question_id);
+                          validateResponse(analysis);
+                        "
+                      >
+                        <template #label>
+                          {{ index + 1 }}. {{ analysis.question.question_label }}
+                        </template>
 
-                      <!-- Multi Choice Question -->
-                      <div v-if="analysis.question.type === QuestionType.multi_choice">
-                        <CheckboxGroup
-                          v-model:value="analysis.choices"
-                          style="width: 100%; display: block"
-                        >
-                          <div v-for="option in analysis.question.choices">
-                            <Checkbox
-                              :value="option.choice_id"
-                              @change="
-                                () => {
-                                  if (selectedChoice[option.choice_id] == null) {
-                                    selectedChoice[option.choice_id] = {
-                                      selected: true,
-                                      sub: option.sub_options || [],
-                                    };
-                                  } else {
-                                    selectedChoice[option.choice_id] = {
-                                      selected: !selectedChoice[option.choice_id]
-                                        .selected,
-                                      sub: option.sub_options || [],
-                                    };
+                        <!-- Open Ended Question -->
+                        <div v-if="analysis.question.type === QuestionType.open_ended">
+                          <Textarea
+                            class="my-2"
+                            placeholder="Open ended response..."
+                            v-model:value="
+                              feedbackStore.questions[
+                                feedbackStore.getQuestionIndexById(analysis.question_id)
+                              ].response
+                            "
+                            @change="
+                              feedbackStore.updateQuestionConditions(
+                                analysis.question_id
+                              );
+                              validateResponse(analysis);
+                            "
+                            :required="analysis.question.required"
+                          ></Textarea>
+                        </div>
+
+                        <!-- Multi Choice Question -->
+                        <div v-if="analysis.question.type === QuestionType.multi_choice">
+                          <CheckboxGroup
+                            v-model:value="analysis.choices"
+                            style="width: 100%; display: block"
+                          >
+                            <div v-for="option in analysis.question.choices">
+                              <Checkbox
+                                :value="option.choice_id"
+                                @change="
+                                  () => {
+                                    if (selectedChoice[option.choice_id] == null) {
+                                      selectedChoice[option.choice_id] = {
+                                        selected: true,
+                                        sub: option.sub_options || [],
+                                      };
+                                    } else {
+                                      selectedChoice[option.choice_id] = {
+                                        selected: !selectedChoice[option.choice_id]
+                                          .selected,
+                                        sub: option.sub_options || [],
+                                      };
+                                    }
                                   }
-                                }
-                              "
-                              >{{ option.value }}</Checkbox
-                            >
+                                "
+                                >{{ option.value }}</Checkbox
+                              >
 
-                            <!-- Sub options -->
-                            <div class="ml-10">
-                              <div v-for="sub in option.sub_options || []">
-                                <Checkbox
-                                  :value="sub.choice_id"
-                                  v-if="
-                                    selectedChoice[option.choice_id]?.selected == true
-                                  "
-                                  >{{ sub.value }}</Checkbox
-                                >
+                              <!-- Sub options -->
+                              <div class="ml-10">
+                                <div v-for="sub in option.sub_options || []">
+                                  <Checkbox
+                                    :value="sub.choice_id"
+                                    v-if="
+                                      selectedChoice[option.choice_id]?.selected == true
+                                    "
+                                    >{{ sub.value }}</Checkbox
+                                  >
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </CheckboxGroup>
+                          </CheckboxGroup>
 
-                        <!-- TODO: show sub options -->
-                      </div>
+                          <!-- TODO: show sub options -->
+                        </div>
 
-                      <!-- Single choice -->
-                      <div v-if="analysis.question.type === QuestionType.single_choice">
-                        <RadioGroup
-                          v-model:value="analysis.single_choice.value"
-                          @change=""
-                          style="width: 100%; display: block"
-                        >
-                          <!-- TODO: add onchange event -->
-                          <div v-for="option in analysis.question.choices">
-                            <Radio :value="option.choice_id">{{ option.value }}</Radio>
-
-                            <!-- Sub options -->
-                            <div>
-                              <RadioGroup
-                                v-if="analysis.single_choice.value == option.choice_id"
-                                class="ml-10"
-                                v-model:value="analysis.single_choice.sub_choice"
-                                @change=""
-                                style="width: 100%; display: block"
-                              >
-                                <div v-for="sub in option.sub_options || []">
-                                  <Radio :value="sub.choice_id">{{ sub.value }}</Radio>
-                                </div>
-                              </RadioGroup>
-                            </div>
-                          </div>
-
-                          <div
-                            class="ml-10"
-                            v-if="
-                              isOptionOther(
-                                analysis.question.choices,
-                                analysis.single_choice.value
-                              )
-                            "
+                        <!-- Single choice -->
+                        <div v-if="analysis.question.type === QuestionType.single_choice">
+                          <RadioGroup
+                            v-model:value="analysis.single_choice.value"
+                            @change=""
+                            style="width: 100%; display: block"
                           >
-                            <Textarea
-                              class="my-2"
-                              v-model:value="
-                                feedbackStore.questions[
-                                  feedbackStore.getQuestionIndexById(analysis.question_id)
-                                ].response
+                            <!-- TODO: add onchange event -->
+                            <div v-for="option in analysis.question.choices">
+                              <Radio :value="option.choice_id">{{ option.value }}</Radio>
+
+                              <!-- Sub options -->
+                              <div>
+                                <RadioGroup
+                                  v-if="analysis.single_choice.value == option.choice_id"
+                                  class="ml-10"
+                                  v-model:value="analysis.single_choice.sub_choice"
+                                  @change=""
+                                  style="width: 100%; display: block"
+                                >
+                                  <div v-for="sub in option.sub_options || []">
+                                    <Radio :value="sub.choice_id">{{ sub.value }}</Radio>
+                                  </div>
+                                </RadioGroup>
+                              </div>
+                            </div>
+
+                            <div
+                              class="ml-10"
+                              v-if="
+                                isOptionOther(
+                                  analysis.question.choices,
+                                  analysis.single_choice.value
+                                )
                               "
-                              :required="true"
-                            ></Textarea>
-                          </div>
-                        </RadioGroup>
-                      </div>
+                            >
+                              <Textarea
+                                class="my-2"
+                                v-model:value="
+                                  feedbackStore.questions[
+                                    feedbackStore.getQuestionIndexById(
+                                      analysis.question_id
+                                    )
+                                  ].response
+                                "
+                                :required="true"
+                              ></Textarea>
+                            </div>
+                          </RadioGroup>
+                        </div>
 
-                      <!-- Error message -->
-                      <div class="text-red-500">{{ analysis.error || "" }}</div>
-                    </FormItem>
-                  </template>
-                </Card>
-              </TabPane>
-            </Tabs>
+                        <!-- Error message -->
+                        <div class="text-red-500">{{ analysis.error || "" }}</div>
+                      </FormItem>
+                    </template>
+                  </Card>
+                </TabPane>
+              </Tabs>
+            </div>
           </div>
-        </div>
 
-        <Divider />
-        <div class="flex items-end justify-center my-4 mx-3">
-          <Space>
-            <Button type="primary" size="large" @click="save()"
-              >Submit and Continue</Button
-            >
-            <Button
-              size="large"
-              type="primary"
-              :ghost="true"
-              :danger="true"
-              @click="feedbackStore.resetResponses()"
-              >Reset</Button
-            >
-          </Space>
-        </div>
-      </Form>
+          <Divider />
+          <div class="flex items-end justify-center my-4 mx-3">
+            <Space>
+              <Button type="primary" size="large" @click="save()"
+                >Submit and Continue</Button
+              >
+              <Button
+                size="large"
+                type="primary"
+                :ghost="true"
+                :danger="true"
+                @click="feedbackStore.resetResponses()"
+                >Reset</Button
+              >
+            </Space>
+          </div>
+        </Form>
+      </div>
     </div>
-  </div>
+  </Spin>
 
   <!-- Survey selection modal Modal -->
   <Modal

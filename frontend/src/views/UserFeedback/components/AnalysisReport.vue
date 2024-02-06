@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useAccountStore } from "@/store/account";
-import { useAppStore } from "@/store/app.store";
 import { Workbook } from "exceljs";
-import { ref } from "vue";
 import { DownloadOutlined } from "@ant-design/icons-vue";
 import { Button, notification } from "ant-design-vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
@@ -54,6 +52,10 @@ async function downloadReport() {
   window.URL.revokeObjectURL(url);
 
   store.loading = false;
+  notification.success({
+    message: "Download Complete",
+    description: "Your report has been downloaded successfully.",
+  });
 }
 </script>
 
