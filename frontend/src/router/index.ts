@@ -251,6 +251,11 @@ const routes: any = [
         component: () => import("../views/UserFeedback/Analysis/Index.vue"),
       },
       {
+        path: "review",
+        name: "user_feedback.review",
+        component: () => import("../views/UserFeedback/Review.vue"),
+      },
+      {
         path: "surveys",
         name: "user_feedback.surveys",
         component: () => import("../views/UserFeedback/SurveyBuilder/Index.vue"),

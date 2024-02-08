@@ -11,6 +11,7 @@ import {
   DotChartOutlined,
   MonitorOutlined,
   BuildOutlined,
+EditOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 
@@ -88,6 +89,14 @@ const config = ref({
 
           <router-link to="/user-feedback/analyze">
             <span role="link"> Analyze </span>
+          </router-link>
+        </MenuItem>
+
+        <MenuItem key="review">
+          <template #icon> <EditOutlined /> </template>
+
+          <router-link to="/user-feedback/review">
+            <span role="link"> Review </span>
           </router-link>
         </MenuItem>
 
