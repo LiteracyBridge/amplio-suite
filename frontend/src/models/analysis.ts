@@ -58,15 +58,15 @@ export class Progress {
   users_feedback: number = 0;
 }
 
-export class AudioMetadata {
-  url: string;
-  title: string;
-  community: string;
-  district: string;
-  region: string;
-  listening_model: string;
-  group: string;
-  uuid: string;
-  filename: string;
-  submission: boolean;
-}
+// export class AudioMetadata {
+//   url: string;
+//   title: string;
+//   community: string;
+//   district: string;
+//   region: string;
+//   listening_model: string;
+//   group: string;
+//   uuid: string;
+//   filename: string;
+//   submission: boolean;
+// }

@@ -3,10 +3,11 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Button, Card, Descriptions, DescriptionsItem } from "ant-design-vue";
 import Instructions from "./Instructions.vue";
-import type { AudioMetadata } from "@/models/analysis";
+import { UserFeedbackMessage } from "@/models/uf_message";
+// import type { AudioMetadata } from "@/models/analysis";
 
 const props = defineProps<{
-  audioMetadata: AudioMetadata;
+  message: UserFeedbackMessage;
 }>();
 
 const $emit = defineEmits<{
@@ -28,7 +29,7 @@ const connected = ref(false),
   currentAudio = ref();
 
 function loadError() {
-  if (props.audioMetadata.url != "url") {
+  if (props.message.url != "url") {
     if (audio.value.error.code == 4) {
       console.log("missing mp3");
       $emit("srcError", false);
@@ -181,7 +182,7 @@ function getMinSecText(time: number) {
 }
 
 function getUUID() {
-  if (props.audioMetadata) return props.audioMetadata.uuid;
+  if (props.message) return props.message?.message_uuid;
 }
 
 onMounted(() => {
@@ -242,20 +243,20 @@ function markAsUseless() {
       <tr>
         <td style="padding: 10px">
           <div class="audioMetadata my-4">
-            <div v-if="audioMetadata.title">
+            <div v-if="message?.content_metadata?.title">
               <span style="font-weight: bold">Last message:</span>
-              {{ audioMetadata.title }}
+              {{ message?.content_metadata?.title }}
             </div>
             <div v-else><br /></div>
-            <div v-if="audioMetadata.url != ''">
+            <div v-if="message.url != ''">
               <!-- for some reason this v-if has to be in this second-level div; otherwise, the audio key controls do not work.-->
               <span style="font-weight: bold">Location:</span>
-              {{ audioMetadata.community }}, {{ audioMetadata.district }},
-              {{ audioMetadata.region }}
+              {{ message.recipient.community_name }}, {{ message.recipient.district }},
+              {{ message.recipient.region }}
               <span class="ml-3" style="font-weight: bold"> Model:</span>
-              {{ audioMetadata.listening_model }}
+              {{ message.recipient.listening_model }}
               <span class="ml-3" style="font-weight: bold"> Group:</span>
-              {{ audioMetadata.group }}
+              {{ message.recipient.group_name }}
               <span class="ml-3" style="font-weight: bold"> ID:</span>
               {{ getUUID() }}
             </div>
@@ -276,18 +277,18 @@ function markAsUseless() {
               controls
               preload="auto"
               autoplay
-              :src="audioMetadata.url"
+              :src="message.url"
             >
               Your browser doesn't support the HTML5 audio element.
             </audio>
           </div>
-          <div v-if="audioMetadata.url != ''" class="audiometadata">
+          <div v-if="message.url != ''" class="audiometadata">
             <span style="font-weight: bold">Speed:</span
             ><span class="mr-3"> {{ speed }}</span>
             <span v-if="readyToLoop()" style="font-weight: bold"> Looping </span
             ><span>{{ loopRangeText }}</span>
           </div>
-          <div v-if="audioMetadata.url != '' && !fullyLoaded">Loading...</div>
+          <div v-if="message.url != '' && !fullyLoaded">Loading...</div>
         </td>
       </tr>
       <tr style="vertical-align: bottom">
@@ -300,7 +301,7 @@ function markAsUseless() {
             >
 
             <span>
-              <!-- above was previously v-if="audioMetadata.submission"-->
+              <!-- above was previously v-if="message.submission"-->
               <Button type="primary" @click="$emit('next', getUUID())">Skip</Button>
             </span>
           </div>

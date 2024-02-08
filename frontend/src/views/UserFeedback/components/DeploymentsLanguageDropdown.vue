@@ -31,7 +31,9 @@ const modal = ref({
   matchedSurveys: [] as Survey[],
 });
 
-async function handleOnMounted() {
+async function handleOnMounted(force: boolean = false) {
+  if (!force && feedbackStore.survey?.id != null) return;
+
   feedbackStore.loading = true;
 
   await useSurveyBuilder().download();
@@ -61,7 +63,7 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
   store.userFeedback.deployment = deployment;
   store.userFeedback.language = language;
 
-  handleOnMounted();
+  handleOnMounted(true);
 };
 
 function analyse(survey: Survey | number) {
@@ -87,7 +89,7 @@ onMounted(async () => {
     return;
   }
 
-  handleOnMounted();
+  handleOnMounted(false);
 });
 </script>
 

@@ -12,6 +12,7 @@ export class UserFeedbackMessage {
   is_useless: boolean = false;
   relation: string;
   recipient_id: string;
+  url: string = "";
 
   recipient: Recipient;
   content_metadata: ContentMetadata;

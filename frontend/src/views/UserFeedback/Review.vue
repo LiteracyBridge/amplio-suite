@@ -33,9 +33,12 @@ import {
 } from "ant-design-vue";
 import DeploymentsLanguageDropdown from "./components/DeploymentsLanguageDropdown.vue";
 import { UserFeedbackMessage } from "@/models/uf_message";
+import { useRouter } from "vue-router";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
+
+const router = useRouter();
 
 const columns = [
   {
@@ -61,7 +64,10 @@ const columns = [
   {
     title: "District",
     key: "district",
-  }
+  },
+  {
+    key: "actions",
+  },
 ];
 
 // export default {
@@ -96,7 +102,9 @@ function goTo(uuid: string, index: number) {
   // index = index;
   // reviewed.value.push(submissionsList[index].uuid);
   // allResponses.value = false;
+  router.push({ path: "/user-feedback/analyze", query: { message_uuid: uuid } });
 }
+
 function getNext() {
   // index.value += 1;
   // if (index.value < submissionsList.length) {
@@ -246,7 +254,7 @@ async function getSubmissionsList() {
       </template>
 
       <template v-if="column.key === 'feedback'">
-        {{ record.is_useless ? 'No' : 'False' }}
+        {{ record.is_useless ? "No" : "False" }}
       </template>
 
       <template v-if="column.key === 'group'">
@@ -258,9 +266,12 @@ async function getSubmissionsList() {
       </template>
 
       <template v-if="column.key === 'district'">
-         {{ record.recipient.district }}, {{ record.recipient.region }}
+        {{ record.recipient.district }}, {{ record.recipient.region }}
       </template>
 
+      <template v-if="column.key === 'actions'">
+        <Button type="link" @click="goTo(record.message_uuid, index)"> Review </Button>
+      </template>
     </template>
   </Table>
 

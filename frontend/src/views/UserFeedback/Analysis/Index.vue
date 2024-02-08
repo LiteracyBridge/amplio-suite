@@ -31,25 +31,29 @@ import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import AudioPlayer from "./AudioPlayer.vue";
 import Stats from "./Stats.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
-import { AudioMetadata, Analysis, Progress } from "@/models/analysis";
+import { Analysis, Progress } from "@/models/analysis";
 import { QuestionChoice, QuestionType } from "@/models/question";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
 import AnalysisReport from "../components/AnalysisReport.vue";
 import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
+import { useRouter } from "vue-router";
+import { UserFeedbackMessage } from "@/models/uf_message";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
 
+const router = useRouter();
 const config = ref({
   activeSection: "transcription",
   noMessages: false,
 });
 
-const uuid = ref(""),
+const current_message_uuid = ref(""),
+  message = ref<UserFeedbackMessage>(new UserFeedbackMessage()),
   previousSubmission = ref(false),
-  audioMetadata = ref<AudioMetadata>(new AudioMetadata()),
+  // audioMetadata = ref<AudioMetadata>(new AudioMetadata()),
   progress = ref(new Progress()),
   audioKey = ref(0),
   audio = ref(),
@@ -58,49 +62,49 @@ const uuid = ref(""),
   transcription = ref(null),
   selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
 
-function updateUrl(uuidSkip?: boolean) {
+function updateUrl(skipMessage: boolean = false) {
   feedbackStore.loading = true;
   transcription.value = null;
 
-  return ApiRequest.get(
-    `user-feedback/messages?email=${useAccountStore().email}&program=${
-      store.programCode
-    }&deployment=${store.userFeedback.deployment}&language=${
-      store.userFeedback.language
-    }&uuid=${uuid.value || uuidSkip || ""}&skipped_messages=${
-      feedbackStore.skipped_messages
-    }`
+  return ApiRequest.get<UserFeedbackMessage>(
+    `user-feedback/messages/${store.programCode}?deployment=${
+      store.userFeedback.deployment
+    }&language=${store.userFeedback.language}&message_id=${
+      skipMessage ? null : current_message_uuid.value || null
+    }&skipped_messages=${feedbackStore.skipped_messages.join(',')}`
   )
-    .then(([response]: any) => {
+    .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
+      if (msg == null) return;
 
-      console.log(response);
+      console.log(msg);
 
-      uuid.value = response.audioMetadata.uuid;
-      audioMetadata.value = response.audioMetadata;
-      progress.value = response.progress;
+      current_message_uuid.value = msg.message_uuid;
+      message.value = msg;
+      // audioMetadata.value = response.audioMetadata;
+      // progress.value = response.progress;
 
-      if (response.transcription != null) {
-        transcription.value = response.transcription;
+      if (msg.transcription != null) {
+        transcription.value = msg.transcription;
       }
 
-      if (audioMetadata.value.url != "") {
-        let filename = unescape(
-          audioMetadata.value.url.substring(audioMetadata.value.url.lastIndexOf("/") + 1)
-        );
-        audioMetadata.value.filename = filename;
-        if (audioMetadata.value.submission) {
-          previousSubmission.value = true;
-        }
-      }
+      // if (audioMetadata.value.url != "") {
+      //   let filename = unescape(
+      //     audioMetadata.value.url.substring(audioMetadata.value.url.lastIndexOf("/") + 1)
+      //   );
+      //   audioMetadata.value.filename = filename;
+      //   if (audioMetadata.value.submission) {
+      //     previousSubmission.value = true;
+      //   }
+      // }
 
       startTime.value = new Date();
-      console.log("new URL:" + audioMetadata.value.url);
-      return audioMetadata.value.url;
+      // console.log("new URL:" + audioMetadata.value.url);
+      return msg.url;
     })
     .catch((err) => {
       console.log("caught:" + err);
-      uuid.value = "";
+      current_message_uuid.value = "";
     })
     .finally(() => {
       feedbackStore.loading = false;
@@ -108,7 +112,10 @@ function updateUrl(uuidSkip?: boolean) {
 }
 
 const skipCurrentMessage = () => {
-  feedbackStore.skipped_messages = [...feedbackStore.skipped_messages, uuid.value];
+  feedbackStore.skipped_messages = [
+    ...feedbackStore.skipped_messages,
+    current_message_uuid.value,
+  ];
   updateUrl(true);
 };
 
@@ -167,7 +174,7 @@ function save(is_useless: boolean = false) {
 
   feedbackStore
     .saveChanges({
-      message_uuid: uuid.value,
+      message_uuid: current_message_uuid.value,
       is_useless,
       start_time: startTime.value,
       transcription: transcription.value,
@@ -186,12 +193,25 @@ const isOptionOther = computed(() => {
 });
 
 watch(nextUUID, (newUUID) => {
-  uuid.value = newUUID;
+  current_message_uuid.value = newUUID;
   if (newUUID != "") {
     updateUrl();
   } else {
-    audioMetadata.value.url = "";
+    message.value.url = "";
   }
+});
+
+onMounted(() => {
+  const message_uuid = router.currentRoute.value.query.message_uuid as string;
+  console.log(message_uuid, "here", message_uuid == null);
+  if (message_uuid != null) {
+    current_message_uuid.value = message_uuid;
+    updateUrl();
+  }
+  console.log(message_uuid);
+  // if (store.userFeedback.deployment != null && store.userFeedback.language != null) {
+  //   updateUrl();
+  // }
 });
 </script>
 
@@ -240,24 +260,21 @@ watch(nextUUID, (newUUID) => {
 
     <div v-else>
       <!-- No feedback messages -->
-      <Empty class="mt-10" v-if="audioMetadata.url == null || audioMetadata.url == ''">
+      <Empty class="mt-10" v-if="message.url == null || message.url == ''">
         <template #description>
           <span class="text-lg">There are no user feedback messages to analyse </span>
         </template>
       </Empty>
 
       <div v-else>
-        <div
-          class="flex justify-center"
-          v-if="audioMetadata.url != '' || audioMetadata.url != null"
-        >
+        <div class="flex justify-center" v-if="message.url != '' || message.url != null">
           <AudioPlayer
             :key="audioKey"
             @srcError="updateUrl"
             @next="skipCurrentMessage"
             @useless="save($event)"
             ref="audio"
-            :audioMetadata="audioMetadata"
+            :message="message"
           />
         </div>
 
