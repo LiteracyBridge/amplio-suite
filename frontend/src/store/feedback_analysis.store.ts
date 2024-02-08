@@ -12,6 +12,7 @@ import { Survey } from "@/models/survey";
 import { useAppStore } from "./app.store";
 import { useAccountStore } from "./account";
 import { notification } from "ant-design-vue";
+import { UserFeedbackMessage } from "@/models/uf_message";
 
 class Statistics {
   user_feedback: 0;
@@ -95,13 +96,6 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         (q: Question) => q.order
       ).map((question: Question) => {
         question.choices = question.choices;
-        // .map((c) => {
-        //   c.sub_options = question.choices.filter(
-        //     (c2) => c2.parent_id == c.choice_id
-        //   );
-        //   return c;
-        // })
-        // .filter((c) => c.parent_id == null);
 
         let show = true;
         if (question.conditions?.action == ConditionAction.show) {
@@ -128,7 +122,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         };
       });
 
-      // Fetch statis
+      // Fetch stats
       ApiRequest.get<Statistics>(
         `user-feedback/analysis/${survey.id}/statistics?email=${useAccountStore().email
         }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
@@ -250,27 +244,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           }
           return q;
         });
-        // break;
-        // return matched;
-        // };
       }
-    },
-    async download() {
-      // TODO: implement downloading of analysis
-      // this.$state.loading = true;
-      // return ApiRequest.get<Survey>(
-      //   `surveys/${useGlobalStore().context.selectedProgramCode}`
-      // )
-      //   .then((resp) => {
-      //     this.$state.surveys = resp.map((s) => {
-      //       const survey: Survey = Object.create(Survey.prototype);
-      //       Object.assign(survey, s);
-      //       return survey;
-      //     });
-      //     return resp;
-      //   })
-      //   .catch((err) => message.error(err))
-      //   .finally(() => (this.$state.loading = false));
     },
     resetResponses() {
       this.$state.questions = this.$state.questions.map((q) => {
@@ -308,12 +282,6 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         .then(([resp]) => {
           // Reset all responses
           this.resetResponses();
-
-          console.log(resp);
-          // this.setSurvey(resp);
-          // this.$state.surveys = this.$state.surveys.map((s) =>
-          //   s.id == resp.id ? resp : s
-          // );
           return resp;
         })
         .finally(() => (this.$state.loading = false));
@@ -322,6 +290,21 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       this.loading = true;
       return ApiRequest.get<Array<string>>(
         `user-feedback/reports/${this.$state.survey.id}?language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment}`,
+      )
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
+    },
+    async fetchSubmittedMessages() {
+      this.loading = true;
+      return ApiRequest.get<UserFeedbackMessage>(
+        `user-feedback/analysis/${this.$state.survey.id}/submissions?language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment}`,
       )
         .finally(() => (this.$state.loading = false))
         .catch((err) => {

@@ -4,36 +4,68 @@ import { useAccountStore } from "@/store/account";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
+import {
+  Card,
+  Button,
+  Form,
+  FormItem,
+  Space,
+  Divider,
+  Textarea,
+  Modal,
+  Tabs,
+  TabPane,
+  CheckboxGroup,
+  RadioGroup,
+  Checkbox,
+  Radio,
+  Empty,
+  Select,
+  SelectOption,
+  notification,
+  PageHeader,
+  Dropdown,
+  MenuItem,
+  Table,
+  Alert,
+  Menu,
+  Spin,
+} from "ant-design-vue";
+import DeploymentsLanguageDropdown from "./components/DeploymentsLanguageDropdown.vue";
+import { UserFeedbackMessage } from "@/models/uf_message";
 
-const store = useFeedbackAnalysis(),
-  appStore = useAppStore();
+const feedbackStore = useFeedbackAnalysis(),
+  store = useAppStore();
 
 const columns = [
   {
-    label: "Submission Time",
+    title: "Submission Time",
     key: "submissionTime",
-    class: "text-center px-4 py-2 border-b",
   },
   {
-    label: "Filename",
+    title: "Filename",
     key: "uuid",
-    class: "text-center px-4 py-2 border-b",
   },
   {
-    label: "Feedback",
+    title: "Feedback",
     key: "feedback",
-    class: "text-center px-4 py-2 border-b",
   },
   {
-    label: "Location",
+    title: "Location",
     key: "location",
-    class: "text-center px-4 py-2 border-b",
   },
   {
-    label: "Group",
+    title: "Group",
     key: "group",
-    class: "text-center px-4 py-2 border-b",
   },
+  {
+    title: "Community",
+    key: "community",
+  },
+  {
+    title: "District",
+    key: "district",
+  }
 ];
 
 // export default {
@@ -45,10 +77,10 @@ const columns = [
 //   },
 // data() {
 const allResponses = ref(true),
-  connected = ref(true),
+  // connected = ref(true),
   uuid = ref(""),
   index = ref(0),
-  submissionsList = ref<any>([]),
+  submissionsList = ref<UserFeedbackMessage[]>([]),
   reviewed = ref([]),
   // columns = ref()
   sortTable = ref({
@@ -64,19 +96,19 @@ function setAllResponses() {
   getSubmissionsList();
 }
 function goTo(uuid: string, index: number) {
-  uuid = uuid;
-  index = index;
-  reviewed.value.push(submissionsList[index].uuid);
-  allResponses.value = false;
+  // uuid = uuid;
+  // index = index;
+  // reviewed.value.push(submissionsList[index].uuid);
+  // allResponses.value = false;
 }
 function getNext() {
-  index.value += 1;
-  if (index.value < submissionsList.length) {
-    uuid.value = submissionsList[index.value].uuid;
-    reviewed.value.push(submissionsList[index.value].uuid);
-  } else {
-    uuid.value = "";
-  }
+  // index.value += 1;
+  // if (index.value < submissionsList.length) {
+  //   uuid.value = submissionsList[index.value].uuid;
+  //   reviewed.value.push(submissionsList[index.value].uuid);
+  // } else {
+  //   uuid.value = "";
+  // }
 }
 //  function  setSortByColumn(colId = this.sortTable.by, descending = !this.sortTable.function descending) {
 //     console.log("sort:" + colId + " / " + String(descending));
@@ -100,35 +132,39 @@ function getNext() {
 //   this.$router.push({ path: this.$route.path });
 // },
 
-function getSubmissionsList() {
-  const request =
-    "https://ckz0f72fjf.execute-api.us-west-2.amazonaws.com/default/ufDataService?" +
-    "email=" +
-    useAccountStore().email +
-    "&program=" +
-    appStore.programCode +
-    "&deployment=" +
-    appStore.userFeedback.deployment +
-    "&language=" +
-    appStore.userFeedback.language +
-    "&uuid=all" +
-    "&timezoneOffset=" +
-    -new Date().getTimezoneOffset() +
-    " minutes";
-  // Vue.axios.interceptors.request.use(request => {console.log('Starting Request', JSON.stringify(request, null, 2)) return request });
-  console.log("updateUrl:" + request);
-  ApiRequest.get(request)
-    .then((response) => {
-      // if (!this.connected) {
-      //   this.connected = true;
-      // }
-      submissionsList.value = response;
-      // this.setSortByColumn(this.sortTable.by, this.sortTable.descending);
-    })
-    .catch((err) => {
-      console.log("caught:" + err);
-      // this.connected = false;
-    });
+async function getSubmissionsList() {
+  await feedbackStore
+    .fetchSubmittedMessages()
+    .then((resp) => (submissionsList.value = resp));
+
+  // const request =
+  //   "https://ckz0f72fjf.execute-api.us-west-2.amazonaws.com/default/ufDataService?" +
+  //   "email=" +
+  //   useAccountStore().email +
+  //   "&program=" +
+  //   store.programCode +
+  //   "&deployment=" +
+  //   store.userFeedback.deployment +
+  //   "&language=" +
+  //   store.userFeedback.language +
+  //   "&uuid=all" +
+  //   "&timezoneOffset=" +
+  //   -new Date().getTimezoneOffset() +
+  //   " minutes";
+  // // Vue.axios.interceptors.request.use(request => {console.log('Starting Request', JSON.stringify(request, null, 2)) return request });
+  // console.log("updateUrl:" + request);
+  // ApiRequest.get(request)
+  //   .then((response) => {
+  //     // if (!this.connected) {
+  //     //   this.connected = true;
+  //     // }
+  //     submissionsList.value = response;
+  //     // this.setSortByColumn(this.sortTable.by, this.sortTable.descending);
+  //   })
+  //   .catch((err) => {
+  //     console.log("caught:" + err);
+  //     // this.connected = false;
+  //   });
 }
 // },
 // computed: {
@@ -167,6 +203,67 @@ onMounted(() => {
 </script>
 
 <template>
+  <PageHeader title="User Feedback Review" sub-title="Analyse user feedback messages">
+    <template #extra>
+      <DeploymentsLanguageDropdown @change="getSubmissionsList()" />
+    </template>
+
+    <Alert type="info" :closable="true">
+      <template #message>
+        <span>
+          Reviewing user feedback for
+          <span class="font-bold text-lg">{{ store.programName }}</span
+          >, deployment
+          <span class="font-bold text-lg">{{ store.userFeedback.deployment }}</span>
+          and language
+          <span class="font-bold text-lg">{{ store.userFeedback.language }}</span>
+        </span>
+      </template>
+    </Alert>
+  </PageHeader>
+
+  <Table
+    :columns="columns"
+    :data-source="submissionsList"
+    :loading="feedbackStore.loading"
+  >
+    <!-- <template #title>
+      <div class="flex justify-between">
+        <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
+
+        <Button type="primary" @click="fetchData('ByDepl')" :ghost="true">
+          <ReloadOutlined /> Refresh Data
+        </Button>
+      </div>
+    </template> -->
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'submissionTime'">
+        {{ record.submissionTime }}
+      </template>
+
+      <template v-if="column.key === 'uuid'">
+        {{ record.message_uuid }}
+      </template>
+
+      <template v-if="column.key === 'feedback'">
+        {{ record.is_useless ? 'No' : 'False' }}
+      </template>
+
+      <template v-if="column.key === 'group'">
+        {{ record.recipient.group_name }}
+      </template>
+
+      <template v-if="column.key === 'community'">
+        {{ record.recipient.community_name }}
+      </template>
+
+      <template v-if="column.key === 'district'">
+         {{ record.recipient.district }}, {{ record.recipient.region }}
+      </template>
+
+    </template>
+  </Table>
+
   <div>
     <div v-if="allResponses" class="grid grid-cols-10">
       <!-- <div class="row-start-1 row-end-2 col-span-full">
@@ -182,8 +279,8 @@ onMounted(() => {
         <table class="table-fixed overflow-x-auto" style="border: 2px solid #ddd">
           <thead>
             <tr>
-              <th :class="col.class" v-for="col in columns" :key="col.key">
-                    {{ col.label }}
+              <th v-for="col in columns" :key="col.key">
+                {{ col.title }}
                 <!-- <v-tooltip
                   :width="150"
                   :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`"
@@ -206,7 +303,7 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr
+            <!-- <tr
               v-for="(submission, index) in submissionsList"
               :key="submission.uuid"
               :class="
@@ -223,7 +320,7 @@ onMounted(() => {
               >
                 {{ submission[col.key] }}
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>

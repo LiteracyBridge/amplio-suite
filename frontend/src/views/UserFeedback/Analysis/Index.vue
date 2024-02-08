@@ -41,8 +41,7 @@ import AnalysisReport from "../components/AnalysisReport.vue";
 import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
 
 const feedbackStore = useFeedbackAnalysis(),
-  store = useAppStore(),
-  surveyStore = useSurveyBuilder();
+  store = useAppStore();
 
 const config = ref({
   activeSection: "transcription",
@@ -263,7 +262,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <PageHeader sub-title="Analyse user feedback messages">
+  <PageHeader sub-title="Analyse user feedback messages" @back="() => $router.go(-1)">
     <template #title>
       <span> {{ feedbackStore.survey?.name || "" }} Analysis </span>
     </template>
