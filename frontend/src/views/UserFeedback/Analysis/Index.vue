@@ -37,9 +37,8 @@ import { Survey } from "@/models/survey";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
-import { API_URL } from "@/models/constants";
-import { DownOutlined, DownloadOutlined } from "@ant-design/icons-vue";
 import AnalysisReport from "../components/AnalysisReport.vue";
+import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore(),
@@ -239,8 +238,6 @@ const onLanguageDeploymentChanged = (deployment: number, language: string) => {
   store.userFeedback ??= { deployment, language, surveyId: null };
   store.userFeedback.deployment = deployment;
   store.userFeedback.language = language;
-
-  handleOnMounted();
 };
 
 watch(nextUUID, (newUUID) => {
@@ -274,27 +271,7 @@ onMounted(async () => {
     <template #extra>
       <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
 
-      <Dropdown>
-        <template #overlay>
-          <Menu>
-            <SubMenu :key="d.deploymentnumber" v-for="d in store.deployments">
-              <template #title>
-                <span>Deployment {{ d.deploymentnumber }}</span>
-              </template>
-              <MenuItem
-                :key="lang"
-                v-for="lang in store.languages"
-                @click="onLanguageDeploymentChanged(d.deploymentnumber, lang)"
-                >{{ lang }}</MenuItem
-              >
-            </SubMenu>
-          </Menu>
-        </template>
-        <Button>
-          Change Deployment
-          <DownOutlined />
-        </Button>
-      </Dropdown>
+      <DeploymentsLanguageDropdown @change="handleOnMounted()" />
     </template>
 
     <Alert type="info" :closable="true">
