@@ -44,7 +44,6 @@ const feedbackStore = useFeedbackAnalysis(),
 
 const config = ref({
   activeSection: "transcription",
-  // loading: true,
   noMessages: false,
 });
 
@@ -112,46 +111,6 @@ const skipCurrentMessage = () => {
   feedbackStore.skipped_messages = [...feedbackStore.skipped_messages, uuid.value];
   updateUrl(true);
 };
-
-// function analyse(survey: Survey | number) {
-//   feedbackStore.loading = true;
-
-//   if (typeof survey === "number") {
-//     survey = useSurveyBuilder().published.find((s) => s.id == survey);
-//   }
-
-//   useFeedbackAnalysis().setSurvey(survey);
-//   uuid.value = nextUUID.value;
-//   updateUrl();
-
-//   modal.value.visible = false;
-//   feedbackStore.loading = false;
-// }
-
-// async function handleOnMounted() {
-//   feedbackStore.loading = true;
-
-//   await useSurveyBuilder().download();
-
-//   // Fetch surveys of the program
-//   const surveys = useSurveyBuilder().published;
-//   modal.value.matchedSurveys = surveys;
-
-//   if ((surveys || []).length == 0) {
-//     feedbackStore.loading = false;
-//     return;
-//   }
-
-//   // Multiple surveys were found, ask the user to select one
-//   if (surveys.length >= 1) {
-//     modal.value.visible = true;
-//     return;
-//   }
-
-//   if (surveys.length == 0 && surveys != null) {
-//     modal.value.visible = true;
-//   }
-// }
 
 function validateResponse(feedback: Analysis) {
   let isValid = true;
@@ -226,12 +185,6 @@ const isOptionOther = computed(() => {
   };
 });
 
-// const onLanguageDeploymentChanged = (deployment: number, language: string) => {
-//   store.userFeedback ??= { deployment, language, surveyId: null };
-//   store.userFeedback.deployment = deployment;
-//   store.userFeedback.language = language;
-// };
-
 watch(nextUUID, (newUUID) => {
   uuid.value = newUUID;
   if (newUUID != "") {
@@ -240,18 +193,6 @@ watch(nextUUID, (newUUID) => {
     audioMetadata.value.url = "";
   }
 });
-
-// onMounted(async () => {
-//   if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
-//     onLanguageDeploymentChanged(
-//       store.deployments[0]?.deploymentnumber,
-//       store.languages[0]
-//     );
-//     return;
-//   }
-
-//   handleOnMounted();
-// });
 </script>
 
 <template>
