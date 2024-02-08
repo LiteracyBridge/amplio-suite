@@ -7,7 +7,6 @@ import {
   Space,
   Divider,
   Textarea,
-  Modal,
   Tabs,
   TabPane,
   CheckboxGroup,
@@ -15,15 +14,9 @@ import {
   Checkbox,
   Radio,
   Empty,
-  Select,
-  SelectOption,
   notification,
   PageHeader,
-  Dropdown,
-  MenuItem,
-  SubMenu,
   Alert,
-  Menu,
   Spin,
 } from "ant-design-vue";
 import { computed, h, onMounted, ref, watch } from "vue";
@@ -35,7 +28,6 @@ import { Analysis, Progress } from "@/models/analysis";
 import { QuestionChoice, QuestionType } from "@/models/question";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
-import { useAccountStore } from "@/store/account";
 import AnalysisReport from "../components/AnalysisReport.vue";
 import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
 import { useRouter } from "vue-router";
@@ -52,11 +44,7 @@ const config = ref({
 
 const current_message_uuid = ref(""),
   message = ref<UserFeedbackMessage>(new UserFeedbackMessage()),
-  previousSubmission = ref(false),
-  // audioMetadata = ref<AudioMetadata>(new AudioMetadata()),
-  progress = ref(new Progress()),
   audioKey = ref(0),
-  audio = ref(),
   nextUUID = ref<string>(),
   startTime = ref<Date>(null),
   transcription = ref(null),
@@ -77,29 +65,14 @@ function updateUrl(skipMessage: boolean = false) {
       // TODO: check for not empty response [when there are no messages ]
       if (msg == null) return;
 
-      console.log(msg);
-
       current_message_uuid.value = msg.message_uuid;
       message.value = msg;
-      // audioMetadata.value = response.audioMetadata;
-      // progress.value = response.progress;
+      startTime.value = new Date();
 
       if (msg.transcription != null) {
         transcription.value = msg.transcription;
       }
 
-      // if (audioMetadata.value.url != "") {
-      //   let filename = unescape(
-      //     audioMetadata.value.url.substring(audioMetadata.value.url.lastIndexOf("/") + 1)
-      //   );
-      //   audioMetadata.value.filename = filename;
-      //   if (audioMetadata.value.submission) {
-      //     previousSubmission.value = true;
-      //   }
-      // }
-
-      startTime.value = new Date();
-      // console.log("new URL:" + audioMetadata.value.url);
       return msg.url;
     })
     .catch((err) => {
@@ -203,15 +176,11 @@ watch(nextUUID, (newUUID) => {
 
 onMounted(() => {
   const message_uuid = router.currentRoute.value.query.message_uuid as string;
-  console.log(message_uuid, "here", message_uuid == null);
+
   if (message_uuid != null) {
     current_message_uuid.value = message_uuid;
     updateUrl();
   }
-  console.log(message_uuid);
-  // if (store.userFeedback.deployment != null && store.userFeedback.language != null) {
-  //   updateUrl();
-  // }
 });
 </script>
 
@@ -273,7 +242,6 @@ onMounted(() => {
             @srcError="updateUrl"
             @next="skipCurrentMessage"
             @useless="save($event)"
-            ref="audio"
             :message="message"
           />
         </div>
