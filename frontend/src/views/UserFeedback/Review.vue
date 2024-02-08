@@ -51,10 +51,6 @@ const columns = [
     key: "feedback",
   },
   {
-    title: "Location",
-    key: "location",
-  },
-  {
     title: "Group",
     key: "group",
   },
@@ -193,9 +189,9 @@ async function getSubmissionsList() {
 //   }
 // },
 
-onMounted(() => {
-  getSubmissionsList();
-});
+// onMounted(() => {
+//   getSubmissionsList();
+// });
 // mounted() {
 // this.getSubmissionsList();
 //   },
@@ -237,6 +233,10 @@ onMounted(() => {
       </div>
     </template> -->
     <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'submissionTime'">
+        {{ record.submissionTime }}
+      </template>
+
       <template v-if="column.key === 'submissionTime'">
         {{ record.submissionTime }}
       </template>

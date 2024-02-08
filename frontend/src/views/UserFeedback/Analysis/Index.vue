@@ -33,7 +33,6 @@ import Stats from "./Stats.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
 import { AudioMetadata, Analysis, Progress } from "@/models/analysis";
 import { QuestionChoice, QuestionType } from "@/models/question";
-import { Survey } from "@/models/survey";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { useAccountStore } from "@/store/account";
@@ -47,12 +46,6 @@ const config = ref({
   activeSection: "transcription",
   // loading: true,
   noMessages: false,
-});
-
-const modal = ref({
-  visible: false,
-  selectedSurveyId: null,
-  matchedSurveys: [] as Survey[],
 });
 
 const uuid = ref(""),
@@ -120,45 +113,45 @@ const skipCurrentMessage = () => {
   updateUrl(true);
 };
 
-function analyse(survey: Survey | number) {
-  feedbackStore.loading = true;
+// function analyse(survey: Survey | number) {
+//   feedbackStore.loading = true;
 
-  if (typeof survey === "number") {
-    survey = useSurveyBuilder().published.find((s) => s.id == survey);
-  }
+//   if (typeof survey === "number") {
+//     survey = useSurveyBuilder().published.find((s) => s.id == survey);
+//   }
 
-  useFeedbackAnalysis().setSurvey(survey);
-  uuid.value = nextUUID.value;
-  updateUrl();
+//   useFeedbackAnalysis().setSurvey(survey);
+//   uuid.value = nextUUID.value;
+//   updateUrl();
 
-  modal.value.visible = false;
-  feedbackStore.loading = false;
-}
+//   modal.value.visible = false;
+//   feedbackStore.loading = false;
+// }
 
-async function handleOnMounted() {
-  feedbackStore.loading = true;
+// async function handleOnMounted() {
+//   feedbackStore.loading = true;
 
-  await useSurveyBuilder().download();
+//   await useSurveyBuilder().download();
 
-  // Fetch surveys of the program
-  const surveys = useSurveyBuilder().published;
-  modal.value.matchedSurveys = surveys;
+//   // Fetch surveys of the program
+//   const surveys = useSurveyBuilder().published;
+//   modal.value.matchedSurveys = surveys;
 
-  if ((surveys || []).length == 0) {
-    feedbackStore.loading = false;
-    return;
-  }
+//   if ((surveys || []).length == 0) {
+//     feedbackStore.loading = false;
+//     return;
+//   }
 
-  // Multiple surveys were found, ask the user to select one
-  if (surveys.length >= 1) {
-    modal.value.visible = true;
-    return;
-  }
+//   // Multiple surveys were found, ask the user to select one
+//   if (surveys.length >= 1) {
+//     modal.value.visible = true;
+//     return;
+//   }
 
-  if (surveys.length == 0 && surveys != null) {
-    modal.value.visible = true;
-  }
-}
+//   if (surveys.length == 0 && surveys != null) {
+//     modal.value.visible = true;
+//   }
+// }
 
 function validateResponse(feedback: Analysis) {
   let isValid = true;
@@ -233,11 +226,11 @@ const isOptionOther = computed(() => {
   };
 });
 
-const onLanguageDeploymentChanged = (deployment: number, language: string) => {
-  store.userFeedback ??= { deployment, language, surveyId: null };
-  store.userFeedback.deployment = deployment;
-  store.userFeedback.language = language;
-};
+// const onLanguageDeploymentChanged = (deployment: number, language: string) => {
+//   store.userFeedback ??= { deployment, language, surveyId: null };
+//   store.userFeedback.deployment = deployment;
+//   store.userFeedback.language = language;
+// };
 
 watch(nextUUID, (newUUID) => {
   uuid.value = newUUID;
@@ -248,17 +241,17 @@ watch(nextUUID, (newUUID) => {
   }
 });
 
-onMounted(async () => {
-  if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
-    onLanguageDeploymentChanged(
-      store.deployments[0]?.deploymentnumber,
-      store.languages[0]
-    );
-    return;
-  }
+// onMounted(async () => {
+//   if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
+//     onLanguageDeploymentChanged(
+//       store.deployments[0]?.deploymentnumber,
+//       store.languages[0]
+//     );
+//     return;
+//   }
 
-  handleOnMounted();
-});
+//   handleOnMounted();
+// });
 </script>
 
 <template>
@@ -270,7 +263,7 @@ onMounted(async () => {
     <template #extra>
       <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
 
-      <DeploymentsLanguageDropdown @change="handleOnMounted()" />
+      <DeploymentsLanguageDropdown @change="updateUrl()" />
     </template>
 
     <Alert type="info" :closable="true">
@@ -518,33 +511,6 @@ onMounted(async () => {
       </div>
     </div>
   </Spin>
-
-  <!-- Survey selection modal Modal -->
-  <Modal
-    title="Choose survey for analysis"
-    v-model:open="modal.visible"
-    :closable="false"
-    :mask-closable="false"
-  >
-    <template #footer>
-      <Button
-        type="primary"
-        @click="analyse(modal.selectedSurveyId)"
-        :disabled="modal.selectedSurveyId == null"
-        >Analyse
-      </Button>
-    </template>
-
-    <Form layout="vertical">
-      <FormItem label="Select Survey" :required="true">
-        <Select v-model:value="modal.selectedSurveyId">
-          <SelectOption v-for="s in modal.matchedSurveys" :value="s.id" :key="s.id">
-            {{ s.name }}
-          </SelectOption>
-        </Select>
-      </FormItem>
-    </Form>
-  </Modal>
 </template>
 
 <style scoped>
