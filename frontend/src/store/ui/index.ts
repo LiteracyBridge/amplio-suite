@@ -7,19 +7,19 @@ import { defineStore } from "pinia";
 export const getModalDefaultState = () => ({
   isOpen: false,
   title: "",
-  width: 0
+  width: 0,
 });
 
 export const getNotificationDefaultState = () => ({
   isOpen: false,
   type: "",
-  text: ""
+  text: "",
 });
 
 export const useUIStore = defineStore("ui", {
   state: () => ({
     modal: getModalDefaultState(),
-    notification: getNotificationDefaultState()
+    notification: getNotificationDefaultState(),
   }),
   actions: {
     closeModal() {
@@ -40,18 +40,18 @@ export const useUIStore = defineStore("ui", {
 
     closeNotification() {
       Object.assign(this.$state, {
-        notification: getNotificationDefaultState()
+        notification: getNotificationDefaultState(),
       });
     },
 
     openNotification() {
       if (this.notification.type == "notice") {
         notification.info({
-          message: this.notification.text
+          message: this.notification.text,
         });
       } else {
         notification.warning({
-          message: this.notification.text
+          message: this.notification.text,
         });
       }
       // this.notification.isOpen = true;
@@ -89,6 +89,6 @@ export const useUIStore = defineStore("ui", {
       } else if (payload.type === "alert") {
         this.setNotificationAlert(payload.text);
       }
-    }
-  }
+    },
+  },
 });

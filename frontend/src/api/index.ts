@@ -8,10 +8,10 @@ export class ApiRequest {
       .get(`${API_URL}/${path}`, {
         withCredentials: true,
         headers: {
-          Authorization: `Bearer ${useAccountStore().user.token}`
-        }
+          Authorization: `Bearer ${useAccountStore().user.token}`,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return response.data.data as T[];
       });
   }
@@ -20,11 +20,11 @@ export class ApiRequest {
     return axios
       .delete(`${API_URL}/${path}`, {
         headers: {
-          Authorization: `Bearer ${useAccountStore().user.token}`
+          Authorization: `Bearer ${useAccountStore().user.token}`,
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(response => {
+      .then((response) => {
         return response.data.data as T[];
         // Add your code here
       });
@@ -34,10 +34,10 @@ export class ApiRequest {
     return axios
       .post(`${API_URL}/${path}`, body, {
         headers: {
-          Authorization: `Bearer ${useAccountStore().user.token}`
-        }
+          Authorization: `Bearer ${useAccountStore().user.token}`,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return response.data.data as T[];
       });
   }
@@ -46,10 +46,10 @@ export class ApiRequest {
     return axios
       .put(`${API_URL}/${path}`, body, {
         headers: {
-          Authorization: `Bearer ${useAccountStore().user.token}`
-        }
+          Authorization: `Bearer ${useAccountStore().user.token}`,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return response.data.data as T[];
       });
   }

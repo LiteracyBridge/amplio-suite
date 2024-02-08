@@ -5,14 +5,14 @@ import { Recipient } from "@/models/recipient";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
   state: () => ({
-    loading: false
+    loading: false,
   }),
   actions: {
     async getTbStatusBy(selector: string) {
       return ApiRequest.get<Record<string, any>>(
         `dashboard-queries/${
           useAppStore().programCode
-        }/status?selector=${selector}`
+        }/status?selector=${selector}`,
       );
     },
     async getRecipients(deployment: string) {
@@ -21,10 +21,10 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
       return ApiRequest.get<Recipient>(
         `dashboard-queries/${
           useAppStore().programCode
-        }/recipients/${deployment}`
+        }/recipients/${deployment}`,
       )
-        .then(resp => resp)
+        .then((resp) => resp)
         .finally(() => (this.loading = false));
-    }
-  }
+    },
+  },
 });

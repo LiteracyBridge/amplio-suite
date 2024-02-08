@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 export const useLanguagesStore = defineStore("languages", {
   state: () => ({
     loading: false,
-    languages: [] as Language[]
+    languages: [] as Language[],
   }),
   actions: {
     /**
@@ -13,9 +13,9 @@ export const useLanguagesStore = defineStore("languages", {
      * If a code is not found, return {code:the-code, name:the-code, comment:the-code}
      */
     mapLanguageCodesToInfo(codes: string[]): Language[] {
-      const infos = (codes || []).map(lc => {
+      const infos = (codes || []).map((lc) => {
         let languageInfo = this.languages.find(
-          languageInfo => languageInfo.code == lc
+          (languageInfo) => languageInfo.code == lc,
         );
         if (!languageInfo) {
           languageInfo = { code: lc, name: lc, comment: lc };
@@ -35,7 +35,7 @@ export const useLanguagesStore = defineStore("languages", {
         return name.substring(0, length);
       };
 
-      const codes = new Set(this.languages.map(l => l.code.toLowerCase()));
+      const codes = new Set(this.languages.map((l) => l.code.toLowerCase()));
 
       const { name } = lang;
       let code = lang.code || "";
@@ -54,6 +54,6 @@ export const useLanguagesStore = defineStore("languages", {
     //
     async fetchLanguages() {
       return ApiRequest.get<Language>("languages/supported");
-    }
-  }
+    },
+  },
 });

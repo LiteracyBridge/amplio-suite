@@ -5,7 +5,7 @@ export const useUserFeedbackStore = defineStore("uf", {
   state: () => ({
     status: "",
     programId: "",
-    counts: {}
+    counts: {},
   }),
 
   actions: {
@@ -50,11 +50,11 @@ export const useUserFeedbackStore = defineStore("uf", {
           deploymentNumber: deploymentnumber,
           language,
           fileData,
-          clearAnswers: false
+          clearAnswers: false,
         });
       } catch (error) {
         return null;
       }
-    }
-  }
+    },
+  },
 });

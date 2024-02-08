@@ -10,7 +10,7 @@ export const useProgramsStore = defineStore("programs", {
   state: () => ({
     loading: false,
     organisationPrograms: [] as Program[],
-    programs: []
+    programs: [],
   }),
   actions: {
     // requestInit() {
@@ -22,7 +22,7 @@ export const useProgramsStore = defineStore("programs", {
     // },
 
     setProgramsList(data: Program[]) {
-      this.organisationPrograms = sortBy(data, p => p.project.name);
+      this.organisationPrograms = sortBy(data, (p) => p.project.name);
     },
     //
     // API Requests
@@ -75,7 +75,7 @@ export const useProgramsStore = defineStore("programs", {
     }) {
       this.loading = true;
       return ApiRequest.post<Program>(`programs/organisations`, form)
-        .then(resp => {
+        .then((resp) => {
           this.organisationPrograms = resp;
         })
         .finally(() => (this.loading = false));
@@ -87,13 +87,13 @@ export const useProgramsStore = defineStore("programs", {
       this.loading = true;
 
       return ApiRequest.delete<Program>(
-        `programs/${opts.programId}/organisations/${opts.organisationId}`
+        `programs/${opts.programId}/organisations/${opts.organisationId}`,
       )
-        .then(async resp => {
+        .then(async (resp) => {
           this.organisationPrograms = resp;
           notification.success({
             message: "Organisation Removed!",
-            description: `The organisation has been removed from the program.`
+            description: `The organisation has been removed from the program.`,
           });
           return resp;
         })
@@ -104,19 +104,19 @@ export const useProgramsStore = defineStore("programs", {
     async removeUserFromProgram(opts: { programId: number; userId: number }) {
       this.loading = true;
       return ApiRequest.delete<Program>(
-        `programs/${opts.programId}/users?user_id=${opts.userId}`
+        `programs/${opts.programId}/users?user_id=${opts.userId}`,
       )
-        .then(async resp => {
+        .then(async (resp) => {
           this.organisationPrograms = resp;
           notification.success({
             message: "User Remove!",
-            description: `The user has been removed from the program.`
+            description: `The user has been removed from the program.`,
           });
           return resp;
         })
         .finally(() => {
           this.loading = false;
         });
-    }
-  }
+    },
+  },
 });

@@ -6,7 +6,7 @@ import {
   ConditionAction,
   QuestionType,
   DependentCondition,
-  Question
+  Question,
 } from "@/models/question";
 import { Survey } from "@/models/survey";
 import { useAppStore } from "./app.store";
@@ -27,14 +27,15 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     survey: null as null | Survey,
     questions: [] as Analysis[],
     skipped_messages: [] as string[],
-    statistics: new Statistics()
+    statistics: new Statistics(),
     // dependents: [] as QuestionDependent[],
   }),
   getters: {
-    sections: state => {
+    sections: (state) => {
       return (
-        (state.survey?.sections || []).filter(s => !(s.is_deleted || false)) ||
-        []
+        (state.survey?.sections || []).filter(
+          (s) => !(s.is_deleted || false),
+        ) || []
       );
     },
     // groupBySection: (state) => {
@@ -44,16 +45,18 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     //     questions: data[key],
     //   }));
     // },
-    findById: state => (id: string | number): null | Analysis => {
-      return state.questions.find(q => q.id == id);
-    },
-    subQuestions: state => {
+    findById:
+      (state) =>
+      (id: string | number): null | Analysis => {
+        return state.questions.find((q) => q.id == id);
+      },
+    subQuestions: (state) => {
       return (parentId: string | number): Analysis[] => {
-        return state.questions.filter(q => q.question.parent_id == parentId);
+        return state.questions.filter((q) => q.question.parent_id == parentId);
       };
     },
     //FIXME: remove this function
-    sectionQuestions: state => {
+    sectionQuestions: (state) => {
       return (opts?: {
         sectionId?: string | number;
         parentId?: string | number;
@@ -63,33 +66,34 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
 
         if (parentId != null && opts.isSubQuestions == true) {
           return state.questions.filter(
-            q => q.question.parent_id == parentId && !(q.is_deleted || false)
+            (q) => q.question.parent_id == parentId && !(q.is_deleted || false),
           );
         }
 
         if (sectionId != null) {
           return state.questions.filter(
-            q => q.question.section_id == sectionId && !(q.is_deleted || false)
+            (q) =>
+              q.question.section_id == sectionId && !(q.is_deleted || false),
           );
         }
 
         return state.questions.filter(
-          q => q.question.parent_id == null && !(q.is_deleted || false)
+          (q) => q.question.parent_id == null && !(q.is_deleted || false),
         );
       };
     },
-    getQuestionIndexById: state => {
+    getQuestionIndexById: (state) => {
       return (id: string | number): number => {
-        return state.questions.findIndex(q => q.question_id == id);
+        return state.questions.findIndex((q) => q.question_id == id);
       };
-    }
+    },
   },
   actions: {
     setSurvey(survey: Survey) {
       this.$state.survey = survey;
       this.$state.questions = orderBy(
         survey.questions,
-        (q: Question) => q.order
+        (q: Question) => q.order,
       ).map((question: Question) => {
         question.choices = question.choices;
 
@@ -112,9 +116,9 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
             question.type == QuestionType.single_choice
               ? {
                   value: null,
-                  sub_choice: null
+                  sub_choice: null,
                 }
-              : null
+              : null,
         };
       });
 
@@ -124,20 +128,22 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           useAccountStore().email
         }&language=${useAppStore().userFeedback.language}&deployment=${
           useAppStore().userFeedback.deployment
-        }`
+        }`,
       ).then(([stats]) => {
         this.$state.statistics = stats;
       });
     },
     updateQuestionConditions(sourceId: string | number) {
-      const source = this.$state.questions.find(q => q.question_id == sourceId);
+      const source = this.$state.questions.find(
+        (q) => q.question_id == sourceId,
+      );
       if (source == null) {
         return;
       }
 
       // Get all questions whose condition depends on this question
       const dependents = this.$state.questions.filter(
-        q => q.question?.conditions?.question_id == sourceId
+        (q) => q.question?.conditions?.question_id == sourceId,
       );
 
       let response: string[] | number[] = [];
@@ -148,14 +154,14 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         response = [
           source.question.choices
             .find(
-              i =>
+              (i) =>
                 i.choice_id.toString() ==
-                source.single_choice?.value?.toString()
+                source.single_choice?.value?.toString(),
             )
-            ?.value?.toString()
+            ?.value?.toString(),
         ];
       } else if (source.question.type == QuestionType.multi_choice) {
-        response = (source.question.choices || []).flatMap(c => c.value);
+        response = (source.question.choices || []).flatMap((c) => c.value);
       } else {
         response = [source.response?.toString()];
       }
@@ -169,7 +175,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         // TODO: change condition value to array
         switch (condition.condition) {
           case DependentCondition.equals:
-            matched = response.findIndex(i => i == condition.value) > -1;
+            matched = response.findIndex((i) => i == condition.value) > -1;
             break;
           case DependentCondition.not_equals:
             matched = response[0] != condition.value;
@@ -188,11 +194,13 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
             break;
           case DependentCondition.contains:
             matched =
-              response.findIndex(i => i == condition.value.toLowerCase()) > -1;
+              response.findIndex((i) => i == condition.value.toLowerCase()) >
+              -1;
             break;
           case DependentCondition.not_contains:
             matched =
-              response.findIndex(i => i == condition.value.toLowerCase()) == -1;
+              response.findIndex((i) => i == condition.value.toLowerCase()) ==
+              -1;
             break;
           case DependentCondition.is_empty:
             matched = response == null || response.length == 0;
@@ -201,13 +209,13 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
             matched = response != null && response.length > 0;
             break;
           default:
-            matched = response.findIndex(i => i == condition.value) > -1;
+            matched = response.findIndex((i) => i == condition.value) > -1;
             break;
         }
 
         // If condition is not met, reset any changes made to the question
         if (!matched) {
-          this.$state.questions = this.$state.questions.map(q => {
+          this.$state.questions = this.$state.questions.map((q) => {
             if (q.question_id == dependent.question_id) {
               q.show = q.meta["show"];
               q.question.required = q.meta["required"];
@@ -217,7 +225,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           continue;
         }
 
-        this.$state.questions = this.$state.questions.map(q => {
+        this.$state.questions = this.$state.questions.map((q) => {
           if (q.question_id == dependent.question_id) {
             switch (condition.action) {
               case ConditionAction.show:
@@ -241,7 +249,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       }
     },
     resetResponses() {
-      this.$state.questions = this.$state.questions.map(q => {
+      this.$state.questions = this.$state.questions.map((q) => {
         q.response = null;
         q.single_choice = { value: null, sub_choice: null };
         q.choices = [];
@@ -270,8 +278,8 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           ...extra,
           is_useless: extra.is_useless || false,
           analyst_email: useAccountStore().email,
-          transaction: extra.transcription
-        }
+          transaction: extra.transcription,
+        },
       )
         .then(([resp]) => {
           // Reset all responses
@@ -285,13 +293,13 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       return ApiRequest.get<Array<string>>(
         `user-feedback/reports/${this.$state.survey.id}?language=${
           useAppStore().userFeedback.language
-        }&deployment=${useAppStore().userFeedback.deployment}`
+        }&deployment=${useAppStore().userFeedback.deployment}`,
       )
         .finally(() => (this.$state.loading = false))
-        .catch(err => {
+        .catch((err) => {
           notification.error({
             message: "Error",
-            description: err.message
+            description: err.message,
           });
 
           throw err;
@@ -302,17 +310,17 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       return ApiRequest.get<UserFeedbackMessage>(
         `user-feedback/analysis/${this.$state.survey.id}/submissions?language=${
           useAppStore().userFeedback.language
-        }&deployment=${useAppStore().userFeedback.deployment}`
+        }&deployment=${useAppStore().userFeedback.deployment}`,
       )
         .finally(() => (this.$state.loading = false))
-        .catch(err => {
+        .catch((err) => {
           notification.error({
             message: "Error",
-            description: err.message
+            description: err.message,
           });
 
           throw err;
         });
-    }
-  }
+    },
+  },
 });

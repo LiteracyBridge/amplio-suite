@@ -13,29 +13,29 @@ export const useAppStore = defineStore("app-config-store", {
     userFeedback: {
       deployment: undefined as undefined | number | string,
       language: undefined as undefined | string,
-      surveyId: undefined as undefined | number
-    }
+      surveyId: undefined as undefined | number,
+    },
   }),
   getters: {
-    programCode: state => {
+    programCode: (state) => {
       return state.activeProgram.data?.program_id;
     },
-    programName: state => {
+    programName: (state) => {
       return state.activeProgram.data?.project?.name;
     },
     deployments: (state): Deployment[] => {
       return orderBy(
         state.activeProgram.data?.project.deployments || [],
-        d => d.deploymentnumber
+        (d) => d.deploymentnumber,
       );
     },
-    languages: state => {
+    languages: (state) => {
       return state.activeProgram.data?.languages || [];
-    }
+    },
   },
   actions: {
     setActiveProgram(id: number | string) {
-      const program = useAccountStore().programs.find(p => p.id == id);
+      const program = useAccountStore().programs.find((p) => p.id == id);
 
       if (program == null) {
         message.error("Program not found");
@@ -48,8 +48,8 @@ export const useAppStore = defineStore("app-config-store", {
       // Save to local storage
       localStorage.setItem(
         LocalStorageKeys.active_program,
-        JSON.stringify(this.activeProgram)
+        JSON.stringify(this.activeProgram),
       );
-    }
-  }
+    },
+  },
 });

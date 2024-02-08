@@ -2,7 +2,7 @@ const DeploymentInterval = Object.freeze({
   one_month: 1,
   one_quarter: 3,
   six_months: 6,
-  one_year: 12
+  one_year: 12,
 });
 
 export function toSentenceCase(str: string, clean: boolean = false) {
@@ -21,7 +21,7 @@ export function toTitleCase(str: string) {
 
   return str
     .split(" ")
-    .map(word => toSentenceCase(word))
+    .map((word) => toSentenceCase(word))
     .join(" ");
 }
 

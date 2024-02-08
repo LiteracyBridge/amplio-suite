@@ -37,7 +37,7 @@ import {
   faTrashAlt,
   faQuestionCircle,
   faCheck,
-  faCaretDown
+  faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { setGlobalOptions } from "vue-request";
 
@@ -59,7 +59,7 @@ library.add(
   faTrashAlt,
   faQuestionCircle,
   faCheck,
-  faCaretDown
+  faCaretDown,
 );
 
 const pinia = createPinia();
@@ -67,7 +67,7 @@ const app = createApp(App);
 
 // Vue Request
 setGlobalOptions({
-  cacheTime: 10 * 60 * 1000 // 10 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
 });
 
 // if (process.env.NODE_ENV === "development") {
@@ -96,7 +96,7 @@ if (import.meta.env.DEV) {
     ...awsconfig,
     aws_user_pools_web_client_id: import.meta.env
       .VITE_APP_AWS_USER_POOLS_CLIENT_ID,
-    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID
+    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID,
   });
 } else {
   Amplify.configure(awsconfig);

@@ -12,7 +12,7 @@ export const useRolesStore = defineStore("roles-store", {
   state: () => ({
     loading: false,
     template: {} as { [module: string]: { value: string; label: string }[] },
-    roles: [] as Role[]
+    roles: [] as Role[],
   }),
   actions: {
     // API Requests
@@ -32,7 +32,7 @@ export const useRolesStore = defineStore("roles-store", {
             data[i] = data[i].map((val: string) => {
               return {
                 label: toTitleCase(toSentenceCase(val, true)),
-                value: val
+                value: val,
               };
             });
           });
@@ -53,7 +53,7 @@ export const useRolesStore = defineStore("roles-store", {
       const path =
         form.program_id != null ? `programs/users` : `users/roles/assign`;
       return ApiRequest.post<User | Program>(path, form)
-        .then(resp => {
+        .then((resp) => {
           if (form.program_id != null) {
             useProgramsStore().organisationPrograms = resp as Program[];
           } else {
@@ -63,13 +63,13 @@ export const useRolesStore = defineStore("roles-store", {
           notification.success({
             message: `${
               form.program_id ? "Program added" : "Role assigned"
-            } successfully`
+            } successfully`,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           notification.error({
             message: "Error assigning role",
-            description: err.message
+            description: err.message,
           });
           throw err;
         })
@@ -79,16 +79,16 @@ export const useRolesStore = defineStore("roles-store", {
       this.loading = true;
 
       return ApiRequest.post<User>("users/roles/revoke", form)
-        .then(users => {
+        .then((users) => {
           useAccountStore().users = users;
           notification.success({
-            message: "Role revoked successfully"
+            message: "Role revoked successfully",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           notification.error({
             message: "Error revoking role",
-            description: err.message
+            description: err.message,
           });
           throw err;
         })
@@ -98,20 +98,20 @@ export const useRolesStore = defineStore("roles-store", {
       this.loading = true;
 
       return ApiRequest.delete<Role>(`users/roles/${id}`)
-        .then(roles => {
+        .then((roles) => {
           this.roles = roles;
           notification.success({
-            message: "Role deleted successfully"
+            message: "Role deleted successfully",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           notification.error({
             message: "Error deleting role",
-            description: err.message
+            description: err.message,
           });
           throw err;
         })
         .finally(() => (this.loading = false));
-    }
-  }
+    },
+  },
 });

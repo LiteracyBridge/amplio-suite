@@ -33,5 +33,5 @@ export enum Permission {
   AssignRole = "assign-role",
   CreateRole = "create-role",
   DeleteRole = "delete-role",
-  UpdateRole = "update-role"
+  UpdateRole = "update-role",
 }

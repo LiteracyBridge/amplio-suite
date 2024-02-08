@@ -8,7 +8,7 @@ export const useRoadmapStore = defineStore("roadmap", {
     status: "",
     programId: "",
 
-    roadmap: []
+    roadmap: [],
   }),
 
   actions: {
@@ -61,7 +61,7 @@ export const useRoadmapStore = defineStore("roadmap", {
         // commit("requestError");
         useUIStore().setNotification({
           type: "alert",
-          text: error.toString()
+          text: error.toString(),
         });
       }
     },
@@ -72,6 +72,6 @@ export const useRoadmapStore = defineStore("roadmap", {
       else this.addStep(stepId);
 
       this.setChanged(true);
-    }
-  }
+    },
+  },
 });

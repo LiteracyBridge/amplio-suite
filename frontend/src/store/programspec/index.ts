@@ -6,7 +6,7 @@ import {
   publish,
   putProgramSpec,
   uploadSpec as uploadSpecFile,
-  approveSpec as approveSpecFile
+  approveSpec as approveSpecFile,
 } from "@/api/programspec.api";
 import { Language } from "@/models/language";
 import { Recipient } from "@/models/recipient";
@@ -36,10 +36,10 @@ export const getDefaultGeneral = () => ({
   direct_beneficiaries_map: {
     male: "Number of Male",
     female: "Number of Female",
-    youth: "Number of Youth"
+    youth: "Number of Youth",
   },
   direct_beneficiaries_additional_map: {},
-  tableau_id: null as string | number | null
+  tableau_id: null as string | number | null,
 });
 
 export const getDefaultState = () => {
@@ -53,8 +53,8 @@ export const getDefaultState = () => {
     filterText: "",
     sortTable: {
       by: "region",
-      descending: true
-    }
+      descending: true,
+    },
   };
   return defaultState;
 };
@@ -72,44 +72,44 @@ export const useProgramSpecStore = defineStore("programspec", {
     filterText: "",
     sortTable: {
       by: "region",
-      descending: true
-    }
+      descending: true,
+    },
   }),
   getters: {
-    canPublish: state => {
-      const hasOneMessage = (state.deployments || []).some(depl =>
-        depl.playlists.some((pl: any) => pl.messages.length > 0)
+    canPublish: (state) => {
+      const hasOneMessage = (state.deployments || []).some((depl) =>
+        depl.playlists.some((pl: any) => pl.messages.length > 0),
       );
       const hasOneRecipient = (state.recipients || []).length > 0;
       return hasOneMessage && hasOneRecipient;
     },
-    labelUsed: state => {
+    labelUsed: (state) => {
       console.log(state.recipients);
 
       const labels = new Set();
-      (state.recipients || []).forEach(r => {
+      (state.recipients || []).forEach((r) => {
         const keys = Object.keys(r.direct_beneficiaries_additional || {});
-        keys.forEach(label => labels.add(label));
+        keys.forEach((label) => labels.add(label));
       });
 
       return Array.from(labels);
     },
-    directBeneficiariesAdditionalLabels: state => {
+    directBeneficiariesAdditionalLabels: (state) => {
       const keys = Object.keys(
-        state.general.direct_beneficiaries_additional_map
+        state.general.direct_beneficiaries_additional_map,
       );
-      return keys.map(key => ({
+      return keys.map((key) => ({
         key,
-        value: state.general.direct_beneficiaries_additional_map[key]
+        value: state.general.direct_beneficiaries_additional_map[key],
       }));
     },
-    directBeneficiariesLabels: state => {
+    directBeneficiariesLabels: (state) => {
       const keys = Object.keys(state.general.direct_beneficiaries_map);
       return keys.map((key: any) => ({
         key,
-        value: state.general.direct_beneficiaries_map[key]
+        value: state.general.direct_beneficiaries_map[key],
       }));
-    }
+    },
   },
   actions: {
     filteredRecipients() {
@@ -123,20 +123,17 @@ export const useProgramSpecStore = defineStore("programspec", {
           direction *
           (a as any)[column]
             .toString()
-            .localeCompare((b as any)[column].toString())
+            .localeCompare((b as any)[column].toString()),
       );
 
       // Filter
       let text = this.filterText;
-      recipients = recipients.filter(reci =>
+      recipients = recipients.filter((reci) =>
         Object.values(reci)
-          .filter(val => val !== null)
-          .some(val =>
-            val
-              .toString()
-              .toLowerCase()
-              .includes(text.toLowerCase())
-          )
+          .filter((val) => val !== null)
+          .some((val) =>
+            val.toString().toLowerCase().includes(text.toLowerCase()),
+          ),
       );
 
       // return recipients.slice(0, this.recipientsToShow)
@@ -195,7 +192,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       ) {
         deploymentIx = this.deployments.findIndex(
           (d: { deploymentnumber: any }) =>
-            d.deploymentnumber === payload.deploymentnumber
+            d.deploymentnumber === payload.deploymentnumber,
         );
       }
       if (
@@ -205,7 +202,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       ) {
         deploymentIx = this.deployments.findIndex(
           (d: { deploymentnumber: any }) =>
-            d.deploymentnumber === payload.deployment.deploymentnumber
+            d.deploymentnumber === payload.deployment.deploymentnumber,
         );
       }
       return this.deployments[deploymentIx];
@@ -223,7 +220,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         payload.playlist.position !== undefined
       ) {
         playlistIx = deployment.playlists.findIndex(
-          (p: { position: any }) => p.position === payload.playlist.position
+          (p: { position: any }) => p.position === payload.playlist.position,
         );
       }
       return deployment.playlists[playlistIx];
@@ -238,7 +235,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         payload.message.position !== undefined
       ) {
         messageIx = playlist.messages.findIndex(
-          (m: { position: any }) => m.position === payload.message.position
+          (m: { position: any }) => m.position === payload.message.position,
         );
       }
       return playlist.messages[messageIx];
@@ -256,7 +253,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.recipients = payload.programspec.recipients;
       this.deployments = orderBy(
         payload.programspec.deployments,
-        "deploymentnumber"
+        "deploymentnumber",
       );
 
       this.deployments.forEach((d: { playlists: any[] }) => {
@@ -266,7 +263,7 @@ export const useProgramSpecStore = defineStore("programspec", {
             p.messages.forEach((m: { position: any }, ix: number) => {
               m.position = ix + 1;
             });
-          }
+          },
         );
       });
 
@@ -330,7 +327,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         notification.success({
           message: "Program published successfully",
           description:
-            "The program specification was successfully published to the ACM."
+            "The program specification was successfully published to the ACM.",
         });
 
         return "success";
@@ -364,9 +361,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addDirectBeneficiariesAdditionalLabel() {
       const value = "New additional field";
-      const key = `field_${Math.random()
-        .toString(36)
-        .substring(7)}`;
+      const key = `field_${Math.random().toString(36).substring(7)}`;
 
       this.setDirectBeneficiariesAdditionalLabel({ value, key });
       this.setChanged(true);
@@ -379,7 +374,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       general.deployments_count = deployments.length;
       const newSpec = {
         general: general,
-        deployments: deployments.map(depl => {
+        deployments: deployments.map((depl) => {
           const dup: any = Object.assign({}, depl);
 
           // Renamed fields
@@ -391,7 +386,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
           return dup;
         }),
-        recipients: recipients.map(recip => {
+        recipients: recipients.map((recip) => {
           // If this recipient has a temporary ID, set it to null so the server can supply a proper id.
           if (recip.id != null && recip.id.match(TEMP_RECIPIENT_RE)) {
             recip.id = null;
@@ -412,7 +407,7 @@ export const useProgramSpecStore = defineStore("programspec", {
           delete newRecip.group_name;
 
           return newRecip;
-        })
+        }),
       };
 
       this.requestInit();
@@ -420,19 +415,19 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.loading = true;
       return ApiRequest.put(
         `program-spec/content?programid=${programId}`,
-        newSpec
+        newSpec,
       )
         .then(([resp]) => {
           this.setSpec({ programId, programspec: resp });
           notification.success({
             message: "Success",
-            description: "Program specification updated successfully."
+            description: "Program specification updated successfully.",
           });
         })
-        .catch(error => {
+        .catch((error) => {
           notification.error({
             message: "Error",
-            description: error.message
+            description: error.message,
           });
         })
         .finally(() => {
@@ -457,7 +452,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     deleteLanguage(language: any) {
       // noinspection EqualityComparisonWithCoercionJS
       this.general.languages = this.general.languages.filter(
-        (lang: any) => lang != language
+        (lang: any) => lang != language,
       );
     },
 
@@ -472,7 +467,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     }) {
       const { key, value } = payload;
       const map = {
-        ...this.general.direct_beneficiaries_additional_map
+        ...this.general.direct_beneficiaries_additional_map,
       };
       map[key] = value;
 
@@ -481,10 +476,10 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     deleteDirectBeneficiariesAdditionalLabel(labelKey: string) {
       const beneficiaries = {
-        ...this.general.direct_beneficiaries_additional_map
+        ...this.general.direct_beneficiaries_additional_map,
       };
       const index = Object.keys(beneficiaries).findIndex(
-        key => key === labelKey
+        (key) => key === labelKey,
       );
 
       if (index >= 0) {
@@ -512,13 +507,17 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       this.deployments = [
         ...this.deployments,
-        Deployment.create(this.deployments.length + 1, this.programId, previous)
+        Deployment.create(
+          this.deployments.length + 1,
+          this.programId,
+          previous,
+        ),
       ];
     },
 
     removeDeployment(deployment: Deployment) {
       const index = this.deployments.findIndex(
-        d => d.deploymentnumber === deployment.deploymentnumber
+        (d) => d.deploymentnumber === deployment.deploymentnumber,
       );
 
       if (index > -1) this.deployments.splice(index, 1);
@@ -536,7 +535,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const deployment = this.getDeployment(payload);
       // New playlist at next position.
       deployment.playlists.push(
-        Playlist.create(deployment.playlists.length + 1)
+        Playlist.create(deployment.playlists.length + 1),
       );
     },
 
@@ -545,7 +544,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
       // const deployment = this.getDeployment(payload);
       const playlistIx = deployment.playlists.findIndex(
-        (pl: { position: any }) => pl.position === payload.playlist.position
+        (pl: { position: any }) => pl.position === payload.playlist.position,
       );
       deployment.playlists.splice(playlistIx, 1);
     },
@@ -555,7 +554,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const { messages, playlist } = payload;
       // Ensure ascending positions.
       messages.forEach(
-        (m: { position: any }, ix: number) => (m.position = ix + 1)
+        (m: { position: any }, ix: number) => (m.position = ix + 1),
       );
       playlist.messages = messages;
     },
@@ -580,7 +579,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       deployment: Deployment;
     }) {
       const messageIx = (payload.playlist.messages ?? []).findIndex(
-        msg => msg.title === payload.message.title
+        (msg) => msg.title === payload.message.title,
       );
 
       payload.playlist.messages.splice(messageIx, 1);
@@ -689,7 +688,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       if (!recipient.id) {
         // Create a temporary id for local use prior ot the assignment of a proper id by the server.
         let tempId = 1;
-        this.recipients.forEach(recipient => {
+        this.recipients.forEach((recipient) => {
           if (recipient.id != null) {
             const match = recipient.id.match(TEMP_RECIPIENT_RE);
             let numericId = Number(match[1]);
@@ -702,7 +701,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         this.setChanged(true);
       }
 
-      let ix = this.recipients.findIndex(r => recipient.id === r.id);
+      let ix = this.recipients.findIndex((r) => recipient.id === r.id);
       if (ix >= 0) {
         Object.assign(this.recipients[ix], recipient);
       } else {
@@ -716,6 +715,6 @@ export const useProgramSpecStore = defineStore("programspec", {
     async downloadSpec(programId: string) {
       this.loading = true;
       return ApiRequest.get(`program-spec/content?programid=${programId}`);
-    }
-  }
+    },
+  },
 });

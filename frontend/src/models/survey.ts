@@ -15,7 +15,7 @@ export class FormProps {
 export enum SurveyStatus {
   draft = "draft",
   published = "published",
-  archived = "archived"
+  archived = "archived",
 }
 
 export class Survey extends FormProps {

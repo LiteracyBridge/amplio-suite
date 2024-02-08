@@ -18,7 +18,7 @@ export class Deployment {
   static create(
     deploymentnumber: number,
     programId: string,
-    previous?: Deployment
+    previous?: Deployment,
   ) {
     let startdate = new Date(),
       enddate = new Date();
@@ -35,10 +35,11 @@ export class Deployment {
       enddate = new Date(enddate.setDate(startdate.getDate() + 90));
     }
 
-    let deploymentname = `${programId}-${startdate.getFullYear() %
-      100}-${deploymentnumber}`;
+    let deploymentname = `${programId}-${
+      startdate.getFullYear() % 100
+    }-${deploymentnumber}`;
     console.log(
-      `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`
+      `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`,
     );
 
     console.log(startdate);
