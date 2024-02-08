@@ -41,7 +41,7 @@ export class Analysis extends FormProps {
   // TODO: Look for better name
   single_choice?: { value: string | number; sub_choice: string | number } = {
     value: null,
-    sub_choice: null,
+    sub_choice: null
   };
   meta: Record<string, any> = {};
   // choices?: Array<{

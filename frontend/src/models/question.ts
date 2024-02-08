@@ -9,13 +9,13 @@ export enum QuestionType {
   multi_choice = "multi_choice",
   // scale = "scale", // remove
   single_choice = "single_choice",
-  default = "default",
+  default = "default"
 }
 
 export const QuestionTypesList = [
   { value: QuestionType.open_ended, label: "Open Ended" },
   { value: QuestionType.multi_choice, label: "Multiple Choice (Select Many)" },
-  { value: QuestionType.single_choice, label: "Single Choice (Select One)" },
+  { value: QuestionType.single_choice, label: "Single Choice (Select One)" }
 ];
 
 export class QuestionSection extends FormProps {
@@ -71,7 +71,7 @@ export class Question extends FormProps {
 
   static fromJson(obj: Partial<Question>) {
     return new Question({
-      ...obj,
+      ...obj
     });
   }
 
@@ -89,7 +89,7 @@ export class Question extends FormProps {
                 is_other: false,
                 choice_id: self.crypto.randomUUID(),
                 question_id: null,
-                is_new: true,
+                is_new: true
               },
               {
                 value: "Option 2",
@@ -97,9 +97,9 @@ export class Question extends FormProps {
                 is_other: false,
                 choice_id: self.crypto.randomUUID(),
                 question_id: null,
-                is_new: true,
-              },
-            ],
+                is_new: true
+              }
+            ]
     });
   }
 }
@@ -128,7 +128,7 @@ export enum DependentCondition {
   contains = "contains",
   not_contains = "not_contains",
   is_empty = "is_empty",
-  is_not_empty = "is_not_empty",
+  is_not_empty = "is_not_empty"
 }
 
 export enum ConditionAction {
@@ -137,5 +137,5 @@ export enum ConditionAction {
   required = "required",
   enable = "enable",
   disable = "disable",
-  not_required = "not_required",
+  not_required = "not_required"
 }

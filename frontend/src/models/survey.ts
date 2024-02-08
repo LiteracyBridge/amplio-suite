@@ -1,5 +1,5 @@
-import type { Deployment } from "./deployment";
-import type { Question, QuestionSection } from "./question";
+import { Deployment } from "./deployment";
+import { Question, QuestionSection } from "./question";
 
 export class FormProps {
   // Form properties
@@ -15,7 +15,7 @@ export class FormProps {
 export enum SurveyStatus {
   draft = "draft",
   published = "published",
-  archived = "archived",
+  archived = "archived"
 }
 
 export class Survey extends FormProps {

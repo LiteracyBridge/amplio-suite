@@ -1,20 +1,17 @@
 import { defineStore } from "pinia";
 import { ApiRequest } from "@/api";
-import { Program } from "@/models/program";
-import { ProgramUser, User } from "@/models/user";
 import { useAppStore } from "@/store/app.store";
-import { sortBy } from "lodash";
-import { notification } from "ant-design-vue";
-import type { Recipient } from "@/models/recipient";
+import { Recipient } from "@/models/recipient";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
   state: () => ({
-    loading: false,
+    loading: false
   }),
   actions: {
     async getTbStatusBy(selector: string) {
       return ApiRequest.get<Record<string, any>>(
-        `dashboard-queries/${useAppStore().programCode
+        `dashboard-queries/${
+          useAppStore().programCode
         }/status?selector=${selector}`
       );
     },
@@ -22,10 +19,12 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
       this.loading = true;
 
       return ApiRequest.get<Recipient>(
-        `dashboard-queries/${useAppStore().programCode
+        `dashboard-queries/${
+          useAppStore().programCode
         }/recipients/${deployment}`
-      ).then((resp) => resp)
-        .finally(() => this.loading = false);
+      )
+        .then(resp => resp)
+        .finally(() => (this.loading = false));
     }
-  },
+  }
 });

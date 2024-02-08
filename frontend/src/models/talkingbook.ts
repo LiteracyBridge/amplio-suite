@@ -8,5 +8,5 @@ export class TalkingBookDeployed {
   deployment_name: string;
   deployment_uuid: string;
   content_package: string;
-  deployment: Deployment
+  deployment: Deployment;
 }

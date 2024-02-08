@@ -6,7 +6,7 @@ import { useProgramSpecStore } from "../programspec";
 export const getDefaultState = () => ({
   isComplete: false,
   actualStep: 1,
-  completedSteps: [0], // First step is fill by default
+  completedSteps: [0] // First step is fill by default
 });
 
 export const useWizardStore = defineStore("wizard", {
@@ -106,7 +106,7 @@ export const useWizardStore = defineStore("wizard", {
       const attrs = [
         "deploymentsCount",
         "deploymentsLength",
-        "deploymentsFirst",
+        "deploymentsFirst"
       ];
 
       await useProgramSpecStore().setDeploymentsCount(count);
@@ -155,6 +155,6 @@ export const useWizardStore = defineStore("wizard", {
       const { lang, step } = payload;
       await useProgramSpecStore().deleteLanguage(lang);
       await this.check("languages", step);
-    },
-  },
+    }
+  }
 });

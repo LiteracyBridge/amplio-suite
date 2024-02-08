@@ -35,9 +35,8 @@ export class Deployment {
       enddate = new Date(enddate.setDate(startdate.getDate() + 90));
     }
 
-    let deploymentname = `${programId}-${
-      startdate.getFullYear() % 100
-    }-${deploymentnumber}`;
+    let deploymentname = `${programId}-${startdate.getFullYear() %
+      100}-${deploymentnumber}`;
     console.log(
       `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`
     );

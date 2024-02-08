@@ -1,4 +1,3 @@
-// import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
 import { Auth } from "aws-amplify";
 import { Invitation, User, UserRole } from "@/models/user";
@@ -21,21 +20,22 @@ export const useAccountStore = defineStore("account", {
       img: "",
       token: "",
       organisation_id: null,
-      roles: [],
+      roles: []
     } as User,
     signUp: {
       send: false,
-      email: "",
-    },
+      email: ""
+    }
   }),
 
   getters: {
-    programs: (state) => {
-      return (state.user.programs || []).map((pu) => pu.program);
+    programs: state => {
+      return (state.user.programs || []).map(pu => pu.program);
     },
-    email: (state) => state.user.email,
-    isAmplioStaff: (state) => state.user.email.split("@")[1] === "amplio.org",
-    fullName: (state) => (state.user.first_name || '') + " " + (state.user.last_name || ""),
+    email: state => state.user.email,
+    isAmplioStaff: state => state.user.email.split("@")[1] === "amplio.org",
+    fullName: state =>
+      (state.user.first_name || "") + " " + (state.user.last_name || "")
   },
   actions: {
     authRequest() {
@@ -59,7 +59,7 @@ export const useAccountStore = defineStore("account", {
       this.signUp.email = "";
     },
     async logout() {
-      Auth.signOut().then((_resp) => {
+      Auth.signOut().then(_resp => {
         this.setUser({ email: "", name: "", img: "", token: "" });
 
         // Clear local storage items
@@ -74,11 +74,13 @@ export const useAccountStore = defineStore("account", {
       });
     },
     async requireAuth() {
-      return Auth.currentAuthenticatedUser().then((data) => {
+      return Auth.currentAuthenticatedUser().then(data => {
         if (data && data.signInUserSession) {
-          this.user.token ??= data.signInUserSession.idToken.jwtToken;
-          this.user.email ??= data.attributes.email;
-          this.user.name ??= data.attributes.email.split("@")[0];
+          this.user.token =
+            this.user.token || data.signInUserSession.idToken.jwtToken;
+          this.user.email = this.user.email || data.attributes.email;
+          this.user.name =
+            this.user.name || data.attributes.email.split("@")[0];
           return;
           // TODO: Verify user from server
         } else {
@@ -140,7 +142,7 @@ export const useAccountStore = defineStore("account", {
       return ApiRequest.get<User>("users/me").then(([resp]) => {
         this.user = User.fromJSON({
           ...resp,
-          token: token,
+          token: token
         });
 
         // Set active program
@@ -158,6 +160,6 @@ export const useAccountStore = defineStore("account", {
     },
     fetchOrganisations() {
       return ApiRequest.get<Organisation>("users/organisations");
-    },
-  },
+    }
+  }
 });

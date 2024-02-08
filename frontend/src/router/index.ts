@@ -11,15 +11,15 @@ import { Hub } from "@aws-amplify/core";
 const routes: any = [
   {
     path: "/",
-    redirect: { path: "/login" },
+    redirect: { path: "/login" }
   },
   {
     path: "/login",
     component: SignIn,
     beforeEnter: checkAuth,
     meta: {
-      layout: "login",
-    },
+      layout: "login"
+    }
   },
   {
     path: "/register",
@@ -27,8 +27,8 @@ const routes: any = [
       import(/* webpackChunkName: "sign-up" */ "../views/SignUp.vue"),
     beforeEnter: checkAuth,
     meta: {
-      layout: "login",
-    },
+      layout: "login"
+    }
   },
   {
     path: "/password-reset",
@@ -38,26 +38,26 @@ const routes: any = [
       ),
     beforeEnter: checkAuth,
     meta: {
-      layout: "login",
-    },
+      layout: "login"
+    }
   },
   {
     path: "/programs",
     meta: {
-      layout: "default",
+      layout: "default"
     },
     component: () =>
       import(
         /* webpackChunkName: "programs-index" */ "../views/ProgramsIndex.vue"
       ),
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   {
     path: "/programs/:programId",
     props: true,
     component: Home,
     name: "home",
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   {
     path: "/programs/:programId/roadmap",
@@ -65,7 +65,7 @@ const routes: any = [
     props: true,
     component: () =>
       import(/* webpackChunkName: "roadmap" */ "../views/Roadmap.vue"),
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   {
     path: "/programs/:programId/tableau",
@@ -73,7 +73,7 @@ const routes: any = [
     props: true,
     component: () =>
       import(/* webpackChunkName: "tableau" */ "../views/Tableau.vue"),
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   {
     path: "/programs/:programId/wizard",
@@ -90,21 +90,21 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-program-name" */ "../views/Wizard/ProgramName.vue"
-          ),
+          )
       },
       {
         path: "step-2",
         name: "step-geo",
         props: { step: 2 },
         component: () =>
-          import(/* webpackChunkName: "step-geo" */ "../views/Wizard/Geo.vue"),
+          import(/* webpackChunkName: "step-geo" */ "../views/Wizard/Geo.vue")
       },
       {
         path: "step-3",
         name: "step-sdg",
         props: { step: 3 },
         component: () =>
-          import(/* webpackChunkName: "step-sdg" */ "../views/Wizard/SDG.vue"),
+          import(/* webpackChunkName: "step-sdg" */ "../views/Wizard/SDG.vue")
       },
       {
         path: "step-4",
@@ -113,7 +113,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-listening-model" */ "../views/Wizard/ListeningModel.vue"
-          ),
+          )
       },
       {
         path: "step-5",
@@ -122,7 +122,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-deployments" */ "../views/Wizard/Deployments.vue"
-          ),
+          )
       },
       {
         path: "step-6",
@@ -131,7 +131,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-feedback" */ "../views/Wizard/Feedback.vue"
-          ),
+          )
       },
       {
         path: "step-7",
@@ -140,7 +140,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-languages" */ "../views/Wizard/Languages.vue"
-          ),
+          )
       },
       {
         path: "step-8",
@@ -149,9 +149,9 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "step-final" */ "../views/Wizard/Final.vue"
-          ),
-      },
-    ],
+          )
+      }
+    ]
   },
 
   {
@@ -162,9 +162,9 @@ const routes: any = [
       // we return a redirect path/location here.
       return {
         name: "programspec.index",
-        params: to.params,
+        params: to.params
       };
-    },
+    }
   },
   {
     path: "/programs/:programId/settings",
@@ -181,7 +181,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "general" */ "../views/Program/General.vue"
-          ),
+          )
       },
       {
         path: "content2",
@@ -189,7 +189,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "content2" */ "../views/Program/Content2.vue"
-          ),
+          )
       },
       {
         path: "recipients",
@@ -197,7 +197,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "recipients" */ "../views/Program/Recipients.vue"
-          ),
+          )
       },
       {
         path: "importExport",
@@ -205,7 +205,7 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "recipients" */ "../views/Program/ImportExport.vue"
-          ),
+          )
       },
       {
         path: "ufImportExport",
@@ -213,20 +213,20 @@ const routes: any = [
         component: () =>
           import(
             /* webpackChunkName: "recipients" */ "../views/Program/UfImportExport.vue"
-          ),
-      },
-    ],
+          )
+      }
+    ]
   },
   {
     path: "/kb",
     component: () => import("../views/kb.vue"),
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   {
     path: "/download",
     component: () =>
       import(/* webpackChunkName: "download" */ "../views/Download.vue"),
-    beforeEnter: requireAuth,
+    beforeEnter: requireAuth
   },
   // TB Analytics
   {
@@ -236,8 +236,9 @@ const routes: any = [
       {
         path: "installations",
         name: "tb_analytics.installations",
-        component: () => import("../views/TalkingBookAnalytics/Installation.vue"),
-      },
+        component: () =>
+          import("../views/TalkingBookAnalytics/Installation.vue")
+      }
     ]
   },
   // User feedback
@@ -248,35 +249,36 @@ const routes: any = [
       {
         path: "analyze",
         name: "user_feedback.analyze",
-        component: () => import("../views/UserFeedback/Analysis/Index.vue"),
+        component: () => import("../views/UserFeedback/Analysis/Index.vue")
       },
       {
         path: "review",
         name: "user_feedback.review",
-        component: () => import("../views/UserFeedback/Review.vue"),
+        component: () => import("../views/UserFeedback/Review.vue")
       },
       {
         path: "surveys",
         name: "user_feedback.surveys",
-        component: () => import("../views/UserFeedback/SurveyBuilder/Index.vue"),
+        component: () => import("../views/UserFeedback/SurveyBuilder/Index.vue")
       },
       {
         path: "survey-builder",
         name: "user_feedback.survey-builder",
-        component: () => import("../views/UserFeedback/SurveyBuilder/SurveyBuilder.vue"),
-      },
-    ],
+        component: () =>
+          import("../views/UserFeedback/SurveyBuilder/SurveyBuilder.vue")
+      }
+    ]
   },
   // Program spec
   {
     path: "/programs/spec",
-    component: () => import("../views/Program/Index.vue"),
+    component: () => import("../views/Program/Index.vue")
   },
   // Monitoring Center,
   {
     path: "/programs/monitor",
     name: "monitor",
-    component: () => import("../views/Monitor/Index.vue"),
+    component: () => import("../views/Monitor/Index.vue")
   },
   // Settings
   {
@@ -286,26 +288,25 @@ const routes: any = [
       {
         path: "users",
         name: "admin.users",
-        component: () => import("../views/Admin/Users/Index.vue"),
+        component: () => import("../views/Admin/Users/Index.vue")
       },
       {
         path: "roles",
         name: "admin.roles",
-        component: () => import("../views/Admin/Users/ManageRoles.vue"),
+        component: () => import("../views/Admin/Users/ManageRoles.vue")
       },
       {
         path: "programs",
         name: "admin.Programs",
-        component: () =>
-          import("../views/Admin/Programs/Index.vue"),
-      },
-    ],
-  },
+        component: () => import("../views/Admin/Programs/Index.vue")
+      }
+    ]
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes
 });
 
 function stepIsCompleted(to: any, from: any, next: any) {
@@ -331,7 +332,7 @@ function requireAuth(to: any, from: any, next: any) {
     .catch(() => {
       return next({
         path: "/login",
-        query: { redirect: to.fullPath },
+        query: { redirect: to.fullPath }
       });
     });
 }
@@ -349,7 +350,7 @@ function checkAuth(to: any, from: any, next: any) {
 
 async function getUser() {
   return Auth.currentAuthenticatedUser()
-    .then(async (data) => {
+    .then(async data => {
       if (data && data.signInUserSession) {
         await useAccountStore().fetchAccountInfo(
           data.signInUserSession!.idToken.jwtToken
@@ -360,13 +361,13 @@ async function getUser() {
 
       return { authorized: false };
     })
-    .catch((err) => {
+    .catch(err => {
       console.error(err);
       return { authorized: false };
     });
 }
 
-Hub.listen("auth", async (data) => {
+Hub.listen("auth", async data => {
   let user = null;
 
   switch (data.payload.event) {

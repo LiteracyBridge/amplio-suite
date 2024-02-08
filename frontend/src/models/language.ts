@@ -1,5 +1,5 @@
 export class Language {
-    name: string;
-    code: string;
-    comment?: string;
+  name: string;
+  code: string;
+  comment?: string;
 }

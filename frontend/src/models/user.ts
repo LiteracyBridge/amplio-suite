@@ -1,4 +1,4 @@
-import type { Organisation } from "./organisation";
+import { Organisation } from "./organisation";
 import { Program } from "./program";
 import { Permission, Role } from "./role";
 
@@ -43,20 +43,22 @@ export class User {
    * The permissions are derived from the roles assigned to the user within the program.
    * "*" indicates that the user has system wide permission to perform the action.
    */
-  permissions: { [programId: string | "*"]: { [action: string]: boolean } } =
-    {};
+  permissions: {
+    [programId: string | "*"]: { [action: string]: boolean };
+  } = {};
 
   static fromJSON(json: any): User {
     const user = new User();
     Object.assign(user, json);
 
     // Parse roles into a map of permissions that can be used to check permissions in the UI
-    const permissions: { [programId: string]: { [action: string]: boolean } } =
-      {};
+    const permissions: {
+      [programId: string]: { [action: string]: boolean };
+    } = {};
     for (const role of user.roles) {
       for (const module in role.role.permissions) {
         const key = role.program_id || "*";
-        permissions[key] ??= {};
+        permissions[key] = permissions[key] || {};
 
         for (const action of role.role.permissions[module]) {
           permissions[key][action] = true;

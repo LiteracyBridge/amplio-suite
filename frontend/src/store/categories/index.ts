@@ -5,13 +5,13 @@ import { defineStore } from "pinia";
 export const useCategoriesStore = defineStore("categories", {
   state: () => ({
     loading: false,
-    categories: [] as SupportedCategory[],
+    categories: [] as SupportedCategory[]
   }),
 
   actions: {
     async fetchCategories() {
       this.loading = true;
       return ApiRequest.get<SupportedCategory>("categories/supported");
-    },
-  },
+    }
+  }
 });
