@@ -22,19 +22,15 @@ import {
 import { computed, h, onMounted, ref, watch } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import AudioPlayer from "./AudioPlayer.vue";
-import Stats from "./Stats.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
 import { Analysis, Progress } from "@/models/analysis";
 import { QuestionChoice, QuestionType } from "@/models/question";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
-import AnalysisReport from "../components/AnalysisReport.vue";
-import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
-import { useRouter } from "vue-router";
 import { UserFeedbackMessage } from "@/models/uf_message";
 
 const props = defineProps<{
-  deploymentChanged: boolean;
+  deploymentChanged: string;
 }>();
 
 const feedbackStore = useFeedbackAnalysis(),
@@ -73,17 +69,15 @@ function updateUrl(skipMessage: boolean = false) {
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
-      if (msg == null) return;
+      // if (msg == null) return;
 
-      current_message_uuid.value = msg.message_uuid;
-      message.value = msg;
+      current_message_uuid.value = msg?.message_uuid;
+      message.value = msg || new UserFeedbackMessage();
       startTime.value = new Date();
 
-      if (msg.transcription != null) {
+      if (msg?.transcription != null) {
         transcription.value = msg.transcription;
       }
-
-      return msg.url;
     })
     .catch((err) => {
       console.log("caught:" + err);
@@ -186,10 +180,9 @@ watch(nextUUID, (newUUID) => {
 
 watch(
   props,
-  (newProps) => {
-    if (newProps.deploymentChanged) {
-      updateUrl();
-    }
+  (newProps, _oldProps) => {
+    console.log(newProps)
+    updateUrl(true);
   },
   { deep: true }
 );

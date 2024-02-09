@@ -128,7 +128,6 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
         }`,
       ).then(([stats]) => {
-        console.warn(stats);
         this.$state.statistics = stats;
       });
     },

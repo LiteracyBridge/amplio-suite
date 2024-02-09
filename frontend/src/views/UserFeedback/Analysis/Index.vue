@@ -39,7 +39,7 @@ const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
 
 const activeTab = ref("analyse");
-const deploymentChanged = ref(false);
+const deploymentChanged = ref("");
 </script>
 
 <template>
@@ -51,7 +51,9 @@ const deploymentChanged = ref(false);
     <template #extra>
       <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
 
-      <DeploymentsLanguageDropdown @change="deploymentChanged = true" />
+      <DeploymentsLanguageDropdown
+        @change="(d, l) => (deploymentChanged = d.toString() + '_' + l.toString())"
+      />
     </template>
 
     <Alert type="info" :closable="true">
