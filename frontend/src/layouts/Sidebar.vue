@@ -14,9 +14,9 @@ import {
 EditOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
+import { useAppStore } from "@/store/app.store";
 
-const collapsed = ref(false);
-
+const store = useAppStore();
 const config = ref({
   activeMenu: null,
 });
@@ -24,16 +24,15 @@ const config = ref({
 
 <template>
   <LayoutSider
-    v-model:collapsed="collapsed"
+    v-model:collapsed="store.sidebarCollapsed"
     :trigger="null"
     collapsible
     :style="{ minHeight: '100vh', backgroundColor: 'white' }"
     breakpoint="lg"
-    :collapsed-width="0"
     width="260px"
   >
     <div class="logo">
-      <Image :src="LogoLarge" width="100px"> </Image>
+      <Image :src="LogoLarge" width="100px" v-if="!store.sidebarCollapsed"> </Image>
     </div>
 
     <Divider></Divider>

@@ -349,5 +349,21 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           throw err;
         });
     },
+    async fetchSampleMessages() {
+      this.loading = true;
+      return ApiRequest.get<UserFeedbackMessage>(
+        `user-feedback/messages/${useAppStore().programCode}/samples?language=${useAppStore().userFeedback.language
+        }&deployment=${useAppStore().userFeedback.deployment}`,
+      )
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
+    }
   },
 });

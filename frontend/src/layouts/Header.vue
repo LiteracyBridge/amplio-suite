@@ -98,14 +98,14 @@ function changeProgram(val: number) {
     <div id="header-items">
       <div>
         <MenuUnfoldOutlined
-          v-if="appStore.sidebarVisible"
+          v-if="appStore.sidebarCollapsed"
           class="trigger"
-          @click="() => (appStore.sidebarVisible = !appStore.sidebarVisible)"
+          @click="() => (appStore.sidebarCollapsed = !appStore.sidebarCollapsed)"
         />
         <MenuUnfoldOutlined
           v-else
           class="trigger"
-          @click="() => (appStore.sidebarVisible = !appStore.sidebarVisible)"
+          @click="() => (appStore.sidebarCollapsed = !appStore.sidebarCollapsed)"
         />
 
         <Select

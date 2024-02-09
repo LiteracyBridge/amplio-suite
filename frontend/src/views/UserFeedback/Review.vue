@@ -142,19 +142,19 @@ onMounted(() => {
       </template>
 
       <template v-if="column.key === 'feedback'">
-        {{ record.is_useless ? "No" : "False" }}
+        {{ record.is_useless == true ? "No" : "Yes" }}
       </template>
 
       <template v-if="column.key === 'group'">
-        {{ record.recipient.group_name }}
+        {{ record.recipient?.group_name }}
       </template>
 
       <template v-if="column.key === 'community'">
-        {{ record.recipient.community_name }}
+        {{ record.recipient?.community_name }}
       </template>
 
       <template v-if="column.key === 'district'">
-        {{ record.recipient.district }}, {{ record.recipient.region }}
+        {{ record.recipient?.district }}, {{ record.recipient?.region }}
       </template>
 
       <template v-if="column.key === 'actions'">

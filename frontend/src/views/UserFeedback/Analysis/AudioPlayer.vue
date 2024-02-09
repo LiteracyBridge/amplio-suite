@@ -192,10 +192,6 @@ onMounted(() => {
   //   }
 });
 
-// const audioUrl = computed(() => {
-//   return props.audioMetadata.url;
-// });
-
 const loopRangeText = computed(() => {
   var s = "";
   if (loopStart.value || loopEnd.value) {

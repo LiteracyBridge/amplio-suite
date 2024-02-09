@@ -8,7 +8,7 @@ import { orderBy } from "lodash";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
-    sidebarVisible: false,
+    sidebarCollapsed: false,
     activeProgram: { id: undefined as number, data: undefined as Program },
     userFeedback: {
       deployment: undefined as undefined | number | string,
