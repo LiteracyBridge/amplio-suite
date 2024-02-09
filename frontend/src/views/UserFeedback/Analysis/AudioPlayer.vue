@@ -8,6 +8,7 @@ import { UserFeedbackMessage } from "@/models/uf_message";
 
 const props = defineProps<{
   message: UserFeedbackMessage;
+  mini: boolean;
 }>();
 
 const $emit = defineEmits<{
@@ -16,10 +17,7 @@ const $emit = defineEmits<{
   (e: "useless", status: boolean): void;
 }>();
 
-// const router = useRouter();
-
-const connected = ref(false),
-  speed = ref(1),
+const speed = ref(1),
   fullyLoaded = ref(false),
   loopStart = ref(0),
   loopEnd = ref(0),
@@ -215,12 +213,29 @@ function markAsUseless() {
 </script>
 
 <template>
-  <Card title="Audio Player" type="inner">
-    <template #extra>
-      <Instructions />
-    </template>
+  <template v-if="mini == true">
+    <audio
+      ref="audio"
+      @timeupdate="checkLoop"
+      @error="loadError"
+      @canplaythrough="loaded"
+      tabindex="-1"
+      controls
+      preload="auto"
+      autoplay
+      :src="message.url"
+    >
+      Your browser doesn't support the HTML5 audio element.
+    </audio>
+  </template>
 
-    <!-- <Descriptions title="" v-if="audioMetadata.url != ''" size="small">
+  <template v-else>
+    <Card title="Audio Player" type="inner">
+      <template #extra>
+        <Instructions />
+      </template>
+
+      <!-- <Descriptions title="" v-if="audioMetadata.url != ''" size="small">
       <DescriptionsItem v-if="audioMetadata.title" label="Last message">
         {{ audioMetadata.title }}</DescriptionsItem
       >
@@ -239,76 +254,77 @@ function markAsUseless() {
       </DescriptionsItem>
     </Descriptions> -->
 
-    <table>
-      <tr>
-        <td style="padding: 10px">
-          <div class="audioMetadata my-4">
-            <div v-if="message?.content_metadata?.title">
-              <span style="font-weight: bold">Last message:</span>
-              {{ message?.content_metadata?.title }}
+      <table>
+        <tr>
+          <td style="padding: 10px">
+            <div class="audioMetadata my-4">
+              <div v-if="message?.content_metadata?.title">
+                <span style="font-weight: bold">Last message:</span>
+                {{ message?.content_metadata?.title }}
+              </div>
+              <div v-else><br /></div>
+              <div v-if="message.url != ''">
+                <!-- for some reason this v-if has to be in this second-level div; otherwise, the audio key controls do not work.-->
+                <span style="font-weight: bold">Location:</span>
+                {{ message.recipient.community_name }}, {{ message.recipient.district }},
+                {{ message.recipient.region }}
+                <span class="ml-3" style="font-weight: bold"> Model:</span>
+                {{ message.recipient.listening_model }}
+                <span class="ml-3" style="font-weight: bold"> Group:</span>
+                {{ message.recipient.group_name }}
+                <span class="ml-3" style="font-weight: bold"> ID:</span>
+                {{ getUUID() }}
+              </div>
             </div>
-            <div v-else><br /></div>
-            <div v-if="message.url != ''">
-              <!-- for some reason this v-if has to be in this second-level div; otherwise, the audio key controls do not work.-->
-              <span style="font-weight: bold">Location:</span>
-              {{ message.recipient.community_name }}, {{ message.recipient.district }},
-              {{ message.recipient.region }}
-              <span class="ml-3" style="font-weight: bold"> Model:</span>
-              {{ message.recipient.listening_model }}
-              <span class="ml-3" style="font-weight: bold"> Group:</span>
-              {{ message.recipient.group_name }}
-              <span class="ml-3" style="font-weight: bold"> ID:</span>
-              {{ getUUID() }}
+            <div
+              tabindex="0"
+              class="flex justify-center noFocusOutline"
+              ref="audioDiv"
+              @keypress.space.prevent
+              @keydown="checkKey"
+            >
+              <audio
+                ref="audio"
+                @timeupdate="checkLoop"
+                @error="loadError"
+                @canplaythrough="loaded"
+                tabindex="-1"
+                controls
+                preload="auto"
+                autoplay
+                :src="message.url"
+              >
+                Your browser doesn't support the HTML5 audio element.
+              </audio>
             </div>
-          </div>
-          <div
-            tabindex="0"
-            class="flex justify-center noFocusOutline"
-            ref="audioDiv"
-            @keypress.space.prevent
-            @keydown="checkKey"
-          >
-            <audio
-              ref="audio"
-              @timeupdate="checkLoop"
-              @error="loadError"
-              @canplaythrough="loaded"
-              tabindex="-1"
-              controls
-              preload="auto"
-              autoplay
-              :src="message.url"
-            >
-              Your browser doesn't support the HTML5 audio element.
-            </audio>
-          </div>
-          <div v-if="message.url != ''" class="audiometadata">
-            <span style="font-weight: bold">Speed:</span
-            ><span class="mr-3"> {{ speed }}</span>
-            <span v-if="readyToLoop()" style="font-weight: bold"> Looping </span
-            ><span>{{ loopRangeText }}</span>
-          </div>
-          <div v-if="message.url != '' && !fullyLoaded">Loading...</div>
-        </td>
-      </tr>
-      <tr style="vertical-align: bottom">
-        <td>
-          <div class="flex items-end justify-between my-4 mx-3">
-            <!-- <span> ID: {{ getUUID() }}</span> -->
-            <span></span>
-            <Button type="primary" :danger="true" @click="markAsUseless()"
-              >Not Feedback</Button
-            >
+            <div v-if="message.url != ''" class="audiometadata">
+              <span style="font-weight: bold">Speed:</span
+              ><span class="mr-3"> {{ speed }}</span>
+              <span v-if="readyToLoop()" style="font-weight: bold"> Looping </span
+              ><span>{{ loopRangeText }}</span>
+            </div>
+            <div v-if="message.url != '' && !fullyLoaded">Loading...</div>
+          </td>
+        </tr>
+        <tr style="vertical-align: bottom">
+          <td>
+            <div class="flex items-end justify-between my-4 mx-3">
+              <!-- <span> ID: {{ getUUID() }}</span> -->
+              <span></span>
+              <Button type="primary" :danger="true" @click="markAsUseless()"
+                >Not Feedback</Button
+              >
 
-            <span>
-              <!-- above was previously v-if="message.submission"-->
-              <Button type="primary" @click="$emit('next', getUUID())">Skip</Button>
-            </span>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </Card>
+              <span>
+                <!-- above was previously v-if="message.submission"-->
+                <Button type="primary" @click="$emit('next', getUUID())">Skip</Button>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </Card>
+  </template>
 </template>
 
 <style scoped>

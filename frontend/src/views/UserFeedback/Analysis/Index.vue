@@ -243,6 +243,7 @@ onMounted(() => {
             @next="skipCurrentMessage"
             @useless="save($event)"
             :message="message"
+            :mini="false"
           />
         </div>
 

@@ -7,6 +7,9 @@ import { ApiRequest } from "@/api";
 import {
   Card,
   Button,
+  Drawer,
+  Descriptions,
+  DescriptionsItem,
   Form,
   FormItem,
   Space,
@@ -30,10 +33,12 @@ import {
   Alert,
   Menu,
   Spin,
+  Popconfirm,
 } from "ant-design-vue";
 import DeploymentsLanguageDropdown from "./components/DeploymentsLanguageDropdown.vue";
 import { UserFeedbackMessage } from "@/models/uf_message";
 import { useRouter } from "vue-router";
+import AudioPlayer from "./Analysis/AudioPlayer.vue";
 
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
@@ -70,6 +75,9 @@ const columns = [
   },
 ];
 
+const open = ref(false),
+  selectedMessage = ref<UserFeedbackMessage>(null);
+
 // export default {
 //   name: "Responses",
 //   components: {
@@ -83,6 +91,7 @@ const allResponses = ref(true),
   uuid = ref(""),
   index = ref(0),
   submissionsList = ref<UserFeedbackMessage[]>([]),
+  analysis = ref<Record<string, any>>(null),
   reviewed = ref([]),
   // columns = ref()
   sortTable = ref({
@@ -196,10 +205,33 @@ async function getSubmissionsList() {
 //     this.context.selectedDeployment = this.$route.query.deployment;
 //   }
 // },
+async function onMessageSelected(message: UserFeedbackMessage) {
+  selectedMessage.value = message;
+  feedbackStore
+    .fetchAnalysisReport(message.message_uuid)
+    .then((resp) => {
+      // The result should be a 2D array with the first row being the headers
+      // and the second row being the values
+      if (resp.length > 1) {
+        let temp: Record<string, any> = {};
 
-// onMounted(() => {
-//   getSubmissionsList();
-// });
+        for (let i = 0; i < resp[0].length; i++) {
+          temp[resp[0][i]] = resp[1][i]; // resp[0][i] is the header, resp[1][i] is the corresponding value
+        }
+        analysis.value = temp;
+      }
+      // analysis.value = resp;
+    })
+    .finally(() => {
+      open.value = true;
+    });
+  // this.$store.commit("setSelectedMessage", message);
+  // this.$store.commit("setOpen", true);
+}
+
+onMounted(() => {
+  getSubmissionsList();
+});
 // mounted() {
 // this.getSubmissionsList();
 //   },
@@ -270,10 +302,48 @@ async function getSubmissionsList() {
       </template>
 
       <template v-if="column.key === 'actions'">
-        <Button type="link" @click="goTo(record.message_uuid, index)"> Review </Button>
+        <Button type="link" @click="onMessageSelected(record as UserFeedbackMessage)">
+          Review
+        </Button>
       </template>
     </template>
   </Table>
+
+  <Drawer v-model:open="open" title="Review Feedback" width="900px">
+    <!-- <template #extra>
+      <Button type="primary" @click="isOpen = true">Invite someone</Button>
+    </template> -->
+
+    <template v-if="selectedMessage.url != '' || selectedMessage.url != null">
+      <AudioPlayer :message="selectedMessage" :mini="true" />
+      <Divider />
+    </template>
+
+    <Empty v-if="analysis == null" description="No analysis available" />
+
+    <Descriptions
+      v-else
+      layout="vertical"
+      bordered
+      :column="1"
+      :label-style="{ fontWeight: 'normal' }"
+    >
+      <DescriptionsItem v-for="(value, key) of analysis" :label="key">
+        {{ value || "N/A" }}</DescriptionsItem
+      >
+    </Descriptions>
+
+    <template #footer>
+      <Popconfirm
+        title="Are you sure you want to delete this analysis? The message will be available for analysis again."
+        okText="Yes"
+        cancelText="No"
+        @confirm="open = false"
+      >
+        <Button :danger="true" block>Delete Analysis</Button>
+      </Popconfirm>
+    </template>
+  </Drawer>
 
   <div>
     <div v-if="allResponses" class="grid grid-cols-10">

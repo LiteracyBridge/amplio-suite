@@ -288,12 +288,18 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         })
         .finally(() => (this.$state.loading = false));
     },
-    async fetchAnalysisReport() {
+    async fetchAnalysisReport(messageId?: string) {
       this.loading = true;
+      let path = `user-feedback/reports/${this.$state.survey.id}?language=${
+        useAppStore().userFeedback.language
+      }&deployment=${useAppStore().userFeedback.deployment}`;
+
+      if (messageId != null) {
+        path += `&message_id=${messageId}`;
+      }
+
       return ApiRequest.get<Array<string>>(
-        `user-feedback/reports/${this.$state.survey.id}?language=${
-          useAppStore().userFeedback.language
-        }&deployment=${useAppStore().userFeedback.deployment}`,
+        path,
       )
         .finally(() => (this.$state.loading = false))
         .catch((err) => {
@@ -306,6 +312,10 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         });
     },
     async fetchSubmittedMessages() {
+      if(this.$state.survey?.id == null) {
+        return [];
+      }
+
       this.loading = true;
       return ApiRequest.get<UserFeedbackMessage>(
         `user-feedback/analysis/${this.$state.survey.id}/submissions?language=${
