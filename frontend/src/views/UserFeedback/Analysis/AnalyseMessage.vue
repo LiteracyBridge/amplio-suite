@@ -33,10 +33,13 @@ import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdo
 import { useRouter } from "vue-router";
 import { UserFeedbackMessage } from "@/models/uf_message";
 
+const props = defineProps<{
+  deploymentChanged: boolean;
+}>();
+
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
 
-const router = useRouter();
 const config = ref({
   activeSection: "transcription",
   noMessages: false,
@@ -180,6 +183,16 @@ watch(nextUUID, (newUUID) => {
     message.value.url = "";
   }
 });
+
+watch(
+  props,
+  (newProps) => {
+    if (newProps.deploymentChanged) {
+      updateUrl();
+    }
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   updateUrl();

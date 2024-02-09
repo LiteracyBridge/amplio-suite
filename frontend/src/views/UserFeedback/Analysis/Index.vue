@@ -38,155 +38,8 @@ import MessagesBrowser from "./MessagesBrowser.vue";
 const feedbackStore = useFeedbackAnalysis(),
   store = useAppStore();
 
-const router = useRouter();
-const config = ref({
-  activeSection: "transcription",
-  noMessages: false,
-});
-
-const current_message_uuid = ref(""),
-  message = ref<UserFeedbackMessage>(new UserFeedbackMessage()),
-  audioKey = ref(0),
-  nextUUID = ref<string>(),
-  startTime = ref<Date>(null),
-  transcription = ref(null),
-  selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({}),
-  activeTab = ref("analyse");
-
-function updateUrl(skipMessage: boolean = false) {
-  if (store.userFeedback?.deployment == null || store.userFeedback?.language == null) {
-    notification.error({
-      message: `Error`,
-      description: "Please select a deployment and language!",
-    });
-  }
-
-  feedbackStore.loading = true;
-  transcription.value = null;
-
-  return ApiRequest.get<UserFeedbackMessage>(
-    `user-feedback/messages/${store.programCode}?deployment=${
-      store.userFeedback.deployment
-    }&language=${store.userFeedback.language}&message_id=${
-      skipMessage ? null : current_message_uuid.value || null
-    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}`
-  )
-    .then(([msg]) => {
-      // TODO: check for not empty response [when there are no messages ]
-      if (msg == null) return;
-
-      current_message_uuid.value = msg.message_uuid;
-      message.value = msg;
-      startTime.value = new Date();
-
-      if (msg.transcription != null) {
-        transcription.value = msg.transcription;
-      }
-
-      return msg.url;
-    })
-    .catch((err) => {
-      console.log("caught:" + err);
-      current_message_uuid.value = "";
-    })
-    .finally(() => {
-      feedbackStore.loading = false;
-    });
-}
-
-const skipCurrentMessage = () => {
-  feedbackStore.skipped_messages = [
-    ...feedbackStore.skipped_messages,
-    current_message_uuid.value,
-  ];
-  updateUrl(true);
-};
-
-function validateResponse(feedback: Analysis) {
-  let isValid = true;
-
-  if (!feedback.show) return isValid;
-
-  // Reset error
-  feedback.error = null;
-
-  if (feedback.question.required) {
-    if (
-      feedback.question.type == QuestionType.open_ended &&
-      (feedback.response == null || feedback.response == "")
-    ) {
-      feedback.error = "This question is required!";
-      isValid = false;
-    }
-
-    if (
-      feedback.question.type == QuestionType.multi_choice &&
-      (feedback.choices || []).length == 0
-    ) {
-      feedback.error = "This question is required!";
-      isValid = false;
-    }
-
-    if (
-      feedback.question.type == QuestionType.single_choice &&
-      feedback.single_choice?.value == null
-    ) {
-      feedback.error = "This question is required!";
-      isValid = false;
-    }
-  }
-  return isValid;
-}
-
-function save(is_useless: boolean = false) {
-  // Validate response
-  if (is_useless == false) {
-    let isValid = true;
-    for (const feedback of feedbackStore.questions) {
-      isValid = validateResponse(feedback);
-    }
-
-    if (!isValid) {
-      notification.error({
-        message: `Error`,
-        description: "Please answer all required questions!",
-      });
-      return;
-    }
-  }
-
-  feedbackStore
-    .saveChanges({
-      message_uuid: current_message_uuid.value,
-      is_useless,
-      start_time: startTime.value,
-      transcription: transcription.value,
-    })
-    .then(() => updateUrl(true));
-}
-
-const isOptionOther = computed(() => {
-  return (choices: QuestionChoice[], option_id: number | string) => {
-    const option = choices.find((c) => c.choice_id == option_id);
-
-    if (option == null) return false;
-
-    return option.is_other;
-  };
-});
-
-watch(nextUUID, (newUUID) => {
-  current_message_uuid.value = newUUID;
-  if (newUUID != "") {
-    updateUrl();
-  } else {
-    message.value.url = "";
-  }
-});
-
-onMounted(() => {
-  updateUrl();
-});
+const activeTab = ref("analyse");
+const deploymentChanged = ref(false);
 </script>
 
 <template>
@@ -198,7 +51,7 @@ onMounted(() => {
     <template #extra>
       <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
 
-      <DeploymentsLanguageDropdown @change="updateUrl()" />
+      <DeploymentsLanguageDropdown @change="deploymentChanged = true" />
     </template>
 
     <Alert type="info" :closable="true">
@@ -214,14 +67,14 @@ onMounted(() => {
       </template>
     </Alert>
 
-    <template v-if="!feedbackStore.loading">
+    <template v-if="!feedbackStore.loading && activeTab == 'analyse'">
       <Stats class="my-2" />
     </template>
   </PageHeader>
 
   <Tabs v-model:activeKey="activeTab" centered size="large">
     <TabPane key="analyse" tab="Analyse Feedback">
-      <AnalyseMessage></AnalyseMessage>
+      <AnalyseMessage :deployment-changed="deploymentChanged"></AnalyseMessage>
     </TabPane>
 
     <TabPane key="browser" tab="Browse Feedback Messages">

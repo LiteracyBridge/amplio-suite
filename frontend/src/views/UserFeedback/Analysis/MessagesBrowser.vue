@@ -92,6 +92,13 @@ onMounted(() => {
 </script>
 
 <template>
+  <Alert
+    type="info"
+    :closable="true"
+    :show-icon="true"
+    description="The user feedback messages are randomly selected. Only 51% of the total messages are shown"
+  />
+
   <Table
     :columns="columns"
     :data-source="messages"
