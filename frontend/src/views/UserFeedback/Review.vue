@@ -1,38 +1,17 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useAccountStore } from "@/store/account";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import { useAppStore } from "@/store/app.store";
-import { ApiRequest } from "@/api";
 import {
-  Card,
   Button,
   Drawer,
   Descriptions,
   DescriptionsItem,
-  Form,
-  FormItem,
-  Space,
   Divider,
-  Textarea,
-  Modal,
-  Tabs,
-  TabPane,
-  CheckboxGroup,
-  RadioGroup,
-  Checkbox,
-  Radio,
   Empty,
-  Select,
-  SelectOption,
-  notification,
   PageHeader,
-  Dropdown,
-  MenuItem,
   Table,
   Alert,
-  Menu,
-  Spin,
   Popconfirm,
 } from "ant-design-vue";
 import DeploymentsLanguageDropdown from "./components/DeploymentsLanguageDropdown.vue";
@@ -78,133 +57,17 @@ const columns = [
 const open = ref(false),
   selectedMessage = ref<UserFeedbackMessage>(null);
 
-// export default {
-//   name: "Responses",
-//   components: {
-//     NavBar,
-//     AnalyzeComp,
-//     VTooltip,
-//   },
-// data() {
+
 const allResponses = ref(true),
-  // connected = ref(true),
-  uuid = ref(""),
-  index = ref(0),
   submissionsList = ref<UserFeedbackMessage[]>([]),
-  analysis = ref<Record<string, any>>(null),
-  reviewed = ref([]),
-  // columns = ref()
-  sortTable = ref({
-    by: "submissionTime",
-    descending: true,
-  });
-// };
-// },
-// methods: {
-//   ...mutations,
-function setAllResponses() {
-  allResponses.value = true;
-  getSubmissionsList();
-}
-function goTo(uuid: string, index: number) {
-  // uuid = uuid;
-  // index = index;
-  // reviewed.value.push(submissionsList[index].uuid);
-  // allResponses.value = false;
-  router.push({ path: "/user-feedback/analyze", query: { message_uuid: uuid } });
-}
-
-function getNext() {
-  // index.value += 1;
-  // if (index.value < submissionsList.length) {
-  //   uuid.value = submissionsList[index.value].uuid;
-  //   reviewed.value.push(submissionsList[index.value].uuid);
-  // } else {
-  //   uuid.value = "";
-  // }
-}
-//  function  setSortByColumn(colId = this.sortTable.by, descending = !this.sortTable.function descending) {
-//     console.log("sort:" + colId + " / " + String(descending));
-//     if (this.sortTable.by === colId) {
-//       this.sortTable.descending = descending;
-//     } else {
-//       this.sortTable.by = colId;
-//       this.sortTable.descending = descending;
-//     }
-//     const direction = this.sortTable.descending ? -1 : 1;
-//     this.submissionsList = this.submissionsList.sort(
-//       (a, b) => direction * a[colId].toString().localeCompare(b[colId].toString())
-//     );
-//   },
-
-// contextChanged() {
-//   this.getSubmissionsList();
-// },
-
-// updatedProgram(programCode) {
-//   this.$router.push({ path: this.$route.path });
-// },
+  analysis = ref<Record<string, any>>(null);
 
 async function getSubmissionsList() {
   await feedbackStore
     .fetchSubmittedMessages()
     .then((resp) => (submissionsList.value = resp));
-
-  // const request =
-  //   "https://ckz0f72fjf.execute-api.us-west-2.amazonaws.com/default/ufDataService?" +
-  //   "email=" +
-  //   useAccountStore().email +
-  //   "&program=" +
-  //   store.programCode +
-  //   "&deployment=" +
-  //   store.userFeedback.deployment +
-  //   "&language=" +
-  //   store.userFeedback.language +
-  //   "&uuid=all" +
-  //   "&timezoneOffset=" +
-  //   -new Date().getTimezoneOffset() +
-  //   " minutes";
-  // // Vue.axios.interceptors.request.use(request => {console.log('Starting Request', JSON.stringify(request, null, 2)) return request });
-  // console.log("updateUrl:" + request);
-  // ApiRequest.get(request)
-  //   .then((response) => {
-  //     // if (!this.connected) {
-  //     //   this.connected = true;
-  //     // }
-  //     submissionsList.value = response;
-  //     // this.setSortByColumn(this.sortTable.by, this.sortTable.descending);
-  //   })
-  //   .catch((err) => {
-  //     console.log("caught:" + err);
-  //     // this.connected = false;
-  //   });
 }
-// },
-// computed: {
-//   ...getters,
-// liveSubmissionsList() {
-//   return this.submissionsList;
-// },
-// deployments() {
-//   var program = this.programs.filter((p) => {
-//     return p.code == this.context.selectedProgramCode;
-//   });
-//   return program[0].deployments;
-// },
-// languages() {
-//   var program = this.programs.filter((p) => {
-//     return p.code == this.context.selectedProgramCode;
-//   });
-//   return program[0].languages;
-// },
-// },
-// created() {
-//   if (this.$route.query.program) {
-//     this.context.selectedProgramCode = this.$route.query.program;
-//     this.context.selectedLanguageCode = this.$route.query.language;
-//     this.context.selectedDeployment = this.$route.query.deployment;
-//   }
-// },
+
 async function onMessageSelected(message: UserFeedbackMessage) {
   selectedMessage.value = message;
   feedbackStore
@@ -225,17 +88,12 @@ async function onMessageSelected(message: UserFeedbackMessage) {
     .finally(() => {
       open.value = true;
     });
-  // this.$store.commit("setSelectedMessage", message);
-  // this.$store.commit("setOpen", true);
 }
 
 onMounted(() => {
   getSubmissionsList();
 });
-// mounted() {
-// this.getSubmissionsList();
-//   },
-// };
+
 </script>
 
 <template>
@@ -263,15 +121,6 @@ onMounted(() => {
     :data-source="submissionsList"
     :loading="feedbackStore.loading"
   >
-    <!-- <template #title>
-      <div class="flex justify-between">
-        <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
-
-        <Button type="primary" @click="fetchData('ByDepl')" :ghost="true">
-          <ReloadOutlined /> Refresh Data
-        </Button>
-      </div>
-    </template> -->
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'submissionTime'">
         {{ record.submissionTime }}
@@ -310,10 +159,6 @@ onMounted(() => {
   </Table>
 
   <Drawer v-model:open="open" title="Review Feedback" width="900px">
-    <!-- <template #extra>
-      <Button type="primary" @click="isOpen = true">Invite someone</Button>
-    </template> -->
-
     <template v-if="selectedMessage.url != '' || selectedMessage.url != null">
       <AudioPlayer :message="selectedMessage" :mini="true" />
       <Divider />
@@ -406,16 +251,5 @@ onMounted(() => {
         </table>
       </div>
     </div>
-
-    <div v-else-if="!allResponses">
-      <analyze-comp :nextUUID="uuid" @all="setAllResponses" @next="getNext" />
-    </div>
   </div>
 </template>
-
-<style scoped>
-/* table thead th {
-  white-space: nowrap;
-  @apply px-4 py-2 text-green border-b;
-} */
-</style>

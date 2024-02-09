@@ -214,19 +214,27 @@ function markAsUseless() {
 
 <template>
   <template v-if="mini == true">
-    <audio
-      ref="audio"
-      @timeupdate="checkLoop"
-      @error="loadError"
-      @canplaythrough="loaded"
-      tabindex="-1"
-      controls
-      preload="auto"
-      autoplay
-      :src="message.url"
+    <div
+      tabindex="0"
+      class="flex justify-center noFocusOutline"
+      ref="audioDiv"
+      @keypress.space.prevent
+      @keydown="checkKey"
     >
-      Your browser doesn't support the HTML5 audio element.
-    </audio>
+      <audio
+        ref="audio"
+        @timeupdate="checkLoop"
+        @error="loadError"
+        @canplaythrough="loaded"
+        tabindex="-1"
+        controls
+        preload="auto"
+        autoplay
+        :src="message.url"
+      >
+        Your browser doesn't support the HTML5 audio element.
+      </audio>
+    </div>
   </template>
 
   <template v-else>
