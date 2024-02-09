@@ -15,7 +15,7 @@ import { notification } from "ant-design-vue";
 import { UserFeedbackMessage } from "@/models/uf_message";
 
 class Statistics {
-  user_feedback: 0;
+  by_current_user: 0;
   total_analysed: 0;
   total_messages: 0;
   total_useless: 0;
@@ -47,9 +47,9 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     // },
     findById:
       (state) =>
-      (id: string | number): null | Analysis => {
-        return state.questions.find((q) => q.id == id);
-      },
+        (id: string | number): null | Analysis => {
+          return state.questions.find((q) => q.id == id);
+        },
     subQuestions: (state) => {
       return (parentId: string | number): Analysis[] => {
         return state.questions.filter((q) => q.question.parent_id == parentId);
@@ -115,21 +115,20 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           single_choice:
             question.type == QuestionType.single_choice
               ? {
-                  value: null,
-                  sub_choice: null,
-                }
+                value: null,
+                sub_choice: null,
+              }
               : null,
         };
       });
 
       // Fetch stats
       ApiRequest.get<Statistics>(
-        `user-feedback/analysis/${survey.id}/statistics?email=${
-          useAccountStore().email
-        }&language=${useAppStore().userFeedback.language}&deployment=${
-          useAppStore().userFeedback.deployment
+        `user-feedback/analysis/${survey.id}/statistics?email=${useAccountStore().email
+        }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
         }`,
       ).then(([stats]) => {
+        console.warn(stats);
         this.$state.statistics = stats;
       });
     },
@@ -270,18 +269,23 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       // TODO: implement saving of analysis
       // const survey = this.$state.survey;
       this.$state.loading = true;
+      const body =  {
+        questions: this.$state.questions,
+        submit_time: new Date(),
+        ...extra,
+        is_useless: extra.is_useless || false,
+        analyst_email: useAccountStore().email,
+        transaction: extra.transcription,
+      };
       return ApiRequest.post<Analysis>(
         `user-feedback/analysis/${this.$state.survey.id}`,
-        {
-          questions: this.$state.questions,
-          submit_time: new Date(),
-          ...extra,
-          is_useless: extra.is_useless || false,
-          analyst_email: useAccountStore().email,
-          transaction: extra.transcription,
-        },
+       body,
       )
         .then(([resp]) => {
+          this.$state.statistics.total_analysed += 1;
+          this.$state.statistics.by_current_user += body.is_useless ? 0 : 1;
+          this.$state.statistics.total_useless += body.is_useless ? 1 : 0;
+
           // Reset all responses
           this.resetResponses();
           return resp;
@@ -290,9 +294,8 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     },
     async fetchAnalysisReport(messageId?: string) {
       this.loading = true;
-      let path = `user-feedback/reports/${this.$state.survey.id}?language=${
-        useAppStore().userFeedback.language
-      }&deployment=${useAppStore().userFeedback.deployment}`;
+      let path = `user-feedback/reports/${this.$state.survey.id}?language=${useAppStore().userFeedback.language
+        }&deployment=${useAppStore().userFeedback.deployment}`;
 
       if (messageId != null) {
         path += `&message_id=${messageId}`;
@@ -312,15 +315,29 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         });
     },
     async fetchSubmittedMessages() {
-      if(this.$state.survey?.id == null) {
+      if (this.$state.survey?.id == null) {
         return [];
       }
 
       this.loading = true;
       return ApiRequest.get<UserFeedbackMessage>(
-        `user-feedback/analysis/${this.$state.survey.id}/submissions?language=${
-          useAppStore().userFeedback.language
+        `user-feedback/analysis/${this.$state.survey.id}/submissions?language=${useAppStore().userFeedback.language
         }&deployment=${useAppStore().userFeedback.deployment}`,
+      )
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
+    },
+    async deleteSubmission(message_id: string) {
+      this.loading = true;
+      return ApiRequest.delete<UserFeedbackMessage>(
+        `user-feedback/analysis/${this.$state.survey.id}/submissions/${message_id}`,
       )
         .finally(() => (this.$state.loading = false))
         .catch((err) => {

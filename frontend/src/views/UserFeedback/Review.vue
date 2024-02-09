@@ -13,6 +13,7 @@ import {
   Table,
   Alert,
   Popconfirm,
+  Spin,
 } from "ant-design-vue";
 import DeploymentsLanguageDropdown from "./components/DeploymentsLanguageDropdown.vue";
 import { UserFeedbackMessage } from "@/models/uf_message";
@@ -26,12 +27,12 @@ const router = useRouter();
 
 const columns = [
   {
-    title: "Submission Time",
-    key: "submissionTime",
+    title: "ID",
+    key: "uuid",
   },
   {
-    title: "Filename",
-    key: "uuid",
+    title: "Message Title",
+    key: "title",
   },
   {
     title: "Feedback",
@@ -56,7 +57,6 @@ const columns = [
 
 const open = ref(false),
   selectedMessage = ref<UserFeedbackMessage>(null);
-
 
 const allResponses = ref(true),
   submissionsList = ref<UserFeedbackMessage[]>([]),
@@ -90,10 +90,21 @@ async function onMessageSelected(message: UserFeedbackMessage) {
     });
 }
 
+async function deleteAnalysis() {
+  await feedbackStore.deleteSubmission(selectedMessage.value.message_uuid).then(() => {
+    open.value = false;
+    analysis.value = null;
+
+    submissionsList.value = submissionsList.value.filter(
+      (msg) => msg.message_uuid !== selectedMessage.value.message_uuid
+    );
+    selectedMessage.value = null;
+  });
+}
+
 onMounted(() => {
   getSubmissionsList();
 });
-
 </script>
 
 <template>
@@ -122,12 +133,8 @@ onMounted(() => {
     :loading="feedbackStore.loading"
   >
     <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'submissionTime'">
-        {{ record.submissionTime }}
-      </template>
-
-      <template v-if="column.key === 'submissionTime'">
-        {{ record.submissionTime }}
+      <template v-if="column.key === 'title'">
+        {{ record.content_metadata?.title }}
       </template>
 
       <template v-if="column.key === 'uuid'">
@@ -159,31 +166,35 @@ onMounted(() => {
   </Table>
 
   <Drawer v-model:open="open" title="Review Feedback" width="900px">
-    <template v-if="selectedMessage.url != '' || selectedMessage.url != null">
-      <AudioPlayer :message="selectedMessage" :mini="true" />
-      <Divider />
-    </template>
-
-    <Empty v-if="analysis == null" description="No analysis available" />
-
-    <Descriptions
-      v-else
-      layout="vertical"
-      bordered
-      :column="1"
-      :label-style="{ fontWeight: 'normal' }"
-    >
-      <DescriptionsItem v-for="(value, key) of analysis" :label="key">
-        {{ value || "N/A" }}</DescriptionsItem
+    <Spin :spinning="feedbackStore.loading">
+      <template
+        v-if="(selectedMessage?.url != '' || selectedMessage?.url != null) && open"
       >
-    </Descriptions>
+        <AudioPlayer :message="selectedMessage" :mini="true" />
+        <Divider />
+      </template>
+
+      <Empty v-if="analysis == null" description="No analysis available" />
+
+      <Descriptions
+        v-else
+        layout="vertical"
+        bordered
+        :column="1"
+        :label-style="{ fontWeight: 'normal' }"
+      >
+        <DescriptionsItem v-for="(value, key) of analysis" :label="key">
+          {{ value || "N/A" }}</DescriptionsItem
+        >
+      </Descriptions>
+    </Spin>
 
     <template #footer>
       <Popconfirm
         title="Are you sure you want to delete this analysis? The message will be available for analysis again."
         okText="Yes"
         cancelText="No"
-        @confirm="open = false"
+        @confirm="deleteAnalysis()"
       >
         <Button :danger="true" block>Delete Analysis</Button>
       </Popconfirm>

@@ -51,6 +51,13 @@ const current_message_uuid = ref(""),
   selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
 
 function updateUrl(skipMessage: boolean = false) {
+  if (store.userFeedback?.deployment == null || store.userFeedback?.language == null) {
+    notification.error({
+      message: `Error`,
+      description: "Please select a deployment and language!",
+    });
+  }
+
   feedbackStore.loading = true;
   transcription.value = null;
 
@@ -59,7 +66,7 @@ function updateUrl(skipMessage: boolean = false) {
       store.userFeedback.deployment
     }&language=${store.userFeedback.language}&message_id=${
       skipMessage ? null : current_message_uuid.value || null
-    }&skipped_messages=${feedbackStore.skipped_messages.join(',')}`
+    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}`
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
@@ -175,12 +182,7 @@ watch(nextUUID, (newUUID) => {
 });
 
 onMounted(() => {
-  const message_uuid = router.currentRoute.value.query.message_uuid as string;
-
-  if (message_uuid != null) {
-    current_message_uuid.value = message_uuid;
-    updateUrl();
-  }
+  updateUrl();
 });
 </script>
 
