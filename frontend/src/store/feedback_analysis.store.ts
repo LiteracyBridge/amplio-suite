@@ -268,7 +268,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       // TODO: implement saving of analysis
       // const survey = this.$state.survey;
       this.$state.loading = true;
-      const body =  {
+      const body = {
         questions: this.$state.questions,
         submit_time: new Date(),
         ...extra,
@@ -278,7 +278,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
       };
       return ApiRequest.post<Analysis>(
         `user-feedback/analysis/${this.$state.survey.id}`,
-       body,
+        body,
       )
         .then(([resp]) => {
           this.$state.statistics.total_analysed += 1;
@@ -354,6 +354,28 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         `user-feedback/messages/${useAppStore().programCode}/samples?language=${useAppStore().userFeedback.language
         }&deployment=${useAppStore().userFeedback.deployment}`,
       )
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
+    },
+    async transcribeMessage(form: { message_id: string, transcription: string }) {
+      this.loading = true;
+      return ApiRequest.post<UserFeedbackMessage>(
+        `user-feedback/messages/${useAppStore().programCode}/transcribe`, form
+      )
+        .then(([resp]) => {
+          notification.success({
+            message: "Success",
+            description: "Message transcription saved successfully!",
+          })
+          return resp;
+        })
         .finally(() => (this.$state.loading = false))
         .catch((err) => {
           notification.error({
