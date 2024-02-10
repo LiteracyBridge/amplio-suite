@@ -68,10 +68,6 @@ const deploymentChanged = ref("");
         </span>
       </template>
     </Alert>
-
-    <template v-if="!feedbackStore.loading && activeTab == 'analyse'">
-      <Stats class="my-2" />
-    </template>
   </PageHeader>
 
   <Tabs v-model:activeKey="activeTab" centered size="large">

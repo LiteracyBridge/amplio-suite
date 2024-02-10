@@ -17,6 +17,8 @@ import {
   notification,
   PageHeader,
   Alert,
+  Row,
+  Col,
   Spin,
 } from "ant-design-vue";
 import { computed, h, onMounted, ref, watch } from "vue";
@@ -28,6 +30,7 @@ import { QuestionChoice, QuestionType } from "@/models/question";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { UserFeedbackMessage } from "@/models/uf_message";
+import Stats from "./Stats.vue";
 
 const props = defineProps<{
   deploymentChanged: string;
@@ -181,7 +184,7 @@ watch(nextUUID, (newUUID) => {
 watch(
   props,
   (newProps, _oldProps) => {
-    console.log(newProps)
+    console.log(newProps);
     updateUrl(true);
   },
   { deep: true }
@@ -215,7 +218,9 @@ onMounted(() => {
       </Empty>
 
       <div v-else>
-        <div class="flex justify-center" v-if="message.url != '' || message.url != null">
+        <div v-if="message.url != '' || message.url != null">
+          <Stats class="my-2" />
+
           <AudioPlayer
             :key="audioKey"
             @srcError="updateUrl"
