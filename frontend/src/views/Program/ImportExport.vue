@@ -173,6 +173,9 @@ import { mapActions } from "pinia";
 import VButton from "@/components/VButton.vue";
 import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
 import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
+import {useUIStore} from "@/store/ui";
+import { useProgramSpecStore } from "@/store/programspec";
+import { notification } from "ant-design-vue";
 
 export default {
   props: ["programId"],
@@ -203,8 +206,8 @@ export default {
   }),
 
   methods: {
-    ...mapActions("ui", ["setModal", "closeModal", "setNotification"]),
-    ...mapActions("programspec", ["getExportLink", "uploadSpec", "approveSpec"]),
+    ...mapActions(useUIStore, ["setModal", "closeModal", "setNotification"]),
+    ...mapActions(useProgramSpecStore, ["getExportLink", "uploadSpec", "approveSpec"]),
 
     /**
      * Export the published program spec for the current program. (The "alt" key can be used to enable an option
@@ -213,6 +216,11 @@ export default {
      */
     async onExportProgramSpec() {
       // Get the link to the downloadable object.
+      notification.info({
+        message: `Exporting ${
+          this.exportUnpublished ? "unpublished " : ""
+        } Program Specification for ${this.programId}`,
+      })
       const downloadLink = await this.getExportLink({
         programId: this.programId,
         artifact: this.exportUnpublished ? "unpublished" : "published",
