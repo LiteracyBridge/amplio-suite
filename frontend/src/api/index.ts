@@ -6,7 +6,6 @@ export class ApiRequest {
   static async get<T>(path: string): Promise<T[] | null> {
     return axios
       .get(`${API_URL}/${path}`, {
-        withCredentials: true,
         headers: {
           Authorization: `Bearer ${useAccountStore().user.token}`,
         },
@@ -22,7 +21,6 @@ export class ApiRequest {
         headers: {
           Authorization: `Bearer ${useAccountStore().user.token}`,
         },
-        withCredentials: true,
       })
       .then((response) => {
         return response.data.data as T[];
