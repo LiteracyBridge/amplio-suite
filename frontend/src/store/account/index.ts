@@ -111,7 +111,11 @@ export const useAccountStore = defineStore("account", {
         return action.some(p => this.can(p));
       }
 
-      return this.user.permissions[action] === true;
+      try {
+        return this.$state.user?.permissions[action] === true;
+      } catch (error) {
+        return false;
+      }
     },
 
     //

@@ -8,27 +8,27 @@ export class Role {
 // TODO: update permissions
 export enum Permission {
   // ACM/TB Loader
-  manage_deployment = "manage-deployment",
-  manage_playlist = "manage-playlist",
-  manage_prompt = "manage-prompt",
-  manage_content = "manage-content",
-  manage_acm_checkout = "manage-acm-checkout",
+  manage_deployment = "manage_deployment",
+  manage_playlist = "manage_playlist",
+  manage_prompt = "manage_prompt",
+  manage_content = "manage_content",
+  manage_acm_checkout = "manage_acm_checkout",
 
   // Analytics
-  view_tb_analytics = "view-tb-analytics",
-  view_deployment_status = "view-deployment-status",
+  view_tb_analytics = "view_tb_analytics",
+  view_deployment_status = "view_deployment_status",
 
   // Programs
-  manage_user = "manage-user",
-  manage_program = "manage-program",
-  manage_specification = "manage-specification",
+  manage_user = "manage_user",
+  manage_program = "manage_program",
+  manage_specification = "manage_specification",
 
   // Staff
-  manage_staff = "manage-staff",
-  manage_role = "manage-role",
+  manage_staff = "manage_staff",
+  manage_role = "manage_role",
 
   // User feedback
-  manage_survey = "manage-survey",
-  analyse_survey = "analyse-survey",
-  review_analysis = "review-analysis",
+  manage_survey = "manage_survey",
+  analyse_survey = "analyse_survey",
+  review_analysis = "review_analysis",
 }
