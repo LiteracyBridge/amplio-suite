@@ -106,23 +106,9 @@ export const useAccountStore = defineStore("account", {
      * @param programId The program ID to check permissions for
      * @param permission The permission to check
      */
-    can(programId: string | "*", permission: Permission): boolean {
-      let hasPermission = false;
-
-      let actions = this.user.permissions[programId];
-      if (this.user.permissions[programId] != null) {
-        hasPermission = actions[permission] === true;
-      }
-
-      if (hasPermission) {
-        return true;
-      }
-
-      actions = this.user.permissions["*"];
-      if (actions != null) {
-        return actions[permission] === true;
-      }
-      return false;
+    can(permission: Permission): boolean {
+      const action = this.user.permissions[permission];
+      return action === true;
     },
 
     //

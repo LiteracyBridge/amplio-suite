@@ -15,11 +15,6 @@ export class UserRole {
   user_id: number;
   role_id: number;
 
-  /**
-   * The program_id of the role, If not set, then the role is a system wide.
-   */
-  program_id?: number;
-
   role: Role;
   // user: User; -- circular dependency
 }
@@ -44,7 +39,7 @@ export class User {
    * "*" indicates that the user has system wide permission to perform the action.
    */
   permissions: {
-    [programId: string | "*"]: { [action: string]: boolean };
+    [action: string]: boolean
   } = {};
 
   static fromJSON(json: any): User {
@@ -53,15 +48,12 @@ export class User {
 
     // Parse roles into a map of permissions that can be used to check permissions in the UI
     const permissions: {
-      [programId: string]: { [action: string]: boolean };
+      [action: string]: boolean
     } = {};
     for (const role of user.roles) {
       for (const module in role.role.permissions) {
-        const key = role.program_id || "*";
-        permissions[key] = permissions[key] || {};
-
         for (const action of role.role.permissions[module]) {
-          permissions[key][action] = true;
+          permissions[action] = true;
         }
       }
     }
