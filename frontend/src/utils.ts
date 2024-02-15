@@ -19,7 +19,7 @@ export function toSentenceCase(str: string, clean: boolean = false) {
 export function toTitleCase(str: string) {
   if (str == null || str == "") return str;
 
-  return str
+  return str.replace(new RegExp('_+', 'g'), ' ')
     .split(" ")
     .map((word) => toSentenceCase(word))
     .join(" ");

@@ -4,7 +4,7 @@ import { User } from "@/models/user";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
-import { notification } from "ant-design-vue";
+import { message, notification } from "ant-design-vue";
 import { Program } from "@/models/program";
 import { useProgramsStore } from "./programs";
 
@@ -16,8 +16,16 @@ export const useRolesStore = defineStore("roles-store", {
   }),
   actions: {
     // API Requests
-    create(form: Role) {
-      return ApiRequest.post<Role>("users/roles", form);
+    create(form: Partial<Role>) {
+      this.$state.loading = true;
+      return ApiRequest.post<Role>("users/roles", form)
+        .then((roles) => {
+          this.$state.roles = roles;
+          message.success({
+            content: "Role created successfully",
+          });
+        })
+        .finally(() => (this.$state.loading = false));
     },
     fetchRoles() {
       return ApiRequest.get<Role>("users/roles");
@@ -61,9 +69,8 @@ export const useRolesStore = defineStore("roles-store", {
           }
 
           notification.success({
-            message: `${
-              form.program_id ? "Program added" : "Role assigned"
-            } successfully`,
+            message: `${form.program_id ? "Program added" : "Role assigned"
+              } successfully`,
           });
         })
         .catch((err) => {

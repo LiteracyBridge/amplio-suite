@@ -10,8 +10,7 @@ import {
   Modal,
   Tabs,
   TabPane,
-  Row,
-  Col,
+  Empty,
   Table,
   Tag,
   SelectOption,
@@ -127,6 +126,8 @@ const deleteRole = (role_id: number) => {
   </PageHeader>
 
   <Spin :spinning="loading">
+  <Empty v-if="store.roles.length === 0" description="No roles found" />
+
     <Tabs
       v-model:activeKey="roleTabKey"
       tab-position="left"

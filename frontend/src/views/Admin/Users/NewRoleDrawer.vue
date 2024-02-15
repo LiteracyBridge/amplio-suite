@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import {
   Button,
-  Modal,
   Drawer,
   Form,
   FormItem,
@@ -10,8 +9,8 @@ import {
   notification,
   Divider,
   Spin,
+  message,
 } from "ant-design-vue";
-import { useRequest } from "vue-request";
 import { onMounted, reactive, ref } from "vue";
 import { toSentenceCase, toTitleCase } from "@/utils";
 import { useRolesStore } from "@/store/roles.store";
@@ -35,25 +34,24 @@ const formState = reactive<{
   permissions: {},
 });
 
-// Create role request
-const { loading: isSaving, run } = useRequest(store.create, {
-  defaultParams: [formState],
-  manual: true,
-  onSuccess: (data) => {
-    store.roles = data;
-  },
-});
-
 function createRole() {
-  run(formState);
-  if (!isSaving.value) {
-    store.loading = false;
-    notification.open({
-      message: "Role Created",
-      description: "Role has been created successfully",
+  if (formState.name.trim() == "") {
+    message.error({
+      content: "Role name is required to create a new role",
     });
-    emit("closed", true);
+    return;
   }
+
+  if (Object.keys(formState.permissions).length == 0) {
+    message.error({
+      content: "Please select at least one permission to create a new role",
+    });
+    return;
+  }
+
+  store.create(formState).then(() => {
+    emit("closed", true);
+  });
 }
 
 onMounted(async () => {
@@ -85,12 +83,12 @@ function getModuleName(module: string) {
     :mask-closable="false"
     :confirm-loading="store.loading"
   >
-    <template #extra>
-      <Button @click="createRole()">Save</Button>
+    <template #footer>
+      <Button block type="primary" @click="createRole()">Create Role</Button>
     </template>
 
-    <Form :model="formState" layout="vertical">
-      <Spin :spinning="store.loading || isSaving">
+    <Spin :spinning="store.loading">
+      <Form :model="formState" layout="vertical">
         <FormItem label="Role Name" required>
           <Input v-model:value="formState.name" />
         </FormItem>
@@ -115,7 +113,7 @@ function getModuleName(module: string) {
             />
           </div>
         </template>
-      </Spin>
-    </Form>
+      </Form>
+    </Spin>
   </Drawer>
 </template>
