@@ -11,12 +11,16 @@ import {
   DotChartOutlined,
   MonitorOutlined,
   BuildOutlined,
-EditOutlined,
+  EditOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
+import { useAccountStore } from "@/store/account";
+import { Permission } from "@/models/role";
 
-const store = useAppStore();
+const store = useAppStore(),
+  account = useAccountStore();
+
 const config = ref({
   activeMenu: null,
 });
@@ -40,7 +44,7 @@ const config = ref({
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <!-- FIXME: Add permission check here -->
 
-      <MenuItem key="program-spec">
+      <MenuItem key="program-spec" v-if="account.can(Permission.manage_specification)">
         <template #icon>
           <InsertRowRightOutlined />
         </template>
@@ -50,7 +54,7 @@ const config = ref({
         </router-link>
       </MenuItem>
 
-      <MenuItem key="monitoring">
+      <MenuItem key="monitoring" v-if="account.can(Permission.view_deployment_status)">
         <template #icon>
           <MonitorOutlined />
         </template>
@@ -78,12 +82,23 @@ const config = ref({
         </MenuItem>
       </Menu.SubMenu> -->
 
-       <Menu.SubMenu label="User Feedback" title="User Feedback" key="user-feedback">
+      <Menu.SubMenu
+        label="User Feedback"
+        title="User Feedback"
+        key="user-feedback"
+        v-if="
+          account.can([
+            Permission.manage_survey,
+            Permission.analyse_survey,
+            Permission.review_analysis,
+          ])
+        "
+      >
         <template #icon>
           <SoundOutlined />
         </template>
 
-        <MenuItem key="analyze">
+        <MenuItem key="analyze" v-if="account.can(Permission.analyse_survey)">
           <template #icon> <DotChartOutlined /> </template>
 
           <router-link to="/user-feedback/analyze">
@@ -91,7 +106,7 @@ const config = ref({
           </router-link>
         </MenuItem>
 
-        <MenuItem key="review">
+        <MenuItem key="review" v-if="account.can(Permission.review_analysis)">
           <template #icon> <EditOutlined /> </template>
 
           <router-link to="/user-feedback/review">
@@ -99,7 +114,7 @@ const config = ref({
           </router-link>
         </MenuItem>
 
-        <MenuItem key="survey-builder">
+        <MenuItem key="survey-builder" v-if="account.can(Permission.manage_survey)">
           <template #icon> <BuildOutlined /> </template>
           <router-link to="/user-feedback/surveys">
             <span role="link"> Survey Builder </span>
@@ -107,17 +122,22 @@ const config = ref({
         </MenuItem>
       </Menu.SubMenu>
 
-      <Menu.SubMenu label="Admin" title="Admin" key="admin">
+      <Menu.SubMenu
+        label="Admin"
+        title="Admin"
+        key="admin"
+        v-if="account.can([Permission.manage_staff, Permission.manage_program])"
+      >
         <template #icon><SettingOutlined /></template>
 
         <MenuItem key="manage-users">
           <template #icon><UserOutlined /></template>
 
-          <router-link to="/admin/users">
+          <router-link to="/admin/users" v-if="account.can(Permission.manage_staff)">
             <span role="link"> Manage Users </span>
           </router-link>
         </MenuItem>
-        <MenuItem key="manage-programs">
+        <MenuItem key="manage-programs" v-if="account.can(Permission.manage_program)">
           <template #icon> <DatabaseOutlined /> </template>
 
           <router-link to="/admin/programs">
@@ -128,11 +148,6 @@ const config = ref({
 
       <Divider></Divider>
 
-      <!-- <MenuItem key="change-programs">
-        <router-link to="/admin/change-programs">
-          <span role="link"> Programs </span>
-        </router-link>
-      </MenuItem> -->
     </Menu>
   </LayoutSider>
 </template>

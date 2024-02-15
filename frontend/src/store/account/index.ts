@@ -104,11 +104,14 @@ export const useAccountStore = defineStore("account", {
      * If not, it then checks if the user has a system wide permission ('*').
      *
      * @param programId The program ID to check permissions for
-     * @param permission The permission to check
+     * @param action The permission to check
      */
-    can(permission: Permission): boolean {
-      const action = this.user.permissions[permission];
-      return action === true;
+    can(action: Permission | Permission[]): boolean {
+      if (Array.isArray(action)) {
+        return action.some(p => this.can(p));
+      }
+
+      return this.user.permissions[action] === true;
     },
 
     //
