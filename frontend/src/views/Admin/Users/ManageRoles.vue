@@ -160,7 +160,7 @@ const deleteRole = (role_id: number) => {
                   :danger="true"
                   class="mr-5 w-full"
                   @click="deleteRole(role.id)"
-                  v-if="useAccountStore().can('*', Permission.DeleteRole)"
+                  v-if="useAccountStore().can('*', Permission.manage_role)"
                   >Delete Role</Button
                 >
               </template>

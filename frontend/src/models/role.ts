@@ -8,30 +8,27 @@ export class Role {
 // TODO: update permissions
 export enum Permission {
   // ACM/TB Loader
-  ManageDeployment = "manage-deployment",
-  ManagePlaylist = "manage-playlist",
-  ManagePrompt = "manage-prompt",
-  DeployContent = "deploy-content",
-  ManageContent = "manage-content",
-  ManageAcmCheckouts = "manage-acm-checkouts",
-  ViewTbAnalytics = "view-tb-analytics",
-  ViewUsageQueries = "view-usage-queries",
-  ViewCollectionStats = "view-collection-stats",
-  ViewDeploymentStatus = "view-deployment-status",
+  manage_deployment = "manage-deployment",
+  manage_playlist = "manage-playlist",
+  manage_prompt = "manage-prompt",
+  manage_content = "manage-content",
+  manage_acm_checkout = "manage-acm-checkout",
+
+  // Analytics
+  view_tb_analytics = "view-tb-analytics",
+  view_deployment_status = "view-deployment-status",
 
   // Programs
-  CreateProgram = "create-program",
-  UpdateProgram = "update-program",
-  DeleteProgram = "delete-program",
-  UpdateSpec = "update-spec",
-  PublishSpec = "publish-spec",
+  manage_user = "manage-user",
+  manage_program = "manage-program",
+  manage_specification = "manage-specification",
 
-  // Roles
-  CreateStaff = "create-staff",
-  UpdateStaff = "update-staff",
-  DeleteStaff = "delete-staff",
-  AssignRole = "assign-role",
-  CreateRole = "create-role",
-  DeleteRole = "delete-role",
-  UpdateRole = "update-role",
+  // Staff
+  manage_staff = "manage-staff",
+  manage_role = "manage-role",
+
+  // User feedback
+  manage_survey = "manage-survey",
+  analyse_survey = "analyse-survey",
+  review_analysis = "review-analysis",
 }
