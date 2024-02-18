@@ -1,5 +1,5 @@
 <template>
-  <Table :columns="columns" :data-source="tableData" :loading="loading">
+  <Table :columns="columns" :data-source="tableData" :loading="loading"> <!--@change="handleTableChange"-->
     <template #title>
       <div class="flex justify-between">
       <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
@@ -39,6 +39,10 @@ import { useProgramsStore } from "@/store/programs";
 import { Table, TypographyTitle, Button } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+import { computed } from "vue";
+import type { TableProps } from "ant-design-vue";
+import { usePagination } from 'vue-request';
+import axios from 'axios';
 
 const store = useTalkingBookAnalyticStore();
 
@@ -50,10 +54,14 @@ const columns = [
   {
     title: "Earliest",
     key: "earliest",
+    sorter: true,
+    width: '20%',
   },
   {
     title: "Latest",
     key: "latest",
+    sorter: true,
+    width: '20%',
   },
   {
     title: "# TBs Instaled",
