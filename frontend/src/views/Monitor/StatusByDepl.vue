@@ -1,5 +1,5 @@
 <template>
-  <Table :columns="columns" :data-source="tableData" :loading="loading"> <!--@change="handleTableChange"-->
+  <Table :columns="columns" :data-source="tableData" :loading="loading" @change="onChange">
     <template #title>
       <div class="flex justify-between">
       <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
@@ -66,12 +66,21 @@ const columns = [
   {
     title: "# TBs Instaled",
     key: "deployed",
+    dataIndex: "deployed",
+    sorter: {
+      compare: (a: any, b: any) => a.deployed - b.deployed,
+      multiple: 3,
+    }
   },
   {
     title: "# TBs reporting data",
     key: "collected",
   },
 ];
+
+function onChange(pagination: any, filters: any, sorter: any, extra: any) {
+  console.log('params', pagination, filters, sorter, extra);
+}
 
 const { loading, data: tableData, run: fetchData } = useRequest(store.getTbStatusBy, {
   defaultParams: ["ByDepl"],
