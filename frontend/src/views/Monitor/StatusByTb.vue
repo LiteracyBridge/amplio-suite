@@ -40,7 +40,7 @@
     <template #customFilterIcon="{ filtered }">
       <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
     </template>
-    <template #bodyCell="{ column, record }"> <!--   -->
+    <template #bodyCell="{ column, record }">
       <span v-if="state.searchText && state.searchedColumn === record.dataIndex">
         <template
           v-for="(fragment, i) in column
@@ -93,7 +93,6 @@ import { Table, TypographyTitle, Button, Input } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 import { SearchOutlined } from "@ant-design/icons-vue";
-import { table } from "console";
 
 const store = useTalkingBookAnalyticStore();
 const state = reactive({
@@ -103,6 +102,7 @@ const state = reactive({
 const searchInput = ref();
 
 const tableData = ref([]);
+type columns = any
 const columns = [
   { 
     title: "Recipient",
@@ -123,12 +123,12 @@ const columns = [
     title: "Current Content Deployment",
     key: "deployment_num",
     dataIndex: "deployment_num",
-    defaultSortOrder: "descend",
-    sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
-    //sorter: {
-    //  compare: (a: any, b: any) => a.deployment_num - b.deployment_num,
-    //  multiple: 3,
-    //},
+    //defaultSortOrder: "descend",
+    //sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
+    sorter: {
+      compare: (a: any, b: any) => a.deployment_num - b.deployment_num,
+      multiple: 3,
+    },
   },
   { title: "Date of Last Content Update", key: "deployment_time", dataIndex: "deployment_time", },
   { title: "User", key: "deployment_user", dataIndex: "deployment_user" },
