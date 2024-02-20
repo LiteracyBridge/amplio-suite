@@ -6,7 +6,7 @@
       },
     }"
   >
-    <component :is="layout" id="app" class="bg-gray-100 font-sans">
+    <component :is="layout">
       <router-view />
     </component>
   </ConfigProvider>

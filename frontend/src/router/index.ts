@@ -7,6 +7,7 @@ import Home from "@/views/Home.vue";
 import SignIn from "@/views/SignIn.vue";
 import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
+import { notification } from "ant-design-vue";
 
 const routes: any = [
   {
@@ -22,13 +23,9 @@ const routes: any = [
     },
   },
   {
-    path: "/register",
+    path: "/dashboard",
     component: () =>
-      import(/* webpackChunkName: "sign-up" */ "../views/SignUp.vue"),
-    beforeEnter: checkAuth,
-    meta: {
-      layout: "login",
-    },
+      import(/* webpackChunkName: "sign-up" */ "../views/Dashboard.vue"),
   },
   {
     path: "/password-reset",
@@ -342,29 +339,30 @@ function checkAuth(to: any, from: any, next: any) {
   return useAccountStore()
     .requireAuth()
     .then(() => {
-      return next({ path: "/programs" });
+      return next({ path: "/dashboard" });
     })
     .catch(() => {
       return next();
     });
 }
 
+
 async function getUser() {
   return Auth.currentAuthenticatedUser()
     .then(async (data) => {
       if (data && data.signInUserSession) {
-        await useAccountStore().fetchAccountInfo(
+        return await useAccountStore().fetchAccountInfo(
           data.signInUserSession!.idToken.jwtToken,
+        ).then((_resp) =>
+          router.push({ path: "/dashboard" })
         );
-
-        return { authorized: true };
       }
 
-      return { authorized: false };
+      return useAccountStore().logout();
     })
     .catch((err) => {
-      console.error(err);
-      return { authorized: false };
+      notification.error({ message: "Login failed", description: err.message });
+      return useAccountStore().logout();
     });
 }
 
@@ -373,40 +371,19 @@ Hub.listen("auth", async (data) => {
 
   switch (data.payload.event) {
     case "signIn":
-      user = await getUser();
-      if (user?.authorized == true) {
-        router.push({ path: "/programs" });
-      } else {
-        router.push({ path: "/login" });
-      }
-      // router.push({ path: "/" });
-      break;
     case "signUp":
-      console.log(data);
-      // TODO: add a/c to sbc
-      user = await getUser();
-      console.log(user);
-      if (user?.authorized == true) {
-        router.push({ path: "/programs" });
-      } else {
-        router.push({ path: "/login" });
-      }
+    case "configured":
+      await getUser();
       break;
     case "signOut":
-      router.push({ path: "/login" });
-      window.location.reload();
+      if (router.currentRoute.value.path === "/login") {
+        window.location.reload();
+      } else {
+        router.push({ path: "/login" });
+      }
       break;
     case "signIn_failure":
       console.log("user sign in failed");
-      break;
-    case "configured":
-      user = await getUser();
-      console.log(user);
-      if (user?.authorized == true) {
-        router.push({ path: "/programs" });
-      } else {
-        router.push({ path: "/login" });
-      }
       break;
   }
 });

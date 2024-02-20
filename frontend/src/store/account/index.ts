@@ -47,7 +47,7 @@ export const useAccountStore = defineStore("account", {
       this.signUp.email = "";
     },
     async logout() {
-      Auth.signOut().then((_resp) => {
+      return Auth.signOut().then((_resp) => {
         this.user = new User()
 
         // Clear local storage items
@@ -59,6 +59,8 @@ export const useAccountStore = defineStore("account", {
         for (const key in Object.keys(RequestCacheKeys)) {
           clearCache(key);
         }
+
+        return true
       });
     },
     async requireAuth() {
