@@ -39,24 +39,6 @@ const routes: any = [
     },
   },
   {
-    path: "/programs",
-    meta: {
-      layout: "default",
-    },
-    component: () =>
-      import(
-        /* webpackChunkName: "programs-index" */ "../views/ProgramsIndex.vue"
-      ),
-    beforeEnter: requireAuth,
-  },
-  {
-    path: "/programs/:programId",
-    props: true,
-    component: Home,
-    name: "home",
-    beforeEnter: requireAuth,
-  },
-  {
     path: "/programs/:programId/roadmap",
     name: "roadmap",
     props: true,
@@ -64,14 +46,7 @@ const routes: any = [
       import(/* webpackChunkName: "roadmap" */ "../views/Roadmap.vue"),
     beforeEnter: requireAuth,
   },
-  {
-    path: "/programs/:programId/tableau",
-    name: "tableau",
-    props: true,
-    component: () =>
-      import(/* webpackChunkName: "tableau" */ "../views/Tableau.vue"),
-    beforeEnter: requireAuth,
-  },
+
   {
     path: "/programs/:programId/wizard",
     redirect: { name: "step-program-name" },
@@ -150,70 +125,6 @@ const routes: any = [
       },
     ],
   },
-
-  {
-    path: "/programs/:programId/settings",
-    name: "programspec.settings",
-    redirect: (to: any) => {
-      // the function receives the target route as the argument
-      // we return a redirect path/location here.
-      return {
-        name: "programspec.index",
-        params: to.params,
-      };
-    },
-  },
-  {
-    path: "/programs/:programId/settings",
-    name: "programspec.index",
-    // redirect: { path: "/programs/:programId/settings/general" },
-    props: true,
-    component: () =>
-      import(/* webpackChunkName: "program" */ "../views/Program/Index.vue"),
-    beforeEnter: requireAuth,
-    children: [
-      {
-        path: "general",
-        props: true,
-        component: () =>
-          import(
-            /* webpackChunkName: "general" */ "../views/Program/General.vue"
-          ),
-      },
-      {
-        path: "content2",
-        props: true,
-        component: () =>
-          import(
-            /* webpackChunkName: "content2" */ "../views/Program/Content2.vue"
-          ),
-      },
-      {
-        path: "recipients",
-        props: true,
-        component: () =>
-          import(
-            /* webpackChunkName: "recipients" */ "../views/Program/Recipients.vue"
-          ),
-      },
-      {
-        path: "importExport",
-        props: true,
-        component: () =>
-          import(
-            /* webpackChunkName: "recipients" */ "../views/Program/ImportExport.vue"
-          ),
-      },
-      {
-        path: "ufImportExport",
-        props: true,
-        component: () =>
-          import(
-            /* webpackChunkName: "recipients" */ "../views/Program/UfImportExport.vue"
-          ),
-      },
-    ],
-  },
   {
     path: "/kb",
     component: () => import("../views/kb.vue"),
@@ -236,6 +147,13 @@ const routes: any = [
         component: () =>
           import("../views/TalkingBookAnalytics/Installation.vue"),
       },
+      // Tableau
+      {
+        path: "tableau",
+        name: "tb_analytics.tableau",
+        component: () =>
+          import(/* webpackChunkName: "tableau" */ "../views/TalkingBookAnalytics/Tableau.vue"),
+      }
     ],
   },
   // User feedback
@@ -367,8 +285,6 @@ async function getUser() {
 }
 
 Hub.listen("auth", async (data) => {
-  let user = null;
-
   switch (data.payload.event) {
     case "signIn":
     case "signUp":

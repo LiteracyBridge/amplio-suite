@@ -26,13 +26,13 @@
 <script>
 import { mapState } from "pinia";
 import { getTableauJwt } from "@/api/tableau.api";
-import { useProgramSpecStore } from "@/store/programspec";
+import {useAppStore} from "@/store/app.store";
 
 export default {
-  props: ["programId"],
   computed: {
-    ...mapState(useProgramSpecStore, {
-      programName: (state) => state.general.name,
+    ...mapState(useAppStore, {
+      programName: (state) => state.programName,
+      programId: (state) => state.programCode,
     }),
     workbook() {
       return `https://10ay.online.tableau.com/t/amplio/views/${this.programId}/Dashboard1?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link`;
@@ -71,5 +71,5 @@ export default {
     viz.token = this.jwt;
     viz.src = this.workbook;
   },
-};
+}
 </script>
