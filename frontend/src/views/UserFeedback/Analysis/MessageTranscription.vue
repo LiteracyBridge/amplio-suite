@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, ref } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
-import { useAppStore } from "@/store/app.store";
-import { Button, Drawer, Divider, Spin, Form, Textarea } from "ant-design-vue";
+import {
+  Button,
+  Drawer,
+  Divider,
+  Spin,
+  Form,
+  Textarea,
+  Popconfirm,
+} from "ant-design-vue";
 import { UserFeedbackMessage } from "@/models/uf_message";
 import AudioPlayer from "./AudioPlayer.vue";
 
@@ -16,11 +23,8 @@ const emit = defineEmits<{
 }>();
 
 const store = useFeedbackAnalysis();
-const form = reactive({ transcription: null });
 
-const allResponses = ref(true),
-  submissionsList = ref<UserFeedbackMessage[]>([]),
-  analysis = ref<Record<string, any>>(null);
+const submissionsList = ref<UserFeedbackMessage[]>([]);
 
 async function save() {
   await store.fetchSubmittedMessages().then((resp) => (submissionsList.value = resp));
@@ -42,6 +46,22 @@ const isValid = computed(() => {
     title="Transcribe Feedback Message"
     width="700px"
   >
+    <template #extra>
+      <Popconfirm
+        title="Are you sure to mark this message as not feedback?"
+        okText="Yes"
+        cancelText="No"
+        @confirm="
+          store.markAsNotFeedback(message.message_uuid).then(() => {
+            message.is_useless = true;
+            emit('update:open', false);
+          })
+        "
+      >
+        <Button :danger="true">Not Feedback</Button>
+      </Popconfirm>
+    </template>
+
     <Spin :spinning="store.loading">
       <template v-if="(message?.url != '' || message?.url != null) && open">
         <AudioPlayer :message="message" :mini="true" />
