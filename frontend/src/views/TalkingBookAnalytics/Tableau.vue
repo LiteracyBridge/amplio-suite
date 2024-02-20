@@ -6,6 +6,7 @@
 
     <div id="tableauHolder" :class="tableauVisibility">
       <tableau-viz id="tableauViz" toolbar="hidden"> </tableau-viz>
+
     </div>
     <div class="py-6 px-4 flex justify-start">
       <h1 class="text-2xl text-blue" :class="messageVisibility">
@@ -27,6 +28,7 @@
 import { mapState } from "pinia";
 import { getTableauJwt } from "@/api/tableau.api";
 import {useAppStore} from "@/store/app.store";
+import {ApiRequest} from "@/api";
 
 export default {
   computed: {
@@ -66,7 +68,10 @@ export default {
   },
   async mounted() {
     this.jwt = null; // hide message while attempting fetch of jwt
-    this.jwt = await getTableauJwt(this.programId);
+    // this.jwt = await getTableauJwt(this.programId);
+    // console.log(this.jwt);
+    this.jwt = (await ApiRequest.get("tableau/jwt"))[0];
+    console.log(this.jwt);
     const viz = document.getElementById("tableauViz");
     viz.token = this.jwt;
     viz.src = this.workbook;
