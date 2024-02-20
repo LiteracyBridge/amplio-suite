@@ -385,6 +385,28 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
 
           throw err;
         });
+    },
+    async markAsNotFeedback(message_id: string) {
+      this.loading = true;
+      return ApiRequest.post<UserFeedbackMessage>(
+        `user-feedback/messages/${useAppStore().programCode}/not-feedback/${message_id}`, {}
+      )
+        .then(([resp]) => {
+          notification.success({
+            message: "Success",
+            description: "Message has been marked as not feedback!",
+          })
+          return resp;
+        })
+        .finally(() => (this.$state.loading = false))
+        .catch((err) => {
+          notification.error({
+            message: "Error",
+            description: err.message,
+          });
+
+          throw err;
+        });
     }
   },
 });
