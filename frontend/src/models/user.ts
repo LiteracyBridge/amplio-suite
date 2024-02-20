@@ -47,17 +47,13 @@ export class User {
     Object.assign(user, json);
 
     // Parse roles into a map of permissions that can be used to check permissions in the UI
-    const permissions: {
-      [action: string]: boolean
-    } = {};
     for (const role of user.roles) {
       for (const module in role.role.permissions) {
         for (const action of role.role.permissions[module]) {
-          permissions[action] = true;
+          user.permissions[action] = true;
         }
       }
     }
-    user.permissions = permissions;
 
     return user;
   }

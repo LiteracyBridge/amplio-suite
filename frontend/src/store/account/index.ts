@@ -38,18 +38,6 @@ export const useAccountStore = defineStore("account", {
       (state.user.first_name || "") + " " + (state.user.last_name || ""),
   },
   actions: {
-    authRequest() {
-      this.status = "loading";
-    },
-    authSuccess() {
-      this.status = "success";
-    },
-    authError() {
-      this.status = "error";
-    },
-    setUser(payload: any) {
-      this.user = payload;
-    },
     setSignUp(email: string) {
       this.signUp.send = true;
       this.signUp.email = email;
@@ -60,7 +48,7 @@ export const useAccountStore = defineStore("account", {
     },
     async logout() {
       Auth.signOut().then((_resp) => {
-        this.setUser({ email: "", name: "", img: "", token: "" });
+        this.user = new User()
 
         // Clear local storage items
         for (const key in Object.keys(LocalStorageKeys)) {

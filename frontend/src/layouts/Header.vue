@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Auth } from "aws-amplify";
-// import { useUserStore } from "@/stores/user";
-// import { useSideNavStore } from "@/stores/side-nav.store";
 import { useRouter } from "vue-router";
 import {
   AppstoreFilled,
@@ -10,35 +7,24 @@ import {
   LogoutOutlined,
   UserOutlined,
   MenuUnfoldOutlined,
-  DownOutlined,
-  AccountBookOutlined,
 } from "@ant-design/icons-vue";
 import {
   Popconfirm,
   Menu,
   Select,
-  DropdownButton,
   LayoutHeader,
   MenuItem,
-  Space,
   Dropdown,
   Button,
-  message,
-  Divider,
-  Tooltip,
   SelectOption,
   Modal,
 } from "ant-design-vue";
 import { useAppStore } from "@/store/app.store";
 import { useAccountStore } from "@/store/account";
-// import { useProjectStore } from "@/stores/projects";
-// import Profile from "@/views/Profile.vue";
-// import FeedbackModal from "@/components/FeedbackModal.vue";
 
 const router = useRouter();
 const userStore = useAccountStore();
 const appStore = useAppStore();
-// const projectStore = useProjectStore();
 
 const profileVisible = ref(false),
   feedbackModalVisible = ref(false);
@@ -139,20 +125,14 @@ function changeProgram(val: number) {
 
           <template #overlay>
             <Menu>
-              <MenuItem key="projects">
-                <RouterLink to="/projects">
-                  <AppstoreOutlined />
-                  <span> Manage Projects </span>
-                </RouterLink>
-              </MenuItem>
 
-              <MenuItem key="profile" @click="profileVisible = true">
+              <!-- <MenuItem key="profile" @click="profileVisible = true">
                 <UserOutlined />
                 <span> My Profile </span>
-              </MenuItem>
+              </MenuItem> -->
 
               <!-- <MenuItem key="logout" @click="signOut"> -->
-              <MenuItem key="logout">
+              <MenuItem key="logout" @click="userStore.logout()">
                 <LogoutOutlined />
                 <span> Logout </span>
               </MenuItem>
