@@ -54,6 +54,7 @@ const isValid = computed(() => {
         @confirm="
           store.markAsNotFeedback(message.message_uuid).then(() => {
             message.is_useless = true;
+            store.statistics.total_useless += 1;
             emit('update:open', false);
           })
         "
