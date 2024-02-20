@@ -6,6 +6,7 @@ export enum RequestCacheKeys {
   org_users = "org_users",
   orgs = "orgs",
   supported_languages = "supported_languages",
+  tableau_jwt = "tableau_jwt",
 }
 
 export enum LocalStorageKeys {
