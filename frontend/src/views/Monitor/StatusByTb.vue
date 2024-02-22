@@ -123,17 +123,33 @@ const columns = [
     title: "Current Content Deployment",
     key: "deployment_num",
     dataIndex: "deployment_num",
-    //defaultSortOrder: "descend",
-    //sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
-    sorter: {
-      compare: (a: any, b: any) => a.deployment_num - b.deployment_num,
-      multiple: 3,
-    },
+    sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
   },
-  { title: "Date of Last Content Update", key: "deployment_time", dataIndex: "deployment_time", },
-  { title: "User", key: "deployment_user", dataIndex: "deployment_user" },
-  { title: "Date of Last Data Collection", key: "collection_time", dataIndex: "collection_time" },
-  { title: "User", key: "collection_user", dataIndex: "collection_user" },
+  { 
+    title: "Date of Last Content Update",
+    key: "deployment_time",
+    dataIndex: "deployment_time",
+    sorter: (a: any, b: any) => new Date(a.deployment_time).valueOf() - new Date(b.deployment_time).valueOf(),
+  },
+  { 
+    title: "User",
+    key: "deployment_user",
+    dataIndex: "deployment_user",
+    //sorter: (a: any, b: any) => a.deployment_user.length - b.deployment_user.length,
+    sorter: (a: any, b: any) => a.deployment_user.localeCompare(b.deployment_user)
+  },
+  { 
+    title: "Date of Last Data Collection",
+    key: "collection_time",
+    dataIndex: "collection_time",
+    sorter: (a: any, b: any) => new Date(a.collection_time).valueOf() - new Date(b.collection_time).valueOf(),
+  },
+  { 
+    title: "User",
+    key: "collection_user",
+    dataIndex: "collection_user",
+    sorter: (a: any, b: any) => a.collection_user.length - b.collection_user.length,
+  },
 ];
 
 const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {

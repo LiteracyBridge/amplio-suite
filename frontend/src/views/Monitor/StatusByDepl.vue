@@ -54,27 +54,30 @@ const columns = [
   {
     title: "Earliest",
     key: "earliest",
-    sorter: true,
     width: '20%',
+    sorter: (a: any, b: any) => new Date(a.earliest).valueOf() - new Date(b.earliest).valueOf(),
   },
   {
     title: "Latest",
     key: "latest",
-    sorter: true,
+    sorter: (a: any, b: any) => new Date(a.latest).valueOf() - new Date(b.latest).valueOf(),
     width: '20%',
   },
   {
-    title: "# TBs Instaled",
+    title: "# TBs Installed",
     key: "deployed",
     dataIndex: "deployed",
-    sorter: {
-      compare: (a: any, b: any) => a.deployed - b.deployed,
-      multiple: 3,
-    }
+    sorter: (a: any, b: any) => a.deployed - b.deployed,
+    //sorter: {
+    //  compare: (a: any, b: any) => a.deployed - b.deployed,
+    //  multiple: 3,
+    //}
   },
   {
     title: "# TBs reporting data",
     key: "collected",
+    dataIndex: "collected",
+    sorter: (a: any, b: any) => a.collected - b.collected,
   },
 ];
 
