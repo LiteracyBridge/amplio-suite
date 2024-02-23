@@ -37,30 +37,30 @@ jobs:
         yarn staging-build
         cd ..
 
-    # - name: Configure AWS Credentials
-    #   uses: aws-actions/configure-aws-credentials@v2
-    #   with:
-    #     aws-access-key-id: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
-    #     aws-secret-access-key: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
-    #     aws-region: us-west-2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
 
-    # - name: Deploy to s3
-    #   run: |
-    #     aws s3 rm s3://sbcimpact.amplio.org --recursive
-    #     aws s3 cp --recursive dist/ s3://suite-test.amplio.org
+    - name: Deploy to s3
+      run: |
+        aws s3 rm s3://sbcimpact.amplio.org --recursive
+        aws s3 cp --recursive dist/ s3://suite-test.amplio.org
 
 
     # - name: Unit Tests
     #   run: |
     #     yarn test:unit
 
-    - name: Deploy to S3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --delete
-      env:
-        AWS_S3_BUCKET: 'suite-test.amplio.org'
-        AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION__AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION__AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-west-2'
-        SOURCE_DIR: 'frontend/dist'
+    # - name: Deploy to S3
+    #   uses: jakejarvis/s3-sync-action@master
+    #   with:
+    #     args: --acl public-read --delete
+    #   env:
+    #     AWS_S3_BUCKET: 'suite-test.amplio.org'
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION__AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION__AWS_SECRET_ACCESS_KEY }}
+    #     AWS_REGION: 'us-west-2'
+    #     SOURCE_DIR: 'frontend/dist'
