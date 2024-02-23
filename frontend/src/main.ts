@@ -89,7 +89,7 @@ app.component("login-layout", Login);
 
 app.use(router);
 
-if (import.meta.env.DEV) {
+if (false) {
   // Change AWS config to use test pool
   console.log("Using local cognito server");
   Amplify.configure({
