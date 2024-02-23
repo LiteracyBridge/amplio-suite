@@ -35,14 +35,9 @@
 
 <script setup lang="ts">
 import { useRequest } from "vue-request";
-import { useProgramsStore } from "@/store/programs";
 import { Table, TypographyTitle, Button } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
-import { computed } from "vue";
-import type { TableProps } from "ant-design-vue";
-import { usePagination } from 'vue-request';
-import axios from 'axios';
 
 const store = useTalkingBookAnalyticStore();
 

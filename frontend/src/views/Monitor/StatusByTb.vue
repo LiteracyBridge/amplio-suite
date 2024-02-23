@@ -1,5 +1,9 @@
 <template>
-  <Table :columns="columns" :data-source="tableData" :loading="loading" @change="onChange">
+  <Table
+    :columns="columns"
+    :data-source="tableData"
+    :loading="loading"
+  >
     <template #title>
       <div class="flex justify-between">
         <TypographyTitle :level="5">
@@ -17,24 +21,35 @@
       </template>
     </template>
     <template
-      #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
+      #customFilterDropdown="{
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        column,
+      }"
+    >
       <div style="padding: 8px">
         <Input
           ref="searchInput"
           :placeholder="`Search ${column.dataIndex}`"
           :value="selectedKeys[0]"
-          style="width: 188px; margin-bottom: 8px; display: block;"
+          style="width: 188px; margin-bottom: 8px; display: block"
           @change="(e: any) => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)" />
+          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+        />
         <Button
           type="primary"
           size="small"
           style="width: 90px; margin-right: 8px"
-          @click="handleSearch(selectedKeys, confirm, column.dataIndex)">
+          @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+        >
           <template #icon><SearchOutlined /></template>
           Search
-      </Button>
-        <Button size="small" style="width: 90px" @click="handleReset(clearFilters)">Reset</Button>
+        </Button>
+        <Button size="small" style="width: 90px" @click="handleReset(clearFilters)"
+          >Reset</Button
+        >
       </div>
     </template>
     <template #customFilterIcon="{ filtered }">
@@ -45,11 +60,13 @@
         <template
           v-for="(fragment, i) in column
             .toString()
-            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))">
+            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+        >
           <mark
             v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
             :key="i"
-            class="highlight">
+            class="highlight"
+          >
             {{ fragment }}
           </mark>
           <template v-else>{{ fragment }}</template>
@@ -96,20 +113,20 @@ import { SearchOutlined } from "@ant-design/icons-vue";
 
 const store = useTalkingBookAnalyticStore();
 const state = reactive({
-  searchText: '',
-  searchedColumn: '',
+  searchText: "",
+  searchedColumn: "",
 });
 const searchInput = ref();
 
 const tableData = ref([]);
-type columns = any
 const columns = [
-  { 
+  {
     title: "Recipient",
     key: "recipient",
     dataIndex: "recipient",
     customFilterDropdown: true,
-    onFilter: (value: any, record: any) => record.recipient.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value: any, record: any) =>
+      record.recipient.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => {
@@ -119,36 +136,38 @@ const columns = [
     },
   },
   { title: "TB ID", key: "talkingbookid", dataIndex: "talkingbookid" },
-  { 
+  {
     title: "Current Content Deployment",
     key: "deployment_num",
     dataIndex: "deployment_num",
     sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
   },
-  { 
+  {
     title: "Date of Last Content Update",
     key: "deployment_time",
     dataIndex: "deployment_time",
-    sorter: (a: any, b: any) => new Date(a.deployment_time).valueOf() - new Date(b.deployment_time).valueOf(),
+    sorter: (a: any, b: any) =>
+      new Date(a.deployment_time).valueOf() - new Date(b.deployment_time).valueOf(),
   },
-  { 
+  {
     title: "User",
     key: "deployment_user",
     dataIndex: "deployment_user",
-    //sorter: (a: any, b: any) => a.deployment_user.length - b.deployment_user.length,
-    sorter: (a: any, b: any) => a.deployment_user.localeCompare(b.deployment_user)
+    sorter: (a: any, b: any) => a.deployment_user?.localeCompare(b?.deployment_user),
   },
-  { 
+  {
     title: "Date of Last Data Collection",
     key: "collection_time",
     dataIndex: "collection_time",
-    sorter: (a: any, b: any) => new Date(a.collection_time).valueOf() - new Date(b.collection_time).valueOf(),
+    sorter: (a: any, b: any) =>
+      new Date(a.collection_time).valueOf() - new Date(b.collection_time).valueOf(),
   },
-  { 
+  {
     title: "User",
     key: "collection_user",
     dataIndex: "collection_user",
-    sorter: (a: any, b: any) => a.collection_user.length - b.collection_user.length,
+    sorter: (a: any, b: any) =>
+      (a.collection_user?.length || 0) - (b.collection_user?.length || 0),
   },
 ];
 
@@ -156,16 +175,12 @@ const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
   confirm();
   state.searchText = selectedKeys[0];
   state.searchedColumn = dataIndex;
-}
+};
 
 const handleReset = (clearFilters: any) => {
   clearFilters({ confirm: true });
-  state.searchText = '';
-}
-
-function onChange(pagination: any, filters: any, sorter: any, extra: any) {
-  console.log('params', pagination, filters, sorter, extra);
-}
+  state.searchText = "";
+};
 
 const { loading, run: fetchData } = useRequest(store.getTbStatusBy, {
   defaultParams: ["ByTb"],
