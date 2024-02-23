@@ -69,6 +69,7 @@ const config = ref({
         label="Talking Book Analytics"
         title="Talking Book Analytics"
         key="tb-analytics"
+        v-if="account.can([Permission.view_tb_analytics])"
       >
         <template #icon>
           <SoundOutlined />
