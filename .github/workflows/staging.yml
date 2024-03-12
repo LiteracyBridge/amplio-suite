@@ -46,21 +46,5 @@ jobs:
 
     - name: Deploy to s3
       run: |
-        aws s3 rm s3://sbcimpact.amplio.org --recursive
+        aws s3 rm s3://suite-test.amplio.org --recursive
         aws s3 cp --recursive dist/ s3://suite-test.amplio.org
-
-
-    # - name: Unit Tests
-    #   run: |
-    #     yarn test:unit
-
-    # - name: Deploy to S3
-    #   uses: jakejarvis/s3-sync-action@master
-    #   with:
-    #     args: --acl public-read --delete
-    #   env:
-    #     AWS_S3_BUCKET: 'suite-test.amplio.org'
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION__AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION__AWS_SECRET_ACCESS_KEY }}
-    #     AWS_REGION: 'us-west-2'
-    #     SOURCE_DIR: 'frontend/dist'
