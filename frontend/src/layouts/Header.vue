@@ -72,7 +72,7 @@ function changeProgram(val: number) {
 </script>
 
 <template>
-  <Profile :visible="profileVisible" @close="profileVisible = false"></Profile>
+  <!-- <Profile :visible="profileVisible" @close="profileVisible = false"></Profile> -->
 
   <!-- <FeedbackModal :visible="feedbackModalVisible" @close="feedbackModalVisible = false">
   </FeedbackModal> -->
