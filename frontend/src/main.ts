@@ -89,14 +89,14 @@ app.component("login-layout", Login);
 
 app.use(router);
 
-if (false) {
+if (import.meta.env.DEV) {
   // Change AWS config to use test pool
   console.log("Using local cognito server");
   Amplify.configure({
     ...awsconfig,
     aws_user_pools_web_client_id: import.meta.env
-      .VITE_APP_AWS_USER_POOLS_CLIENT_ID,
-    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID,
+      .VITE_APP_AWS_USER_POOLS_CLIENT_ID || awsconfig.aws_user_pools_web_client_id,
+    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID || awsconfig.aws_user_pools_id,
   });
 } else {
   Amplify.configure(awsconfig);

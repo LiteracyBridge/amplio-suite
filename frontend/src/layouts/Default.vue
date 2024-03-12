@@ -101,6 +101,8 @@ function openDiscourse() {
           >
             <router-view :key="$route.fullPath"></router-view>
 
+            <!-- TODO: Implement clickup integration for bug reports -->
+<!--
             <FloatButtonGroup
               trigger="hover"
               type="primary"
@@ -129,7 +131,7 @@ function openDiscourse() {
                   <CommentOutlined />
                 </template>
               </FloatButton>
-            </FloatButtonGroup>
+            </FloatButtonGroup> -->
           </LayoutContent>
 
           <LayoutFooter class="text-center">
