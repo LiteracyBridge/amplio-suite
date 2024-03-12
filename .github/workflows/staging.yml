@@ -46,4 +46,4 @@ jobs:
     - name: Deploy to s3
       run: |
         aws s3 rm s3://suite-test.amplio.org --recursive
-        aws s3 cp --recursive dist/ s3://suite-test.amplio.org
+        aws s3 cp --recursive frontend/dist s3://suite-test.amplio.org
