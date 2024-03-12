@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { Button, Input, PageHeader, Table } from "ant-design-vue";
+import { SearchOutlined } from "@ant-design/icons-vue";
 import { reactive, ref } from "vue";
 import ProgramDetails from "./ProgramDetails.vue";
 import { useProgramsStore } from "@/store/programs";
 import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
 import { useAccountStore } from "@/store/account";
-import type { Program } from "@/models/program";
+import { Program } from "@/models/program";
 
 const store = useProgramsStore();
 const searchInput = ref();
@@ -45,7 +46,7 @@ const columns = [
     onFilterDropdownOpenChange: (visible: boolean) => {
       if (visible) {
         setTimeout(() => {
-          searchInput.value.focus();
+          searchInput.value?.focus();
         }, 100);
       }
     },
@@ -74,8 +75,6 @@ const handleReset = (clearFilters: any) => {
   clearFilters({ confirm: true });
   tableState.searchText = "";
 };
-
-
 </script>
 
 <template>

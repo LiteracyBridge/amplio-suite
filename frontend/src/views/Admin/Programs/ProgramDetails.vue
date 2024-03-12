@@ -2,9 +2,7 @@
 import {
   Button,
   Modal,
-  notification,
   Drawer,
-  Table,
   List,
   ListItem,
   ListItemMeta,
@@ -13,7 +11,6 @@ import {
   Form,
   FormItem,
   Spin,
-  SelectOption,
 } from "ant-design-vue";
 
 import { computed, createVNode, ref, watch } from "vue";
@@ -109,6 +106,12 @@ const getProgramOrgs = computed(() => {
   return useAccountStore().organisations.filter(
     (o) => program.value.organisations.find((org) => org.organisation_id == o.id) == null
   );
+});
+
+const getUsers = computed(() => {
+  return organisationUsers.value
+    .filter((u) => program.value.users.find((i) => i.user_id == u.id) == null)
+    .map((u) => ({ value: u.id, label: `${u.first_name} ${u.last_name} (${u.email})` }));
 });
 </script>
 
@@ -232,20 +235,13 @@ const getProgramOrgs = computed(() => {
               v-model:value="addUserModal.user_id"
               :show-search="true"
               :filter-option="true"
+              option-filter-prop="label"
               name="user_id"
               style="width: 100%"
               placeholder="Please select user"
               :loading="isFetchingOrgUsers"
+              :options="getUsers"
             >
-              <SelectOption
-                :value="user.id"
-                :label="user.first_name + ' ' + user.last_name"
-                v-for="user in organisationUsers.filter(
-                  (u) => program.users.find((i) => i.user_id == u.id) == null
-                )"
-              >
-                {{ user.first_name }} {{ user.last_name }} ({{ user.email }})
-              </SelectOption>
             </Select>
           </FormItem>
         </Form>
