@@ -34,11 +34,8 @@ async function downloadReport() {
 
   const sheet = workbook.addWorksheet("Feedback Analysis Report");
 
-  // First array item is the header
-  sheet.columns = data[0].flatMap((r) => ({ header: r, key: r }));
-
-  // Add remaining rows to the sheet
-  sheet.addRows(data.slice(1));
+  sheet.columns = data[0].headers;
+  sheet.addRows(data[0].rows);
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {

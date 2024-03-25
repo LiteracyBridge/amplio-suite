@@ -300,7 +300,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         path += `&message_id=${messageId}`;
       }
 
-      return ApiRequest.get<Array<string>>(
+      return ApiRequest.get<{ headers: Record<string, string>[], rows: Record<string, any>[] }>(
         path,
       )
         .finally(() => (this.$state.loading = false))
