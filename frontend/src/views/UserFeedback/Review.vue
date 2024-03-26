@@ -73,17 +73,17 @@ async function onMessageSelected(message: UserFeedbackMessage) {
   feedbackStore
     .fetchAnalysisReport(message.message_uuid)
     .then((resp) => {
-      // The result should be a 2D array with the first row being the headers
-      // and the second row being the values
-      if (resp.length > 1) {
+      if (resp[0].rows.length > 0) {
         let temp: Record<string, any> = {};
+        const row = resp[0].rows[0]; // there's only one item
 
-        for (let i = 0; i < resp[0].length; i++) {
-          temp[resp[0][i]] = resp[1][i]; // resp[0][i] is the header, resp[1][i] is the corresponding value
-        }
+        Object.keys(row).forEach((k) => {
+          const header = resp[0].headers.find((h) => h.key == k);
+          temp[header.header] = row[k];
+        });
+
         analysis.value = temp;
       }
-      // analysis.value = resp;
     })
     .finally(() => {
       open.value = true;
@@ -165,7 +165,12 @@ onMounted(() => {
     </template>
   </Table>
 
-  <Drawer v-model:open="open" title="Review Feedback" width="900px">
+  <Drawer
+    v-model:open="open"
+    title="Review Feedback"
+    width="900px"
+    @close="analysis = null"
+  >
     <Spin :spinning="feedbackStore.loading">
       <template
         v-if="(selectedMessage?.url != '' || selectedMessage?.url != null) && open"
