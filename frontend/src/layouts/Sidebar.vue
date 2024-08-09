@@ -19,8 +19,8 @@ import { useAppStore } from "@/store/app.store";
 import { useAccountStore } from "@/store/account";
 import { Permission } from "@/models/role";
 
-const store = useAppStore(),
-  account = useAccountStore();
+const store = useAppStore();
+const account = useAccountStore();
 
 const config = ref({
   activeMenu: null,
@@ -154,6 +154,13 @@ const config = ref({
           </router-link>
         </MenuItem>
       </Menu.SubMenu>
+
+      <MenuItem key="softwares">
+        <template #icon> <BuildOutlined /> </template>
+        <router-link to="/downloads">
+          <span role="link">Software Installation</span>
+        </router-link>
+      </MenuItem>
 
       <Divider></Divider>
     </Menu>

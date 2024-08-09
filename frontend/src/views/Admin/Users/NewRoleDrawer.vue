@@ -108,7 +108,7 @@ function getModuleName(module: string) {
             <CheckboxGroup
               class="ml-5"
               v-model:value="formState.permissions[module.toString().replace('/', '_')]"
-              :name="module"
+              :name="module.toString()"
               :options="permissions"
             />
           </div>
