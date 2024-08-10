@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { MenuItem, Image, LayoutSider, Menu, Divider } from "ant-design-vue";
 import {
   DatabaseOutlined,
+  TableOutlined,
   SettingOutlined,
   UserOutlined,
   InsertRowRightOutlined,
@@ -151,6 +152,12 @@ const config = ref({
 
           <router-link to="/admin/programs">
             <span role="link"> Manage Programs </span>
+          </router-link>
+        </MenuItem>
+        <MenuItem key="ACMs" v-if="account.can(Permission.manage_program)">
+          <template #icon><TableOutlined /></template>
+          <router-link to="/admin/acms">
+            <span role="link">ACMs</span>
           </router-link>
         </MenuItem>
       </Menu.SubMenu>

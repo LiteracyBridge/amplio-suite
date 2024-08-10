@@ -216,6 +216,11 @@ const routes: any = [
         name: "admin.Programs",
         component: () => import("../views/Admin/Programs/Index.vue"),
       },
+      {
+        path: "acms",
+        name: "admin.ACMs",
+        component: () => import("../views/Admin/ACMs/Index.vue"),
+      },
     ],
   },
 ];
