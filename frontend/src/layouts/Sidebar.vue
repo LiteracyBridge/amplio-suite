@@ -157,8 +157,8 @@ const config = ref({
 
       <MenuItem key="softwares">
         <template #icon> <BuildOutlined /> </template>
-        <router-link to="/downloads">
-          <span role="link">Software Installation</span>
+        <router-link to="/download">
+          <span role="link">Software Download</span>
         </router-link>
       </MenuItem>
 
