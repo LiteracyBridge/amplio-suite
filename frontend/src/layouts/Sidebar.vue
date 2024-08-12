@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue";
 import { MenuItem, Image, LayoutSider, Menu, Divider } from "ant-design-vue";
 import {
   DatabaseOutlined,
@@ -13,6 +12,7 @@ import {
   BuildOutlined,
   BarChartOutlined,
   EditOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -156,7 +156,7 @@ const config = ref({
       </Menu.SubMenu>
 
       <MenuItem key="softwares">
-        <template #icon> <BuildOutlined /> </template>
+        <template #icon> <DownloadOutlined /> </template>
         <router-link to="/download">
           <span role="link">Software Download</span>
         </router-link>
