@@ -4,6 +4,7 @@
       token: {
         colorPrimary: '#289b6a',
       },
+      hashed: false
     }"
   >
     <component :is="layout">

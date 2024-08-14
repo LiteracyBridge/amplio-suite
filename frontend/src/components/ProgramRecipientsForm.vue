@@ -483,8 +483,8 @@ const props = defineProps<{
 
 const state = useProgramSpecStore();
 
-const regionsOptions = ref([]),
-  beneficiariesIsOpen = ref(false);
+const regionsOptions = ref([]);
+const beneficiariesIsOpen = ref(false);
 
 const beneficiariesAdditionalFields = computed(() => {
   const part1 = Object.keys(state.general.direct_beneficiaries_additional_map).map(

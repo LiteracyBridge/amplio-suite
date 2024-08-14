@@ -33,17 +33,21 @@
   color: white;
 }
 */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  opacity: 1;
-}
+// input[type=number]::-webkit-inner-spin-button,
+// input[type=number]::-webkit-outer-spin-button {
+//   opacity: 1;
+// }
 
-.outline-box {
-  @apply rounded border border-solid border-gray-500 px-1 font-semibold;
-}
+// .outline-box {
+//   @apply rounded border border-solid border-gray-500 px-1 font-semibold;
+// }
 
-@media (min-width: 1920px) {
-  .container {
-    max-width: 1920px;
-  }
-}
+// @media (min-width: 1920px) {
+//   .container {
+//     max-width: 1920px;
+//   }
+// }
+
+// .ant-btn > span {
+//   display: contents !important;
+// }

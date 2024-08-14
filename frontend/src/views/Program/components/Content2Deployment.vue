@@ -1,17 +1,15 @@
 <template>
   <Row :gutter="8">
     <Col :sm="6" :lg="6" :xl="4">
-      <div class="flex">
-        <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
-          <font-awesome-icon icon="grip-lines" />
-        </div>
-        <div class="mx-2 mt-2 text-gray-600" @click="onToggleExpanded">
-          <font-awesome-icon :icon="icon" size="lg" />
-        </div>
-        <p class="font-light text-2xl text-gray-800 ml-10">
-          Deployment {{ deployment.deploymentnumber }}
-        </p>
-      </div>
+
+      <Button type="text" @click="onToggleExpanded">
+        <template #icon>
+          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
+          <CaretDownOutlined v-else class="ml-5 mb-2" />
+        </template>
+
+        Deployment {{ deployment.deploymentnumber }}
+      </Button>
     </Col>
 
     <Col :span="6">
@@ -37,120 +35,30 @@
       />
     </Col>
 
-    <Col :span="5" align="end">
-      <Button
-        v-if="expanded"
-        type="primary"
-        :ghost="true"
-        @click="onAddPlaylist()"
-        :disabled="!canAddPlaylist"
-        class="mr-2"
-      >
-        Add Playlist
-      </Button>
+    <Col :span="5">
+      <div class="ml-10">
+        <Button
+          v-if="expanded"
+          type="primary"
+          :ghost="true"
+          @click="onAddPlaylist()"
+          :disabled="!canAddPlaylist"
+          class="mr-2"
+        >
+          Add Playlist
+        </Button>
 
-      <Popconfirm
-        title="Are you sure delete this deployment?"
-        ok-text="Yes"
-        cancel-text="No"
-        @confirm="onRemoveDeployment()"
-      >
-        <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
-      </Popconfirm>
-
-      <!-- <VButton
-        v-if="canRemoveDeployment"
-        class="flex-initial my-auto ml-2 border-none"
-        iconL="trash-alt"
-        variant="warning"
-        :ariaLabel="`Remove deployment ${name}`"
-        @click="onRemoveDeployment()"
-      /> -->
+        <Popconfirm
+          title="Are you sure delete this deployment?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="onRemoveDeployment()"
+        >
+          <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
+        </Popconfirm>
+      </div>
     </Col>
   </Row>
-
-  <!-- <div class="w-full">
-    <div class="flex my-2"> -->
-  <!-- <div class="cursor-grab handle mx-2 mt-2 text-gray-600">
-        <font-awesome-icon icon="grip-lines" />
-      </div>
-      <div
-        class="mx-2 mt-2 text-gray-600"
-        style="min-width: 10px"
-        @click="onToggleExpanded"
-      >
-        <font-awesome-icon :icon="icon" size="lg" />
-      </div> -->
-  <!-- <div>
-        <p class="font-light text-2xl text-gray-800">
-          Deployment {{ deployment.deploymentnumber }}
-        </p>
-      </div>
-      <v-input
-        aria-label="`Deployment ${name}`"
-        placeholder="Deployment Name"
-        :class="
-          !name || name.length === 0 ? 'invalid border-red-500 border-2 rounded' : ''
-        "
-        type="text"
-        :name="`Deployment ${name}`"
-        mx="-mt-1 mx-2"
-        :value="name"
-        @change="
-          store.setDeploymentName({
-            deployment: deployment,
-            deploymentname: $event.target.value,
-          })
-        "
-      /> -->
-
-  <!-- <v-input
-        class="-mt-1 mx-2"
-        type="date"
-        iconLeft="calendar-alt"
-        :aria-label="`Start of deployment ${deployment.name}`"
-        :value="deployment.startdate"
-        @change="
-          store.setDeploymentStartdate({
-            deployment: deployment,
-            startdate: $event.target.value,
-          })
-        "
-        mx="mx-0"
-      /> -->
-  <!-- <v-input
-        class="-mt-1 mx-2"
-        type="date"
-        iconLeft="calendar-alt"
-        :aria-label="`Start of deployment ${deployment.name}`"
-        :value="deployment.enddate"
-        @change="
-          store.setDeploymentEnddate({
-            deployment: deployment,
-            enddate: $event.target.value,
-          })
-        "
-        mx="mx-0"
-      /> -->
-
-  <!-- <button
-        v-if="expanded"
-        class="btn"
-        @click="onAddPlaylist()"
-        :disabled="!canAddPlaylist"
-      >
-        Add Playlist
-      </button>
-
-      <VButton
-        v-if="canRemoveDeployment"
-        class="flex-initial my-auto ml-2 border-none"
-        iconL="trash-alt"
-        variant="warning"
-        :ariaLabel="`Remove deployment ${name}`"
-        @click="onRemoveDeployment()"
-      />
-    </div> -->
 
   <!-- If expanded, show the playlists in the deployment -->
   <div class="my-5" v-if="expanded">
@@ -163,8 +71,9 @@
 import Content2Playlists from "./Content2Playlists.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
-import { Deployment } from "@/models/deployment";
+import type { Deployment } from "@/models/deployment";
 import { computed, ref } from "vue";
+import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   deployment: Deployment;

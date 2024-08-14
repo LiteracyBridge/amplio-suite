@@ -10,15 +10,12 @@
 
     <Row :gutter="8">
       <Col :span="2">
-        <div class="flex">
-          <div class="m-2 p-2 cursor-grab msg-handle">
-            <font-awesome-icon icon="grip-lines" />
-          </div>
-
-          <div class="m-2 py-2 mt-2" style="min-width: 10px" @click="toggleExpanded">
-            <font-awesome-icon :icon="icon" size="lg" />
-          </div>
-        </div>
+        <Button type="text" @click="toggleExpanded" class="mt-1 mr-2" block>
+          <!-- <template #icon> -->
+            <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
+            <CaretDownOutlined v-else class="ml-5 mb-2" />
+          <!-- </template> -->
+        </Button>
       </Col>
 
       <Col :span="14">
@@ -49,7 +46,10 @@
           cancel-text="No"
           @click="queryDeleteMessage()"
         >
-          <Button class="mt-3" :aria-label="`Delete message ${message.title}`" :danger="true"
+          <Button
+            class="mt-3"
+            :aria-label="`Delete message ${message.title}`"
+            :danger="true"
             >Delete Message</Button
           >
         </Popconfirm>
@@ -116,10 +116,11 @@ import Content2MessageForm from "./Content2MessageForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
-import { Playlist } from "@/models/playlist";
-import { Message } from "@/models/message";
-import { Deployment } from "@/models/deployment";
+import type { Playlist } from "@/models/playlist";
+import type { Message } from "@/models/message";
+import type { Deployment } from "@/models/deployment";
 import { FormItem, Input, Row, Col, Alert, Button, Popconfirm } from "ant-design-vue";
+import { CaretRightOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   deployment: Deployment;

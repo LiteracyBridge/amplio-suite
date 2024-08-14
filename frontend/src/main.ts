@@ -10,7 +10,6 @@ import awsconfig from "./aws-exports";
 
 // Custom plugins
 import "./plugins/fontawesome";
-import "vue-multiselect/dist/vue-multiselect.css";
 
 // Style
 import "@/assets/css/tailwind.scss";
