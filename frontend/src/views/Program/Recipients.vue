@@ -29,7 +29,7 @@
 
     <Table
       :columns="columns"
-      :data-source="store.filteredRecipients"
+      :data-source="recipients"
       :sticky="true"
       :pagination="false"
       class="ant-table-striped"
@@ -37,7 +37,17 @@
     >
       <template #title>
         <div class="flex justify-end">
-          <Button @click="addNewRecipient" type="primary" :ghost="true"
+          <Input
+            type="text"
+            class="mr-10"
+            placeholder="Search recipient"
+            @change="filterRecipient($event.target.value)"
+          >
+            <template #prefix>
+              <SearchOutlined />
+            </template>
+          </Input>
+
           <Button @click="addNewRecipient()" type="primary" :ghost="true"
             >+ Add Recipient</Button
           >
@@ -147,8 +157,8 @@ import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
 import { Recipient } from "@/models/recipient";
-import { Form, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
-import { CopyOutlined, EditOutlined } from "@ant-design/icons-vue";
+import { Input, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
+import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vue";
 
 const columns: Array<{ title: string; key: keyof Recipient }> = [
   { title: "Region/State", key: "region" },
@@ -162,7 +172,7 @@ const columns: Array<{ title: string; key: keyof Recipient }> = [
 ];
 
 const store = useProgramSpecStore();
-
+const recipients = ref([...store.recipients]);
 const data = ref({
   selectedRecipientId: null,
   recipientInEdit: null as Recipient,
@@ -174,22 +184,6 @@ const modal = ref({
   open: false,
   state: undefined as "edit" | "new",
 });
-
-// const showModal = ref({
-//   edit: false,
-//   delete: false,
-//   mandatory: false,
-// });
-
-// const selectedRecipient = computed(() => {
-//   return store.recipients.find(
-//     (recipient) => recipient.recipientid === data.value.selectedRecipientId
-//   );
-// });
-
-// const tableIsFilter = computed(() => {
-//   return store.sortTable.by !== "" || store.filterText !== "";
-// });
 
 const isRecipientInEditValid = computed(() => {
   // nothing selected; can't be valid
@@ -269,9 +263,30 @@ const invalidBeneficiaries = computed(() => {
   return invalid;
 });
 
+function filterRecipient(val?: string) {
+  if (val == null || val === undefined || val.trim().length === 0) {
+    recipients.value = [...store.recipients];
+    return
+  }
+
+  const input = val.trim().toLowerCase();
+  recipients.value = store.recipients.filter((recipient) => {
+    return (
+      recipient.region?.toLowerCase().includes(input) ||
+      recipient.district?.toLowerCase().includes(input) ||
+      recipient.community_name?.toLowerCase().includes(input) ||
+      recipient.group_name?.toLowerCase().includes(input) ||
+      recipient.agent?.toLowerCase().includes(input) ||
+      recipient.language?.toLowerCase().includes(input) ||
+      recipient.numtbs?.toString().includes(input)
+    );
+  });
+}
+
 function onAcceptEdit() {
   if (isRecipientInEditValid.value) {
     store.updateRecipient({ recipient: data.value.recipientInEdit });
+    filterRecipient(); // trigger table refresh
     onCloseModal();
   } else {
     notification.error({
@@ -282,10 +297,11 @@ function onAcceptEdit() {
 }
 
 function onCloseModal() {
+  modal.value.open = false;
+
   data.value.recipientEdited = false;
   data.value.recipientInEdit = new Recipient();
   modal.value.state = "new";
-  modal.value.open = false;
 }
 
 // function handleModalEscape() {
@@ -335,6 +351,4 @@ function addNewRecipient() {
 function onRecipientEdited(value: boolean) {
   data.value.recipientEdited = value;
 }
-
-
 </script>

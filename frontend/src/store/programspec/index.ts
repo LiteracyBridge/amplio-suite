@@ -110,31 +110,6 @@ export const useProgramSpecStore = defineStore("programspec", {
         value: state.general.direct_beneficiaries_map[key],
       }));
     },
-    filteredRecipients: (state) => {
-      let recipients = [...state.recipients];
-
-      // Sort
-      const column = state.sortTable.by;
-      const direction = state.sortTable.descending ? 1 : -1;
-      recipients = recipients.sort(
-        (a, b) =>
-          direction *
-          (a as any)[column]
-            .toString()
-            .localeCompare((b as any)[column].toString()),
-      );
-
-      // Filter
-      const text = state.filterText;
-      recipients = recipients.filter((reci) =>
-        Object.values(reci)
-          .filter((val) => val !== null)
-          .some((val) =>
-            val.toString().toLowerCase().includes(text.toLowerCase()),
-          ),
-      );
-      return recipients;
-    },
   },
   actions: {
     resetState() {
