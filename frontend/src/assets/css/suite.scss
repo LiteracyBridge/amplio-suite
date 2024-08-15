@@ -51,3 +51,10 @@
 // .ant-btn > span {
 //   display: contents !important;
 // }
+
+[data-doc-theme='light'] .ant-table-striped :deep(.table-striped) td {
+  background-color: #fafafa;
+}
+[data-doc-theme='dark'] .ant-table-striped :deep(.table-striped) td {
+  background-color: rgb(29, 29, 29);
+}

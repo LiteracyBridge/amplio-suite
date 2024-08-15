@@ -110,14 +110,12 @@ export const useProgramSpecStore = defineStore("programspec", {
         value: state.general.direct_beneficiaries_map[key],
       }));
     },
-  },
-  actions: {
-    filteredRecipients() {
-      let recipients = [...this.recipients];
+    filteredRecipients: (state) => {
+      let recipients = [...state.recipients];
 
       // Sort
-      const column = this.sortTable.by;
-      const direction = this.sortTable.descending ? 1 : -1;
+      const column = state.sortTable.by;
+      const direction = state.sortTable.descending ? 1 : -1;
       recipients = recipients.sort(
         (a, b) =>
           direction *
@@ -127,7 +125,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       );
 
       // Filter
-      let text = this.filterText;
+      const text = state.filterText;
       recipients = recipients.filter((reci) =>
         Object.values(reci)
           .filter((val) => val !== null)
@@ -135,15 +133,10 @@ export const useProgramSpecStore = defineStore("programspec", {
             val.toString().toLowerCase().includes(text.toLowerCase()),
           ),
       );
-
-      // return recipients.slice(0, this.recipientsToShow)
       return recipients;
     },
-
-    newRecipient() {
-      return new Recipient();
-    },
-
+  },
+  actions: {
     resetState() {
       Object.assign(this, {});
     },
