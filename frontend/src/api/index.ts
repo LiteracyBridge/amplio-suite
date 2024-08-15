@@ -2,6 +2,7 @@ import { API_URL } from "@/models/constants";
 import { useAccountStore } from "@/store/account";
 import axios from "axios";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ApiRequest {
   static async get<T>(path: string): Promise<T[] | null> {
     return axios
