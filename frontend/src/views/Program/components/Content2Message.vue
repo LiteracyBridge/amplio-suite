@@ -12,8 +12,8 @@
       <Col :span="2">
         <Button type="text" @click="toggleExpanded" class="mt-1 mr-2" block>
           <!-- <template #icon> -->
-            <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
-            <CaretDownOutlined v-else class="ml-5 mb-2" />
+          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
+          <CaretDownOutlined v-else class="ml-5 mb-2" />
           <!-- </template> -->
         </Button>
       </Col>

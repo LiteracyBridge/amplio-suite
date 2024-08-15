@@ -38,6 +38,7 @@
       <template #title>
         <div class="flex justify-end">
           <Button @click="addNewRecipient" type="primary" :ghost="true"
+          <Button @click="addNewRecipient()" type="primary" :ghost="true"
             >+ Add Recipient</Button
           >
         </div>
@@ -72,7 +73,7 @@
           {{ record.numtbs }}
         </template>
 
-        <template v-if="column.key === 'actions'">
+        <template v-if="column.key === 'affiliate'">
           <div>
             <Tooltip placement="topLeft">
               <template #title>
@@ -138,26 +139,12 @@
         :invalid-constraint="true"
       />
     </Modal>
-
-    <!-- Mandatory fields modal -->
-    <portal to="modalBody" v-if="showModal.mandatory">
-      <p class="text-xl">Please complete all of the mandatory fields.</p>
-    </portal>
-
-    <portal to="modalFooter" v-if="showModal.mandatory">
-      <footer class="flex flex-row-reverse justify-between pt-20">
-        <VButton label="Close" />
-        <!-- <VButton label="Close" @click="onClickEdit(selectedRecipientId)" /> -->
-      </footer>
-    </portal>
   </section>
 </template>
 
 <script lang="ts" setup>
-import VButton from "@/components/VButton.vue";
 import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
 import { computed, ref } from "vue";
 import { Recipient } from "@/models/recipient";
 import { Form, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
@@ -171,11 +158,10 @@ const columns: Array<{ title: string; key: keyof Recipient }> = [
   { title: "Agent", key: "agent" },
   { title: "Language", key: "language" },
   { title: "# TBs", key: "numtbs" },
-  { title: "", key: "actions" },
+  { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
 ];
 
 const store = useProgramSpecStore();
-const ui = useUIStore();
 
 const data = ref({
   selectedRecipientId: null,
@@ -189,11 +175,11 @@ const modal = ref({
   state: undefined as "edit" | "new",
 });
 
-const showModal = ref({
-  edit: false,
-  delete: false,
-  mandatory: false,
-});
+// const showModal = ref({
+//   edit: false,
+//   delete: false,
+//   mandatory: false,
+// });
 
 // const selectedRecipient = computed(() => {
 //   return store.recipients.find(
@@ -222,7 +208,7 @@ const isRecipientInEditValid = computed(() => {
   const partial = requiredFields.map((field: keyof Recipient) => {
     const value = data.value.recipientInEdit[field];
     if (typeof value === "string" || value instanceof String) return value !== "";
-    else if (typeof value === "number") return value >= 0;
+    if (typeof value === "number") return value >= 0;
     else if (Array.isArray(value)) return value.length > 0;
   });
 
@@ -260,7 +246,7 @@ const invalidBeneficiaries = computed(() => {
   // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
   Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional || {}).forEach(
     (key) => {
-      let val = data.value.recipientInEdit.direct_beneficiaries_additional[key];
+      const val = data.value.recipientInEdit.direct_beneficiaries_additional[key];
       if (val > data.value.recipientInEdit.direct_beneficiaries) {
         invalid = true;
         // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
@@ -273,7 +259,7 @@ const invalidBeneficiaries = computed(() => {
   // Is either of these properties greater than "direct beneficiaries"?
   const keys = ["numhouseholds", "group_size"];
   keys.forEach((key: keyof Recipient) => {
-    let val = data.value.recipientInEdit[key];
+    const val = data.value.recipientInEdit[key];
     if (val > data.value.recipientInEdit.direct_beneficiaries) {
       invalid = true;
       // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
@@ -283,12 +269,20 @@ const invalidBeneficiaries = computed(() => {
   return invalid;
 });
 
+function onAcceptEdit() {
+  if (isRecipientInEditValid.value) {
+    store.updateRecipient({ recipient: data.value.recipientInEdit });
+    onCloseModal();
+  } else {
+    notification.error({
+      message: "Required Fields",
+      description: "Please complete all of the mandatory fields.",
+    });
+  }
+}
+
 function onCloseModal() {
   data.value.recipientEdited = false;
-  showModal.value.edit = false;
-  showModal.value.delete = false;
-  showModal.value.mandatory = false;
-
   data.value.recipientInEdit = new Recipient();
   modal.value.state = "new";
   modal.value.open = false;
@@ -299,16 +293,16 @@ function onCloseModal() {
 //   data.value.recipientInEdit = null;
 // }
 
-function onCancelEdit() {
-  data.value.recipientInEdit = new Recipient();
-  modal.value.state = "new";
-  modal.value.open = false;
-}
+// function onCancelEdit() {
+//   data.value.recipientInEdit = new Recipient();
+//   modal.value.state = "new";
+//   modal.value.open = false;
+// }
 
-function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
-  data.value.recipientEdited = false;
-  showModal.value[modal] = true;
-}
+// function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
+//   data.value.recipientEdited = false;
+//   showModal.value[modal] = true;
+// }
 
 function editRecipient(recipient: Recipient, index?: number) {
   console.log(`Edit ${JSON.stringify(recipient)}`);
@@ -327,35 +321,20 @@ function duplicateRecipient(recipient: Recipient) {
 
   modal.value.state = "new";
   modal.value.open = true;
-
-  onOpenModal("edit", "New Recipient Details");
 }
 
 function addNewRecipient() {
   data.value.recipientInEdit = new Recipient();
   data.value.recipientInEdit.country = store.general.country;
+  modal.value.state = "new";
+  modal.value.open = true;
 
   console.log(`new recipient: ${JSON.stringify(data.value.recipientInEdit)}`);
-  onOpenModal("edit", "New Recipient Details");
 }
 
 function onRecipientEdited(value: boolean) {
   data.value.recipientEdited = value;
 }
 
-function onAcceptEdit() {
-  if (isRecipientInEditValid.value) {
-    store.updateRecipient({ recipient: data.value.recipientInEdit });
-    onCloseModal();
-  } else {
-    notification.error({
-      message: "Required Fields",
-      description: "Please complete all of the mandatory fields.",
-    });
-  }
-}
 
-// onMounted(() => {
-//   store.ensureSpec({ programId: props.programId });
-// });
 </script>

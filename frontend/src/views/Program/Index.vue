@@ -92,7 +92,7 @@ import Recipients from "./Recipients.vue";
 import ImportExport from "./ImportExport.vue";
 import { useAppStore } from "@/store/app.store";
 import { useRequest } from "vue-request";
-
+import { LocalStorageKeys } from "@/models/constants";
 
 const store = useProgramSpecStore();
 const appStore = useAppStore();
@@ -116,8 +116,11 @@ const data = ref({
 });
 
 // Download spec
-const {} = useRequest(store.downloadSpec, {
-  defaultParams: [appStore.activeProgram.data.program_id],
+useRequest(store.downloadSpec, {
+  defaultParams: [
+    appStore.activeProgram.data?.program_id ??
+      JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+  ],
   onSuccess: (data) => {
     store.setSpec({
       programId: appStore.activeProgram.data.program_id,
