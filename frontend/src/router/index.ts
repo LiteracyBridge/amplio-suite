@@ -1,15 +1,14 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import multiguard from "vue-router-multiguard";
 
 import { useAccountStore } from "@/store/account";
 import { useWizardStore } from "@/store/wizard";
-import Home from "@/views/Home.vue";
 import SignIn from "@/views/SignIn.vue";
-import { Auth } from "aws-amplify";
 import { Hub } from "@aws-amplify/core";
 import { notification } from "ant-design-vue";
+import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 
-const routes: any = [
+const routes: RouteRecordRaw[] = [
   {
     path: "/",
     redirect: { path: "/login" },
@@ -271,11 +270,11 @@ function checkAuth(to: any, from: any, next: any) {
 
 
 async function getUser() {
-  return Auth.currentAuthenticatedUser()
+  return fetchAuthSession()
     .then(async (data) => {
-      if (data && data.signInUserSession) {
+      if (data) {
         return await useAccountStore().fetchAccountInfo(
-          data.signInUserSession!.idToken.jwtToken,
+          data.tokens.idToken.toString(),
         ).then((_resp) =>
           router.push({ path: "/dashboard" })
         );
@@ -291,19 +290,19 @@ async function getUser() {
 
 Hub.listen("auth", async (data) => {
   switch (data.payload.event) {
-    case "signIn":
-    case "signUp":
-    case "configured":
+    case "signedIn":
+    case "tokenRefresh":
       await getUser();
       break;
-    case "signOut":
+    case "signedOut":
       if (router.currentRoute.value.path === "/login") {
         window.location.reload();
       } else {
         router.push({ path: "/login" });
       }
       break;
-    case "signIn_failure":
+    case "signInWithRedirect_failure":
+    case "tokenRefresh_failure":
       console.log("user sign in failed");
       break;
   }

@@ -50,7 +50,7 @@ export default {
 
 <style lang="scss" scoped>
 .step {
-  @apply max-w-screen-md mx-auto grid col-gap-4 my-4;
+  @apply max-w-screen-md mx-auto grid my-4;
 }
 
 .step {

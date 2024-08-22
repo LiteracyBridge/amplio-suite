@@ -34,7 +34,7 @@ document.head.appendChild(tableauScript);
 
 const store = useAppStore();
 
-const jwt = ref(null);
+const jwt = ref<any>(null);
 
 // Fetch jwt key
 const workbook = computed(() => {
@@ -42,7 +42,7 @@ const workbook = computed(() => {
 });
 
 const tableauVisibility = computed(() => {
-  const gotJwt = !(!jwt || jwt["error"] === "Not found");
+  const gotJwt = !(!jwt || jwt.value.error === "Not found");
   // 'visually_hidden' leaves the TableauWiz in a state from which it never recovers, so it never appears.
   // Instead, use the traditional "display: none;" style.
   return gotJwt ? "" : "noTableau";

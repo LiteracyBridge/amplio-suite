@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
-import { Auth } from "aws-amplify";
-import { Invitation, User, UserRole } from "@/models/user";
+// import { Auth } from "aws-amplify";
+import { type Invitation, User, type UserRole } from "@/models/user";
 import { ApiRequest } from "@/api";
-import { Permission } from "@/models/role";
-import { Organisation } from "@/models/organisation";
+import type { Permission } from "@/models/role";
+import type { Organisation } from "@/models/organisation";
 import { useAppStore } from "../app.store";
 import { LocalStorageKeys, RequestCacheKeys } from "@/models/constants";
 import { clearCache } from "vue-request";
+import { fetchAuthSession, signOut } from "aws-amplify/auth";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
@@ -35,7 +36,7 @@ export const useAccountStore = defineStore("account", {
     email: (state) => state.user.email,
     isAmplioStaff: (state) => state.user.email.split("@")[1] === "amplio.org",
     fullName: (state) =>
-      (state.user.first_name || "") + " " + (state.user.last_name || ""),
+      `${state.user.first_name || ""} ${state.user.last_name || ""}`,
   },
   actions: {
     setSignUp(email: string) {
@@ -47,7 +48,7 @@ export const useAccountStore = defineStore("account", {
       this.signUp.email = "";
     },
     async logout() {
-      return Auth.signOut().then((_resp) => {
+      return signOut().then((_resp) => {
         this.user = new User()
 
         // Clear local storage items
@@ -64,18 +65,18 @@ export const useAccountStore = defineStore("account", {
       });
     },
     async requireAuth() {
-      return Auth.currentAuthenticatedUser().then((data) => {
-        if (data && data.signInUserSession) {
-          this.user.token =
-            this.user.token || data.signInUserSession.idToken.jwtToken;
-          this.user.email = this.user.email || data.attributes.email;
-          this.user.name =
-            this.user.name || data.attributes.email.split("@")[0];
+      return fetchAuthSession().then((data) => {
+        console.log(data)
+        if (data.tokens) {
+          this.user.token ??=
+            this.user.token || data.tokens.idToken.toString()
+          this.user.email ??= this.user.email || data.tokens.idToken.payload.sub;
+          this.user.name ??=
+            this.user.name || data.tokens.idToken.payload.sub.split("@")[0];
           return;
           // TODO: Verify user from server
-        } else {
-          throw new Error("No current user");
         }
+        throw new Error("No current user");
       });
     },
     /**
