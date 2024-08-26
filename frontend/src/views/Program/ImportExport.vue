@@ -169,10 +169,13 @@
 
 <script>
 import { mapActions } from "pinia";
+import { useUIStore } from "@/store/ui";
+import { useAccountStore } from "@/store/account";
 
 import VButton from "@/components/VButton.vue";
 import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
 import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
+import { useProgramSpecStore } from "@/store/programspec";
 
 export default {
   props: ["programId"],
@@ -203,8 +206,8 @@ export default {
   }),
 
   methods: {
-    ...mapActions("ui", ["setModal", "closeModal", "setNotification"]),
-    ...mapActions("programspec", ["getExportLink", "uploadSpec", "approveSpec"]),
+    ...mapActions(useUIStore, ["setModal", "closeModal", "setNotification"]),
+    ...mapActions(useProgramSpecStore, ["getExportLink", "uploadSpec", "approveSpec"]),
 
     /**
      * Export the published program spec for the current program. (The "alt" key can be used to enable an option

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div id="deployments-container" style="font-family: system-ui">
+    <div id="deployments-container">
       <!-- Separater line between heading and content -->
       <draggable
         id="deployments-draggable"
@@ -13,7 +13,7 @@
         item-key="deploymentnumber"
       >
         <template #item="{ element: deployment, index: index }">
-          <div class="">
+          <div class="my-3">
             <Content2Deployment
               :deployment="deployment"
               :canRemove="index === store.deployments.length - 1"
@@ -23,7 +23,11 @@
       </draggable>
     </div>
 
-    <VButton tag="span" label="+ Add Deployment" @click="onAddDeployment" />
+    <Divider></Divider>
+
+    <Button :ghost="true" type="primary" @click="onAddDeployment" class="mt-5 ml-3"
+      >+ Add Deployment</Button
+    >
   </section>
 </template>
 
@@ -35,6 +39,7 @@ import { useProgramSpecStore } from "@/store/programspec";
 import { useCategoriesStore } from "@/store/categories";
 import { ref } from "vue";
 import { useRequest } from "vue-request";
+import { Button, Divider } from "ant-design-vue";
 
 const props = defineProps<{
   programId: string;

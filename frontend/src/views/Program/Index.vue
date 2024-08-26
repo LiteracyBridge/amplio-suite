@@ -47,10 +47,10 @@
         </TabPane>
 
         <TabPane key="deployment-and-content" tab="Deployments & Content">
-          <Content2
+          <DeploymentAndContent
             :program-id="appStore.activeProgram.id?.toString()"
             v-if="store.deployments != null"
-          ></Content2>
+          ></DeploymentAndContent>
         </TabPane>
 
         <TabPane key="recipients" tab="Recipients">
@@ -74,31 +74,28 @@
 import { useProgramSpecStore } from "@/store/programspec";
 import { onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
+import { onBeforeRouteLeave } from "vue-router";
 import {
   Alert,
   Button,
   Modal,
   PageHeader,
   Popconfirm,
-  Space,
   Spin,
   TabPane,
   Tabs,
 } from "ant-design-vue";
 
 import General from "./General.vue";
-import Content2 from "./Content2.vue";
+import DeploymentAndContent from "./DeploymentAndContent.vue";
 import Recipients from "./Recipients.vue";
 import ImportExport from "./ImportExport.vue";
 import { useAppStore } from "@/store/app.store";
 import { useRequest } from "vue-request";
+import { LocalStorageKeys } from "@/models/constants";
 
-// const props = defineProps<{ programId: string }>();
-
-const store = useProgramSpecStore(),
-  appStore = useAppStore(),
-  route = useRoute();
+const store = useProgramSpecStore();
+const appStore = useAppStore();
 
 const activeKey = ref("general");
 
@@ -119,8 +116,11 @@ const data = ref({
 });
 
 // Download spec
-const {} = useRequest(store.downloadSpec, {
-  defaultParams: [appStore.activeProgram.data.program_id],
+useRequest(store.downloadSpec, {
+  defaultParams: [
+    appStore.activeProgram.data?.program_id ??
+      JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+  ],
   onSuccess: (data) => {
     store.setSpec({
       programId: appStore.activeProgram.data.program_id,

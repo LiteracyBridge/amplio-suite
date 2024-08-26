@@ -7,36 +7,29 @@ const store = useFeedbackAnalysis();
 
 <template>
   <Card type="inner" size="small">
-    <Row justify="space-around">
-      <Col :span="4">
-        <Statistic
-          title="Total Messages"
-          :value="store.statistics.total_messages"
-        />
+    <Row :gutter="4">
+      <Col :span="12">
+        <Statistic title="Total" :value="store.statistics.total_messages" />
       </Col>
-      <Col :span="4">
+      <Col :span="12">
         <Statistic
-          title="Total Analysed"
+          title="Analysed"
           :value="store.statistics.total_analysed + store.statistics.total_useless"
         />
       </Col>
-      <Col :span="4">
-        <Statistic
-          title="Valid Messages"
-          :value="store.statistics.total_analysed"
-        />
+    </Row>
+    <Row :gutter="4">
+      <Col :span="12">
+        <Statistic title="Valid" :value="store.statistics.total_analysed" />
       </Col>
-      <Col :span="4">
-        <Statistic
-          title="Analysed By You"
-          :value="store.statistics.by_current_user"
-        />
+      <Col :span="12">
+        <Statistic title="Useless" :value="store.statistics.total_useless" />
       </Col>
-      <Col :span="4">
-        <Statistic
-          title="Useless Messages"
-          :value="store.statistics.total_useless"
-        />
-      </Col> </Row
+    </Row>
+    <Row :gutter="4">
+      <Col :span="12">
+        <Statistic title="Analysed By You" :value="store.statistics.by_current_user" />
+      </Col>
+      </Row
   ></Card>
 </template>
