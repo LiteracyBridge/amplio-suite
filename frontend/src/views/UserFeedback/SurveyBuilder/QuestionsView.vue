@@ -55,13 +55,13 @@ const getQuestions = computed({
   },
 });
 
-function duplicateQuestion(question: Question) {
-  const new_question = store.duplicateQuestion({
-    source: question,
-    sectionId: question.section_id,
-  });
-  store.addQuestion(new_question);
-}
+// function duplicateQuestion(question: Question) {
+//   const new_question = store.duplicateQuestion({
+//     source: question,
+//     sectionId: question.section_id,
+//   });
+//   store.addQuestion(new_question);
+// }
 
 function focusCard(question: Question) {
   editQuestion(question);

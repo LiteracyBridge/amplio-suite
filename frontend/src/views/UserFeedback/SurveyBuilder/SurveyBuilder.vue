@@ -83,6 +83,10 @@ onMounted(() => {
 <template>
   <PageHeader title="Survey Builder">
     <template #extra>
+      <Button type="primary" @click="store.saveChanges()">
+        Save Changes</Button
+      >
+
       <Popconfirm
         title="Publishing this survey will make it available for analysis. Are you sure you want to publish this survey?"
         ok-text="Yes"
@@ -110,7 +114,6 @@ onMounted(() => {
         <Button
           type="primary"
           :ghost="true"
-          :danger="true"
           v-if="store.activeSurvey.status == SurveyStatus.published"
         >
           Unpublish

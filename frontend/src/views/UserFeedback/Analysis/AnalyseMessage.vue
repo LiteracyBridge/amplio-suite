@@ -25,8 +25,8 @@ import { computed, h, onMounted, ref, watch } from "vue";
 import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import AudioPlayer from "./AudioPlayer.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
-import { Analysis, Progress } from "@/models/analysis";
-import { QuestionChoice, QuestionType } from "@/models/question";
+import type { Analysis } from "@/models/analysis";
+import { type QuestionChoice, QuestionType } from "@/models/question";
 import { useAppStore } from "@/store/app.store";
 import { ApiRequest } from "@/api";
 import { UserFeedbackMessage } from "@/models/uf_message";
@@ -36,26 +36,25 @@ const props = defineProps<{
   deploymentChanged: string;
 }>();
 
-const feedbackStore = useFeedbackAnalysis(),
-  store = useAppStore();
+const feedbackStore = useFeedbackAnalysis();
+const store = useAppStore();
 
 const config = ref({
   activeSection: "transcription",
   noMessages: false,
 });
 
-const current_message_uuid = ref(""),
-  message = ref<UserFeedbackMessage>(new UserFeedbackMessage()),
-  audioKey = ref(0),
-  nextUUID = ref<string>(),
-  startTime = ref<Date>(null),
-  transcription = ref(null),
-  selectedChoice = ref<Record<string, { selected: boolean; sub: QuestionChoice[] }>>({});
+const current_message_uuid = ref("");
+const message = ref<UserFeedbackMessage>(new UserFeedbackMessage());
+const audioKey = ref(0);
+const nextUUID = ref<string>();
+const startTime = ref<Date>(null);
+const transcription = ref(null);
 
 function updateUrl(skipMessage: boolean = false) {
   if (store.userFeedback?.deployment == null || store.userFeedback?.language == null) {
     notification.error({
-      message: `Error`,
+      message: "Error",
       description: "Please select a deployment and language!",
     });
   }
@@ -83,7 +82,7 @@ function updateUrl(skipMessage: boolean = false) {
       }
     })
     .catch((err) => {
-      console.log("caught:" + err);
+      console.log(`caught:${err}`);
       current_message_uuid.value = "";
     })
     .finally(() => {
@@ -109,23 +108,23 @@ function validateResponse(feedback: Analysis) {
 
   if (feedback.question.required) {
     if (
-      feedback.question.type == QuestionType.open_ended &&
-      (feedback.response == null || feedback.response == "")
+      feedback.question.type === QuestionType.open_ended &&
+      (feedback.response == null || feedback.response === "")
     ) {
       feedback.error = "This question is required!";
       isValid = false;
     }
 
     if (
-      feedback.question.type == QuestionType.multi_choice &&
-      (feedback.choices || []).length == 0
+      feedback.question.type === QuestionType.multi_choice &&
+      (feedback.choices || []).length === 0
     ) {
       feedback.error = "This question is required!";
       isValid = false;
     }
 
     if (
-      feedback.question.type == QuestionType.single_choice &&
+      feedback.question.type === QuestionType.single_choice &&
       feedback.single_choice?.value == null
     ) {
       feedback.error = "This question is required!";
@@ -137,7 +136,7 @@ function validateResponse(feedback: Analysis) {
 
 function save(is_useless: boolean = false) {
   // Validate response
-  if (is_useless == false) {
+  if (is_useless === false) {
     let isValid = true;
     for (const feedback of feedbackStore.questions) {
       isValid = validateResponse(feedback);
@@ -145,7 +144,7 @@ function save(is_useless: boolean = false) {
 
     if (!isValid) {
       notification.error({
-        message: `Error`,
+        message: "Error",
         description: "Please answer all required questions!",
       });
       return;
@@ -164,6 +163,7 @@ function save(is_useless: boolean = false) {
 
 const isOptionOther = computed(() => {
   return (choices: QuestionChoice[], option_id: number | string) => {
+    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
     const option = choices.find((c) => c.choice_id == option_id);
 
     if (option == null) return false;
@@ -174,7 +174,7 @@ const isOptionOther = computed(() => {
 
 watch(nextUUID, (newUUID) => {
   current_message_uuid.value = newUUID;
-  if (newUUID != "") {
+  if (newUUID !== "") {
     updateUrl();
   } else {
     message.value.url = "";
@@ -306,15 +306,19 @@ onMounted(() => {
                                 :value="option.choice_id"
                                 @change="
                                   () => {
-                                    if (selectedChoice[option.choice_id] == null) {
-                                      selectedChoice[option.choice_id] = {
+                                    if (
+                                      feedbackStore.selectedChoice[option.choice_id] ==
+                                      null
+                                    ) {
+                                      feedbackStore.selectedChoice[option.choice_id] = {
                                         selected: true,
                                         sub: option.sub_options || [],
                                       };
                                     } else {
-                                      selectedChoice[option.choice_id] = {
-                                        selected: !selectedChoice[option.choice_id]
-                                          .selected,
+                                      feedbackStore.selectedChoice[option.choice_id] = {
+                                        selected: !feedbackStore.selectedChoice[
+                                          option.choice_id
+                                        ].selected,
                                         sub: option.sub_options || [],
                                       };
                                     }
@@ -329,7 +333,7 @@ onMounted(() => {
                                   <Checkbox
                                     :value="sub.choice_id"
                                     v-if="
-                                      selectedChoice[option.choice_id]?.selected == true
+                                    feedbackStore.selectedChoice[option.choice_id]?.selected == true
                                     "
                                     >{{ sub.value }}</Checkbox
                                   >
