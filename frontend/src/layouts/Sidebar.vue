@@ -13,7 +13,7 @@ import {
   BarChartOutlined,
   EditOutlined,
   DownloadOutlined,
-  AreaChartOutlined
+  AreaChartOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
