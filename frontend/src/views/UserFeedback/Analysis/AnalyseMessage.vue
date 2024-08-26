@@ -218,18 +218,21 @@ onMounted(() => {
       </Empty>
 
       <div v-else>
-        <div v-if="message.url != '' || message.url != null">
-          <Stats class="my-2" />
-
-          <AudioPlayer
-            :key="audioKey"
-            @srcError="updateUrl"
-            @next="skipCurrentMessage"
-            @useless="save($event)"
-            :message="message"
-            :mini="false"
-          />
-        </div>
+        <Row v-if="message.url != '' || message.url != null" :gutter="5">
+          <Col :span="20">
+            <AudioPlayer
+              :key="audioKey"
+              @srcError="updateUrl"
+              @next="skipCurrentMessage"
+              @useless="save($event)"
+              :message="message"
+              :mini="false"
+            />
+          </Col>
+          <Col :span="4">
+            <Stats class="h-full" />
+          </Col>
+        </Row>
 
         <Form layout="vertical" class="mt-5 block">
           <div class="flex justify-center">
@@ -333,7 +336,8 @@ onMounted(() => {
                                   <Checkbox
                                     :value="sub.choice_id"
                                     v-if="
-                                    feedbackStore.selectedChoice[option.choice_id]?.selected == true
+                                      feedbackStore.selectedChoice[option.choice_id]
+                                        ?.selected == true
                                     "
                                     >{{ sub.value }}</Checkbox
                                   >
