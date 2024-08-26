@@ -8,8 +8,7 @@ import { UserFeedbackMessage } from "@/models/uf_message";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons-vue";
 import MessageTranscription from "./MessageTranscription.vue";
 
-const feedbackStore = useFeedbackAnalysis(),
-  store = useAppStore();
+const feedbackStore = useFeedbackAnalysis();
 
 const messages = ref<UserFeedbackMessage[]>([]);
 const groupSearchInput = ref();
@@ -118,6 +117,7 @@ onMounted(() => {
     <template #title>
       <div class="flex justify-between">
         <span></span>
+
         <Button type="primary" @click="fetchMessages()" :ghost="true">
           <template #icon>
             <ReloadOutlined />
