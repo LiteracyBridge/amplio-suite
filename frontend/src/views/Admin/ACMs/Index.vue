@@ -1,9 +1,5 @@
 <script lang="ts" setup>
 import { Button, Input, PageHeader, Table } from "ant-design-vue";
-import { SearchOutlined } from "@ant-design/icons-vue";
-import { reactive, ref } from "vue";
-import { title } from "process";
-import { useRequest } from "vue-request";
 
 function onChange(pagination: any, filters: any, sorter: any, extra: any) {
   console.log('params', pagination, filters, sorter, extra);
@@ -12,6 +8,8 @@ function onChange(pagination: any, filters: any, sorter: any, extra: any) {
 /**const { loading, data: tableData, run: fetchData } = useRequest(store.getTbStatusBy, {
   defaultParams: ["ByDepl"],
 });*/
+
+// TODO: fetch the checkout data from the backend
 
 const columns = [
     {
@@ -83,7 +81,7 @@ const dataSource = [
 </script>
 
 <template>
-    <PageHeader title="ACMs" sub-title="ACM Checkout list"></PageHeader>
+    <PageHeader title="ACMs" sub-title="ACM Checkout"></PageHeader>
 
     <Table :columns="columns" :data-source="dataSource" @change="onChange">
         <template #bodyCell="{ column, record }">
