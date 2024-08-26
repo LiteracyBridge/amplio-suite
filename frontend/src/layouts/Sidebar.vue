@@ -61,7 +61,7 @@ const config = ref({
         </template>
 
         <router-link to="/programs/monitor">
-          <span role="link">TB Monitoring Center </span>
+          <span role="link">Monitoring Center </span>
         </router-link>
       </MenuItem>
 
