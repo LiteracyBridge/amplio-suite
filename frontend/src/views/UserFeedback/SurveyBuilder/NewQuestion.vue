@@ -2,9 +2,6 @@
 import {
   Card,
   Button,
-  Dropdown,
-  Menu,
-  MenuItem,
   Form,
   FormItem,
   Input,
@@ -15,21 +12,9 @@ import {
   Textarea,
   Switch,
 } from "ant-design-vue";
-import { DownOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
-
-import {
-  computed,
-  h,
-  markRaw,
-  onMounted,
-  onUnmounted,
-  onBeforeUnmount,
-  ref,
-  toRaw,
-  watch,
-} from "vue";
-import { Question, QuestionChoice, QuestionType } from "@/models/question";
-import QuestionsView from "./QuestionsView.vue";
+import {  DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
+import { onBeforeUnmount, ref } from "vue";
+import { type Question, type QuestionChoice, QuestionType } from "@/models/question";
 import OptionIcon from "./OptionIcon.vue";
 import QuestionCondition from "./QuestionCondition.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";

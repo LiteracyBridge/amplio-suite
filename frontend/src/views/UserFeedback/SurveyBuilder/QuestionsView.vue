@@ -1,17 +1,10 @@
 <script lang="ts" setup>
 import {
-  Button,
   Card,
-  Divider,
-  FormItem,
-  Radio,
-  RadioGroup,
-  Space,
   Form,
   Input,
   Empty,
 } from "ant-design-vue";
-// import { Question, QuestionType } from "./types";
 import { computed, markRaw, onMounted, ref, toRaw } from "vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
 import OptionIcon from "./OptionIcon.vue";
@@ -145,6 +138,7 @@ function focusCard(question: Question) {
               </div>
             </Form>
           </Card>
+
         </div>
       </template>
     </draggable>
