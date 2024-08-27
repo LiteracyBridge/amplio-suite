@@ -237,11 +237,7 @@ function duplicateQuestion(question: Question) {
 
               <!-- TODO: Implement adding new option -->
               <span class="block">
-                <Button
-                  type="link"
-                  :ghost="true"
-                  @click="addOption(false, option.choice_id)"
-                >
+                <Button type="link" @click="addOption(false, option.choice_id)">
                   add sub option
                 </Button>
                 <!-- or
@@ -260,11 +256,9 @@ function duplicateQuestion(question: Question) {
         </div>
 
         <span class="mt-5 block">
-          <Button type="link" :ghost="true" @click="addOption()"> Add option </Button>
+          <Button type="link" @click="addOption()"> Add option </Button>
           or
-          <Button type="link" :ghost="true" @click="addOption(true)">
-            add "Other"
-          </Button>
+          <Button type="link" @click="addOption(true)"> add "Other" </Button>
         </span>
       </div>
 
