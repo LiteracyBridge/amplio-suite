@@ -216,6 +216,11 @@ export default {
      */
     async onExportProgramSpec() {
       // Get the link to the downloadable object.
+      notification.info({
+        message: `Exporting ${
+          this.exportUnpublished ? "unpublished " : ""
+        } Program Specification for ${this.programId}`,
+      })
       const downloadLink = await this.getExportLink({
         programId: this.programId,
         artifact: this.exportUnpublished ? "unpublished" : "published",
