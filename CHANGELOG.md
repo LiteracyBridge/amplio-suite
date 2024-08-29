@@ -1,4 +1,8 @@
-# 0.1.0 (2024-08-29)
+## [0.1.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.0...v0.1.1) (2024-08-29)
+
+
+
+# [0.1.0](https://github.com/LiteracyBridge/amplio-suite/compare/58a3a2f4321f526946aa33355f1210f9e0925abf...v0.1.0) (2024-08-29)
 
 
 ### Bug Fixes
