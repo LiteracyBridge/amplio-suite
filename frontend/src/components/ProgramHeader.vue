@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import VButton from '@/components/VButton'
+import VButton from '@/components/VButton.vue'
 
 export default {
   props: {

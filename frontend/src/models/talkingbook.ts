@@ -1,0 +1,12 @@
+import { Deployment } from "./deployment";
+
+export class TalkingBookDeployed {
+  talkingbook_id: string;
+  deployed_timestamp: Date;
+  recipient_id: string;
+  project: string;
+  deployment_name: string;
+  deployment_uuid: string;
+  content_package: string;
+  deployment: Deployment;
+}

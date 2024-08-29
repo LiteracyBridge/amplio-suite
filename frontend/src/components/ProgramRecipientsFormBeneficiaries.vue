@@ -2,53 +2,41 @@
   <div class="grid grid-cols-form-2 items-center col-span-2">
     <div>
       <span class="float-right mr-4 text-right">{{ label }}</span>
-      <v-tooltip
+      <!-- <v-tooltip
         v-if="showTooltip"
         text="This field cannot be greater than Direct Beneficiaries"
         position="left"
         class="ml-2"
       >
-        <font-awesome-icon
-          class="text-orange-600"
-          icon="exclamation-circle"
-        />
-      </v-tooltip>
+        <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
+      </v-tooltip> -->
     </div>
-    <v-input class="recipient-number-value"
+    <Input
       type="number"
       :value="val"
-      @input="input($event.target.value)"
+      @change="emit('input', $event.target.value)"
       mx="mx-0 w-full"
-    />
+    >
+      <template #suffix>
+        <Tooltip title="This field cannot be greater than Direct Beneficiaries">
+          <InfoCircleOutlined style="color: rgba(0, 0, 0, 0.45)" />
+        </Tooltip>
+      </template>
+    </Input>
   </div>
 </template>
 
-<script>
-import VInput from '@/components/VInput'
-import VTooltip from '@/components/VTooltip'
+<script lang="ts" setup>
+import { FormItem, Input, Tooltip } from "ant-design-vue";
+import { InfoCircleOutlined } from "@ant-design/icons-vue";
 
-export default {
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    val: {
-      type: Number,
-      default: null
-    },
-    showTooltip: {
-      type: Boolean,
-      required: true
-    },
-    input: {
-      type: Function,
-      required: true
-    }
-  },
-  components: {
-    VInput,
-    VTooltip,
-  },
-}
+const props = defineProps<{
+  label: string;
+  val?: number | string;
+  showTooltip: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "input", value: number | string): void;
+}>();
 </script>

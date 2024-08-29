@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'pinia'
 
-import Box from '@/components/SetupBox'
+import Box from '@/components/SetupBox.vue'
 
 export default {
   props: {

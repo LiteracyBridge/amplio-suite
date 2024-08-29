@@ -1,102 +1,216 @@
 <template>
-    <section class="relative min-h-200-px p-6 pt-0">
-        <loading v-if="isLoading" class="-ml-6 rounded-b-lg"/>
+  <Table
+    :columns="columns"
+    :data-source="tableData"
+    :loading="loading"
+  >
+    <template #title>
+      <div class="flex justify-between">
+        <TypographyTitle :level="5">
+          Talking Book Stats & UF Collection Activity
+        </TypographyTitle>
 
-        <monitor-header
-            title="Collections"
-            :description="description"
+        <Button type="primary" @click="fetchData('ByTb')" :ghost="true">
+          <ReloadOutlined /> Refresh Data
+        </Button>
+      </div>
+    </template>
+    <template #headerCell="{ column }">
+      <template v-if="column.key === 'recipient'">
+        <span>Recipient</span>
+      </template>
+    </template>
+    <template
+      #customFilterDropdown="{
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        column,
+      }"
+    >
+      <div style="padding: 8px">
+        <Input
+          ref="searchInput"
+          :placeholder="`Search ${column.dataIndex}`"
+          :value="selectedKeys[0]"
+          style="width: 188px; margin-bottom: 8px; display: block"
+          @change="(e: any) => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
         />
+        <Button
+          type="primary"
+          size="small"
+          style="width: 90px; margin-right: 8px"
+          @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+        >
+          <template #icon><SearchOutlined /></template>
+          Search
+        </Button>
+        <Button size="small" style="width: 90px" @click="handleReset(clearFilters)"
+          >Reset</Button
+        >
+      </div>
+    </template>
+    <template #customFilterIcon="{ filtered }">
+      <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+    </template>
+    <template #bodyCell="{ column, record }">
+      <span v-if="state.searchText && state.searchedColumn === record.dataIndex">
+        <template
+          v-for="(fragment, i) in column
+            .toString()
+            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+        >
+          <mark
+            v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
+            :key="i"
+            class="highlight"
+          >
+            {{ fragment }}
+          </mark>
+          <template v-else>{{ fragment }}</template>
+        </template>
+      </span>
+      <template v-if="column.key === 'recipient'">
+        {{ record.recipient }}
+      </template>
 
-        <div class="min-h-200-px my-5">
-            <!-- Separater line between heading and content -->
-            <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600"/>
+      <template v-if="column.key === 'talkingbookid'">
+        {{ record.talkingbookid }}
+      </template>
 
-            <a-data-table :tableData="tableData" :columnLabels="columnLabels">
+      <template v-if="column.key === 'deployment_num'">
+        {{ record.deployment_num }}
+      </template>
 
-            </a-data-table>
-        </div>
+      <template v-if="column.key === 'deployment_time'">
+        {{ record.deployment_time }}
+      </template>
 
-        <!-- For modal components -->
-    </section>
+      <template v-if="column.key === 'deployment_user'">
+        {{ record.deployment_user }}
+      </template>
+
+      <template v-if="column.key === 'collection_time'">
+        {{ record.collection_time }}
+      </template>
+
+      <template v-if="column.key === 'collection_user'">
+        {{ record.collection_user }}
+      </template>
+    </template>
+  </Table>
 </template>
 
-<script>
-import {mapState, mapActions} from 'vuex'
+<script setup lang="ts">
+import { reactive, ref } from "vue";
+import { useRequest } from "vue-request";
+import { Table, TypographyTitle, Button, Input } from "ant-design-vue";
+import { ReloadOutlined } from "@ant-design/icons-vue";
+import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+import { SearchOutlined } from "@ant-design/icons-vue";
 
-import { getTbStatusBy } from '@/api/generalQueries.api'
-import ADataTable from '@/components/ADataTable'
-import Loading from '@/components/Loading'
-import MonitorHeader from '@/components/MonitorHeader'
+const store = useTalkingBookAnalyticStore();
+const state = reactive({
+  searchText: "",
+  searchedColumn: "",
+});
+const searchInput = ref();
 
-export default {
-    props: ['programId'],
-    created() {
-        this.getStatus(this, this.programId);
-        // this.tableData = this.deployments
-        this.columnLabels = {
-            // These get concatenated into "recipient":
-            // region: 'Region',
-            // district: 'District',
-            // communityname: 'Community',
-            // groupname: 'Group',
-            // agent: 'Agent',
-            // language: 'Language',
-            recipient: 'Recipient',
-            talkingbookid: 'TB ID',
-            deployment_num: 'Current Content Deployment',
-            deployment_time: 'Date of Last Content Update',
-            deployment_user: 'User',
-            // collection_num: 'Latest Collection',
-            collection_time: 'Date of Last Data Collection',
-            collection_user: 'User',
-        };
+const tableData = ref([]);
+const columns = [
+  {
+    title: "Recipient",
+    key: "recipient",
+    dataIndex: "recipient",
+    customFilterDropdown: true,
+    onFilter: (value: any, record: any) =>
+      record.recipient.toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => {
+          searchInput.value.focus();
+        }, 100);
+      }
     },
+  },
+  { title: "TB ID", key: "talkingbookid", dataIndex: "talkingbookid" },
+  {
+    title: "Current Content Deployment",
+    key: "deployment_num",
+    dataIndex: "deployment_num",
+    sorter: (a: any, b: any) => a.deployment_num - b.deployment_num,
+  },
+  {
+    title: "Date of Last Content Update",
+    key: "deployment_time",
+    dataIndex: "deployment_time",
+    sorter: (a: any, b: any) =>
+      new Date(a.deployment_time).valueOf() - new Date(b.deployment_time).valueOf(),
+  },
+  {
+    title: "User",
+    key: "deployment_user",
+    dataIndex: "deployment_user",
+    sorter: (a: any, b: any) => a.deployment_user?.localeCompare(b?.deployment_user),
+  },
+  {
+    title: "Date of Last Data Collection",
+    key: "collection_time",
+    dataIndex: "collection_time",
+    sorter: (a: any, b: any) =>
+      new Date(a.collection_time).valueOf() - new Date(b.collection_time).valueOf(),
+  },
+  {
+    title: "User",
+    key: "collection_user",
+    dataIndex: "collection_user",
+    sorter: (a: any, b: any) =>
+      (a.collection_user?.length || 0) - (b.collection_user?.length || 0),
+  },
+];
 
-    data() {
-        return {
-            description: "Talking Book Stats & UF Collection Activity",
+const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+  confirm();
+  state.searchText = selectedKeys[0];
+  state.searchedColumn = dataIndex;
+};
 
-            tableData: null,
-            columnLabels: null,
-            isLoading: true,
+const handleReset = (clearFilters: any) => {
+  clearFilters({ confirm: true });
+  state.searchText = "";
+};
+
+const { loading, run: fetchData } = useRequest(store.getTbStatusBy, {
+  defaultParams: ["ByTb"],
+  onSuccess: (data) => {
+    loading.value = true;
+
+    // Find which recipient columns have multiple values.
+    const needed: any[] = [];
+    ["region", "district", "communityname", "groupname", "agent", "language"].forEach(
+      (col) => {
+        let v = data[0][col];
+        if (data.some((row) => row[col] !== v)) {
+          needed.push(col);
         }
-    },
-    computed: {
-        ...mapState('programspec', {
-            'status': (state) => state.status,
+      }
+    );
+    data.forEach((row) => {
+      let values = needed.map((col) => row[col] || "-");
+      row.recipient = values.join("/");
+    });
 
-            'programName': (state) => state.general.name,
-        }),
-    },
-    components: {
-        ADataTable,
-        Loading,
-        MonitorHeader,
-    },
-    methods: {
-        ...mapActions('ui', [
-            'setModal',
-            'closeModal'
-        ]),
-        getStatus: async (self, programid) => {
-            let status = await getTbStatusBy(programid, 'ByTb');
-            // Find which recipient columns have multiple values.
-            let needed = [];
-            ['region', 'district', 'communityname', 'groupname', 'agent', 'language'].forEach(col => {
-                let v = status[0][col];
-                if (status.some(row=>row[col]!==v)) {
-                    needed.push(col);
-                }
-            });
-            status.forEach(row=>{
-                let values = needed.map(col=>(row[col] || '-'));
-                row.recipient = values.join('/')
-            });
-            // self.columnLabels['recipient'] = self.columnLabels['recipient'] + `(${needed.join('/')})`;
-            self.tableData = status;
-            self.isLoading = false;
-        }
-    },
-
-}
+    tableData.value = data;
+    loading.value = false;
+  },
+});
 </script>
+
+<style scoped>
+.highlight {
+  background-color: rgb(255, 192, 105);
+  padding: 0px;
+}
+</style>

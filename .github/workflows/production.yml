@@ -15,7 +15,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: '12'
+        node-version: '21'
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -32,6 +32,7 @@ jobs:
     - name: Build frontend
       run: |
         cd frontend
+        yarn config set "strict-ssl" false -g
         yarn install
         yarn production-build
         cd ..

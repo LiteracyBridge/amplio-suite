@@ -1,418 +1,354 @@
 <template>
-    <section class="relative min-h-200-px p-6 pt-0">
-        <loading v-if="status !== 'success'" class="-ml-6 rounded-b-lg"/>
+  <section>
+    <!-- <header class="w-full inline-flex items-center justify-between">
+      <h2 class="visually_hidden">Recipients</h2>
 
-        <!-- This is the common header, with program name, this panel's title, and save & discard buttons -->
-        <program-header
-            class="mb-4"
-            title="Recipients"
-            :changed="hasChanges"
-            :canSave="canSave"
-            :description="description"
-            :onSaveChanges="onSaveChanges"
-            :onDiscardChanges="onDiscardChanges"
+      <VButton tag="span" label="+ Add Recipient" @click="addNewRecipient" />
+
+      <div class="inline-flex">
+        <!-- <form v-on:submit.prevent="fetchRecipients(programId)">
+          <v-input
+            type="text"
+            name="filterColumns"
+            placeholder="Filter columns"
+            iconRight="search"
+            mx="mx-2"
+            :value="store.filterText"
+            @input="setFilterText($event.target.value)"
+          />
+        </form>
+        <VButton
+          tag="span"
+          label="Reset Filter"
+          :disabled="!tableIsFilter"
+          @click="store.resetFilters"
         />
+        -->
+    <!-- </div> -->
+    <!-- </header> -->
 
-        <!-- Separater line between heading and content -->
-        <p class="-mx-6 mb-2 px-6 bg-gray-400 text-xl text-left border-2 border-gray-600"/>
+    <Table
+      :columns="columns"
+      :data-source="recipients"
+      :sticky="true"
+      :pagination="false"
+      class="ant-table-striped"
+      :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+    >
+      <template #title>
+        <div class="flex justify-end">
+          <Input
+            type="text"
+            class="mr-10"
+            placeholder="Search recipient"
+            @change="filterRecipient($event.target.value)"
+          >
+            <template #prefix>
+              <SearchOutlined />
+            </template>
+          </Input>
 
-        <header class="w-full inline-flex items-center justify-between">
-            <h2 class="visually_hidden">Recipients</h2>
-
-            <VButton
-                tag="span"
-                label="+ Add Recipient"
-                @click="addNewRecipient"
-            />
-
-            <div class="inline-flex">
-                <form v-on:submit.prevent="fetchRecipients(programId)">
-                    <v-input
-                        type="text"
-                        name="filterColumns"
-                        placeholder="Filter columns"
-                        iconRight="search"
-                        mx="mx-2"
-                        :value="filterText"
-                        @input="setFilterText($event.target.value)"
-                    />
-                </form>
-                <VButton
-                    tag="span"
-                    label="Reset Filter"
-                    :disabled="!tableIsFilter"
-                    @click="resetFilters"
-                />
-            </div>
-        </header>
-
-        <!--    <div v-if="status !== 'loading' && filteredRecipients.length === 0">-->
-        <!--      <p>Add recipients here.</p>-->
-        <!--    </div>-->
-
-        <div v-if="filteredRecipients.length > 0" class="block pt-2 overflow-x-auto">
-            <table class="w-full table-auto overflow-x-auto">
-                <thead>
-                <tr>
-                    <th v-for="col in columns" :key="col.key" class="text-left border-2">
-                        <v-tooltip :width="150" :text="`Sort ${sortTable.descending ? 'Ascending' : 'Descending'}`">
-                            <button
-                                class="flex gap-2"
-                                style="white-space: nowrap;"
-                                @click="setSortByColumn(col.key)"
-                                @keyup.enter="setSortByColumn(col.key)"
-                                @keyup.space="setSortByColumn(col.key)"
-                            >
-                                {{ col.label }}
-                                <font-awesome-icon
-                                    v-if="sortTable.by === col.key"
-                                    :icon="sortTable.descending ? 'chevron-down' : 'chevron-up'"
-                                />
-                            </button>
-                        </v-tooltip>
-                    </th>
-                    <th class="px-4 py-2 text-amplio-green border-b text-left border-2">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                    v-for="(recipient, index) in filteredRecipients"
-                    :key="recipient.recipientid"
-                    :class="index % 2 === 0 ? '' : 'bg-gray-200'"
-                    class="hover:bg-gray-400"
-                    @dblclick="editRecipient(recipient, index)"
-                >
-                    <td
-                        v-for="col in columns"
-                        :key="`${index}-${col.key}`"
-                        class="px-4 py-2 border-b"
-                    >
-                        {{ recipient[col.key] }}
-                    </td>
-                    <td class="px-4 border-b">
-                        <div class="flex gap-1">
-                            <v-tooltip :width="100" :text="`Edit`">
-                                <VButton
-                                    iconL="edit"
-                                    :ariaLabel="`Edit recipient ${recipient.recipientid}`"
-                                    @click="editRecipient(recipient)"
-                                />
-                            </v-tooltip>
-                            <v-tooltip :width="100" :text="`Duplicate`">
-                                <VButton
-                                    iconL="copy"
-                                    :ariaLabel="`Duplicate recipient ${recipient.recipientid}`"
-                                    @click="duplicateRecipient(recipient)"
-                                />
-                            </v-tooltip>
-                            <!-- <VButton
-                              variant="warning"
-                              iconL="trash-alt"
-                              :ariaLabel="`Delete recipient ${recipient.id}`"
-                              @click="onClickDelete(recipient.id)"
-                            /> -->
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+          <Button @click="addNewRecipient()" type="primary" :ghost="true"
+            >+ Add Recipient</Button
+          >
         </div>
+      </template>
 
-        <!-- Edit modal -->
-        <portal to="modalBody" v-if="showModal.edit">
-            <program-recipients-form
-                :recipient="recipientInEdit"
-                :isDuplicateRecipient="isDuplicateRecipient"
-                :invalidBeneficiaries="invalidBeneficiaries"
-                @changed="onRecipientEdited"
-            />
-        </portal>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'region'">
+          {{ record.region }}
+        </template>
 
-        <portal to="modalFooter" v-if="showModal.edit">
-            <footer v-if="recipientInEdit" class="flex justify-end gap-4">
-                <VButton
-                    label="Cancel" variant="warning" @click="onCancelEdit"
-                />
-                <VButton
-                    type="success" label="OK" :disabled="!recipientEdited || isDuplicateRecipient || invalidBeneficiaries"
-                    @click="onAcceptEdit"
-                />
-                <!--        <VButton-->
-                <!--          v-if="selectedRecipient.id" label="Close" variant="success" :disabled="recipientEdited" @click="onCloseModal"-->
-                <!--        />-->
-            </footer>
-        </portal>
+        <template v-if="column.key === 'district'">
+          {{ record.district }}
+        </template>
 
-        <!-- Delete modal -->
-        <portal to="modalBody" v-if="showModal.delete">
-            <p class="text-xl">This recipient will be deleted.</p>
-        </portal>
+        <template v-if="column.key === 'community_name'">
+          {{ record.community_name }}
+        </template>
 
-        <portal to="modalFooter" v-if="showModal.delete">
-            <footer class="flex flex-row-reverse justify-between pt-20">
-                <VButton
-                    label="Confirm"
-                    variant="warning"
-                    @click="confirmDeleteRecipient"
-                />
-                <VButton
-                    label="Cancel"
-                    @click="onCloseModal"
-                />
-            </footer>
-        </portal>
+        <template v-if="column.key === 'group_name'">
+          {{ record.group_name }}
+        </template>
 
-        <!-- Mandatory fields modal -->
-        <portal to="modalBody" v-if="showModal.mandatory">
-            <p class="text-xl">Please complete all of the mandatory fields.</p>
-        </portal>
+        <template v-if="column.key === 'agent'">
+          {{ record.agent }}
+        </template>
 
-        <portal to="modalFooter" v-if="showModal.mandatory">
-            <footer class="flex flex-row-reverse justify-between pt-20">
-                <VButton
-                    label="Close"
-                    @click="onClickEdit(selectedRecipientId)"
-                />
-            </footer>
-        </portal>
-    </section>
+        <template v-if="column.key === 'language'">
+          {{ record.language }}
+        </template>
+
+        <template v-if="column.key === 'numtbs'">
+          {{ record.numtbs }}
+        </template>
+
+        <template v-if="column.key === 'affiliate'">
+          <div>
+            <Tooltip placement="topLeft">
+              <template #title>
+                <span>Edit recipient {{ record.id }}</span>
+              </template>
+              <Button
+                class="mr-3"
+                :aria-label="`Edit recipient ${record.id}`"
+                @click="editRecipient(record as any)"
+                size="small"
+                type="primary"
+                :ghost="true"
+                ><EditOutlined
+              /></Button>
+            </Tooltip>
+
+            <Tooltip placement="topLeft">
+              <template #title>
+                <span>Duplicate recipient {{ record.id }}</span>
+              </template>
+              <Button
+                class="mr-3"
+                :aria-label="`Duplicate recipient ${record.id}`"
+                @click="duplicateRecipient(record as any)"
+                size="small"
+                ><CopyOutlined
+              /></Button>
+            </Tooltip>
+
+            <!-- <Popconfirm
+            title="Are you sure to delete this recipient?"
+            ok-text="Yes"
+            cancel-text="No"
+          >
+            <Button
+              class="mt-3"
+              :aria-label="`Delete message ${message.title}`"
+              :danger="true"
+              >Delete Message</Button
+            >
+          </Popconfirm> -->
+          </div>
+        </template>
+      </template>
+    </Table>
+
+    <!-- Edit modal -->
+    <!-- New language modal -->
+    <Modal
+      v-model:open="modal.open"
+      title="Recipient Details"
+      ok-text="Save"
+      @ok="onAcceptEdit"
+      @cancel="onCloseModal()"
+      :width="850"
+      :ok-button-props="{ disabled: isDuplicateRecipient || invalidBeneficiaries }"
+    >
+      <ProgramRecipientsForm
+        :recipient="data.recipientInEdit"
+        :isDuplicateRecipient="isDuplicateRecipient"
+        :invalidBeneficiaries="invalidBeneficiaries"
+        @changed="onRecipientEdited"
+        :invalid-constraint="true"
+      />
+    </Modal>
+  </section>
 </template>
 
-<script>
-import {mapState, mapGetters, mapActions} from 'vuex'
+<script lang="ts" setup>
+import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
+import { useProgramSpecStore } from "@/store/programspec";
+import { computed, ref } from "vue";
+import { Recipient } from "@/models/recipient";
+import { Input, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
+import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vue";
 
-import VInput from '@/components/VInput'
-import VButton from '@/components/VButton'
-import Loading from '@/components/Loading'
-import VTooltip from '@/components/VTooltip'
-import ProgramRecipientsForm from '@/components/ProgramRecipientsForm'
-import {EventBus} from '@/event-bus'
-import ProgramHeader from '@/components/ProgramHeader.vue';
+const columns: Array<{ title: string; key: keyof Recipient }> = [
+  { title: "Region/State", key: "region" },
+  { title: "District/County", key: "district" },
+  { title: "Community", key: "community_name" },
+  { title: "Group", key: "group_name" },
+  { title: "Agent", key: "agent" },
+  { title: "Language", key: "language" },
+  { title: "# TBs", key: "numtbs" },
+  { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
+];
 
-const columns = [
-    {label: 'Region/State', key: 'region'},
-    {label: 'District/County', key: 'district'},
-    {label: 'Community', key: 'communityname'},
-    {label: 'Group', key: 'groupname'},
-    {label: 'Agent', key: 'agent'},
-    {label: 'Language', key: 'language'},
-    {label: '# TBs', key: 'numtbs'}
-]
+const store = useProgramSpecStore();
+const recipients = ref([...store.recipients]);
+const data = ref({
+  selectedRecipientId: null,
+  recipientInEdit: null as Recipient,
+  recipientEdited: false,
+  description: "Add and edit recipients here.",
+  columns,
+});
+const modal = ref({
+  open: false,
+  state: undefined as "edit" | "new",
+});
 
-export default {
-    props: ['programId'],
-    computed: {
-        ...mapState('programspec', {
-            'status': (state)=>state.status,
-            'changed': (state)=>state.changed,
-            'sortTable': (state)=>state.sortTable,
-            'filterText': (state)=>state.filterText,
+const isRecipientInEditValid = computed(() => {
+  // nothing selected; can't be valid
+  if (!data.value.recipientInEdit) return null;
 
-            'country': (state)=>state.general.country,
-            'recipients': (state)=>state.recipients,
-        }),
-        ...mapGetters('programspec', [
-            'filteredRecipients',
-        ]),
-        hasChanges() {
-            return this.changed;
-        },
-        canSave() {
-            return this.changed;
-        },
-        selectedRecipient() {
-            return this.recipients.find(recipient => recipient.recipientid === this.selectedRecipientId)
-        },
-        tableIsFilter() {
-            return this.sortTable.by !== '' || this.filterText !== ''
-        },
-        isRecipientInEditValid() {
-            // nothing selected; can't be valid
-            if (!this.recipientInEdit) return null
+  const requiredFields = [
+    "region",
+    "district",
+    "community_name",
+    "language",
+    "language",
+    // 'listeningModel', 'numTbs',
+    // 'deployments', 'directBeneficiaries'
+  ];
 
-            const requiredFields = [
-                'region', 'district', 'communityname',
-                'language',
-                // 'listeningModel', 'numTbs',
-                // 'deployments', 'directBeneficiaries'
-            ]
+  const partial = requiredFields.map((field: keyof Recipient) => {
+    const value = data.value.recipientInEdit[field];
+    if (typeof value === "string" || value instanceof String) return value !== "";
+    if (typeof value === "number") return value >= 0;
+    else if (Array.isArray(value)) return value.length > 0;
+  });
 
-            const partial = requiredFields.map(field => {
-                const value = this.recipientInEdit[field]
-                if (typeof value === 'string' || value instanceof String) return value !== ''
-                else if (typeof value === 'number') return value >= 0
-                else if (Array.isArray(value)) return value.length > 0
-            })
+  return partial.every(Boolean);
+});
 
-            return partial.every(Boolean)
-        },
-        isDuplicateRecipient() {
-            // All the recipients are from the current program, so don't have a "program" property.
-            // Construct a concatenation of country-region-district-communityname-groupname-agent-language
-            function key(recipient) {
-                return `${recipient.country}-${recipient.region}-${recipient.district}-` +
-                    `${recipient.communityname}-${recipient.groupname}-${recipient.agent}-${recipient.language}`;
-            }
+const isDuplicateRecipient = computed(() => {
+  // All the recipients are from the current program, so don't have a "program" property.
+  // Construct a concatenation of country-region-district-community_name-group_name-agent-language
+  function key(recipient: Recipient) {
+    return (
+      `${recipient.country}-${recipient.region}-${recipient.district}-` +
+      `${recipient.community_name}-${recipient.group_name}-${recipient.agent}-${recipient.language}`
+    );
+  }
 
-            if (!this.recipientInEdit) return null
+  if (!data.value.recipientInEdit) return null;
 
-            const thisKey = key(this.recipientInEdit);
-            // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
-            let isDuplicate = false;
-            this.recipients.forEach((recip) => {
-                if (key(recip) === thisKey && recip.recipientid !== this.recipientInEdit.recipientid) isDuplicate = true;
-            });
+  const thisKey = key(data.value.recipientInEdit);
+  // If the key matches any recipient with a different recipientid, then it is a duplicate recipient.
+  let isDuplicate = false;
+  store.recipients.forEach((recip) => {
+    if (key(recip) === thisKey && recip.id !== data.value.recipientInEdit.id)
+      isDuplicate = true;
+  });
 
-            if (isDuplicate) console.log(`Duplicate recipient properties: ${thisKey}`);
-            return isDuplicate;
-        },
-        invalidBeneficiaries() {
-            if (!this.recipientInEdit) return null
-            let invalid = false;
-            // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
-            Object.keys(this.recipientInEdit.direct_beneficiaries_additional).forEach(key => {
-                let val = this.recipientInEdit.direct_beneficiaries_additional[key];
-                if (val > this.recipientInEdit.direct_beneficiaries) {
-                    invalid = true;
-                    // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
-                }
-            });
-            // const values = Object.values(this.recipientInEdit.direct_beneficiaries_additional)
-            //   .map(val => val > this.recipientInEdit.direct_beneficiaries)
+  if (isDuplicate) console.log(`Duplicate recipient properties: ${thisKey}`);
+  return isDuplicate;
+});
 
-            // Is either of these properties greater than "direct beneficiaries"?
-            const keys = ['numhouseholds', 'group_size']
-            keys.forEach(key => {
-                let val = this.recipientInEdit[key];
-                if (val > this.recipientInEdit.direct_beneficiaries) {
-                    invalid = true;
-                    // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
-                }
-            })
+const invalidBeneficiaries = computed(() => {
+  if (!data.value.recipientInEdit) return false;
 
-            return invalid;
-        },
-    },
+  let invalid = false;
+  // are any of the "direct beneficiaries additional" greater than "direct beneficiaries"?
+  Object.keys(data.value.recipientInEdit.direct_beneficiaries_additional || {}).forEach(
+    (key) => {
+      const val = data.value.recipientInEdit.direct_beneficiaries_additional[key];
+      if (val > data.value.recipientInEdit.direct_beneficiaries) {
+        invalid = true;
+        // console.log(`direct beneficiaries additional [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
+      }
+    }
+  );
+  // const values = Object.values(this.recipientInEdit.direct_beneficiaries_additional)
+  //   .map(val => val > this.recipientInEdit.direct_beneficiaries)
 
-    components: {
-        ProgramHeader,
-        VInput,
-        VButton,
-        Loading,
-        VTooltip,
-        ProgramRecipientsForm,
-    },
+  // Is either of these properties greater than "direct beneficiaries"?
+  const keys = ["numhouseholds", "group_size"];
+  keys.forEach((key: keyof Recipient) => {
+    const val = data.value.recipientInEdit[key];
+    if (val > data.value.recipientInEdit.direct_beneficiaries) {
+      invalid = true;
+      // console.log(`beneficiaries inferred from [ ${key} ] (${val}) is greater than direct beneficiaries (${this.recipientInEdit.direct_beneficiaries})`);
+    }
+  });
 
-    created() {
-        this.ensureSpec({programId: this.programId})
+  return invalid;
+});
 
-        EventBus.$on('handleEscape', this.handleModalEscape)
-    },
+function filterRecipient(val?: string) {
+  if (val == null || val === undefined || val.trim().length === 0) {
+    recipients.value = [...store.recipients];
+    return
+  }
 
-    beforeDestroy() {
-        EventBus.$off('handleEscape', this.handleModalEscape)
-    },
+  const input = val.trim().toLowerCase();
+  recipients.value = store.recipients.filter((recipient) => {
+    return (
+      recipient.region?.toLowerCase().includes(input) ||
+      recipient.district?.toLowerCase().includes(input) ||
+      recipient.community_name?.toLowerCase().includes(input) ||
+      recipient.group_name?.toLowerCase().includes(input) ||
+      recipient.agent?.toLowerCase().includes(input) ||
+      recipient.language?.toLowerCase().includes(input) ||
+      recipient.numtbs?.toString().includes(input)
+    );
+  });
+}
 
-    data: () => ({
-        selectedRecipientId: null,
-        recipientInEdit: null,
-        recipientEdited: false,
-        description: "Add and edit recipients here.",
-        columns,
-        showModal: {
-            edit: false,
-            delete: false,
-            mandatory: false
-        },
-    }),
+function onAcceptEdit() {
+  if (isRecipientInEditValid.value) {
+    store.updateRecipient({ recipient: data.value.recipientInEdit });
+    filterRecipient(); // trigger table refresh
+    onCloseModal();
+  } else {
+    notification.error({
+      message: "Required Fields",
+      description: "Please complete all of the mandatory fields.",
+    });
+  }
+}
 
-    methods: {
-        ...mapActions('ui', [
-            'setModal',
-            'closeModal'
-        ]),
-        ...mapActions('languages', [
-            'fetchLanguages',
-        ]),
-        ...mapActions('programspec', [
-            'ensureSpec',
-            'fetchSpec',
-            'updateSpec',
+function onCloseModal() {
+  modal.value.open = false;
 
-            'setSortByColumn',
-            'setFilterText',
-            'resetFilters',
+  data.value.recipientEdited = false;
+  data.value.recipientInEdit = new Recipient();
+  modal.value.state = "new";
+}
 
-            'updateRecipient',
-        ]),
-        ...mapGetters('programspec', [
-            'newRecipient',
-        ]),
+// function handleModalEscape() {
+//   onCloseModal();
+//   data.value.recipientInEdit = null;
+// }
 
-        onSaveChanges() {
-            console.log("onSaveChanges");
-            this.updateSpec();
-        },
+// function onCancelEdit() {
+//   data.value.recipientInEdit = new Recipient();
+//   modal.value.state = "new";
+//   modal.value.open = false;
+// }
 
-        onDiscardChanges() {
-            console.log("onDiscardChanges")
-            this.fetchSpec({programId: this.programId});
-        },
+// function onOpenModal(modal: "edit" | "mandatory" | "delete", title: string) {
+//   data.value.recipientEdited = false;
+//   showModal.value[modal] = true;
+// }
 
-        editRecipient(recipient) {
-            let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
-            console.log(`Edit ${JSON.stringify(recip)}`);
-            this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-            this.onOpenModal('edit', 'Recipient Details')
-        },
-        duplicateRecipient(recipient) {
-            let recip = Object.keys(recipient).map(k => `${k}:${recipient[k]}`).join(', ')
-            console.log(`Duplicate ${JSON.stringify(recip)}`);
-            this.recipientInEdit = JSON.parse(JSON.stringify(recipient));
-            this.recipientInEdit.recipientid = null;
-            this.onOpenModal('edit', 'Duplicated Recipient Details')
-        },
-        addNewRecipient() {
-            this.recipientInEdit = this.newRecipient();
-            this.recipientInEdit.country = this.country;
-            console.log(`new recipient: ${JSON.stringify(this.recipientInEdit)}`);
-            this.onOpenModal('edit', 'New Recipient Details')
-        },
+function editRecipient(recipient: Recipient, index?: number) {
+  console.log(`Edit ${JSON.stringify(recipient)}`);
+  data.value.recipientInEdit = JSON.parse(JSON.stringify(recipient));
 
-        onRecipientEdited(value) {
-            this.recipientEdited = value;
-        },
+  modal.value.state = "edit";
+  modal.value.open = true;
+}
 
-        onAcceptEdit() {
-            this.onCloseModal()
-            if (this.isRecipientInEditValid) {
-                this.updateRecipient({recipient: this.recipientInEdit});
-                this.recipientInEdit = null;
-            } else {
-                this.onOpenModal('mandatory', 'Required Fields')
-            }
-        },
-        onCancelEdit() {
-            this.onCloseModal()
-            this.recipientInEdit = null;
-        },
-        onOpenModal(modal, title) {
-            this.recipientEdited = false;
-            this.showModal[modal] = true
-            this.setModal(title)
-        },
-        onCloseModal() {
-            this.recipientEdited = false;
-            this.showModal.edit = false
-            this.showModal.delete = false
-            this.showModal.mandatory = false
-            this.closeModal()
-        },
+function duplicateRecipient(recipient: Recipient) {
+  const item = new Recipient();
+  Object.assign(item, recipient);
 
-        handleModalEscape() {
-            this.onCloseModal();
-            this.recipientInEdit = null;
-        }
-    },
+  data.value.recipientInEdit = item;
+  data.value.recipientInEdit.id = null;
+
+  modal.value.state = "new";
+  modal.value.open = true;
+}
+
+function addNewRecipient() {
+  data.value.recipientInEdit = new Recipient();
+  data.value.recipientInEdit.country = store.general.country;
+  modal.value.state = "new";
+  modal.value.open = true;
+
+  console.log(`new recipient: ${JSON.stringify(data.value.recipientInEdit)}`);
+}
+
+function onRecipientEdited(value: boolean) {
+  data.value.recipientEdited = value;
 }
 </script>

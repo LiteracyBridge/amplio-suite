@@ -1,0 +1,219 @@
+permissions: ['', 'uf.can-create', 'uf.can-view', 'can-delete']
+
+role: {
+    name: 'admin',
+    permission: ['userfeedback.can-create', 'programspec.can-view', 'can-delete']
+}
+
+{
+    'userfeedback.can-create': true,
+    'programspec.can-view': true,
+}
+
+
+
+
+{
+    "success": true,
+    "statusCode": 200,
+    "data": [
+        {
+            "id": "77c0b098-8608-4546-8d98-474f799c4e64",
+            "createdAt": "2022-12-19T10:42:33.269Z",
+            "updatedAt": "2023-10-09T07:22:25.425Z",
+            "email": "staff@mailinator.com",
+            "phoneNumber": "12012665909",
+            "status": "ACTIVE",
+            "isEmailVerified": false,
+            "isPhoneNumberVerified": false,
+            "staffNo": "ACCT/00002",
+            "firstName": "Andrews",
+            "title": null,
+            "otherNames": null,
+            "lastName": "Mensah",
+            "type": "NORMAL_STAFF",
+            "createdById": null,
+            "jobTitle": "Tester",
+            "position": null,
+            "address": "Cape Coast",
+            "gender": "MALE",
+            "dateOfBirth": "2022-12-06",
+            "fullName": "Andrews Mensah",
+            "emailOrPhoneNumber": "staff@mailinator.com",
+            "permissions": {
+                "*": {
+                    "assigned": {
+                        "lead": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "claim": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "group": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "staff": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-invite",
+                            "can-view-invite",
+                            "can-delete-invite",
+                            "can-activate",
+                            "can-deactivate"
+                        ],
+                        "branch": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "cheque": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "client": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-sync",
+                            "can-activate",
+                            "can-deactivate",
+                            "can-reset-password"
+                        ],
+                        "policy": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-sync",
+                            "can-cancel",
+                            "can-renew",
+                            "can-change-status"
+                        ],
+                        "report": [
+                            "can-view-transaction",
+                            "can-view-invoice",
+                            "can-view-policy",
+                            "can-view-client",
+                            "can-view-commission",
+                            "can-view-claim",
+                            "can-view-cheque",
+                            "can-view-direct-debit",
+                            "can-view-agent",
+                            "can-view-compliance"
+                        ],
+                        "api_key": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-assign-product",
+                            "can-unassign-product"
+                        ],
+                        "invoice": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-sync"
+                        ],
+                        "product": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-setup"
+                        ],
+                        "currency": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "broadcast": [
+                            "can-create",
+                            "can-view"
+                        ],
+                        "commission": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-add-cheque",
+                            "can-capture",
+                            "can-finalize"
+                        ],
+                        "department": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "permission": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-assign",
+                            "can-revoke"
+                        ],
+                        "application": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-assign-product"
+                        ],
+                        "integration": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ],
+                        "transaction": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-sync",
+                            "can-approve"
+                        ],
+                        "direct_debit": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view",
+                            "can-cancel"
+                        ],
+                        "subscription": [
+                            "can-create",
+                            "can-edit",
+                            "can-delete",
+                            "can-view"
+                        ]
+                    }
+                }
+            },
+            "accountType": "STAFF",
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMGUwZWYyMC1mZjkwLTQyZDctOTFmMi1mMjkyNmQ3ODkzYzgiLCJjb21wYW55IjoiZmEwMWQ5ZWYtMDNkYi00NDNlLTgxYzEtMTg4ODNjM2QzNDg4IiwiaWF0IjoxNzAwNDY4MzUyLCJleHAiOjE3MDA4MjgzNTJ9.5_4pzhUCPJL12yLlZqbaOgL2KCkeR8b29AH5vFglMV8"
+        }
+    ]
+}
+
+
+# Needed migration for the new permissions
+1. Create generate progra

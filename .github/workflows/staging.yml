@@ -3,7 +3,7 @@ name: Publish site to Staging
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: '12'
+        node-version: '21'
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -32,21 +32,18 @@ jobs:
     - name: Build frontend
       run: |
         cd frontend
+        yarn config set "strict-ssl" false -g
         yarn install
         yarn staging-build
-        cd ..
 
-    # - name: Unit Tests
-    #   run: |
-    #     yarn test:unit
-
-    - name: Deploy to S3
-      uses: jakejarvis/s3-sync-action@master
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
       with:
-        args: --acl public-read --delete
-      env:
-        AWS_S3_BUCKET: 'amplio-suite'
-        AWS_ACCESS_KEY_ID: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-west-2'
-        SOURCE_DIR: 'frontend/dist'
+        aws-access-key-id: ${{ secrets.STAGING__AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.STAGING__AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+
+    - name: Deploy to s3
+      run: |
+        aws s3 rm s3://suite-test.amplio.org --recursive
+        aws s3 cp --recursive frontend/dist s3://suite-test.amplio.org
