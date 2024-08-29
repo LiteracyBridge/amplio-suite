@@ -1,51 +1,122 @@
 import { defineStore } from "pinia";
-import { getPrograms } from "@/api/generalQueries.api";
-import { useUIStore } from "../ui";
+import { ApiRequest } from "@/api";
+import { Program } from "@/models/program";
+import { ProgramUser, User } from "@/models/user";
+import { useAppStore } from "@/store/app.store";
+import { sortBy } from "lodash";
+import { notification } from "ant-design-vue";
 
 export const useProgramsStore = defineStore("programs", {
-    state: () => ({
-        status: "",
-        programs: [],
-        programNames: {}
-    }),
-    actions: {
-        requestInit() {
-            this.status = "loading";
-        },
+  state: () => ({
+    loading: false,
+    organisationPrograms: [] as Program[],
+    programs: [],
+  }),
+  actions: {
+    // requestInit() {
+    //   this.status = "loading";
+    // },
 
-        requestError() {
-            this.status = "error";
-        },
+    // requestError() {
+    //   this.status = "error";
+    // },
 
-        setProgramsList(values: { programIds: any; programNames: any }) {
-            this.status = "success";
-            this.programs = values.programIds;
-            this.programNames = values.programNames;
-        },
-        async getProgramsList() {
-            if (this.status === "loading") return;
+    setProgramsList(data: Program[]) {
+      this.organisationPrograms = sortBy(data, (p) => p.project.name);
+    },
+    //
+    // API Requests
+    //
+    /**
+     * @deprecated
+     * TODO: remove this function
+     */
+    async getProgramsList() {
+      return;
+      // if (this.status === "loading") return;
 
-            await this.requestInit();
+      // await this.requestInit();
 
-            try {
-                const getProgramsResult = await getPrograms();
-                const programsList = getProgramsResult["result"]["programs"];
-                const programIdsList = Object.keys(programsList).sort();
-                let programNamesMap: Record<string, any> = {};
-                programIdsList.forEach(id => {
-                    programNamesMap[id] = programsList[id].name;
-                });
-                await this.setProgramsList({
-                    programIds: programIdsList,
-                    programNames: programNamesMap
-                });
-            } catch (error) {
-                this.requestError();
-                useUIStore().setNotification({
-                    type: "alert",
-                    text: error.toString()
-                });
-            }
-        }
-    }
+      // try {
+      //   const getProgramsResult = await getPrograms();
+
+      //   console.log(getProgramsResult);
+
+      //   const programsList = getProgramsResult["result"]["programs"];
+      //   const programIdsList = Object.keys(programsList).sort();
+      //   let programNamesMap: Record<string, any> = {};
+      //   programIdsList.forEach((id) => {
+      //     programNamesMap[id] = programsList[id].name;
+      //   });
+      //   await this.setProgramsList({
+      //     programIds: programIdsList,
+      //     programNames: programNamesMap,
+      //   });
+      // } catch (error) {
+      //   this.requestError();
+      //   useUIStore().setNotification({
+      //     type: "alert",
+      //     text: error.toString(),
+      //   });
+      // }
+    },
+    //
+    // API Requests
+    //
+    async getOrgPrograms() {
+      return ApiRequest.get<Program>(`programs/all`);
+    },
+    async fetchOrgUsers(programId: string | number) {
+      return ApiRequest.get<User>(`programs/${programId}/organisation-users`);
+    },
+    async addOrganisationToProgram(form: {
+      organisation_id: number;
+      program_id: number;
+    }) {
+      this.loading = true;
+      return ApiRequest.post<Program>(`programs/organisations`, form)
+        .then((resp) => {
+          this.organisationPrograms = resp;
+        })
+        .finally(() => (this.loading = false));
+    },
+    async removeOrganisationFromProgram(opts: {
+      organisationId: number;
+      programId: number;
+    }) {
+      this.loading = true;
+
+      return ApiRequest.delete<Program>(
+        `programs/${opts.programId}/organisations/${opts.organisationId}`,
+      )
+        .then(async (resp) => {
+          this.organisationPrograms = resp;
+          notification.success({
+            message: "Organisation Removed!",
+            description: `The organisation has been removed from the program.`,
+          });
+          return resp;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    async removeUserFromProgram(opts: { programId: number; userId: number }) {
+      this.loading = true;
+      return ApiRequest.delete<Program>(
+        `programs/${opts.programId}/users?user_id=${opts.userId}`,
+      )
+        .then(async (resp) => {
+          this.organisationPrograms = resp;
+          notification.success({
+            message: "User Remove!",
+            description: `The user has been removed from the program.`,
+          });
+          return resp;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+  },
 });

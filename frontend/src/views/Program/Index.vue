@@ -1,90 +1,103 @@
 <template>
-  <main class="container mx-auto">
-    <div class="py-6 flex justify-between">
-      <h1 class="text-2xl text-blue capitalize">{{ programName }} Program</h1>
+  <PageHeader
+    title="Program Specification"
+    sub-title="Define your requirements and complete/modify the program specification document."
+  >
+    <template #extra>
+      <Button
+        key="1"
+        :ghost="true"
+        :danger="true"
+        type="primary"
+        @click="store.downloadSpec(appStore.activeProgram?.data.program_id)"
+      >
+        Discard Changes
+      </Button>
 
-      <div class="flex">
-        <VButton
-          label="Publish"
-          variant="submit"
-          :disabled="!canPublish"
-          :iconL="data.publishStatus === 'loading' ? 'spinner' : ''"
-          :iconLPulse="data.publishStatus === 'loading'"
-          @click="onPublish"
-        />
-        <v-tooltip
-          v-if="!canPublish"
-          text="There must be at least one deployment with a message and one recipient before this can be published to the ACM"
-          position="right"
-          class="my-2 ml-2"
+      <Button key="2" type="primary" @click="store.updateSpec" :disabled="!store.changed">
+        Save Changes
+      </Button>
+
+      <Popconfirm
+        title="Are you sure you want to publish this program specification to the ACM?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="onPublish"
+      >
+        <Button key="3" :disabled="!store.canPublish" :ghost="true" type="primary"
+          >Publish</Button
         >
-          <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
-        </v-tooltip>
-      </div>
-    </div>
+      </Popconfirm>
+    </template>
 
-    <div class="bg-white rounded-lg shadow-box">
-      <nav aria-label="Program sections" class="flex border-b">
-        <router-link
-          v-for="(section, index) in data.sections"
-          :key="section"
-          :to="`/programs/${programId}/settings/${section}`"
-          :class="[
-            $route.path.endsWith(section) ? 'bg-amplio-green text-white' : 'text-black',
-            index === 0 ? 'rounded-tl-lg' : '',
-          ]"
-          class="p-4 text-lg uppercase hover:bg-amplio-green hover:text-white"
-        >
-          {{ ` ${data.sectionTitles[section] || section} ` }}
-        </router-link>
-      </nav>
-
-      <!-- <transition :name="transitionName" mode="out-in">
-        <router-view />
-      </transition> -->
-      <router-view v-slot="{ Component }">
-        <transition>
-          <component :is="Component" />
-        </transition>
-      </router-view>
-    </div>
-
-    <footer class="py-6">
-      Need help? Contact us on
-      <a class="text-blue" href="mailto:support@amplio.org">support@amplio.org</a>
-    </footer>
-
-    <v-snackbars
-      :show.sync="data.showSnackbar"
-      label="The program specification was successfully published to the ACM."
+    <Alert
+      v-if="!store.canPublish"
+      message="There must be at least one deployment with a message and one recipient before this can be published to the ACM"
+      type="warning"
     />
+  </PageHeader>
 
-    <!-- For modal components -->
-    <portal to="modalBody" v-if="data.isModalOpen">
-      <p class="text-xl">Save or discard the change before continue.</p>
-    </portal>
+  <main class="container mx-auto">
+    <Spin :spinning="store.loading">
+      <Tabs v-model:activeKey="activeKey" centered size="large">
+        <TabPane key="general" tab="General">
+          <div v-if="!store.loading && store.general != null">
+            <General :program-id="appStore.activeProgram.id?.toString()"></General>
+          </div>
+        </TabPane>
 
-    <portal to="modalFooter" v-if="data.isModalOpen">
-      <footer class="flex flex-row-reverse justify-between pt-20">
-        <VButton label="Ok" @click="handleCloseModal" />
-      </footer>
-    </portal>
+        <TabPane key="deployment-and-content" tab="Deployments & Content">
+          <DeploymentAndContent
+            :program-id="appStore.activeProgram.id?.toString()"
+            v-if="store.deployments != null"
+          ></DeploymentAndContent>
+        </TabPane>
+
+        <TabPane key="recipients" tab="Recipients">
+          <Recipients
+            :program-id="appStore.activeProgram.id?.toString()"
+            v-if="store.recipients != null"
+          ></Recipients>
+        </TabPane>
+
+        <TabPane key="import-export" tab="Import/Export">
+          <ImportExport
+            :program-id="appStore.activeProgram.id?.toString()"
+          ></ImportExport>
+        </TabPane>
+      </Tabs>
+    </Spin>
   </main>
 </template>
 
 <script lang="ts" setup>
-import VButton from "@/components/VButton.vue";
-import VTooltip from "@/components/VTooltip.vue";
-import VSnackbars from "@/components/VSnackbars.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useAccountStore } from "@/store/account";
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
+import { onBeforeRouteLeave } from "vue-router";
+import {
+  Alert,
+  Button,
+  Modal,
+  PageHeader,
+  Popconfirm,
+  Spin,
+  TabPane,
+  Tabs,
+} from "ant-design-vue";
 
-const props = defineProps<{ programId: string }>();
-const store = useProgramSpecStore(),
-  route = useRoute();
+import General from "./General.vue";
+import DeploymentAndContent from "./DeploymentAndContent.vue";
+import Recipients from "./Recipients.vue";
+import ImportExport from "./ImportExport.vue";
+import { useAppStore } from "@/store/app.store";
+import { useRequest } from "vue-request";
+import { LocalStorageKeys } from "@/models/constants";
+
+const store = useProgramSpecStore();
+const appStore = useAppStore();
+
+const activeKey = ref("general");
 
 const data = ref({
   sections: ["general", "content2", "recipients", "importExport"],
@@ -102,42 +115,41 @@ const data = ref({
   showSnackbar: false,
 });
 
-const programName = computed(() => {
-  return useProgramSpecStore().general.name;
+// Download spec
+useRequest(store.downloadSpec, {
+  defaultParams: [
+    appStore.activeProgram.data?.program_id ??
+      JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+  ],
+  onSuccess: (data) => {
+    store.setSpec({
+      programId: appStore.activeProgram.data.program_id,
+      programspec: data[0],
+    });
+  },
 });
 
-const anyTabChanged = computed(() => {
-  return useProgramSpecStore().changed;
-});
-
-const canPublish = computed(() => {
-  const deployments = useProgramSpecStore().deployments;
-  const recipients = useProgramSpecStore().recipients;
-  const changed = useProgramSpecStore().changed;
-  const hasOneMessage = deployments.some((depl) =>
-    depl.playlists.some((pl: any) => pl.messages.length > 0)
-  );
-  const hasOneRecipient = recipients.length > 0;
-  return hasOneMessage && hasOneRecipient && !changed;
-});
+// const anyTabChanged = computed(() => {
+//   return useProgramSpecStore().changed;
+// });
 
 async function onPublish() {
-  if (!canPublish.value) return;
+  if (!store.canPublish) return;
 
   data.value.publishStatus = "loading";
   data.value.publishStatus = await store.publishSpec();
   if (data.value.publishStatus === "success") data.value.showSnackbar = true;
 }
 
-function handleOpenModal() {
-  data.value.isModalOpen = true;
-  useUIStore().setModal("Save or discard the change");
-}
+// function handleOpenModal() {
+//   data.value.isModalOpen = true;
+//   useUIStore().setModal("Save or discard the change");
+// }
 
-function handleCloseModal() {
-  data.value.isModalOpen = false;
-  useUIStore().closeModal();
-}
+// function handleCloseModal() {
+//   data.value.isModalOpen = false;
+//   useUIStore().closeModal();
+// }
 
 onMounted(async () => {
   try {
@@ -154,37 +166,54 @@ onMounted(async () => {
     console.log("no user");
   }
 
-  await store.fetchSpec({ programId: route.params.programId });
+  //   Watch for state changes
+  // this subscription will be kept even after the component is unmounted
+  store.$subscribe((mutation, state) => {
+    if (state.changed == false) {
+      store.changed = true;
+    }
+  });
 });
 
-onBeforeRouteUpdate((to, from, next) => {
-  const sTo = to.path.split("/");
-  const sFrom = from.path.split("/");
-  const toName = sTo[sTo.length - 1];
-  const fromName = sFrom[sFrom.length - 1];
+// onBeforeRouteUpdate((to, from, next) => {
+//   const sTo = to.path.split("/");
+//   const sFrom = from.path.split("/");
+//   const toName = sTo[sTo.length - 1];
+//   const fromName = sFrom[sFrom.length - 1];
 
-  const isInternalNavigation = () =>
-    (data.value.internal[fromName] as any) && (data.value.internal[toName] as any);
+//   const isInternalNavigation = () =>
+//     (data.value.internal[fromName] as any) && (data.value.internal[toName] as any);
 
-  data.value.transitionName =
-    data.value.sections.indexOf(toName) < data.value.sections.indexOf(fromName)
-      ? "slide-right"
-      : "slide-left";
+//   data.value.transitionName =
+//     data.value.sections.indexOf(toName) < data.value.sections.indexOf(fromName)
+//       ? "slide-right"
+//       : "slide-left";
 
-  // Check if the data is save
-  if (anyTabChanged.value && !isInternalNavigation()) {
-    handleOpenModal();
-    next(false);
-  } else {
-    next();
-  }
-});
+//   // Check if the data is save
+//   if (anyTabChanged.value && !isInternalNavigation()) {
+//     handleOpenModal();
+//     next(false);
+//   } else {
+//     next();
+//   }
+// });
 
 onBeforeRouteLeave((to, from, next) => {
-  // Check if the data is save
-  if (anyTabChanged.value) {
-    handleOpenModal();
-    next(false);
+  // Check if the data is saved
+  if (store.changed) {
+    Modal.confirm({
+      title: "Save or discard the change before continue.",
+      okText: "Save",
+      cancelText: "Discard Changes",
+      onOk: () => {
+        return store.updateSpec().then(() => {
+          next();
+        });
+      },
+      onCancel: () => {
+        next();
+      },
+    });
   } else {
     next();
   }

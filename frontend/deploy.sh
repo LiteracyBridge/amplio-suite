@@ -2,7 +2,7 @@
 
 set pipefail -euo
 
-NODE_OPTIONS=--max_old_space_size=4096 npm run build
+NODE_OPTIONS=--max_old_space_size=4096 npm run staging-build
 
 # Remove old build
 aws s3 rm s3://suite-test.amplio.org --recursive

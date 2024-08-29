@@ -5,8 +5,8 @@ export class Deployment {
   deployment: string;
   deploymentname?: string;
   deploymentnumber: number;
-  startdate?: Date;
-  enddate?: Date;
+  start_date?: string;
+  end_date?: string;
   distribution?: string;
   comment?: string;
   component?: string;
@@ -18,33 +18,37 @@ export class Deployment {
   static create(
     deploymentnumber: number,
     programId: string,
-    previous?: { enddate?: string | Date }
+    previous?: Deployment,
   ) {
     let startdate = new Date(),
       enddate = new Date();
 
     let playlists: Playlist[] = [];
-    if (deploymentnumber !== 1) {
-      // Date handline in Javascript is pretty bad, but this seems to work well enough.
-      let prevEnd = new Date(previous.enddate);
+    if (previous != null) {
+      // Date handling in Javascript is pretty bad, but this seems to work well enough.
+      let prevEnd = new Date(previous.end_date);
+
       startdate = new Date(prevEnd);
       startdate = new Date(startdate.setDate(prevEnd.getDate() + 1));
+
       enddate = new Date(startdate);
       enddate = new Date(enddate.setDate(startdate.getDate() + 90));
     }
-    let start = startdate.toISOString().substring(0, 10);
-    let end = enddate.toISOString().substring(0, 10);
-    let deploymentname = `${programId}-${startdate.getFullYear() %
-      100}-${deploymentnumber}`;
+
+    let deploymentname = `${programId}-${
+      startdate.getFullYear() % 100
+    }-${deploymentnumber}`;
     console.log(
-      `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`
+      `start: ${startdate}, end: ${enddate}, depl: ${deploymentname}`,
     );
 
+    console.log(startdate);
     const deployment = new Deployment();
     deployment.deploymentnumber = deploymentnumber;
-    deployment.startdate = startdate;
-    deployment.enddate = enddate;
+    deployment.start_date = startdate.toISOString().substring(0, 10);
+    deployment.end_date = enddate.toISOString().substring(0, 10);
     deployment.project = programId;
+    deployment.deploymentname = deploymentname;
     deployment.deployment = deploymentname;
     deployment.playlists = playlists;
 

@@ -1,60 +1,44 @@
-// import cognitoAuth from "@/cognito";
 import { defineStore } from "pinia";
-import { Auth } from "aws-amplify";
+// import { Auth } from "aws-amplify";
+import { type Invitation, User, type UserRole } from "@/models/user";
+import { ApiRequest } from "@/api";
+import type { Permission } from "@/models/role";
+import type { Organisation } from "@/models/organisation";
+import { useAppStore } from "../app.store";
+import { LocalStorageKeys, RequestCacheKeys } from "@/models/constants";
+import { clearCache } from "vue-request";
+import { fetchAuthSession, signOut } from "aws-amplify/auth";
 
 export const useAccountStore = defineStore("account", {
   state: () => ({
+    users: [] as User[],
+    organisations: [] as Organisation[],
+    invitations: [] as Invitation[],
     status: "",
     user: {
       email: "",
       name: "",
       img: "",
       token: "",
-    },
+      organisation_id: null,
+      roles: [],
+    } as User,
     signUp: {
       send: false,
       email: "",
     },
   }),
 
-  getters: {},
-
-  //   mutations: {
-  //     authRequest(state){
-  //       state.status = 'loading'
-  //     },
-  //     authSuccess(state){
-  //       state.status = 'success'
-  //     },
-  //     authError(state){
-  //       state.status = 'error'
-  //     },
-  //     setUser(state, payload) {
-  //       state.user = payload
-  //     },
-  //     setSignUp(state, payload) {
-  //       state.signUp.send = true
-  //       state.signUp.email = payload
-  //     },
-  //     clearSignUp(state) {
-  //       state.signUp.send = false
-  //       state.signUp.email = ''
-  //     }
-  //   },
-
+  getters: {
+    programs: (state) => {
+      return (state.user.programs || []).map((pu) => pu.program);
+    },
+    email: (state) => state.user.email,
+    isAmplioStaff: (state) => state.user.email.split("@")[1] === "amplio.org",
+    fullName: (state) =>
+      `${state.user.first_name || ""} ${state.user.last_name || ""}`,
+  },
   actions: {
-    authRequest() {
-      this.status = "loading";
-    },
-    authSuccess() {
-      this.status = "success";
-    },
-    authError() {
-      this.status = "error";
-    },
-    setUser(payload: any) {
-      this.user = payload;
-    },
     setSignUp(email: string) {
       this.signUp.send = true;
       this.signUp.email = email;
@@ -63,165 +47,91 @@ export const useAccountStore = defineStore("account", {
       this.signUp.send = false;
       this.signUp.email = "";
     },
-    // async login(payload: { email: string; token?: any; password: any }) {
-    //     this.$state.status = "loading";
-
-    //     // if (this.signUp.send) {
-    //     //     await cognitoAuth.confirmRegistration(
-    //     //         payload.email,
-    //     //         payload.token
-    //     //     );
-    //     //     this.clearSignUp();
-    //     //     // commit("clearSignUp");
-    //     // }
-
-    //     // return new Promise((resolve, reject) => {
-    //     //     cognitoAuth.authenticate(
-    //     //         payload.email,
-    //     //         payload.password,
-    //     //         (err: any, result: { getIdToken: () => any }) => {
-    //     //             if (err) {
-    //     //                 this.authError();
-    //     //                 // this.authError();
-    //     //                 reject(err);
-    //     //             }
-
-    //     //             if (result) {
-    //     //                 const token = result.getIdToken();
-    //     //                 const user = {
-    //     //                     email: payload.email,
-    //     //                     name: payload.email.split("@")[0],
-    //     //                     token: token.jwtToken
-    //     //                 };
-
-    //     //                 localStorage.setItem("user", JSON.stringify(user));
-
-    //     //                 this.setUser(user);
-    //     //                 this.authSuccess();
-    //     //                 // commit("setUser", user);
-    //     //                 // this.authSuccess();
-    //     //                 resolve("success");
-    //     //             }
-    //     //         }
-    //     //     );
-    //     // });
-    // },
-    // async register(payload: {
-    //     fullName: string;
-    //     email: string;
-    //     emailConfirmation: string;
-    //     password: string;
-    // }) {
-    //     this.authRequest();
-
-    //     // return new Promise((resolve, reject) => {
-    //     //     const isFill = [
-    //     //         payload.fullName !== "",
-    //     //         payload.email !== "",
-    //     //         payload.emailConfirmation !== "",
-    //     //         payload.password !== ""
-    //     //     ].every(Boolean);
-
-    //     //     if (!isFill) {
-    //     //         reject("Not fill");
-    //     //     }
-
-    //     //     cognitoAuth.signup(
-    //     //         payload.email,
-    //     //         payload.email,
-    //     //         payload.password,
-    //     //         (err: any, result: any) => {
-    //     //             if (err) {
-    //     //                 this.authError();
-    //     //                 reject(err);
-    //     //             }
-
-    //     //             if (result) {
-    //     //                 this.authSuccess();
-    //     //                 this.setSignUp(payload.email);
-    //     //                 resolve("success");
-    //     //             }
-    //     //         }
-    //     //     );
-    //     // });
-    // },
-    // async forgotPassword(payload: { user: any }) {
-    //     this.authRequest();
-    //     // return new Promise((resolve, reject) => {
-    //     //     cognitoAuth.forgotPassword(payload.user, (err: any) => {
-    //     //         if (err) {
-    //     //             this.authError();
-    //     //             reject(err);
-    //     //         } else {
-    //     //             this.authSuccess();
-    //     //             resolve("success");
-    //     //         }
-    //     //     });
-    //     // });
-    // },
-    // async confirmNewPassword(payload: {
-    //     user: any;
-    //     resetToken: any;
-    //     password: any;
-    // }) {
-    //     // this.authRequest();
-    //     // try {
-    //     //     await cognitoAuth.confirmPassword(
-    //     //         payload.user,
-    //     //         payload.resetToken,
-    //     //         payload.password
-    //     //     );
-    //     //     this.authSuccess();
-    //     // } catch {
-    //     //     this.authSuccess();
-    //     // }
-    // },
     async logout() {
-      Auth.signOut().then((_resp) => {
-        this.setUser({ email: "", name: "", img: "", token: "" });
+      return signOut().then((_resp) => {
+        this.user = new User()
+
+        // Clear local storage items
+        for (const key in Object.keys(LocalStorageKeys)) {
+          localStorage.removeItem(key);
+        }
+
+        // Clear vue request cache
+        for (const key in Object.keys(RequestCacheKeys)) {
+          clearCache(key);
+        }
+
+        return true
       });
-      // cognitoAuth.logout();
     },
     async requireAuth() {
-      return Auth.currentAuthenticatedUser().then((data) => {
-        // console.log(data);
-        if (data && data.signInUserSession) {
-          this.user.token ??= data.signInUserSession.idToken.jwtToken;
-          this.user.email ??= data.attributes.email;
-          this.user.name ??= data.attributes.email.split("@")[0];
-          return;
-          // TODO: Verify user from server
+      return this.user.token != null && this.user.token !== ''
+    },
+    /**
+     * Returns user roles as a comma separated string
+     *
+     */
+    rolesToString(roles: UserRole[]) {
+      return (roles || [])
+        .flatMap((role: UserRole) => role.role.name)
+        .join(", ");
+    },
+    /**
+     * Returns true if the user has the given permission
+     *
+     * It first checks if the user has permission for the given program ID.
+     * If not, it then checks if the user has a system wide permission ('*').
+     *
+     * @param programId The program ID to check permissions for
+     * @param action The permission to check
+     */
+    can(action: Permission | Permission[]): boolean {
+      if (Array.isArray(action)) {
+        return action.some(p => this.can(p));
+      }
+
+      try {
+        return this.$state.user?.permissions[action] === true;
+      } catch (error) {
+        return false;
+      }
+    },
+
+    //
+    // API Requests
+    //
+    fetchUsers() {
+      return ApiRequest.get<User>("users");
+    },
+    fetchInvitations() {
+      return ApiRequest.get<Invitation>("users/invitations");
+    },
+    fetchAccountInfo(token: string) {
+      // NB: This is add the token to request headers
+      this.user = new User();
+      this.user.token = token;
+
+      return ApiRequest.get<User>("users/me").then(([resp]) => {
+        this.user = User.fromJSON({
+          ...resp,
+          token: token,
+        });
+
+        // Set active program
+        const activeProgram = localStorage.getItem(
+          LocalStorageKeys.active_program,
+        );
+        if (activeProgram != null) {
+          useAppStore().setActiveProgram(JSON.parse(activeProgram).id);
+        } else if (this.user.programs.length > 0) {
+          useAppStore().setActiveProgram(this.user.programs[0].program.id);
         } else {
-          throw new Error("No current user");
+          // TODO: user has no programs, decide what to do
         }
       });
-
-      // // Resolve if the user is authenticated
-      // // Else reject
-      // // if(this.user?.token !=null) return;
-
-      // const loadUser = () => {
-      //     // Retrieve the object from storage
-      //     const user = localStorage.getItem("user");
-
-      //     this.setUser(JSON.parse(user));
-      // };
-
-      // return new Promise<void>((resolve, reject) => {
-      //     cognitoAuth.isAuthenticated(
-      //         (tokenOrError: any, loggedIn: any) => {
-      //             if (!loggedIn) {
-      //                 if (tokenOrError) {
-      //                     loadUser();
-      //                     resolve();
-      //                 } else reject();
-      //             } else {
-      //                 loadUser();
-      //                 resolve();
-      //             }
-      //         }
-      //     );
-      // });
+    },
+    fetchOrganisations() {
+      return ApiRequest.get<Organisation>("users/organisations");
     },
   },
 });

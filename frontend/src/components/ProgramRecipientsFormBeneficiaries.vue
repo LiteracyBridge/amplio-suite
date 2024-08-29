@@ -2,28 +2,33 @@
   <div class="grid grid-cols-form-2 items-center col-span-2">
     <div>
       <span class="float-right mr-4 text-right">{{ label }}</span>
-      <v-tooltip
+      <!-- <v-tooltip
         v-if="showTooltip"
         text="This field cannot be greater than Direct Beneficiaries"
         position="left"
         class="ml-2"
       >
         <font-awesome-icon class="text-orange-600" icon="exclamation-circle" />
-      </v-tooltip>
+      </v-tooltip> -->
     </div>
-    <v-input
-      class="recipient-number-value"
+    <Input
       type="number"
       :value="val"
-      @input="emit('input', $event.target.value)"
+      @change="emit('input', $event.target.value)"
       mx="mx-0 w-full"
-    />
+    >
+      <template #suffix>
+        <Tooltip title="This field cannot be greater than Direct Beneficiaries">
+          <InfoCircleOutlined style="color: rgba(0, 0, 0, 0.45)" />
+        </Tooltip>
+      </template>
+    </Input>
   </div>
 </template>
 
 <script lang="ts" setup>
-import VInput from "@/components/VInput.vue";
-import VTooltip from "@/components/VTooltip.vue";
+import { FormItem, Input, Tooltip } from "ant-design-vue";
+import { InfoCircleOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   label: string;
@@ -32,6 +37,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "input", value: number): void;
+  (e: "input", value: number | string): void;
 }>();
 </script>

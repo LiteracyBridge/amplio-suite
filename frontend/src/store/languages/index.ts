@@ -1,38 +1,28 @@
-import { getLanguages } from "@/api/generalQueries.api";
+import { ApiRequest } from "@/api";
 import { Language } from "@/models/language";
 import { defineStore } from "pinia";
 
 export const useLanguagesStore = defineStore("languages", {
   state: () => ({
-    status: null as "loading" | "error" | "success",
-    languages: [] as Language[]
+    loading: false,
+    languages: [] as Language[],
   }),
   actions: {
-    getLanguagesRequest() {
-      this.status = "loading";
-    },
-
-    getLanguagesSuccess(languages: any[]) {
-      this.status = "success";
-      this.languages = languages;
-    },
-
-    getLanguagesError() {
-      this.status = "error";
-    },
-    async fetchLanguages(programId?: string) {
-      if ((this.languages || []).length > 0) {
-        return;
-      }
-      this.getLanguagesRequest();
-
-      try {
-        let languages = await getLanguages(programId);
-        await this.getLanguagesSuccess(languages);
-      } catch (err) {
-        console.log(err);
-        this.getLanguagesError();
-      }
+    /**
+     * Map a language code to a dict of {code:language-code, name:language-name, coment:whatever}
+     * If a code is not found, return {code:the-code, name:the-code, comment:the-code}
+     */
+    mapLanguageCodesToInfo(codes: string[]): Language[] {
+      const infos = (codes || []).map((lc) => {
+        let languageInfo = this.languages.find(
+          (languageInfo) => languageInfo.code == lc,
+        );
+        if (!languageInfo) {
+          languageInfo = { code: lc, name: lc, comment: lc };
+        }
+        return languageInfo;
+      });
+      return infos;
     },
     generateNewLanguageCode(lang: { name: string; code: string }) {
       const genCode = (name: string, code: string) => {
@@ -45,7 +35,7 @@ export const useLanguagesStore = defineStore("languages", {
         return name.substring(0, length);
       };
 
-      const codes = new Set(this.languages.map(l => l.code.toLowerCase()));
+      const codes = new Set(this.languages.map((l) => l.code.toLowerCase()));
 
       const { name } = lang;
       let code = lang.code || "";
@@ -58,6 +48,12 @@ export const useLanguagesStore = defineStore("languages", {
         code = genCode(name, code);
       }
       return code;
-    }
-  }
+    },
+    //
+    // API calls
+    //
+    async fetchLanguages() {
+      return ApiRequest.get<Language>("languages/supported");
+    },
+  },
 });
