@@ -25,6 +25,7 @@ async function getTBLoaderAppLatestVersion() {
     console.error("Error retrieving latest release:", error);
   }
 }
+
 </script>
 
 <template>
