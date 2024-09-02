@@ -222,10 +222,44 @@ const newLanguage = ref({
 function onLanguageSelected(code: string) {
   let index = specStore.general.languages.length;
   specStore.setLanguages({ lang: code, index });
+
+  // -----------------------
+  console.log("[*] lang code added : ", code)
 }
 
 function onLanguageDeleted(code: string) {
   const language = languageStore.languages.find((l) => l.code === code);
+  // --------------------------------
+  // Get list of languages in recipient
+  console.log("[*] lang deleted : ", language.name, language.code);
+  
+  var languageExistsInRecipients = false;
+  var languageExistsInContents = false;
+  specStore.recipients.forEach((recp) => {
+    if (recp.language == language.code) {
+      console.log("[*] ", language.code, " exists in recipients");
+      languageExistsInRecipients = true;
+    } else {
+      console.log("[*] ", language.code, " does not exists in recipients");
+      //return false;
+    }
+  });
+
+  specStore.deployments.forEach((depl) => {
+    console.log("[*] depl : ", depl);
+    depl.playlists.forEach((playlist) => {
+      console.log("\t[*] playlist messages : ", playlist.messages)
+      playlist.messages.forEach((content) => {
+        console.log("\t\t[*] content languages : ", content.languages)
+        if (content.languages !== undefined) {
+          if (content.languages.includes(language.code)) {
+            languageExistsInContents = true;
+            console.log("<===> [*][*][*] ", language.code, " exists in content")
+          }
+        }
+      })
+    });
+  });
 
   Modal.confirm({
     title: `Are you sure to delete '${language?.name || code}' language?`,
