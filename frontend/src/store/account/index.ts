@@ -65,19 +65,7 @@ export const useAccountStore = defineStore("account", {
       });
     },
     async requireAuth() {
-      return fetchAuthSession().then((data) => {
-        console.log(data)
-        if (data.tokens) {
-          this.user.token ??=
-            this.user.token || data.tokens.idToken.toString()
-          this.user.email ??= this.user.email || data.tokens.idToken.payload.sub;
-          this.user.name ??=
-            this.user.name || data.tokens.idToken.payload.sub.split("@")[0];
-          return;
-          // TODO: Verify user from server
-        }
-        throw new Error("No current user");
-      });
+      return this.user.token != null && this.user.token !== ''
     },
     /**
      * Returns user roles as a comma separated string

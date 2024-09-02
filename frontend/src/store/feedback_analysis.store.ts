@@ -6,7 +6,8 @@ import {
   ConditionAction,
   QuestionType,
   DependentCondition,
-  Question,
+  type Question,
+  type QuestionChoice,
 } from "@/models/question";
 import { Survey } from "@/models/survey";
 import { useAppStore } from "./app.store";
@@ -29,6 +30,11 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
     skipped_messages: [] as string[],
     statistics: new Statistics(),
     // dependents: [] as QuestionDependent[],
+
+    /**
+     * Tracks the selected choice for each question
+     */
+    selectedChoice: {} as Record<string, { selected: boolean; sub: QuestionChoice[] }>
   }),
   getters: {
     sections: (state) => {
@@ -158,8 +164,11 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
             )
             ?.value?.toString(),
         ];
-      } else if (source.question.type == QuestionType.multi_choice) {
-        response = (source.question.choices || []).flatMap((c) => c.value);
+      } else if (source.question.type === QuestionType.multi_choice) {
+        response = ((source.question.choices || []).filter(c => {
+          return this.selectedChoice[c.choice_id]?.selected === true
+        }) || [])
+          .flatMap((c) => c.value);
       } else {
         response = [source.response?.toString()];
       }
@@ -220,7 +229,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
             }
             return q;
           });
-          continue;
+          continue; // Skip to the next dependent
         }
 
         this.$state.questions = this.$state.questions.map((q) => {

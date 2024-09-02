@@ -1,17 +1,10 @@
 <script lang="ts" setup>
 import {
-  Button,
   Card,
-  Divider,
-  FormItem,
-  Radio,
-  RadioGroup,
-  Space,
   Form,
   Input,
   Empty,
 } from "ant-design-vue";
-// import { Question, QuestionType } from "./types";
 import { computed, markRaw, onMounted, ref, toRaw } from "vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
 import OptionIcon from "./OptionIcon.vue";
@@ -55,13 +48,13 @@ const getQuestions = computed({
   },
 });
 
-function duplicateQuestion(question: Question) {
-  const new_question = store.duplicateQuestion({
-    source: question,
-    sectionId: question.section_id,
-  });
-  store.addQuestion(new_question);
-}
+// function duplicateQuestion(question: Question) {
+//   const new_question = store.duplicateQuestion({
+//     source: question,
+//     sectionId: question.section_id,
+//   });
+//   store.addQuestion(new_question);
+// }
 
 function focusCard(question: Question) {
   editQuestion(question);
@@ -145,6 +138,7 @@ function focusCard(question: Question) {
               </div>
             </Form>
           </Card>
+
         </div>
       </template>
     </draggable>

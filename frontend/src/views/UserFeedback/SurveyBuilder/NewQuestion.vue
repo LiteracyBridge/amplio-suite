@@ -2,9 +2,6 @@
 import {
   Card,
   Button,
-  Dropdown,
-  Menu,
-  MenuItem,
   Form,
   FormItem,
   Input,
@@ -15,21 +12,9 @@ import {
   Textarea,
   Switch,
 } from "ant-design-vue";
-import { DownOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
-
-import {
-  computed,
-  h,
-  markRaw,
-  onMounted,
-  onUnmounted,
-  onBeforeUnmount,
-  ref,
-  toRaw,
-  watch,
-} from "vue";
-import { Question, QuestionChoice, QuestionType } from "@/models/question";
-import QuestionsView from "./QuestionsView.vue";
+import {  DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
+import { onBeforeUnmount, ref } from "vue";
+import { type Question, type QuestionChoice, QuestionType } from "@/models/question";
 import OptionIcon from "./OptionIcon.vue";
 import QuestionCondition from "./QuestionCondition.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
@@ -252,11 +237,7 @@ function duplicateQuestion(question: Question) {
 
               <!-- TODO: Implement adding new option -->
               <span class="block">
-                <Button
-                  type="link"
-                  :ghost="true"
-                  @click="addOption(false, option.choice_id)"
-                >
+                <Button type="link" @click="addOption(false, option.choice_id)">
                   add sub option
                 </Button>
                 <!-- or
@@ -275,11 +256,9 @@ function duplicateQuestion(question: Question) {
         </div>
 
         <span class="mt-5 block">
-          <Button type="link" :ghost="true" @click="addOption()"> Add option </Button>
+          <Button type="link" @click="addOption()"> Add option </Button>
           or
-          <Button type="link" :ghost="true" @click="addOption(true)">
-            add "Other"
-          </Button>
+          <Button type="link" @click="addOption(true)"> add "Other" </Button>
         </span>
       </div>
 

@@ -1,16 +1,15 @@
 <template>
   <Row :gutter="8">
     <Col :sm="6" :lg="5" :xl="4">
-      <div class="flex">
-        <div class="cursor-grab pl-handle ml-10 mr-2">
-          <font-awesome-icon icon="grip-lines" />
-        </div>
-        <div class="mx-2" style="min-width: 10px" @click="onToggleExpanded">
-          <font-awesome-icon :icon="icon" size="lg" />
-        </div>
+      <Button type="text" @click="onToggleExpanded" class="ml-10 mr-2">
+        <template #icon>
+          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
+          <CaretDownOutlined v-else class="ml-5 mb-2" />
+        </template>
 
-        <span class="flex-initial text-xl ml-3">Playlist {{ playlist.position }}:</span>
-      </div>
+        Playlist {{ playlist.position }}
+      </Button>
+
     </Col>
 
     <Col :span="10">
@@ -23,6 +22,7 @@
         :ghost="true"
         @click="onAddMessage()"
         :disabled="!canAddMessage"
+        class="ml-10"
       >
         Add Message
       </Button>
@@ -76,9 +76,10 @@ import Content2Message from "./Content2Message.vue";
 import Draggable from "vuedraggable";
 import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { Deployment } from "@/models/deployment";
-import { Playlist } from "@/models/playlist";
+import type { Deployment } from "@/models/deployment";
+import type { Playlist } from "@/models/playlist";
 import { ref, computed } from "vue";
+import { CaretRightOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   deployment: Deployment;

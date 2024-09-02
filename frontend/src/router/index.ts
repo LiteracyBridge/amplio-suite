@@ -260,8 +260,8 @@ function requireAuth(to: any, from: any, next: any) {
 function checkAuth(to: any, from: any, next: any) {
   return useAccountStore()
     .requireAuth()
-    .then(() => {
-      return next({ path: "/dashboard" });
+    .then((val) => {
+      return val ? next({ path: "/dashboard" }) : next();
     })
     .catch(() => {
       return next();
@@ -269,15 +269,15 @@ function checkAuth(to: any, from: any, next: any) {
 }
 
 
-async function getUser() {
+export async function getUser() {
   return fetchAuthSession()
     .then(async (data) => {
       if (data) {
         return await useAccountStore().fetchAccountInfo(
           data.tokens.idToken.toString(),
-        ).then((_resp) =>
-          router.push({ path: "/dashboard" })
-        );
+        ).then((_resp) => {
+          return router.push({ path: "/dashboard" })
+        });
       }
 
       return useAccountStore().logout();

@@ -192,8 +192,8 @@ const formatOptions = ref([
     { value: "Message", label: "Message" },
     { value: "Song", label: "Song" },
     { value: "Other", label: "Other" },
-  ]),
-  goals = ref(sustainableDevelopmentGoals);
+  ]);
+const goals = ref(sustainableDevelopmentGoals);
 
 const messageLanguages = computed(() => {
   if (!props.message.languages) {

@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { MenuItem, Image, LayoutSider, Menu, Divider } from "ant-design-vue";
 import {
   DatabaseOutlined,
-  TableOutlined,
   SettingOutlined,
   UserOutlined,
   InsertRowRightOutlined,
@@ -14,6 +13,7 @@ import {
   BarChartOutlined,
   EditOutlined,
   DownloadOutlined,
+  AreaChartOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -41,8 +41,7 @@ const config = ref({
       <Image :src="LogoLarge" width="100px" v-if="!store.sidebarCollapsed"> </Image>
     </div>
 
-    <Divider></Divider>
-
+    <hr class="mt-7 mb-1" />
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <!-- FIXME: Add permission check here -->
 
@@ -62,7 +61,7 @@ const config = ref({
         </template>
 
         <router-link to="/programs/monitor">
-          <span role="link">TB Monitoring Center </span>
+          <span role="link">Monitoring Center </span>
         </router-link>
       </MenuItem>
 
@@ -73,7 +72,7 @@ const config = ref({
         v-if="account.can([Permission.view_tb_analytics])"
       >
         <template #icon>
-          <SoundOutlined />
+          <AreaChartOutlined />
         </template>
 
         <MenuItem key="tableau">
@@ -176,7 +175,7 @@ const config = ref({
 
 <style scoped>
 .logo {
-  height: 30px;
+  height: 65px;
   display: center;
   /* background: rgba(255, 255, 255, 0.3); */
   margin: 20px 20px 0px 20px;

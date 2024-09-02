@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import content2Playlist from "./Content2Playlist.vue";
 import Draggable from "vuedraggable";
-import { Deployment } from "@/models/deployment";
+import type { Deployment } from "@/models/deployment";
 import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
 
