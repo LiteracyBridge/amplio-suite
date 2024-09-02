@@ -14,6 +14,7 @@ import {
   EditOutlined,
   DownloadOutlined,
   AreaChartOutlined,
+  TableOutlined
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
