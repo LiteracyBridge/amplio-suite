@@ -57,7 +57,7 @@ async function downloadReport() {
 </script>
 
 <template>
-  <Button type="primary" :ghost="true" @click="downloadReport()" :loading="store.loading">
+  <Button type="primary" :ghost="true" @click="downloadReport()" :loading="store.loading" :disabled="store.loading" >
     <template #icon>
       <DownloadOutlined />
     </template>

@@ -14,6 +14,7 @@ import {
   EditOutlined,
   DownloadOutlined,
   AreaChartOutlined,
+  TableOutlined
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -151,6 +152,12 @@ const config = ref({
 
           <router-link to="/admin/programs">
             <span role="link"> Manage Programs </span>
+          </router-link>
+        </MenuItem>
+        <MenuItem key="ACMs" v-if="account.can(Permission.manage_acm_checkout)">
+          <template #icon><TableOutlined /></template>
+          <router-link to="/admin/acms">
+            <span role="link">ACM Checkout</span>
           </router-link>
         </MenuItem>
       </Menu.SubMenu>

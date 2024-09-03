@@ -130,7 +130,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
 
       // Fetch stats
       ApiRequest.get<Statistics>(
-        `user-feedback/analysis/${survey.id}/statistics?email=${useAccountStore().email
+        `user-feedback/reports/${survey.id}/statistics?email=${useAccountStore().email
         }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
         }`,
       ).then(([stats]) => {
