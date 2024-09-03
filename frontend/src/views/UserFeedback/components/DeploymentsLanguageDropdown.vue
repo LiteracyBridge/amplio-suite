@@ -111,8 +111,12 @@ onMounted(async () => {
       </Menu>
     </template>
 
-    <Button>
+    <Button v-if="store.userFeedback.deployment == null || store.userFeedback.language == null">
       Change Deployment
+      <DownOutlined />
+    </Button>
+    <Button v-else>
+    Deployment {{ store.userFeedback.deployment }} ({{ store.userFeedback.language }})
       <DownOutlined />
     </Button>
   </Dropdown>
