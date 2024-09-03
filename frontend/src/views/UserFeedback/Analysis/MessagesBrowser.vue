@@ -104,6 +104,7 @@ onMounted(() => {
     type="info"
     :closable="true"
     :show-icon="true"
+    size="small"
     description="The user feedback messages are randomly selected. Only 12% of the total messages are shown"
   />
 
