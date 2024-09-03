@@ -74,10 +74,11 @@ function analyse(survey: Survey | number) {
   }
 
   useFeedbackAnalysis().setSurvey(survey);
-  emit("change", store.userFeedback.deployment, store.userFeedback.language);
 
   modal.value.visible = false;
   feedbackStore.loading = false;
+
+  emit("change", store.userFeedback.deployment, store.userFeedback.language);
 }
 
 onMounted(async () => {
