@@ -4,14 +4,21 @@ import { Button, Input, Modal, PageHeader, Table } from "ant-design-vue";
 import { ref, h } from "vue";
 import { onMounted } from "vue";
 import type { ACMCheckout } from "@/models/acm";
-import { CloseOutlined } from "@ant-design/icons-vue";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons-vue";
+import { DateTime } from "luxon";
 
 function onChange(pagination: any, filters: any, sorter: any, extra: any) {
   console.log("params", pagination, filters, sorter, extra);
 }
 
 const showModal = ref(false);
+const isLoading = ref(false);
+const checkoutProjectName = ref("");
+
 const selectedACM = ref<ACMCheckout | null>(null);
+const dataSource = ref<ACMCheckout[]>([]);
+const dataSourceTemp = ref<ACMCheckout[]>([]);
+
 // TODO: fetch the checkout data from the backend
 
 const columns = [
@@ -25,7 +32,7 @@ const columns = [
   },
   {
     title: "Checked Out Date",
-    key: "last_in_date",
+    key: "now_out_date",
   },
   {
     title: "Checked Out By",
@@ -37,55 +44,103 @@ const columns = [
   },
   {
     title: "Last Checkin Date",
-    key: "last_checkin_date",
+    key: "last_in_date",
   },
   {
     title: "Last Filename",
-    key: "last_filename",
+    key: "last_in_file_name",
   },
   {
     title: "Last Checkin Name",
-    key: "last_checkin_name",
+    key: "last_in_name",
   },
 ];
-
-const dataSource = ref<ACMCheckout[]>([]);
 
 onMounted(async () => {
   fetchData();
 });
 
 async function fetchData() {
-  await ApiRequest.get<ACMCheckout>("acm-checkout?action=list").then((resp) => {
-    console.log(resp);
-    dataSource.value = resp;
-  });
+  isLoading.value = true;
+  await ApiRequest.get<ACMCheckout>("acm-checkout?action=list")
+    .then((resp) => {
+      console.log(resp);
+      dataSource.value = resp;
+      dataSourceTemp.value = [...resp];
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 }
 
 async function confirmUncheckout() {
+  isLoading.value = true;
+
   await ApiRequest.get<ACMCheckout>(
     `acm-checkout?action=revokeCheckout&program=${selectedACM.value.acm_name}&key=${selectedACM.value.now_out_key}`
-  ).then((resp) => {
-    console.log(resp);
-    // dataSource.value = resp;
-  });
+  )
+    .then((resp) => {
+      console.log(resp);
+      showModal.value = false;
+      fetchData();
+      // dataSource.value = resp;
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+}
+
+function performSearch(input: string) {
+  const term = input?.trim()?.toLowerCase() ?? "";
+  if (term === "") {
+    dataSource.value = [...dataSourceTemp.value];
+    return;
+  }
+
+  dataSource.value = dataSourceTemp.value.filter((acm) =>
+    acm.acm_name.toLowerCase().includes(term)
+  );
 }
 </script>
 
 <template>
-  <PageHeader title="ACMs" sub-title="ACM Checkout"></PageHeader>
+  <PageHeader title="ACM Checkout Status" sub-title="Manage ACM checkout"></PageHeader>
 
-  <Table :columns="columns" :data-source="dataSource" @change="onChange">
+  <Table
+    :columns="columns"
+    :data-source="dataSource"
+    @change="onChange"
+    size="small"
+    :pagination="{ defaultPageSize: 25 }"
+    :loading="isLoading"
+  >
+    <template #title>
+      <div class="flex justify-center">
+        <Input
+          placeholder="Search ACM"
+          class="w-3/5"
+          @change="performSearch($event.target.value || '')"
+        >
+          <template #prefix>
+            <SearchOutlined />
+          </template>
+        </Input>
+
+        <Button type="primary" class="ml-5" @click="fetchData()">Refresh</Button>
+      </div>
+    </template>
+
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'acm_name'">
         {{ record.acm_name }}
       </template>
       <template v-if="column.key === 'acm_state'">
-          <!-- v-if="record.acm_state === 'CHECKED_OUT'" -->
         <Button
+          v-if="record.acm_state === 'CHECKED_OUT'"
           type="primary"
           shape="circle"
           :ghost="true"
+          :danger="true"
           size="small"
           :icon="h(CloseOutlined)"
           @click="
@@ -95,8 +150,11 @@ async function confirmUncheckout() {
         />
         {{ record.acm_state }}
       </template>
-      <template v-if="column.key === 'last_in_date'">
-        {{ record.last_in_date }}
+      <template v-if="column.key === 'now_out_date'">
+        <span v-if="record.now_out_date">
+          {{ record.now_out_date}}
+        </span>
+        <span v-else>-</span>
       </template>
       <template v-if="column.key === 'now_out_name'">
         {{ record.now_out_name }}
@@ -104,35 +162,44 @@ async function confirmUncheckout() {
       <template v-if="column.key === 'now_out_computername'">
         {{ record.now_out_computername }}
       </template>
-      <template v-if="column.key === 'last_checkin_date'">
-        {{ record.last_checkin_date }}
+      <template v-if="column.key === 'last_in_date'">
+        <span v-if="record.last_in_date">
+          {{ record.last_in_date.replace(/\.\d+/, "") }}
+        </span>
+        <span v-else>-</span>
       </template>
-      <template v-if="column.key === 'last_filename'">
-        {{ record.last_filename }}
+      <template v-if="column.key === 'last_in_file_name'">
+        {{ record.last_in_file_name }}
       </template>
-      <template v-if="column.key === 'last_checkin_name'">
-        {{ record.last_checkin_name }}
+      <template v-if="column.key === 'last_in_name'">
+        {{ record.last_in_name }}
       </template>
     </template>
   </Table>
 
   <!-- Checkout modal -->
   <Modal
-    v-model:open="showModal"
+    :open="showModal"
     @ok="confirmUncheckout()"
     ok-text="Undo Checkout"
     @cancel="
       showModal = false;
       selectedACM = null;
     "
+    :ok-button-props="{
+      disabled: checkoutProjectName.toLowerCase() !== selectedACM?.acm_name.toLowerCase(),
+      danger: true,
+    }"
+    :confirm-loading="isLoading"
   >
     <template #title>
-      <span class="bg-red-600 text-white">Force Undo Checkout</span>
+      <span class="text-red-500 w-full">Force Undo Checkout</span>
     </template>
 
     <div v-if="selectedACM != null">
       <p>
-        You are about to force undo checkout in database '{{ selectedACM.acm_name }}'.
+        You are about to force undo checkout in
+        <span class="font-bold">{{ selectedACM.acm_name }}</span> database.
       </p>
       <p>
         Checked out by user '{{ selectedACM.now_out_name }}' on
@@ -145,11 +212,8 @@ async function confirmUncheckout() {
       </p>
       <p>Contact {{ selectedACM.now_out_name }} at {{ selectedACM.now_out_contact }}.</p>
 
-      <p>
-        Enter the name of this project before confirming this action (upper- vs lower-case
-        ignored)
-      </p>
-      <Input class="w-full" type="text" />
+      <p>Enter the name of this ACM before confirming this action</p>
+      <Input class="w-full mt-5" type="text" v-model:value="checkoutProjectName"></Input>
     </div>
   </Modal>
 </template>
