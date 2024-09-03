@@ -215,6 +215,11 @@ const routes: RouteRecordRaw[] = [
         name: "admin.Programs",
         component: () => import("../views/Admin/Programs/Index.vue"),
       },
+      {
+        path: "acms",
+        name: "admin.acms",
+        component: () => import("../views/Admin/ACMs/Index.vue"),
+      },
     ],
   },
 ];
