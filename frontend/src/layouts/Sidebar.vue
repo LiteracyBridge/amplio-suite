@@ -154,7 +154,7 @@ const config = ref({
             <span role="link"> Manage Programs </span>
           </router-link>
         </MenuItem>
-        <MenuItem key="ACMs" v-if="account.can(Permission.manage_program)">
+        <MenuItem key="ACMs" v-if="account.can(Permission.manage_acm_checkout)">
           <template #icon><TableOutlined /></template>
           <router-link to="/admin/acms">
             <span role="link">ACM Checkout</span>
