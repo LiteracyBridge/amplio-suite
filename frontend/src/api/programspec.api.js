@@ -8,7 +8,7 @@ const URL = "https://v853rt57t9.execute-api.us-west-2.amazonaws.com/Prod";
 const PUBLISH = "/publish";
 // const GET_CONTENT = '/get_content'
 // const PUT_CONTENT = "/put_content";
-const DOWNLOAD = "/download";
+// const DOWNLOAD = "/download";
 
 function makeInit(params) {
   params = params || {};
@@ -65,7 +65,7 @@ async function putProgramSpec(programid, programspec) {
 async function getDownloadLink(programid, artifact) {
   const init = makeInit();
   const fetch_response = await fetch(
-    `${URL}${DOWNLOAD}?programid=${programid}&aslink=true&artifact=${artifact}`,
+    `${API_URL}/program-spec/download?programid=${programid}&aslink=true&artifact=${artifact}`,
     init
   );
   return fetch_response.json();
