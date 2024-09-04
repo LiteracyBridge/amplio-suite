@@ -170,7 +170,6 @@
 <script>
 import { mapActions } from "pinia";
 import { useUIStore } from "@/store/ui";
-import { useAccountStore } from "@/store/account";
 import { notification } from "ant-design-vue";
 import VButton from "@/components/VButton.vue";
 import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
