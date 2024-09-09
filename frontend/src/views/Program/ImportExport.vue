@@ -1,11 +1,6 @@
 <template>
   <!-- Notice watching key 18 (alt key) to enable/disable showing the "export un-published" option. -->
-  <section
-    class="relative min-h-200-px p-6 pt-0"
-    v-on:keydown.18.prevent="altKeyPressed = true"
-    v-on:keyup.18.prevent="altKeyPressed = false"
-    tabindex="0"
-  >
+  <section class="relative min-h-200-px p-6 pt-0">
     <header class="w-full inline-flex items-center justify-between">
       <h2 class="visually_hidden">
         Upload or Download a Program Specification spreadsheet.
@@ -26,13 +21,9 @@
           </ul>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <VButton
-          class="export-button"
-          label="Export Spreadsheet"
-          variant="bg-indigo-200 hover:bg-indigo-400"
-          @click="onExportProgramSpec"
-        />
+
+      <div class="">
+        <Button type="primary" @click="onExportProgramSpec()">Export Spreadsheet </Button>
       </div>
 
       <div class="col-span-4 mr-4 ml-4">
@@ -41,77 +32,47 @@
           <label for="checkbox"> Export the un-published program specification.</label>
         </div>
       </div>
-
-      <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
-        <div>
-          <p
-            v-if="!exportUnpublished"
-            class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded"
-          >
-            <b>Remember:</b> this will export the <em>published</em> program
-            specification. If there are changes that are not published, those won't be in
-            the exported spreadsheet.
-          </p>
-          <p v-else class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded">
-            <b>Remember:</b> this will export the <em>un-published</em> program
-            specification. This is not what will be used by the ACM; it uses the
-            <em>published</em> program specification only.
-          </p>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <VButton
-          class="import-button"
-          label="Upload Spreadsheet"
-          variant="bg-orange-200 hover:bg-orange-400"
-          @click="onUploadProgramSpec"
-        />
-      </div>
-
-      <div class="flex col-span-5 mx-4 my-2 pl-2 pr-4">
-        <div>
-          <p class="p-1 my-2 ml-2 mr-6 max-w-3xl border-2 border-grey rounded">
-            <b>Remember:</b> Always start from a
-            <em>recently exported spreadsheet!</em> First, please upload your program
-            specification spreadsheet. You'll then have an opportunity to review the
-            changes. If you approve the changes, they'll be saved in the database.
-          </p>
-        </div>
-      </div>
     </div>
 
-    <!-- Select file for upload modal -->
-    <portal to="modalBody" v-if="showModal.selectFile">
-      <div>
+    <Alert type="info" message="Remember" class="mt-5">
+      <template #description>
+        This will export the <em>published</em> program specification. If there are
+        changes that are not published, those won't be in the exported spreadsheet.
+      </template>
+    </Alert>
+
+    <Divider></Divider>
+
+    <Button @click="showModal.visible = true" type="primary" :ghost="true"
+      >Upload Spreadsheet</Button
+    >
+
+    <Alert type="warning" message="Remember" class="mt-5">
+      <template #description>
+        Always start from a <em>recently exported spreadsheet!</em> First, please upload
+        your program specification spreadsheet. You'll then have an opportunity to review
+        the changes. If you approve the changes, they'll be saved in the database.
+      </template>
+    </Alert>
+
+    <Modal
+      v-model:open="showModal.visible"
+      title="Upload Program Specification"
+      @cancel="onCancel()"
+      ok-text="Upload"
+      :ok-disabled="selectedFile === null"
+      @ok="onUpload()"
+    >
+      <Spin :spinning="showModal.showSpinner">
         <program-spec-import-form
           :contentHidden="showModal.showSpinner"
           @onFileSelected="onFileSelected($event)"
         />
-        <font-awesome-icon
-          v-if="showModal.showSpinner"
-          icon="spinner"
-          size="2x"
-          pulse
-          class="block mt-2 upload-spinner"
-        />
-      </div>
-    </portal>
-
-    <portal to="modalFooter" v-if="showModal.selectFile">
-      <footer class="flex justify-end gap-4 mt-5">
-        <VButton
-          label="Upload"
-          :disabled="selectedFile === null"
-          type="success"
-          @click="onUpload()"
-        />
-        <VButton label="Cancel" variant="warning" @click="onCancel()" />
-      </footer>
-    </portal>
+      </Spin>
+    </Modal>
 
     <!-- Show differences from database modal -->
-    <portal to="modalBody" v-if="showModal.showDiffs">
+    <!-- <portal to="modalBody" v-if="showModal.showDiffs">
       <div>
         <program-spec-import-diffs
           :contentHidden="showModal.showSpinner"
@@ -142,7 +103,7 @@
           <VButton label="Cancel" variant="warning" @click="onCancel()" />
         </div>
       </footer>
-    </portal>
+    </portal> -->
   </section>
 </template>
 
@@ -167,163 +128,145 @@
 }
 </style>
 
-<script>
-import { mapActions } from "pinia";
-import { useUIStore } from "@/store/ui";
-import { notification } from "ant-design-vue";
+<script lang="ts" setup>
+import { Alert, Button, Divider, Modal, notification, Spin } from "ant-design-vue";
 import VButton from "@/components/VButton.vue";
 import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
 import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
 import { useProgramSpecStore } from "@/store/programspec";
+import { computed, ref } from "vue";
+import { approveSpec, uploadSpec } from "@/api/programspec.api";
 
-export default {
-  props: ["programId"],
+const specStore = useProgramSpecStore();
 
-  components: {
-    VButton,
-    ProgramSpecImportDiffs,
-    ProgramSpecImportForm,
-  },
+const exportUnpublished = ref(false);
+const selectedFile = ref(null);
+const diffs = ref(null);
+const publishImported = ref(true);
+const showModal = ref({
+  showSpinner: false,
+  showDiffs: false,
+  visible: false,
+});
 
-  computed: {
-    showUnpublishedOption() {
-      return this.exportUnpublished || this.altKeyPressed;
-    },
-  },
+const showUnpublishedOption = computed(() => {
+  return exportUnpublished;
+});
 
-  data: () => ({
-    altKeyPressed: false,
-    exportUnpublished: false,
-    selectedFile: null,
-    diffs: null,
-    publishImported: true,
-    showModal: {
-      showSpinner: false,
-      selectFile: false,
-      showDiffs: false,
-    },
-  }),
+/**
+ * Export the published program spec for the current program. (The "alt" key can be used to enable an option
+ * to export the un-published program spec.)
+ * @returns nothing, really.
+ */
+async function onExportProgramSpec() {
+  // Get the link to the downloadable object.
+  notification.info({
+    message: `Exporting ${
+      exportUnpublished.value ? "unpublished " : ""
+    } Program Specification for ${specStore.programId}`,
+  });
 
-  methods: {
-    ...mapActions(useUIStore, ["setModal", "closeModal", "setNotification"]),
-    ...mapActions(useProgramSpecStore, ["getExportLink", "uploadSpec", "approveSpec"]),
+  const downloadLink = await specStore.getExportLink({
+    programId: specStore.programId,
+    artifact: exportUnpublished ? "unpublished" : "published",
+  });
+  if (downloadLink.status === "ok") {
+    const downloadUrl = downloadLink.url;
+    console.log(
+      `Export ${
+        exportUnpublished.value ? "unpublished " : ""
+      } Program Specification for ${specStore.programId} from ${downloadLink.url}`
+    );
+    // Download the object.
+    const fetch_response = await fetch(downloadUrl);
+    // Get the bits, and add them to an <a> element.
+    const data = await fetch_response.arrayBuffer();
+    const blob = new Blob([data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = downloadLink.object.filename;
+    // Simulate a click on the <a>
+    link.click();
+  }
+}
 
-    /**
-     * Export the published program spec for the current program. (The "alt" key can be used to enable an option
-     * to export the un-published program spec.)
-     * @returns nothing, really.
-     */
-    async onExportProgramSpec() {
-      // Get the link to the downloadable object.
-      notification.info({
-        message: `Exporting ${
-          this.exportUnpublished ? "unpublished " : ""
-        } Program Specification for ${this.programId}`,
-      })
-      const downloadLink = await this.getExportLink({
-        programId: this.programId,
-        artifact: this.exportUnpublished ? "unpublished" : "published",
-      });
-      if (downloadLink.status === "ok") {
-        const downloadUrl = downloadLink.url;
-        console.log(
-          `Export ${
-            this.exportUnpublished ? "unpublished " : ""
-          } Program Specification for ${this.programId} from ${downloadLink.url}`
-        );
-        // Download the object.
-        const fetch_response = await fetch(downloadUrl);
-        // Get the bits, and add them to an <a> element.
-        const data = await fetch_response.arrayBuffer();
-        const blob = new Blob([data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = downloadLink.object.filename;
-        // Simulate a click on the <a>
-        link.click();
-      }
-    },
+function onFileSelected(file: any) {
+  selectedFile.value = file;
+}
 
-    async onUploadProgramSpec() {
-      console.log(`Upload Program Specification for ${this.programId}`);
-      // Open the modal to choose the file to upload.
-      this.onOpenModal("selectFile", "Upload Program Specification");
-    },
+/**
+ * Upload the selected file and retrieve the diffs against the current db.
+ * @returns Nothing.
+ */
+async function onUpload() {
+  if (!selectedFile.value) return;
 
-    onFileSelected(file) {
-      this.selectedFile = file;
-    },
+  showModal.value.showSpinner = true;
 
-    /**
-     * Upload the selected file and retrieve the diffs against the current db.
-     * @returns Nothing.
-     */
-    async onUpload() {
-      if (!this.selectedFile) return;
-      this.showModal.showSpinner = true;
-      // Upload it.
-      const data = await this.readFileData(this.selectedFile, true);
-      console.log(this.selectedFile);
-      let result = await this.uploadSpec({ programId: this.programId, fileData: data });
-      let diffs = (result && result.diff) || [];
-      this.diffs = diffs.map((line) =>
-        line.replace(/^ */, (match) => "\xa0\xa0".repeat(match.length))
-      );
-      console.log(this.diffs);
-      this.onOpenModal("showDiffs", "Import Program Specification");
-    },
+  // Upload it.
+  // const data = await readFileData(selectedFile.value, true);
+  const result = await uploadSpec(specStore.programId, selectedFile.value);
 
-    async onApprove() {
-      if (!this.selectedFile) return;
-      this.showModal.showSpinner = true;
-      let result = await this.approveSpec({
-        programId: this.programId,
-        publish: this.publishImported,
-      });
-      if (result && result.status !== "ok") {
-        this.setNotification({ type: "notice", text: result.errors.join() });
-      } else {
-        this.setNotification({
-          type: "notice",
-          text: `Program specification spreadsheet imported${
-            this.publishImported ? " and published" : ""
-          }.`,
-        });
-      }
-      this.onCancel();
-    },
+  if (result.status === "ok") {
+    notification.success({
+      message: "Program specification spreadsheet uploaded successfully.",
+    });
 
-    onOpenModal(modal, title) {
-      Object.keys(this.showModal).forEach((k) => (this.showModal[k] = false));
-      this.showModal[modal] = true;
-      this.setModal(title);
-    },
+    specStore.setSpec({
+      programId: specStore.programId,
+      programspec: result.data,
+    });
+  }
+  // let diffs = result?.diff || [];
 
-    onCancel() {
-      this.onCancelImport();
-      Object.keys(this.showModal).forEach((k) => (this.showModal[k] = false));
-    },
+  // diffs = diffs.map((line: string) =>
+  //   line.replace(/^ */, (match) => "\xa0\xa0".repeat(match.length))
+  // );
+  // console.log(diffs);
 
-    onCancelImport() {
-      Object.keys(this.showModal).forEach((k) => (this.showModal[k] = false));
-      this.closeModal();
-    },
+  onCancel();
+  // onOpenModal("showDiffs", "Import Program Specification");
+}
 
-    async readFileData(file, encode) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = function (readerEvt) {
-          var binaryString = readerEvt.target.result;
-          resolve(encode ? btoa(binaryString) : binaryString);
-        };
-        reader.onerror = (evt) => {
-          reject(evt);
-        };
-        reader.readAsBinaryString(file);
-      });
-    },
-  },
-};
+async function onApprove() {
+  if (!selectedFile.value) return;
+  showModal.value.showSpinner = true;
+
+  const result = await approveSpec({
+    programId: specStore.programId,
+    publish: publishImported,
+  });
+
+  console.log(result);
+  if (result && result.status !== "ok") {
+    notification.error({ message: result.errors.join() });
+  } else {
+    notification.success({
+      message: `Program specification spreadsheet imported${
+        publishImported.value ? " and published" : ""
+      }.`,
+    });
+  }
+
+  onCancel();
+}
+
+// function onOpenModal(modal, title) {
+//   for (const k of Object.keys(showModal.value)) {
+//     showModal.value[k] = false;
+//   }
+//   showModal.value[modal] = true;
+//   // this.setModal(title);
+// }
+
+function onCancel() {
+  showModal.value = {
+    visible: false,
+    showSpinner: false,
+    showDiffs: false,
+  };
+  selectedFile.value = null;
+}
 </script>
