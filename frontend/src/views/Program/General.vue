@@ -193,12 +193,9 @@ import {
 } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
-const props = defineProps<{
-  programId: string;
-}>();
 
-const specStore = useProgramSpecStore(),
-  languageStore = useLanguagesStore();
+const specStore = useProgramSpecStore();
+const languageStore = useLanguagesStore();
 
 const data = ref({
   description:
@@ -220,7 +217,7 @@ const newLanguage = ref({
 });
 
 function onLanguageSelected(code: string) {
-  let index = specStore.general.languages.length;
+  const index = specStore.general.languages.length;
   specStore.setLanguages({ lang: code, index });
 }
 
@@ -241,13 +238,13 @@ function onLanguageDeleted(code: string) {
 
 function addNewLanguage() {
   let language = newLanguage.value.form;
-  let code: string = language.code || "";
+  const code: string = language.code || "";
 
   // Check if language already exists
   const exists = languageStore.languages.find(
     (l) =>
-      l.code.toLowerCase() == code.toLowerCase() ||
-      l.name.toLowerCase() == language.name.toLowerCase()
+      l.code.toLowerCase() === code.toLowerCase() ||
+      l.name.toLowerCase() === language.name.toLowerCase()
   );
 
   if (exists != null) {
