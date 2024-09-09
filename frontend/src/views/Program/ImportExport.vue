@@ -56,7 +56,7 @@
     </Alert>
 
     <Modal
-      v-model:visible="showModal.visible"
+      v-model:open="showModal.visible"
       title="Upload Program Specification"
       @cancel="onCancel()"
       ok-text="Upload"
