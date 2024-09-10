@@ -42,28 +42,22 @@ const workbook = computed(() => {
 });
 
 const tableauVisibility = computed(() => {
-  const gotJwt = !(!jwt || jwt.value.error === "Not found");
+  const gotJwt = !(!jwt || jwt?.value?.error === "Not found");
   // 'visually_hidden' leaves the TableauWiz in a state from which it never recovers, so it never appears.
   // Instead, use the traditional "display: none;" style.
   return gotJwt ? "" : "noTableau";
 });
 
 onMounted(async () => {
-  useRequest(
-    () => {
-      return ApiRequest.get<string>("tableau/jwt");
-    },
-    {
-      cacheTime: 24 * 60 * 60 * 1000, // 24 hours
-      cacheKey: RequestCacheKeys.tableau_jwt,
-      onSuccess: ([token]) => {
-        jwt.value = token;
-        const viz: any = document.getElementById("tableauViz");
-        viz.token = jwt.value;
-        viz.src = workbook.value;
-      },
+  ApiRequest.get<string>(`tableau/jwt?program_id=${store?.activeProgram?.data.program_id}`).then((resp) => {
+    console.log(resp);
+    if (resp.length > 0) {
+      jwt.value = resp[0];
+      const viz: any = document.getElementById("tableauViz");
+      viz.token = jwt.value;
+      viz.src = workbook.value;
     }
-  );
+  });
 });
 </script>
 
