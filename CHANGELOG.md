@@ -1,3 +1,12 @@
+## [0.1.4](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.3...v0.1.4) (2024-09-10)
+
+
+### Bug Fixes
+
+* tableau viz display error ([8adc52b](https://github.com/LiteracyBridge/amplio-suite/commit/8adc52b0fcceaa13d0f3e76fdc6ba26f3de99179))
+
+
+
 ## [0.1.3](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.2...v0.1.3) (2024-09-04)
 
 
