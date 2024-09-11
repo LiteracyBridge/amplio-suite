@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Button, PageHeader, Table, Modal, Typography, Select } from "ant-design-vue";
+import { Button, PageHeader, Table, Modal, Typography, Input } from "ant-design-vue";
 import { computed, ref } from "vue";
 import InvitationDrawer from "./InvitationDrawer.vue";
 import { useAccountStore } from "@/store/account";
@@ -7,18 +7,24 @@ import { useRequest } from "vue-request";
 import { RequestCacheKeys } from "@/models/constants";
 
 import AssignRoleModal from "./AssignRoleModal.vue";
+import { SearchOutlined } from "@ant-design/icons-vue";
+import { User } from "@/models/user";
 
 const store = useAccountStore();
+const users = ref<User[]>([]);
+
 const { loading } = useRequest(store.fetchUsers, {
   cacheKey: RequestCacheKeys.org_users,
   onSuccess: (data) => {
     store.users = data;
+    users.value = [...data];
   },
 });
 
 const modal = ref({
   open: false,
 });
+
 const assignRoleModal = ref({
   open: false,
   user_id: undefined as number,
@@ -52,6 +58,23 @@ const columns = [
     key: "action",
   },
 ];
+
+function performSearch(val?: string) {
+  if (val == null || val === undefined || val.trim().length === 0) {
+    users.value = [...store.users];
+    return
+  }
+
+  const input = val.trim().toLowerCase();
+  users.value = store.users.filter((recipient) => {
+    return (
+      recipient.organisation.name?.toLowerCase().includes(input) ||
+      recipient.first_name?.toLowerCase().includes(input) ||
+      recipient.last_name?.toLowerCase().includes(input) ||
+      recipient.email?.toLowerCase().includes(input)
+    );
+  });
+}
 </script>
 
 <template>
@@ -65,27 +88,21 @@ const columns = [
     </template>
   </PageHeader>
 
-  <Table :columns="columns" :data-source="store.users" :loading="loading">
-    <!-- TODO: implement org filtering -->
-    <!-- <template
-      #customFilterDropdown="{
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters,
-        column,
-      }"
-    >
-      <div style="padding: 8px" v-if="column.key == 'org'">
-        <Select
-          :allow-clear="true"
-          :options="getOrgs"
-          :show-search="true"
-          :placeholder="`Search ${column.key}`"
+  <Table :columns="columns" :data-source="users" :loading="loading">
+    <template #title>
+      <div class="flex w-full">
+        <Input
+          type="text"
+          class="mr-10"
+          placeholder="Search user or organisation"
+          @change="performSearch($event.target.value)"
         >
-        </Select>
+          <template #prefix>
+            <SearchOutlined />
+          </template>
+        </Input>
       </div>
-    </template> -->
+    </template>
 
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
