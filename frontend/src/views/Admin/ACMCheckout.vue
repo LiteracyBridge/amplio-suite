@@ -3,13 +3,9 @@ import { ApiRequest } from "@/api";
 import { Button, Input, Modal, PageHeader, Table } from "ant-design-vue";
 import { ref, h } from "vue";
 import { onMounted } from "vue";
-import type { ACMCheckout } from "@/models/acm";
+import type { ACMCheckout } from "@/models/acm_checkout";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons-vue";
 import { DateTime } from "luxon";
-
-function onChange(pagination: any, filters: any, sorter: any, extra: any) {
-  console.log("params", pagination, filters, sorter, extra);
-}
 
 const showModal = ref(false);
 const isLoading = ref(false);
@@ -18,8 +14,6 @@ const checkoutProjectName = ref("");
 const selectedACM = ref<ACMCheckout | null>(null);
 const dataSource = ref<ACMCheckout[]>([]);
 const dataSourceTemp = ref<ACMCheckout[]>([]);
-
-// TODO: fetch the checkout data from the backend
 
 const columns = [
   {
@@ -62,7 +56,7 @@ onMounted(async () => {
 
 async function fetchData() {
   isLoading.value = true;
-  await ApiRequest.get<ACMCheckout>("acm-checkout?action=list")
+  await ApiRequest.get<ACMCheckout>("acm-checkout/list")
     .then((resp) => {
       console.log(resp);
       dataSource.value = resp;
@@ -109,7 +103,6 @@ function performSearch(input: string) {
   <Table
     :columns="columns"
     :data-source="dataSource"
-    @change="onChange"
     size="small"
     :pagination="{ defaultPageSize: 25 }"
     :loading="isLoading"
@@ -132,7 +125,7 @@ function performSearch(input: string) {
 
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'acm_name'">
-        {{ record.acm_name }}
+        {{ record.project.name }}
       </template>
       <template v-if="column.key === 'acm_state'">
         <Button
