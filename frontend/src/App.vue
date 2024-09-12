@@ -1,10 +1,12 @@
 <template>
+  <!-- <AppLoadingIndicator v-if="useAppStore().loading" /> -->
+
   <ConfigProvider
     :theme="{
       token: {
         colorPrimary: '#289b6a',
       },
-      hashed: false
+      hashed: false,
     }"
   >
     <component :is="layout">
@@ -19,6 +21,8 @@ import { onMounted } from "vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { getUser } from "./router";
+import AppLoadingIndicator from "./components/AppLoadingIndicator.vue";
+import { useAppStore } from "./store/app.store";
 
 const route = useRoute();
 const layout = computed(() => {
@@ -28,9 +32,7 @@ const layout = computed(() => {
 onMounted(() => {
   try {
     getUser();
-  } catch (ignore) {
-
-  }
+  } catch (ignore) {}
   console.log("App mounted");
 });
 </script>

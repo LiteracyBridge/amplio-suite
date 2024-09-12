@@ -7,6 +7,7 @@ import SignIn from "@/views/SignIn.vue";
 import { Hub } from "@aws-amplify/core";
 import { notification } from "ant-design-vue";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
+import { useAppStore } from "@/store/app.store";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -270,6 +271,8 @@ function checkAuth(to: any, from: any, next: any) {
 
 
 export async function getUser() {
+  useAppStore().loading = true;
+
   return fetchAuthSession()
     .then(async (data) => {
       if (data) {
@@ -277,14 +280,20 @@ export async function getUser() {
           data.tokens.idToken.toString(),
         ).then((_resp) => {
           return router.push({ path: "/dashboard" })
+        }).finally(() => {
+          useAppStore().loading = false
         });
       }
 
       return useAccountStore().logout();
     })
     .catch((err) => {
+      useAppStore().loading = false;
+
       notification.error({ message: "Login failed", description: err.message });
       return useAccountStore().logout();
+    }).finally(() => {
+      useAppStore().loading = false
     });
 }
 

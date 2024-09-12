@@ -1,13 +1,14 @@
-import { Program } from "@/models/program";
+import type { Program } from "@/models/program";
 import { defineStore } from "pinia";
 import { useAccountStore } from "./account";
 import { message } from "ant-design-vue";
 import { LocalStorageKeys } from "@/models/constants";
-import { Deployment } from "@/models/deployment";
+import type { Deployment } from "@/models/deployment";
 import { orderBy } from "lodash";
 
 export const useAppStore = defineStore("app-config-store", {
   state: () => ({
+    loading: false,
     sidebarCollapsed: false,
     activeProgram: { id: undefined as number, data: undefined as Program },
     userFeedback: {

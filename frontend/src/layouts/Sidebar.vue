@@ -140,13 +140,14 @@ const config = ref({
       >
         <template #icon><SettingOutlined /></template>
 
-        <MenuItem key="manage-users">
+        <MenuItem key="manage-users" v-if="account.can(Permission.manage_staff)">
           <template #icon><UserOutlined /></template>
 
-          <router-link to="/admin/users" v-if="account.can(Permission.manage_staff)">
+          <router-link to="/admin/users" >
             <span role="link"> Manage Users </span>
           </router-link>
         </MenuItem>
+
         <MenuItem key="manage-programs" v-if="account.can(Permission.manage_program)">
           <template #icon> <DatabaseOutlined /> </template>
 
