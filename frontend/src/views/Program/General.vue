@@ -225,52 +225,66 @@ function onLanguageSelected(code: string) {
 
   // -----------------------
   console.log("[*] lang code added : ", code)
+  // make connection to db
 }
 
 function onLanguageDeleted(code: string) {
   const language = languageStore.languages.find((l) => l.code === code);
+  console.log("[*] language : ", language);
   // --------------------------------
   // Get list of languages in recipient
-  console.log("[*] lang deleted : ", language.name, language.code);
+  if (language != null || language != undefined) {
+    console.log("[*] lang deleted : ", language.name, language.code);
   
-  var languageExistsInRecipients = false;
-  var languageExistsInContents = false;
-  specStore.recipients.forEach((recp) => {
-    if (recp.language == language.code) {
-      console.log("[*] ", language.code, " exists in recipients");
-      languageExistsInRecipients = true;
-    } else {
-      console.log("[*] ", language.code, " does not exists in recipients");
-      //return false;
-    }
-  });
-
-  specStore.deployments.forEach((depl) => {
-    console.log("[*] depl : ", depl);
-    depl.playlists.forEach((playlist) => {
-      console.log("\t[*] playlist messages : ", playlist.messages)
-      playlist.messages.forEach((content) => {
-        console.log("\t\t[*] content languages : ", content.languages)
-        if (content.languages !== undefined) {
-          if (content.languages.includes(language.code)) {
-            languageExistsInContents = true;
-            console.log("<===> [*][*][*] ", language.code, " exists in content")
-          }
-        }
-      })
+    var languageExistsInRecipients = false;
+    var languageExistsInContents = false;
+    specStore.recipients.forEach((recp) => {
+      if (recp.language == language.code) {
+        console.log("[*] ", language.code, " exists in recipients");
+        languageExistsInRecipients = true;
+      } else {
+        console.log("[*] ", language.code, " does not exists in recipients");
+      }
     });
-  });
 
-  Modal.confirm({
-    title: `Are you sure to delete '${language?.name || code}' language?`,
-    icon: createVNode(ExclamationCircleOutlined),
-    okText: "Yes",
-    okType: "danger",
-    cancelText: "No",
-    onOk() {
-      specStore.deleteLanguage(code);
-    },
-  });
+    specStore.deployments.forEach((depl) => {
+      console.log("[*] depl : ", depl);
+      depl.playlists.forEach((playlist) => {
+        console.log("\t[*] playlist messages : ", playlist.messages)
+        playlist.messages.forEach((content) => {
+          console.log("\t\t[*] content languages : ", content.languages)
+          if (content.languages !== undefined) {
+            if (content.languages.includes(language.code)) {
+              languageExistsInContents = true;
+              console.log("<===> [*][*][*] ", language.code, " exists in content")
+            }
+          }
+        })
+      });
+    });
+
+    if (languageExistsInContents || languageExistsInRecipients) {
+      Modal.error({
+        title: `language '${language?.name || code}' is used in recipients and contents`,
+        icon: createVNode(ExclamationCircleOutlined),
+        okText: "Close"
+      });
+    } else {
+      Modal.confirm({
+        title: `Are you sure to delete '${language?.name || code}' language?`,
+        icon: createVNode(ExclamationCircleOutlined),
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk() {
+          specStore.deleteLanguage(code);
+        },
+      });
+    }
+
+    console.log("[*] languageExistsInRecipients : ", languageExistsInRecipients);
+    console.log("[*] languageExistsInContents : ", languageExistsInContents);
+  }
 }
 
 function addNewLanguage() {
