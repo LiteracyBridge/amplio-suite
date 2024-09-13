@@ -603,22 +603,33 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
     }) {
       console.log(payload.language);
+      //console.log("[*] language deleted : ", payload.language);
+      //console.log("[*] message languages : ", payload.message.languages)
       // 'languages' is a list of comma-separated language names or codes.
       // const message = this.getMessage(payload);
       const { language, message } = payload;
       let languageCode;
+      console.log("[*] language : ", language);
       if (typeof language === "string") {
         languageCode = language;
       } else {
-        languageCode = language;
+        //languageCode = language;
+        languageCode = "";
       }
       let languages = message.languages;
+      console.log("[*] languages : ", languages);
       let list = languages == null ? [] : languages.split(/[,;]/);
-      const ix = list.indexOf(languageCode);
-      if (ix >= 0) list.splice(ix, 1);
-      languages = list.join(",");
-      message.languages = languages;
-      this.setChanged(true);
+      console.log("list : ", list);
+      if (list.length > 1) {
+        const ix = list.indexOf(languageCode);
+        console.log("ix : ", ix);
+        if (ix >= 0) list.splice(ix, 1);
+        console.log("list : ", list);
+        languages = list.join(",");
+        console.log("[*] languages : ", languages);
+        message.languages = languages;
+        this.setChanged(true);
+      }
     },
 
     setMessageSDGGoal(payload: {
