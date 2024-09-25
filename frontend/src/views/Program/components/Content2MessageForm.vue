@@ -223,7 +223,7 @@ const targets = computed(() => {
   const goal = goals.value.find((goal) => goal.goalId == props.message.sdg_goal_id);
 
   if (goal) return goal.targets;
-  else return [];
+  return [];
 });
 
 const selectedCategory = computed(() => {

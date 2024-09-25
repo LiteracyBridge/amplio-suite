@@ -414,9 +414,9 @@
         v-for="opt in beneficiariesAdditionalFields"
         :key="opt.key"
         :label="opt.value"
-        :val="recipient.direct_beneficiaries_additional[opt.key]"
+        :val="(recipient.direct_beneficiaries_additional ?? {})[opt.key]"
         :showTooltip="
-          recipient.direct_beneficiaries_additional[opt.key] >
+          (recipient.direct_beneficiaries_additional ?? {})[opt.key] >
           recipient.direct_beneficiaries
         "
         @input="
