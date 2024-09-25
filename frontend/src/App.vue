@@ -1,4 +1,5 @@
 <template>
+  <!-- <AppLoadingIndicator v-if="useAppStore().loading" /> -->
 
   <ConfigProvider
     :theme="{
@@ -20,7 +21,8 @@ import { onMounted } from "vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { getUser } from "./router";
-
+import AppLoadingIndicator from "./components/AppLoadingIndicator.vue";
+import { useAppStore } from "./store/app.store";
 
 const route = useRoute();
 const layout = computed(() => {

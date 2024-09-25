@@ -1,9 +1,7 @@
-import type { Project } from "@/types";
-
 export class ACMCheckout {
   last_in_name: string;
   acm_comment: string;
-  // acm_name: string;
+  acm_name: string;
   last_in_contact?: string;
   last_in_file_name: string;
   last_in_version: string;
@@ -17,6 +15,4 @@ export class ACMCheckout {
   now_out_key?: string;
   now_out_contact?: string;
   acm_state: "CHECKED_IN" | "CHECKED_OUT";
-
-  project: Project
 }
