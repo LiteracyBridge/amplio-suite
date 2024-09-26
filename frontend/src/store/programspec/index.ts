@@ -503,7 +503,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const deployment = this.getDeployment(payload);
       // New playlist at next position.
       deployment.playlists.push(
-        Playlist.create(deployment.playlists.length + 1),
+        Playlist.create(deployment.playlists.length + 1, deployment),
       );
     },
 
@@ -529,7 +529,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addMessage(payload: any) {
       const playlist = this.getPlaylist(payload);
-      const message = Message.create(playlist.messages.length + 1);
+      const message = Message.create(playlist.messages.length + 1, playlist);
       if (playlist.messages.length > 0) {
         playlist.audience =
           playlist.messages[playlist.messages.length - 1].audience;
