@@ -169,5 +169,4 @@ function confirmDeleteMessage() {
   });
   cancelDeleteMessage();
 }
-
 </script>

@@ -56,7 +56,7 @@ const deploymentChanged = ref("");
       />
     </template>
 
-    <Alert type="info" :closable="true">
+    <!-- <Alert type="info" :closable="true">
       <template #message>
         <span>
           Analysing user feedback for
@@ -67,7 +67,7 @@ const deploymentChanged = ref("");
           <span class="font-bold text-lg">{{ store.userFeedback.language }}</span>
         </span>
       </template>
-    </Alert>
+    </Alert> -->
   </PageHeader>
 
   <Tabs v-model:activeKey="activeTab" centered size="large">

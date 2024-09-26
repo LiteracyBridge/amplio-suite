@@ -4,11 +4,11 @@ import { API_URL } from "@/models/constants";
 
 // const URL2 = 'https://ng02lptr62.execute-api.us-west-2.amazonaws.com/Prod'
 // const API_URL = import.meta.env.VITE_APP_API_URL;
-const URL = "https://v853rt57t9.execute-api.us-west-2.amazonaws.com/Prod";
+// const URL = "https://v853rt57t9.execute-api.us-west-2.amazonaws.com/Prod";
 const PUBLISH = "/publish";
 // const GET_CONTENT = '/get_content'
 // const PUT_CONTENT = "/put_content";
-const DOWNLOAD = "/download";
+// const DOWNLOAD = "/download";
 
 function makeInit(params) {
   params = params || {};
@@ -24,7 +24,11 @@ function makeInit(params) {
     init.body = JSON.stringify(data);
     init.headers["Content-Type"] = "application/json";
   } else if (fileData) {
-    init.body = fileData;
+    const form = new FormData()
+    form.append('file',fileData)
+
+    init.body = form;
+    // init.body = fileData;
     //init.headers['Content-Type'] = 'application/text';
   }
   return init;
@@ -65,7 +69,7 @@ async function putProgramSpec(programid, programspec) {
 async function getDownloadLink(programid, artifact) {
   const init = makeInit();
   const fetch_response = await fetch(
-    `${URL}${DOWNLOAD}?programid=${programid}&aslink=true&artifact=${artifact}`,
+    `${API_URL}/program-spec/download?programid=${programid}&aslink=true&artifact=${artifact}`,
     init
   );
   return fetch_response.json();
@@ -74,7 +78,7 @@ async function getDownloadLink(programid, artifact) {
 async function uploadSpec(programid, fileData) {
   const init = makeInit({ method: "POST", fileData: fileData });
   const fetch_request = new Request(
-    `${URL}/upload?programid=${programid}&return_diff=t`,
+    `${API_URL}/program-spec/upload?programid=${programid}&return_diff=t`,
     init
   );
   const fetch_response = await fetch(fetch_request);
@@ -84,7 +88,7 @@ async function uploadSpec(programid, fileData) {
 async function approveSpec(programid, publish) {
   const init = makeInit({ method: "GET" });
   const fetch_request = new Request(
-    `${URL}/accept?programid=${programid}&publish=${publish ? "t" : "f"}`,
+    `${API_URL}/accept?programid=${programid}&publish=${publish ? "t" : "f"}`,
     init
   );
   const fetch_response = await fetch(fetch_request);

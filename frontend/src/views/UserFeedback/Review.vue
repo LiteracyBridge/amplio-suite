@@ -113,7 +113,7 @@ onMounted(() => {
       <DeploymentsLanguageDropdown @change="getSubmissionsList()" />
     </template>
 
-    <Alert type="info" :closable="true">
+    <!-- <Alert type="info" :closable="true">
       <template #message>
         <span>
           Reviewing user feedback for
@@ -124,7 +124,7 @@ onMounted(() => {
           <span class="font-bold text-lg">{{ store.userFeedback.language }}</span>
         </span>
       </template>
-    </Alert>
+    </Alert> -->
   </PageHeader>
 
   <Table

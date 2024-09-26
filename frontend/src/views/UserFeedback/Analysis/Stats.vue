@@ -11,17 +11,17 @@ const store = useFeedbackAnalysis();
       <Col :span="12">
         <Statistic title="Total" :value="store.statistics.total_messages" />
       </Col>
-      <Col :span="12">
+      <!-- <Col :span="12">
         <Statistic
           title="Analysed"
-          :value="store.statistics.total_analysed + store.statistics.total_useless"
+          :value="store.statistics.total_analysed"
         />
+      </Col> -->
+      <Col :span="12">
+        <Statistic title="Valid/Analysed" :value="store.statistics.total_analysed" />
       </Col>
     </Row>
     <Row :gutter="4">
-      <Col :span="12">
-        <Statistic title="Valid" :value="store.statistics.total_analysed" />
-      </Col>
       <Col :span="12">
         <Statistic title="Useless" :value="store.statistics.total_useless" />
       </Col>
@@ -29,7 +29,6 @@ const store = useFeedbackAnalysis();
     <Row :gutter="4">
       <Col :span="12">
         <Statistic title="Analysed By You" :value="store.statistics.by_current_user" />
-      </Col>
-      </Row
+      </Col> </Row
   ></Card>
 </template>

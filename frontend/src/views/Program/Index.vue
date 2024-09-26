@@ -62,7 +62,7 @@
 
         <TabPane key="import-export" tab="Import/Export">
           <ImportExport
-            :program-id="appStore.activeProgram.id?.toString()"
+            :program-id="appStore.activeProgram.data.program_id"
           ></ImportExport>
         </TabPane>
       </Tabs>

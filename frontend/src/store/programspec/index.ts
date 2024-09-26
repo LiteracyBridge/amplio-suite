@@ -603,8 +603,6 @@ export const useProgramSpecStore = defineStore("programspec", {
       message: Message;
     }) {
       console.log(payload.language);
-      //console.log("[*] language deleted : ", payload.language);
-      //console.log("[*] message languages : ", payload.message.languages)
       // 'languages' is a list of comma-separated language names or codes.
       // const message = this.getMessage(payload);
       const { language, message } = payload;
