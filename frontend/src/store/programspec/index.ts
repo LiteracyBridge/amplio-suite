@@ -17,6 +17,7 @@ import { Message } from "@/models/message";
 import { ApiRequest } from "@/api";
 import { notification } from "ant-design-vue";
 import { orderBy } from "lodash";
+import { useLanguagesStore } from "../languages";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -65,6 +66,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     deployments: [] as Deployment[],
     recipients: [] as Recipient[],
     general: new Program(),
+    languages: [] as Language[],
     programId: "",
 
     changed: false,
@@ -110,6 +112,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         value: state.general.direct_beneficiaries_map[key],
       }));
     },
+    languageCodes: (state) => state.languages.map(l => l.code)
   },
   actions: {
     resetState() {
@@ -219,6 +222,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general = payload.programspec.general;
       this.general.name = payload.programspec.name;
       this.recipients = payload.programspec.recipients;
+      this.languages = payload.programspec.languages
       this.deployments = orderBy(
         payload.programspec.deployments,
         "deploymentnumber",
@@ -227,9 +231,9 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.deployments.forEach((d: { playlists: any[] }) => {
         d.playlists.forEach(
           (p: { position: any; messages: any[] }, ix: number) => {
-            p.position = ix + 1;
+            p.position ??= ix + 1;
             p.messages.forEach((m: { position: any }, ix: number) => {
-              m.position = ix + 1;
+              m.position ??= ix + 1;
             });
           },
         );
@@ -376,6 +380,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
           return newRecip;
         }),
+        languages: this.languages
       };
 
       this.requestInit();
@@ -392,12 +397,6 @@ export const useProgramSpecStore = defineStore("programspec", {
             description: "Program specification updated successfully.",
           });
         })
-        .catch((error) => {
-          notification.error({
-            message: "Error",
-            description: error.message,
-          });
-        })
         .finally(() => {
           this.loading = false;
         });
@@ -411,10 +410,18 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general.feedback_frequency = payload;
     },
 
-    setLanguages(payload: { lang: any; index: any }) {
-      const languages = [...this.general.languages];
-      languages[payload.index] = payload.lang;
-      this.general.languages = languages;
+    setLanguage(opts: { code: string, name?: string }) {
+      const languages = new Set(this.languages.map((l) => l.code));
+      if (languages.has(opts.code)) {
+        return
+      }
+      this.languages = [
+        ...this.languages,
+        {
+          code: opts.code,
+          name: opts.name ?? useLanguagesStore().languages.find(i => i.code === opts.code)!.name
+        }
+      ];
     },
 
     deleteLanguage(language: any) {

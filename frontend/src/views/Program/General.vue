@@ -50,8 +50,8 @@
         <Col :span="8">
           <FormItem label="Languages">
             <LanguagesSelector
-              :languages="specStore.general.languages"
-              :onLanguageSelected="onLanguageSelected"
+              :languages="specStore.languageCodes"
+              :onLanguageSelected="($event) => specStore.setLanguage({ code: $event })"
               :onLanguageDeleted="onLanguageDeleted"
               :multiple="true"
             />
@@ -193,7 +193,6 @@ import {
 } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
-
 const specStore = useProgramSpecStore();
 const languageStore = useLanguagesStore();
 
@@ -216,14 +215,9 @@ const newLanguage = ref({
   },
 });
 
-function onLanguageSelected(code: string) {
-  const index = specStore.general.languages.length;
-  specStore.setLanguages({ lang: code, index });
-
-  // -----------------------
-  console.log("[*] lang code added : ", code)
-  // make connection to db
-}
+// function onLanguageSelected(code: string) {
+//   specStore.setLanguage(code);
+// }
 
 function onLanguageDeleted(code: string) {
   const language = languageStore.languages.find((l) => l.code === code);
@@ -247,16 +241,16 @@ function onLanguageDeleted(code: string) {
     specStore.deployments.forEach((depl) => {
       console.log("[*] depl : ", depl);
       depl.playlists.forEach((playlist) => {
-        console.log("\t[*] playlist messages : ", playlist.messages)
+        console.log("\t[*] playlist messages : ", playlist.messages);
         playlist.messages.forEach((content) => {
-          console.log("\t\t[*] content languages : ", content.languages)
+          console.log("\t\t[*] content languages : ", content.languages);
           if (content.languages !== undefined) {
             if (content.languages.includes(language.code)) {
               languageExistsInContents = true;
-              console.log("<===> [*][*][*] ", language.code, " exists in content")
+              console.log("<===> [*][*][*] ", language.code, " exists in content");
             }
           }
-        })
+        });
       });
     });
 
@@ -264,7 +258,7 @@ function onLanguageDeleted(code: string) {
       Modal.error({
         title: `language '${language?.name || code}' is used in recipients and contents`,
         icon: createVNode(ExclamationCircleOutlined),
-        okText: "Close"
+        okText: "Close",
       });
     } else {
       Modal.confirm({
@@ -285,27 +279,21 @@ function onLanguageDeleted(code: string) {
 }
 
 function addNewLanguage() {
-  let language = newLanguage.value.form;
-  const code: string = language.code || "";
+  let form = newLanguage.value.form;
+  const code: string = form.code?.toLowerCase() || "";
 
   // Check if language already exists
-  const exists = languageStore.languages.find(
-    (l) =>
-      l.code.toLowerCase() === code.toLowerCase() ||
-      l.name.toLowerCase() === language.name.toLowerCase()
+  let newLang = languageStore.languages.find(
+    (l) => l.code === code || l.name.toLowerCase() === form.name.toLowerCase()
   );
 
-  if (exists != null) {
-    language = exists;
-  } else {
-    language.code = languageStore.generateNewLanguageCode(language);
+  if (newLang == null) {
+    newLang = { name: form.name, code: languageStore.generateNewLanguageCode(form) };
+    languageStore.mergeWithSystemLanguages({ newLangs: [newLang] }); // update langs list
   }
 
-  // Update main languages list
-  languageStore.languages = [...(languageStore.languages || []), language];
-
   // Update program languages
-  onLanguageSelected(language.code);
+  specStore.setLanguage(newLang);
 
   newLanguage.value = {
     modal: false,
@@ -314,13 +302,6 @@ function addNewLanguage() {
       code: null,
     },
   };
-
-  if (!exists) {
-    specStore.general.new_languages = [
-      ...(specStore.general.new_languages || []),
-      language,
-    ];
-  }
 }
 
 function addField() {

@@ -4,7 +4,7 @@
       <Col :span="12">
         <FormItem label="Language">
           <languages-selector
-            :options="store.general.languages"
+            :options="store.languages"
             :languages="messageLanguages"
             @language-selected="
               (language) =>

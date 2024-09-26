@@ -39,7 +39,7 @@ export class Program {
   salesforce_id?: string;
 
   // For form fields
-  new_languages: Language[] = [];
+  // new_languages: Language[] = [];
 
   project: Project;
   users: ProgramUser[] = [];

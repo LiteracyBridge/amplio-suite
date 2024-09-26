@@ -5,7 +5,6 @@
     </label>
 
     <Select
-      v-if="getLanguages.length > 0"
       id="language_input"
       ref="languages"
       :mode="multiple ? 'multiple' : null"
@@ -18,7 +17,7 @@
       :filter-option="true"
       :option-filter-prop="'name'"
       :show-search="true"
-      :loading="loading || store.loading"
+      :loading="store.loading"
     >
     </Select>
   </div>
@@ -26,13 +25,15 @@
 
 <script setup lang="ts">
 import { RequestCacheKeys } from "@/models/constants";
+import type { Language } from "@/models/language";
 import { useLanguagesStore } from "@/store/languages";
+import { useProgramSpecStore } from "@/store/programspec";
 import { Select, SelectOption, Spin } from "ant-design-vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRequest } from "vue-request";
 
 const props = defineProps<{
-  options?: string[];
+  options?: Language[];
   languages?: string | string[];
   labelBy?: string;
   autofocus?: boolean;
@@ -47,38 +48,14 @@ const emit = defineEmits<{
 
 const store = useLanguagesStore();
 
-const allOptions = ref([]),
-  selectedLanguages = ref([]);
+const selectedLanguages = ref([]);
 
-// Download languages
-const { loading } = useRequest(store.fetchLanguages, {
-  cacheKey: RequestCacheKeys.supported_languages,
-  cacheTime: 1000 * 60 * 60 * 24 * 7, // 1 week
-  defaultParams: [],
-  onSuccess: (data) => {
-    store.languages = data;
-  },
-});
-
-onMounted(() => {
-  if (props.options != null) {
-    allOptions.value = store.mapLanguageCodesToInfo([...props.options]);
-  }
-
+onMounted(async () => {
+  await store.fetchLanguages();
   selectedLanguages.value = [...(props.languages || [])];
 });
 
-watch(
-  props,
-  (newProps, _old) => {
-    if (newProps.options != null) {
-      allOptions.value = store.mapLanguageCodesToInfo([...newProps.options]);
-    }
-  },
-  { deep: true }
-);
-
 const getLanguages = computed(() => {
-  return (props.options || []).length > 0 ? allOptions.value : store.languages;
+  return (props.options || []).length > 0 ? props.options : store.languages;
 });
 </script>
