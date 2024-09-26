@@ -41,7 +41,7 @@
       ></Col>
       <Col :span="4" align="center">
         <Popconfirm
-          title="Are you sure to delete this message?"
+          title="Are you sure you want to delete this message?"
           ok-text="Yes"
           cancel-text="No"
           @click="queryDeleteMessage()"
