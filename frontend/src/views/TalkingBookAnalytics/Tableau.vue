@@ -50,7 +50,6 @@ const tableauVisibility = computed(() => {
 
 onMounted(async () => {
   ApiRequest.get<string>(`tableau/jwt?program_id=${store?.activeProgram?.data.program_id}`).then((resp) => {
-    console.log(resp);
     if (resp.length > 0) {
       jwt.value = resp[0];
       const viz: any = document.getElementById("tableauViz");
