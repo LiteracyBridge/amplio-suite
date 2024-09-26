@@ -190,6 +190,7 @@ import {
   List,
   ListItem,
   Popconfirm,
+  notification,
 } from "ant-design-vue";
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 
@@ -220,62 +221,45 @@ const newLanguage = ref({
 // }
 
 function onLanguageDeleted(code: string) {
-  const language = languageStore.languages.find((l) => l.code === code);
-  console.log("[*] language : ", language);
-  // --------------------------------
-  // Get list of languages in recipient
-  if (language != null || language != undefined) {
-    console.log("[*] lang deleted : ", language.name, language.code);
+  const language = specStore.languages.find((l) => l.code === code)!;
 
-    var languageExistsInRecipients = false;
-    var languageExistsInContents = false;
-    specStore.recipients.forEach((recp) => {
-      if (recp.language == language.code) {
-        console.log("[*] ", language.code, " exists in recipients");
-        languageExistsInRecipients = true;
-      } else {
-        console.log("[*] ", language.code, " does not exists in recipients");
-      }
-    });
-
-    specStore.deployments.forEach((depl) => {
-      console.log("[*] depl : ", depl);
-      depl.playlists.forEach((playlist) => {
-        console.log("\t[*] playlist messages : ", playlist.messages);
-        playlist.messages.forEach((content) => {
-          console.log("\t\t[*] content languages : ", content.languages);
-          if (content.languages !== undefined) {
-            if (content.languages.includes(language.code)) {
-              languageExistsInContents = true;
-              console.log("<===> [*][*][*] ", language.code, " exists in content");
-            }
-          }
-        });
+  // Check if language is used in recipient
+  for (const r of specStore.recipients) {
+    if (r.language == code) {
+      const index = specStore.recipients.findIndex((l) => l.id === r.id);
+      notification.error({
+        message: "Error",
+        description: `${language?.name} is used by recipient #${index + 1}.\nDelete the recipient first!`,
       });
-    });
-
-    if (languageExistsInContents || languageExistsInRecipients) {
-      Modal.error({
-        title: `language '${language?.name || code}' is used in recipients and contents`,
-        icon: createVNode(ExclamationCircleOutlined),
-        okText: "Close",
-      });
-    } else {
-      Modal.confirm({
-        title: `Are you sure to delete '${language?.name || code}' language?`,
-        icon: createVNode(ExclamationCircleOutlined),
-        okText: "Yes",
-        okType: "danger",
-        cancelText: "No",
-        onOk() {
-          specStore.deleteLanguage(code);
-        },
-      });
+      return;
     }
-
-    console.log("[*] languageExistsInRecipients : ", languageExistsInRecipients);
-    console.log("[*] languageExistsInContents : ", languageExistsInContents);
   }
+
+  // Check if language is used in playlist
+  for (const deployment of specStore.deployments) {
+    for (const playlist of deployment.playlists) {
+      for (const m of playlist.messages) {
+        if ((m.languages ?? "").includes(language.code)) {
+          notification.error({
+            message: "Error",
+            description: `${language?.name} is used by '${m.title}' message in '${playlist.title}' playlist.\nDelete the message first!`,
+          });
+          return; // stop all the loops
+        }
+      }
+    }
+  }
+
+  Modal.confirm({
+    title: `Are you sure to delete ${language.name}(${code}) language?`,
+    icon: createVNode(ExclamationCircleOutlined),
+    okText: "Yes",
+    okType: "danger",
+    cancelText: "No",
+    onOk() {
+      specStore.deleteLanguage(code);
+    },
+  });
 }
 
 function addNewLanguage() {
