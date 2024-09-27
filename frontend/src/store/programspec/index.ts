@@ -372,12 +372,6 @@ export const useProgramSpecStore = defineStore("programspec", {
           newRecip.supportentity = recip.support_entity;
           newRecip.communityname = recip.community_name;
           newRecip.groupname = recip.group_name;
-
-          delete newRecip.id;
-          delete newRecip.support_entity;
-          delete newRecip.community_name;
-          delete newRecip.group_name;
-
           return newRecip;
         }),
         languages: this.languages
@@ -424,10 +418,9 @@ export const useProgramSpecStore = defineStore("programspec", {
       ];
     },
 
-    deleteLanguage(language: any) {
-      // noinspection EqualityComparisonWithCoercionJS
-      this.general.languages = this.general.languages.filter(
-        (lang: any) => lang != language,
+    deleteLanguage(language: string) {
+      this.languages = this.languages.filter(
+        (lang: any) => lang.code != language,
       );
     },
 
@@ -578,29 +571,19 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addMessageLanguage(payload: {
       language: string;
-      deployment: Deployment;
-      playlist: Playlist;
       message: Message;
     }) {
       // 'languages' is a list of comma-separated language names or codes.
       const { language, message } = payload;
 
-      let languages = message.languages;
-      const list = languages == null ? [] : languages.split(/[,;]/);
-      if (list.indexOf(language) === -1) list.push(language);
-      languages = list.join(",");
-      message.languages = languages;
+      let languages = (message.languages || '').split(/[,;]/).filter(l => l !== '')
+      message.languages = Array.from(new Set([...languages, language])).join(',')
       this.changed = true;
     },
 
-    getMessageLanguages(payload: {
-      // language: string;
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-    }) {
+    getMessageLanguages(message: Message) {
       // const message = this.getMessage(payload);
-      return (payload.message?.languages || "").split(/[,;]/);
+      return (message?.languages || "").split(/[,;]/).filter(l => l !== '');
     },
 
     removeMessageLanguage(payload: {

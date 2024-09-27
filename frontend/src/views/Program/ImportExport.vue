@@ -26,12 +26,13 @@
         <Button type="primary" @click="onExportProgramSpec()">Export Spreadsheet </Button>
       </div>
 
-      <div class="col-span-4 mr-4 ml-4">
+      <!-- <div class="col-span-4 mr-4 ml-4">
         <div v-if="showUnpublishedOption">
           <input type="checkbox" id="checkbox" v-model="exportUnpublished" />
           <label for="checkbox"> Export the un-published program specification.</label>
         </div>
       </div>
+      -->
     </div>
 
     <Alert type="info" message="Remember" class="mt-5">
@@ -136,6 +137,8 @@ import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
 import { approveSpec, uploadSpec } from "@/api/programspec.api";
+import axios from "axios";
+import { ApiRequest } from "@/api";
 
 const specStore = useProgramSpecStore();
 
@@ -166,30 +169,28 @@ async function onExportProgramSpec() {
     } Program Specification for ${specStore.programId}`,
   });
 
-  const downloadLink = await specStore.getExportLink({
-    programId: specStore.programId,
-    artifact: exportUnpublished ? "unpublished" : "published",
+  const response = await ApiRequest.download(
+    `program-spec/download?programid=${specStore.programId}&artifact=${
+      exportUnpublished ? "unpublished" : "published"
+    }`
+  );
+
+  const url = window.URL.createObjectURL(response);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `program_spec_${
+    exportUnpublished.value ? "unpublished" : "published"
+  }.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+
+  notification.success({
+    description: "Program spec exported successfully.",
+    message: "Success",
   });
-  if (downloadLink.status === "ok") {
-    const downloadUrl = downloadLink.url;
-    console.log(
-      `Export ${
-        exportUnpublished.value ? "unpublished " : ""
-      } Program Specification for ${specStore.programId} from ${downloadLink.url}`
-    );
-    // Download the object.
-    const fetch_response = await fetch(downloadUrl);
-    // Get the bits, and add them to an <a> element.
-    const data = await fetch_response.arrayBuffer();
-    const blob = new Blob([data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = downloadLink.object.filename;
-    // Simulate a click on the <a>
-    link.click();
-  }
 }
 
 function onFileSelected(file: any) {
