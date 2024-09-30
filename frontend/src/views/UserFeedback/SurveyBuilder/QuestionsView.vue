@@ -22,24 +22,24 @@ const store = useSurveyBuilder();
 const drag = ref(false);
 const config = ref<{
   showSubQuestions: boolean;
-  mode: "edit" | "sub-question";
-  selectedQuestion: Question;
+  // mode: "edit" | "sub-question";
+  // selectedQuestion: Question;
 }>({
   showSubQuestions: props.subQuestions,
-  mode: "edit",
-  selectedQuestion: null,
+  // mode: "edit",
+  // selectedQuestion: null,
 });
 
 function editQuestion(question: Question) {
-  config.value.selectedQuestion = Question.fromJson(JSON.parse(JSON.stringify(question)));
-  config.value.mode = "edit";
+  store.selectedQuestion = Question.fromJson(JSON.parse(JSON.stringify(question)));
+  store.mode = "edit";
 }
 
 const getQuestions = computed({
   get: () => {
     return store.questions({
       sectionId: props.sectionId,
-      parentId: props.parent?.id,
+      parentId: props.parent?._id,
       isSubQuestions: props.subQuestions,
     });
   },
@@ -78,15 +78,15 @@ function focusCard(question: Question) {
     >
       <template #item="{ element: question, index }">
         <div>
-          <div v-if="config.selectedQuestion?.id == question.id && config.mode == 'edit'">
+          <div v-if="store.selectedQuestion?._id == question._id && store.mode == 'edit'">
             <NewQuestion
-              :question="config.selectedQuestion"
+              :question="store.selectedQuestion"
               :editing="true"
               :index="index"
               :parent="props.parent"
               @saved="
-                config.mode = 'edit';
-                config.selectedQuestion = null;
+                store.mode = 'edit';
+                store.selectedQuestion = null; // returns to view mode
               "
             ></NewQuestion>
           </div>
@@ -104,6 +104,7 @@ function focusCard(question: Question) {
               <p class="mb-5">
                 <span class="mr-2">{{ index + 1 }}.</span> {{ question.question_label }}
               </p>
+
               <div v-if="question.type == QuestionType.open_ended" class="ml-6">
                 <Input
                   class="my-2 w-4/6"
@@ -144,5 +145,3 @@ function focusCard(question: Question) {
     </draggable>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

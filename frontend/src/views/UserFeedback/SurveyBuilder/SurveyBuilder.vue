@@ -38,8 +38,8 @@ import { SurveyStatus } from "@/models/survey";
 
 const store = useSurveyBuilder();
 
-const question = ref<Question>(null),
-  selectedType = ref<QuestionType>(null);
+// const question = ref<Question>(null);
+// const selectedType = ref<QuestionType>(null);
 
 const config = ref({
   modalVisible: false,
@@ -53,7 +53,7 @@ const config = ref({
     },
     save: () => {
       store.activeSurvey.sections.push({
-        id: self.crypto.randomUUID(),
+        _id: crypto.randomUUID(),
         name: config.value.sectionModal.form.name,
         is_new: true,
       });
@@ -62,15 +62,17 @@ const config = ref({
   },
 });
 
-function questionTypeChanged(type: QuestionType, sectionId: string) {
-  selectedType.value = type;
+// function questionTypeChanged(type: QuestionType, sectionId: string) {
+//   selectedType.value = type;
 
-  question.value = Question.create(type, sectionId);
-  question.value.id = self.crypto.randomUUID();
-  question.value.section_id = sectionId;
-  question.value.question_label = "Untitled question";
-  store.addQuestion(question.value);
-}
+//   question.value = Question.create(type, sectionId);
+//   question.value._id = self.crypto.randomUUID();
+//   question.value.section_id = sectionId;
+//   question.value.question_label = "Untitled question";
+//   store.addQuestion(question.value);
+
+//   console.log(question.value);
+// }
 
 onMounted(() => {
   // Set active section to the first section
@@ -83,9 +85,7 @@ onMounted(() => {
 <template>
   <PageHeader title="Survey Builder">
     <template #extra>
-      <Button type="primary" @click="store.saveChanges()">
-        Save Changes</Button
-      >
+      <Button type="primary" @click="store.saveChanges()"> Save Changes</Button>
 
       <Popconfirm
         title="Publishing this survey will make it available for analysis. Are you sure you want to publish this survey?"
@@ -210,7 +210,12 @@ onMounted(() => {
                 <Button
                   v-for="(questionType, index) in QuestionTypesList"
                   :key="index"
-                  @click="questionTypeChanged(questionType.value, section.id)"
+                  @click="
+                    store.addQuestion({
+                      ...Question.create(questionType.value, section._id),
+                      question_label: 'Untitled question',
+                    })
+                  "
                 >
                   {{ questionType.label }}
                 </Button>

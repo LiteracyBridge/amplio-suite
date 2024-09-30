@@ -14,6 +14,8 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     surveys: [] as Survey[],
     activeSurvey: null as null | Survey,
     // dependents: [] as QuestionDependent[],
+    mode: "edit" as "edit" | "sub-question",
+    selectedQuestion: null as null | Question,
   }),
   getters: {
     published: (state) =>
@@ -32,7 +34,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     groupBySection: (state) => {
       const data = groupBy(state.activeSurvey?.questions || [], "section_id");
       return Object.keys(data).map((key) => ({
-        section: state.activeSurvey.sections.find((s) => s.id == key),
+        section: state.activeSurvey.sections.find((s) => s.id === +key),
         questions: data[key],
       }));
     },
@@ -45,16 +47,16 @@ export const useSurveyBuilder = defineStore("survey-builder", {
         );
       };
     },
-    findById:
-      (state) =>
-      (id: string | number): null | Question => {
-        return state.activeSurvey.questions.find((q) => q.id == id);
-      },
+    // findById:
+    //   (state) =>
+    //     (id: string | number): null | Question => {
+    //       return state.activeSurvey.questions.find((q) => q.id == id);
+    //     },
     getDependentQuestion:
       (state) =>
-      (questionId: string | number): null | Question => {
-        return state.activeSurvey.questions.find((q) => q.id == questionId);
-      },
+        (questionId: string): null | Question => {
+          return state.activeSurvey.questions.find((q) => q._id === questionId);
+        },
     questions: (state) => {
       return (opts?: {
         sectionId?: string | number;
@@ -108,20 +110,22 @@ export const useSurveyBuilder = defineStore("survey-builder", {
         ...this.$state.activeSurvey.questions,
         form,
       ];
+      this.$state.selectedQuestion = form;
+      this.$state.mode = "edit"
       return this.$state.activeSurvey.questions;
     },
     updateQuestion(form: Question) {
       form.is_updated = true;
       this.$state.activeSurvey.questions =
         this.$state.activeSurvey.questions.map((q) =>
-          q.id == form.id ? { ...q, ...form } : q,
+          q._id === form._id ? { ...q, ...form } : q,
         );
       return this.$state.activeSurvey.questions;
     },
     deleteQuestion(item: Question) {
       return (this.$state.activeSurvey.questions =
         this.$state.activeSurvey.questions.map((q) => {
-          if (q.id == item.id) {
+          if (q._id === item._id) {
             q.is_deleted = true;
           }
           return q;
@@ -143,7 +147,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
       const target: Question = JSON.parse(JSON.stringify(opts.source));
       target.section_id = opts.sectionId;
       target.is_new = true;
-      target.id = crypto.randomUUID();
+      target._id = crypto.randomUUID();
 
       target.choices = target.choices.map((c) => {
         c.choice_id = crypto.randomUUID();
@@ -205,8 +209,10 @@ export const useSurveyBuilder = defineStore("survey-builder", {
           });
           return resp;
         })
-        .catch((err) => message.error(err))
-        .finally(() => (this.$state.loading = false));
+        .catch((err) => notification.error({ message: err.message }))
+        .finally(() => {
+          this.$state.loading = false
+        });
     },
     async createSurvey(form: Partial<Survey>): Promise<Survey> {
       this.$state.loading = true;

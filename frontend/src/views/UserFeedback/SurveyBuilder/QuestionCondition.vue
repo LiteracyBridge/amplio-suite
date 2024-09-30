@@ -64,7 +64,7 @@ function addDependent() {
 }
 
 const onQuestionChanged = (id: any) => {
-  selectedQuestion.value = store.questions().find((q) => q.id == id);
+  selectedQuestion.value = store.questions().find((q) => q._id === id);
 };
 </script>
 
@@ -84,7 +84,7 @@ const onQuestionChanged = (id: any) => {
           v-model:value="config.dependent.question_id"
           @change="onQuestionChanged($event)"
         >
-          <SelectOption v-for="q in store.questions()" :key="q.id" :value="q.id">
+          <SelectOption v-for="q in store.questions()" :key="q._id" :value="q._id">
             {{ q.question_label }}
           </SelectOption>
         </Select>

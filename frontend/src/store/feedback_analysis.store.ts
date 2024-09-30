@@ -56,38 +56,38 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         (id: string | number): null | Analysis => {
           return state.questions.find((q) => q.id == id);
         },
-    subQuestions: (state) => {
-      return (parentId: string | number): Analysis[] => {
-        return state.questions.filter((q) => q.question.parent_id == parentId);
-      };
-    },
+    // subQuestions: (state) => {
+    //   return (parentId: string | number): Analysis[] => {
+    //     return state.questions.filter((q) => q.question.parent_id == parentId);
+    //   };
+    // },
     //FIXME: remove this function
-    sectionQuestions: (state) => {
-      return (opts?: {
-        sectionId?: string | number;
-        parentId?: string | number;
-        isSubQuestions?: boolean;
-      }): Analysis[] => {
-        const { sectionId, parentId } = opts ?? {};
+    // sectionQuestions: (state) => {
+    //   return (opts?: {
+    //     sectionId?: string | number;
+    //     parentId?: string | number;
+    //     isSubQuestions?: boolean;
+    //   }): Analysis[] => {
+    //     const { sectionId, parentId } = opts ?? {};
 
-        if (parentId != null && opts.isSubQuestions == true) {
-          return state.questions.filter(
-            (q) => q.question.parent_id == parentId && !(q.is_deleted || false),
-          );
-        }
+    //     if (parentId != null && opts.isSubQuestions == true) {
+    //       return state.questions.filter(
+    //         (q) => q.question.parent_id == parentId && !(q.is_deleted || false),
+    //       );
+    //     }
 
-        if (sectionId != null) {
-          return state.questions.filter(
-            (q) =>
-              q.question.section_id == sectionId && !(q.is_deleted || false),
-          );
-        }
+    //     if (sectionId != null) {
+    //       return state.questions.filter(
+    //         (q) =>
+    //           q.question.section_id == sectionId && !(q.is_deleted || false),
+    //       );
+    //     }
 
-        return state.questions.filter(
-          (q) => q.question.parent_id == null && !(q.is_deleted || false),
-        );
-      };
-    },
+    //     return state.questions.filter(
+    //       (q) => q.question.parent_id == null && !(q.is_deleted || false),
+    //     );
+    //   };
+    // },
     getQuestionIndexById: (state) => {
       return (id: string | number): number => {
         return state.questions.findIndex((q) => q.question_id == id);
@@ -101,17 +101,17 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
         survey.questions,
         (q: Question) => q.order,
       ).map((question: Question) => {
-        question.choices = question.choices;
+        // question.choices = question.choices;
 
         let show = true;
-        if (question.conditions?.action == ConditionAction.show) {
+        if (question.conditions?.action === ConditionAction.show) {
           show = false;
         }
 
         return {
           id: null,
           choices: [],
-          question_id: question.id,
+          question_id: question._id,
           choice_id: null,
           response: null,
           is_useless: false,
@@ -119,7 +119,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           show: show,
           meta: { show: show, required: question.required },
           single_choice:
-            question.type == QuestionType.single_choice
+            question.type === QuestionType.single_choice
               ? {
                 value: null,
                 sub_choice: null,
