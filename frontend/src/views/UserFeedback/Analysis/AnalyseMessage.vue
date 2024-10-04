@@ -67,7 +67,9 @@ function updateUrl(skipMessage: boolean = false) {
       store.userFeedback.deployment
     }&language=${store.userFeedback.language}&message_id=${
       skipMessage ? null : current_message_uuid.value || null
-    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}`
+    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}&survey_id=${
+      feedbackStore.survey?.id
+    }`
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
