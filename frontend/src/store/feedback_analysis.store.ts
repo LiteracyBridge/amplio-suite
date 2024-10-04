@@ -130,7 +130,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
 
       // Fetch stats
       ApiRequest.get<Statistics>(
-        `user-feedback/reports/${survey.id}/statistics?email=${useAccountStore().email
+        `user-feedback/analysis/${survey.id}/stats?email=${useAccountStore().email
         }&language=${useAppStore().userFeedback.language}&deployment=${useAppStore().userFeedback.deployment
         }`,
       ).then(([stats]) => {
@@ -293,6 +293,7 @@ export const useFeedbackAnalysis = defineStore("feedback-analysis", {
           this.$state.statistics.total_analysed += 1;
           this.$state.statistics.by_current_user += body.is_useless ? 0 : 1;
           this.$state.statistics.total_useless += body.is_useless ? 1 : 0;
+          this.$state.skipped_messages.push(extra.message_uuid);
 
           // Reset all responses
           this.resetResponses();

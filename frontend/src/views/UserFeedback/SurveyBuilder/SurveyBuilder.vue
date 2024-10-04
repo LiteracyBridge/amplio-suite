@@ -184,9 +184,10 @@ onMounted(() => {
             </div>
 
             <div class="flex justify-center items-center">
+                <!-- :sub-questions="false" -->
               <QuestionsView
-                :sub-questions="false"
                 :section-id="section.id"
+                :section-uuid="section._id"
               ></QuestionsView>
             </div>
 

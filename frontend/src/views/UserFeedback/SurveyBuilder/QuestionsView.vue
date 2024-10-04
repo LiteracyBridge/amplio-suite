@@ -13,22 +13,23 @@ import draggable from "vuedraggable";
 import { Question, QuestionType } from "@/models/question";
 
 const props = defineProps<{
-  sectionId?: string | number;
-  parent?: Question;
-  subQuestions: boolean;
+  sectionId?: number;
+  sectionUuid: string;
+  // parent?: Question;
+  // subQuestions: boolean;
 }>();
 
 const store = useSurveyBuilder();
 const drag = ref(false);
-const config = ref<{
-  showSubQuestions: boolean;
-  // mode: "edit" | "sub-question";
-  // selectedQuestion: Question;
-}>({
-  showSubQuestions: props.subQuestions,
-  // mode: "edit",
-  // selectedQuestion: null,
-});
+// const config = ref<{
+//   showSubQuestions: boolean;
+//   // mode: "edit" | "sub-question";
+//   // selectedQuestion: Question;
+// }>({
+//   showSubQuestions: props.subQuestions,
+//   // mode: "edit",
+//   // selectedQuestion: null,
+// });
 
 function editQuestion(question: Question) {
   store.selectedQuestion = Question.fromJson(JSON.parse(JSON.stringify(question)));
@@ -37,10 +38,18 @@ function editQuestion(question: Question) {
 
 const getQuestions = computed({
   get: () => {
+    console.log("here now!!!")
+    console.log(props.sectionId)
+    console.log(store.questions({
+      sectionId: props.sectionId,
+      // parentId: props.parent?._id,
+      // isSubQuestions: props.subQuestions,
+    }))
     return store.questions({
       sectionId: props.sectionId,
-      parentId: props.parent?._id,
-      isSubQuestions: props.subQuestions,
+      sectionUuid: props.sectionUuid,
+      // parentId: props.parent?._id,
+      // isSubQuestions: props.subQuestions,
     });
   },
   set: (questions) => {
@@ -79,11 +88,11 @@ function focusCard(question: Question) {
       <template #item="{ element: question, index }">
         <div>
           <div v-if="store.selectedQuestion?._id == question._id && store.mode == 'edit'">
+              <!-- :parent="props.parent" -->
             <NewQuestion
               :question="store.selectedQuestion"
               :editing="true"
               :index="index"
-              :parent="props.parent"
               @saved="
                 store.mode = 'edit';
                 store.selectedQuestion = null; // returns to view mode

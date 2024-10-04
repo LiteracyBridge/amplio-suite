@@ -59,26 +59,27 @@ export const useSurveyBuilder = defineStore("survey-builder", {
         },
     questions: (state) => {
       return (opts?: {
-        sectionId?: string | number;
-        parentId?: string | number;
-        isSubQuestions?: boolean;
+        sectionId?: number;
+        sectionUuid?: string;
+        // parentId?: string | number;
+        // isSubQuestions?: boolean;
       }): Question[] => {
-        const { sectionId, parentId } = opts ?? {};
+        const { sectionId } = opts ?? {};
 
-        if (parentId != null && opts.isSubQuestions == true) {
-          return state.activeSurvey.questions.filter(
-            (q) => q.parent_id == parentId && !(q.is_deleted || false),
-          );
-        }
+        // if (parentId != null && opts.isSubQuestions == true) {
+        //   return state.activeSurvey.questions.filter(
+        //     (q) => q.parent_id == parentId && !(q.is_deleted || false),
+        //   );
+        // }
 
         if (sectionId != null) {
           return state.activeSurvey.questions.filter(
-            (q) => q.section_id == sectionId && !(q.is_deleted || false),
+            (q) => (q.section_id === sectionId || q.section_id === opts.sectionUuid) && !(q.is_deleted || false),
           );
         }
 
         return state.activeSurvey.questions.filter(
-          (q) => q.parent_id == null && !(q.is_deleted || false),
+          (q) => !(q.is_deleted || false),
         );
       };
     },

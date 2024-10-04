@@ -85,7 +85,7 @@ onMounted(async () => {
   if (store.userFeedback.deployment == null || store.userFeedback.language == null) {
     onLanguageDeploymentChanged(
       store.deployments[0]?.deploymentnumber,
-      store.languages[0]
+      store.languages[0].code
     );
     return;
   }
@@ -103,21 +103,23 @@ onMounted(async () => {
             <span>Deployment {{ d.deploymentnumber }}</span>
           </template>
           <MenuItem
-            :key="lang"
+            :key="lang.code"
             v-for="lang in store.languages"
-            @click="onLanguageDeploymentChanged(d.deploymentnumber, lang)"
-            >{{ lang }}</MenuItem
+            @click="onLanguageDeploymentChanged(d.deploymentnumber, lang.code)"
+            >{{ lang.name }} ({{ lang.code }})</MenuItem
           >
         </SubMenu>
       </Menu>
     </template>
 
-    <Button v-if="store.userFeedback.deployment == null || store.userFeedback.language == null">
+    <Button
+      v-if="store.userFeedback.deployment == null || store.userFeedback.language == null"
+    >
       Change Deployment
       <DownOutlined />
     </Button>
     <Button v-else>
-    Deployment {{ store.userFeedback.deployment }} ({{ store.userFeedback.language }})
+      Deployment {{ store.userFeedback.deployment }} ({{ store.userFeedback.language }})
       <DownOutlined />
     </Button>
   </Dropdown>
