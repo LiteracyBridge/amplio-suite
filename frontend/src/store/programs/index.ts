@@ -67,7 +67,7 @@ export const useProgramsStore = defineStore("programs", {
       return ApiRequest.get<Program>(`programs/all`);
     },
     async fetchOrgUsers(programId: string | number) {
-      return ApiRequest.get<User>(`programs/${programId}/organisation-users`);
+      return ApiRequest.get<User>(`programs/${programId}/users`);
     },
     async addOrganisationToProgram(form: {
       organisation_id: number;
