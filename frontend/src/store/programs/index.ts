@@ -64,7 +64,7 @@ export const useProgramsStore = defineStore("programs", {
     // API Requests
     //
     async getOrgPrograms() {
-      return ApiRequest.get<Program>(`programs/all`);
+      return ApiRequest.get<Program>("programs");
     },
     async fetchOrgUsers(programId: string | number) {
       return ApiRequest.get<User>(`programs/${programId}/users`);
@@ -74,7 +74,7 @@ export const useProgramsStore = defineStore("programs", {
       program_id: number;
     }) {
       this.loading = true;
-      return ApiRequest.post<Program>(`programs/organisations`, form)
+      return ApiRequest.post<Program>("programs/organisations", form)
         .then((resp) => {
           this.organisationPrograms = resp;
         })
