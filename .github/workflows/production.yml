@@ -3,7 +3,8 @@ name: Publish site to Production
 on:
   push:
     branches:
-      - stable
+     # - stable
+     - "update-dashboard"
 
 jobs:
   build:
