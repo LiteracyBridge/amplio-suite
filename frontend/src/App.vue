@@ -33,6 +33,5 @@ onMounted(() => {
   try {
     getUser();
   } catch (ignore) {}
-  console.log("App mounted");
 });
 </script>
