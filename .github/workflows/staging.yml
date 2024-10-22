@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+      - "update-dashboard"
 
 jobs:
   build:
