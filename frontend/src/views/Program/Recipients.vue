@@ -166,7 +166,7 @@ import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vu
 
 const columns = [
   // @ts-ignore
-  { title: "#", key: "index", width: '50px' },
+  { title: "#", key: "index", width: '60px' },
   { title: "Region/State", key: "region" },
   { title: "District/County", key: "district" },
   { title: "Community", key: "community_name" },
