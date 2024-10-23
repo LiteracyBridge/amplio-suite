@@ -261,7 +261,11 @@ function onCancel() {
 
 async function createExcel() {
   const workbook = new Workbook();
-  // await workbook.xlsx.load(join(__dirname, "template.xlsx"));
+  const response = await fetch("/program-spec-template.xlsx");
+  // console.log(await response.blob());
+
+  // Convert Blob to ArrayBuffer
+  await workbook.xlsx.load(await response.arrayBuffer());
 
   const headers = {
     general: {
