@@ -16,11 +16,11 @@ import {
 import { groupBy, sumBy } from "lodash";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
-import { Deployment } from "@/models/deployment";
+import type { Deployment } from "@/models/deployment";
 import { DownOutlined } from "@ant-design/icons-vue";
 
-const store = useTalkingBookAnalyticStore(),
-  appStore = useAppStore();
+const store = useTalkingBookAnalyticStore();
+const appStore = useAppStore();
 
 const selectedDeployment = ref(undefined);
 const columns = [
@@ -115,7 +115,8 @@ async function fetchStats(deployment: Deployment) {
 
   const data = await store.getRecipients(deployment.deployment);
 
-  const byGroup = groupBy(data, "community_name");
+  console.log(data);
+  const byGroup = groupBy(data, (d) => d.community_name);
 
   const mapped = Object.keys(byGroup).map((name) => {
     const recipients = (byGroup[name] || []).map((r) => {
@@ -153,7 +154,7 @@ async function fetchStats(deployment: Deployment) {
       return r;
     });
 
-    if (recipients.length == 0) {
+    if (recipients.length === 0) {
       return;
     }
 
@@ -162,8 +163,8 @@ async function fetchStats(deployment: Deployment) {
     community.key = Math.random() * 9999999 + 1; // Generates a random number between 1 and 9999999
 
     community.group_name = recipients[0].community_name;
-    community.num_tbs = sumBy(recipients, "num_tbs");
-    community.num_households = sumBy(recipients, "num_households");
+    community.num_tbs = sumBy(recipients, (r) => r.numtbs);
+    community.num_households = sumBy(recipients, (r) => r.numhouseholds);
     community.children = (((recipients || []) as unknown) as DataItem[]).map((r) => {
       r.district = "";
       return r;
@@ -172,6 +173,7 @@ async function fetchStats(deployment: Deployment) {
     return community;
   });
 
+  console.log(mapped);
   rows.value = [...mapped];
 }
 

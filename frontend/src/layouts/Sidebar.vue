@@ -83,13 +83,13 @@ const config = ref({
             <span role="link"> Tableau Analytics </span>
           </router-link>
         </MenuItem>
-        <!-- <MenuItem key="installations">
+        <MenuItem key="installations">
           <template #icon> <DotChartOutlined /> </template>
 
           <router-link to="/tb-analytics/installations">
             <span role="link"> Installations </span>
           </router-link>
-        </MenuItem> -->
+        </MenuItem>
       </Menu.SubMenu>
 
       <Menu.SubMenu

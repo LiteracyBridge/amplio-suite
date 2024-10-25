@@ -10,7 +10,7 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
   actions: {
     async getTbStatusBy(selector: string) {
       return ApiRequest.get<Record<string, any>>(
-        `dashboard-queries/${
+        `tb-analytics/${
           useAppStore().programCode
         }/status?selector=${selector}`,
       );
@@ -19,7 +19,7 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
       this.loading = true;
 
       return ApiRequest.get<Recipient>(
-        `dashboard-queries/${
+        `tb-analytics/${
           useAppStore().programCode
         }/recipients/${deployment}`,
       )
