@@ -1,3 +1,7 @@
+## [0.2.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.0...v0.2.1) (2024-10-25)
+
+
+
 # [0.2.0](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.4...v0.2.0) (2024-10-25)
 
 
@@ -39,10 +43,6 @@
 
 
 ## [0.1.2](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.1...v0.1.2) (2024-09-03)
-
-
-
-## [0.1.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.0...v0.1.1) (2024-08-29)
 
 
 
