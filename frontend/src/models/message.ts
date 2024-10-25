@@ -10,7 +10,7 @@ export class Message {
   title: string = "";
   format?: string = "";
   default_category_code: string = "";
-  variant?: string = "";
+  variant: string = "";
   sdg_goal_id?: number;
   sdg_target?: string = "";
   key_points?: string = "";

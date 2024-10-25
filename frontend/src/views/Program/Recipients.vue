@@ -87,6 +87,10 @@
           {{ record.numtbs }}
         </template>
 
+        <template v-if="column.key === 'variant'">
+          {{ record.variant }}
+        </template>
+
         <template v-if="column.key === 'affiliate'">
           <div>
             <Tooltip placement="topLeft">
@@ -174,6 +178,7 @@ const columns = [
   { title: "Agent", key: "agent" },
   { title: "Language", key: "language" },
   { title: "# TBs", key: "numtbs", width: '70px' },
+  { title: "Variant", key: "variant", width: '70px' },
   { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
 ];
 
