@@ -1,3 +1,7 @@
+## [0.2.2](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.1...v0.2.2) (2024-10-25)
+
+
+
 ## [0.2.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.0...v0.2.1) (2024-10-25)
 
 
@@ -39,10 +43,6 @@
 ### Bug Fixes
 
 * **spec:** program spec export error ([554a8f6](https://github.com/LiteracyBridge/amplio-suite/commit/554a8f6673219c1ddd91a7f1c61af988e4296261))
-
-
-
-## [0.1.2](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.1...v0.1.2) (2024-09-03)
 
 
 
