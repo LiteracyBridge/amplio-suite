@@ -14,7 +14,7 @@
         Discard Changes
       </Button>
 
-      <Button key="2" type="primary" @click="store.updateSpec" :disabled="!store.changed">
+      <Button key="2" type="primary" @click="store.updateSpec()" :disabled="!store.changed">
         Save Changes
       </Button>
 

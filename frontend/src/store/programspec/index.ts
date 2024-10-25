@@ -17,6 +17,7 @@ import { Message } from "@/models/message";
 import { ApiRequest } from "@/api";
 import { notification } from "ant-design-vue";
 import { orderBy } from "lodash";
+import { useLanguagesStore } from "../languages";
 
 const TEMP_RECIPIENT_PREFIX = "$$TEMP-";
 const TEMP_RECIPIENT_RE = /^\$\$TEMP-([0-9]+)$/;
@@ -65,6 +66,7 @@ export const useProgramSpecStore = defineStore("programspec", {
     deployments: [] as Deployment[],
     recipients: [] as Recipient[],
     general: new Program(),
+    languages: [] as Language[],
     programId: "",
 
     changed: false,
@@ -110,6 +112,7 @@ export const useProgramSpecStore = defineStore("programspec", {
         value: state.general.direct_beneficiaries_map[key],
       }));
     },
+    languageCodes: (state) => state.languages.map(l => l.code)
   },
   actions: {
     resetState() {
@@ -219,6 +222,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general = payload.programspec.general;
       this.general.name = payload.programspec.name;
       this.recipients = payload.programspec.recipients;
+      this.languages = payload.programspec.languages
       this.deployments = orderBy(
         payload.programspec.deployments,
         "deploymentnumber",
@@ -227,9 +231,9 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.deployments.forEach((d: { playlists: any[] }) => {
         d.playlists.forEach(
           (p: { position: any; messages: any[] }, ix: number) => {
-            p.position = ix + 1;
+            p.position ??= ix + 1;
             p.messages.forEach((m: { position: any }, ix: number) => {
-              m.position = ix + 1;
+              m.position ??= ix + 1;
             });
           },
         );
@@ -368,14 +372,9 @@ export const useProgramSpecStore = defineStore("programspec", {
           newRecip.supportentity = recip.support_entity;
           newRecip.communityname = recip.community_name;
           newRecip.groupname = recip.group_name;
-
-          delete newRecip.id;
-          delete newRecip.support_entity;
-          delete newRecip.community_name;
-          delete newRecip.group_name;
-
           return newRecip;
         }),
+        languages: this.languages
       };
 
       this.requestInit();
@@ -392,12 +391,6 @@ export const useProgramSpecStore = defineStore("programspec", {
             description: "Program specification updated successfully.",
           });
         })
-        .catch((error) => {
-          notification.error({
-            message: "Error",
-            description: error.message,
-          });
-        })
         .finally(() => {
           this.loading = false;
         });
@@ -411,16 +404,23 @@ export const useProgramSpecStore = defineStore("programspec", {
       this.general.feedback_frequency = payload;
     },
 
-    setLanguages(payload: { lang: any; index: any }) {
-      const languages = [...this.general.languages];
-      languages[payload.index] = payload.lang;
-      this.general.languages = languages;
+    setLanguage(opts: { code: string, name?: string }) {
+      const languages = new Set(this.languages.map((l) => l.code));
+      if (languages.has(opts.code)) {
+        return
+      }
+      this.languages = [
+        ...this.languages,
+        {
+          code: opts.code,
+          name: opts.name ?? useLanguagesStore().languages.find(i => i.code === opts.code)!.name
+        }
+      ];
     },
 
-    deleteLanguage(language: any) {
-      // noinspection EqualityComparisonWithCoercionJS
-      this.general.languages = this.general.languages.filter(
-        (lang: any) => lang != language,
+    deleteLanguage(language: string) {
+      this.languages = this.languages.filter(
+        (lang: any) => lang.code != language,
       );
     },
 
@@ -503,7 +503,7 @@ export const useProgramSpecStore = defineStore("programspec", {
       const deployment = this.getDeployment(payload);
       // New playlist at next position.
       deployment.playlists.push(
-        Playlist.create(deployment.playlists.length + 1),
+        Playlist.create(deployment.playlists.length + 1, deployment),
       );
     },
 
@@ -529,7 +529,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addMessage(payload: any) {
       const playlist = this.getPlaylist(payload);
-      const message = Message.create(playlist.messages.length + 1);
+      const message = Message.create(playlist.messages.length + 1, playlist);
       if (playlist.messages.length > 0) {
         playlist.audience =
           playlist.messages[playlist.messages.length - 1].audience;
@@ -571,29 +571,19 @@ export const useProgramSpecStore = defineStore("programspec", {
 
     addMessageLanguage(payload: {
       language: string;
-      deployment: Deployment;
-      playlist: Playlist;
       message: Message;
     }) {
       // 'languages' is a list of comma-separated language names or codes.
       const { language, message } = payload;
 
-      let languages = message.languages;
-      const list = languages == null ? [] : languages.split(/[,;]/);
-      if (list.indexOf(language) === -1) list.push(language);
-      languages = list.join(",");
-      message.languages = languages;
+      let languages = (message.languages || '').split(/[,;]/).filter(l => l !== '')
+      message.languages = Array.from(new Set([...languages, language])).join(',')
       this.changed = true;
     },
 
-    getMessageLanguages(payload: {
-      // language: string;
-      deployment: Deployment;
-      playlist: Playlist;
-      message: Message;
-    }) {
+    getMessageLanguages(message: Message) {
       // const message = this.getMessage(payload);
-      return (payload.message?.languages || "").split(/[,;]/);
+      return (message?.languages || "").split(/[,;]/).filter(l => l !== '');
     },
 
     removeMessageLanguage(payload: {
@@ -607,18 +597,27 @@ export const useProgramSpecStore = defineStore("programspec", {
       // const message = this.getMessage(payload);
       const { language, message } = payload;
       let languageCode;
+      console.log("[*] language : ", language);
       if (typeof language === "string") {
         languageCode = language;
       } else {
-        languageCode = language;
+        //languageCode = language;
+        languageCode = "";
       }
       let languages = message.languages;
+      console.log("[*] languages : ", languages);
       let list = languages == null ? [] : languages.split(/[,;]/);
-      const ix = list.indexOf(languageCode);
-      if (ix >= 0) list.splice(ix, 1);
-      languages = list.join(",");
-      message.languages = languages;
-      this.setChanged(true);
+      console.log("list : ", list);
+      if (list.length > 1) {
+        const ix = list.indexOf(languageCode);
+        console.log("ix : ", ix);
+        if (ix >= 0) list.splice(ix, 1);
+        console.log("list : ", list);
+        languages = list.join(",");
+        console.log("[*] languages : ", languages);
+        message.languages = languages;
+        this.setChanged(true);
+      }
     },
 
     setMessageSDGGoal(payload: {

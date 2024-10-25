@@ -146,8 +146,8 @@ export const useWizardStore = defineStore("wizard", {
 
     // step-languages
     async setLanguages(payload: any) {
-      const { lang, index, step } = payload;
-      await useProgramSpecStore().setLanguages({ lang, index });
+      const { lang, step } = payload;
+      await useProgramSpecStore().setLanguage({ code: lang as string });
       await this.check("languages", step);
     },
 

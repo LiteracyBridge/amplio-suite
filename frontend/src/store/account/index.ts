@@ -90,13 +90,9 @@ export const useAccountStore = defineStore("account", {
         return action.some(p => this.can(p));
       }
 
-      if(this.$state.user.permissions == null) {
-        return false
-      }
+      if(this.$state.user.permissions == null) return false;
 
-      if(this.$state.user.permissions[action] == null) {
-        return false
-      }
+      if(this.$state.user.permissions[action] == null) return false;
 
       try {
         return this.$state.user?.permissions[action] === true;

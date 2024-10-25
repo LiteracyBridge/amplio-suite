@@ -60,8 +60,8 @@ function addOption(isOther: boolean = false, parent_id?: string | number) {
   }
 
   const option: QuestionChoice = {
-    choice_id: self.crypto.randomUUID(),
-    question_id: form.value.id,
+    choice_id: crypto.randomUUID(),
+    question_id: form.value._id,
     value: isOther ? "Other" : null,
     is_other: isOther,
     order: maxSequence + 1,
@@ -100,7 +100,7 @@ function deleteQuestionOptionItem(id: string | number, parent_id?: string | numb
 }
 
 function saveQuestion(q: Question) {
-  q.id = q.id ? q.id : self.crypto.randomUUID();
+  q._id = q._id ? q._id : self.crypto.randomUUID();
   q.section_id ??= props.sectionId;
   q.order = props.index;
 
@@ -114,11 +114,11 @@ function saveQuestion(q: Question) {
   emit("saved", q);
 }
 
-function cancelQuestion() {
-  console.log("cancelQuestion");
-  form.value = store.findById(props.question.id);
-  emit("saved", null);
-}
+// function cancelQuestion() {
+//   console.log("cancelQuestion");
+//   form.value = store.findById(props.question.id);
+//   emit("saved", null);
+// }
 
 onBeforeUnmount(() => {
   saveQuestion(form.value);
