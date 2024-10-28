@@ -120,19 +120,6 @@
                 ><CopyOutlined
               /></Button>
             </Tooltip>
-
-            <!-- <Popconfirm
-            title="Are you sure to delete this recipient?"
-            ok-text="Yes"
-            cancel-text="No"
-          >
-            <Button
-              class="mt-3"
-              :aria-label="`Delete message ${message.title}`"
-              :danger="true"
-              >Delete Message</Button
-            >
-          </Popconfirm> -->
           </div>
         </template>
       </template>

@@ -44,7 +44,7 @@
           title="Are you sure you want to delete this message?"
           ok-text="Yes"
           cancel-text="No"
-          @click="queryDeleteMessage()"
+          @confirm="deleteMessage()"
         >
           <Button
             class="mt-3"
@@ -131,14 +131,10 @@ const props = defineProps<{
 
 const store = useProgramSpecStore();
 
-const expanded = ref(false),
-  modal = ref({
-    show: false,
-    eleIndex: -1,
-  });
-
-const icon = computed(() => {
-  return expanded.value ? "caret-down" : "caret-right";
+const expanded = ref(false);
+const modal = ref({
+  show: false,
+  eleIndex: -1,
 });
 
 onMounted(() => {
@@ -151,22 +147,7 @@ function toggleExpanded() {
   expanded.value = !expanded.value;
 }
 
-function queryDeleteMessage() {
-  modal.value.show = true;
-  useUIStore().setModal("Delete Message");
-}
-
-function cancelDeleteMessage() {
-  modal.value.show = false;
-  useUIStore().closeModal();
-}
-
-function confirmDeleteMessage() {
-  store.removeMessage({
-    deployment: props.deployment,
-    playlist: props.playlist,
-    message: props.message,
-  });
-  cancelDeleteMessage();
+function deleteMessage() {
+  store.removeMessage(props.message, props.playlist);
 }
 </script>
