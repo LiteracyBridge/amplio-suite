@@ -530,18 +530,16 @@ export const useProgramSpecStore = defineStore("programspec", {
 			playlist.messages = messages;
 		},
 
-		addMessage(payload: any) {
-			const playlist = this.getPlaylist(payload);
-			const message = Message.create(playlist.messages.length + 1, playlist);
+		addMessage(playlist: Playlist) {
+			playlist.messages ??= [];
+			playlist.messages.push(
+				Message.create(playlist.messages.length + 1, playlist),
+			);
+
 			if (playlist.messages.length > 0) {
-				playlist.audience =
+				playlist.audience ??=
 					playlist.messages[playlist.messages.length - 1].audience;
 			}
-
-			if (playlist.messages == null) {
-				playlist.messages = [];
-			}
-			playlist.messages.push(message);
 		},
 
 		removeMessage(message: Message, playlist: Playlist) {
@@ -553,15 +551,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 			this.$state.changed = true;
 		},
 
-		setMessageTitle(payload: {
-			title: string;
-			deployment: Deployment;
-			playlist: Playlist;
-			message: Message;
-		}) {
-			const message = this.getMessage(payload);
-			const { title } = payload;
-
+		setMessageTitle(title: string, message: Message) {
 			// Since the title is used as the file name, we need to remove any characters that are not allowed in file names.
 			// See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 			message.title = title.replace(/[\\\/:\*\?"<>\|]/g, "");

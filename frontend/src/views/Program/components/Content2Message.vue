@@ -28,15 +28,8 @@
             placeholder="Message Title"
             type="text"
             :name="`message-${message.title}`"
-            :value="message.title"
-            @input="
-              store.setMessageTitle({
-                deployment,
-                playlist,
-                message,
-                title: $event.target.value,
-              })
-            "
+            v-model:value="message.title"
+            @change="store.setMessageTitle($event.target.value, message)"
           /> </FormItem
       ></Col>
       <Col :span="4" align="center">
@@ -114,7 +107,6 @@
 <script setup lang="ts">
 import Content2MessageForm from "./Content2MessageForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
 import type { Playlist } from "@/models/playlist";
 import type { Message } from "@/models/message";

@@ -9,7 +9,6 @@
 
         Playlist {{ playlist.position }}
       </Button>
-
     </Col>
 
     <Col :span="10">
@@ -44,7 +43,7 @@
     </Col>
   </Row>
 
-  <div class="my-4 ml-20 ">
+  <div class="my-4 ml-20">
     <div v-if="expanded">
       <draggable
         v-model="messages"
@@ -87,8 +86,8 @@ const props = defineProps<{
 }>();
 
 const store = useProgramSpecStore();
-const expanded = ref(false),
-  dragging = ref(false);
+const expanded = ref(false);
+const dragging = ref(false);
 
 const canAddMessage = computed(() => {
   return (
@@ -110,10 +109,6 @@ const duplicateTitles = computed(() => {
   return duplicates;
 });
 
-const icon = computed(() => {
-  return expanded.value ? "caret-down" : "caret-right";
-});
-
 const messages = computed({
   get() {
     return props.playlist.messages;
@@ -133,7 +128,7 @@ function onToggleExpanded() {
 
 function onAddMessage() {
   if (canAddMessage.value) {
-    store.addMessage({ deployment: props.deployment, playlist: props.playlist });
+    store.addMessage(props.playlist);
   }
 }
 
