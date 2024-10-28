@@ -20,7 +20,7 @@
 
       <Col :span="14">
         <FormItem
-          help='Message title cannot contain these characters: \/:*?\<>|"'
+          help='Message title cannot contain \/:*?\<>|"'
           class="mt-3 w-full"
         >
           <Input
@@ -29,7 +29,7 @@
             type="text"
             :name="`message-${message.title}`"
             v-model:value="message.title"
-            @change="store.setMessageTitle($event.target.value, message)"
+            @change="store.setMessageOrPlaylistTitle($event.target.value, message)"
           /> </FormItem
       ></Col>
       <Col :span="4" align="center">
