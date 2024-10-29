@@ -78,7 +78,7 @@
     <!-- Form for editing the details of a message -->
     <div class="px-10">
       <div
-        :class="expanded ? 'h-104 md:h-96' : 'h-0'"
+        :class="expanded ? 'min-h-104 md:min-h-96' : 'h-0'"
         class="transition-all duration-300"
       >
         <content2-message-form
@@ -90,17 +90,6 @@
       </div>
     </div>
 
-    <!-- For delete confirmation modal components -->
-    <!-- <portal to="modalBody" v-if="modal.show">
-      <p class="my-5">Are you sure you want to delete the message?</p>
-    </portal>
-
-    <portal to="modalFooter" v-if="modal.show">
-      <footer class="flex flex-row-reverse justify-between">
-        <VButton label="Delete Message" variant="warning" @click="confirmDeleteMessage" />
-        <VButton label="Do Not Delete" @click="cancelDeleteMessage" />
-      </footer>
-    </portal> -->
   </div>
 </template>
 
