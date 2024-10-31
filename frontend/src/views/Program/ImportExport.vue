@@ -177,7 +177,7 @@ async function onExportProgramSpec() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `program_spec_${
+  a.download = `${specStore.programId}_program_spec_${
     exportUnpublished.value ? "unpublished" : "published"
   }.xlsx`;
   a.click();
