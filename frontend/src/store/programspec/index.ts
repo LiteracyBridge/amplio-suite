@@ -566,9 +566,16 @@ export const useProgramSpecStore = defineStore("programspec", {
 			// 'languages' is a list of comma-separated language names or codes.
 			const { language, message } = payload;
 
-			let languages = (message.languages || "")
+			if (Array.isArray(message.languages)) {
+				message.languages = message.languages
+					.map((l) => l.language_code)
+					.join(",");
+			}
+
+			const languages = (message.languages || "")
 				.split(/[,;]/)
 				.filter((l) => l !== "");
+
 			message.languages = Array.from(new Set([...languages, language])).join(
 				",",
 			);
@@ -577,41 +584,27 @@ export const useProgramSpecStore = defineStore("programspec", {
 
 		getMessageLanguages(message: Message) {
 			// const message = this.getMessage(payload);
+			if (Array.isArray(message.languages)) {
+				return message.languages.map((l) => l.language_code);
+			}
+
 			return (message?.languages || "").split(/[,;]/).filter((l) => l !== "");
 		},
 
-		removeMessageLanguage(payload: {
-			language: string;
-			deployment: Deployment;
-			playlist: Playlist;
-			message: Message;
-		}) {
-			console.log(payload.language);
-			// 'languages' is a list of comma-separated language names or codes.
-			// const message = this.getMessage(payload);
-			const { language, message } = payload;
-			let languageCode;
-			console.log("[*] language : ", language);
-			if (typeof language === "string") {
-				languageCode = language;
+		removeMessageLanguage(language: string, message: Message) {
+			let langs: string[] = [];
+
+			if (Array.isArray(message.languages)) {
+				langs = message.languages.map((l) => l.language_code);
 			} else {
-				//languageCode = language;
-				languageCode = "";
+				langs = (message.languages || "").split(/[,;]/).filter((l) => l !== "");
 			}
-			let languages = message.languages;
-			console.log("[*] languages : ", languages);
-			let list = languages == null ? [] : languages.split(/[,;]/);
-			console.log("list : ", list);
-			if (list.length > 1) {
-				const ix = list.indexOf(languageCode);
-				console.log("ix : ", ix);
-				if (ix >= 0) list.splice(ix, 1);
-				console.log("list : ", list);
-				languages = list.join(",");
-				console.log("[*] languages : ", languages);
-				message.languages = languages;
-				this.setChanged(true);
-			}
+
+			const set = new Set(langs);
+			set.delete(language);
+			message.languages = Array.from(set).join(",");
+
+			this.setChanged(true);
 		},
 
 		setMessageSDGGoal(payload: {
