@@ -9,13 +9,16 @@ import { groupBy, orderBy } from "lodash";
 import readXlsxFile from "read-excel-file";
 import { useProgramSpecStore } from "./programspec";
 
-function formatParsingError(opts: {
-	error: string;
-	row: number;
-	column: string;
-	value?: any;
-}) {
-	return `${opts.error} at row ${opts.row}, column ${opts.column} with value '${opts.value}'`;
+function formatParsingError(
+	opts: {
+		error: string;
+		row: number;
+		column: string;
+		value?: any;
+	},
+	sheet: string,
+) {
+	return `${opts.error} at row ${opts.row}, column ${opts.column} with value '${opts.value}' in '${sheet}' sheet`;
 }
 
 export const useProgramSpecImport = defineStore("specImport", {
@@ -38,7 +41,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					sheet: "General",
 				});
 				if (errors1.length > 0) {
-					throw new Error(formatParsingError(errors1[0]));
+					throw new Error(formatParsingError(errors1[0], "General"));
 				}
 
 				const { rows: deployments, errors: errors2 } = await readXlsxFile(
@@ -46,7 +49,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					{ schema: DEPLOYMENTS_SCHEMA, sheet: "Deployments" },
 				);
 				if (errors2.length > 0) {
-					throw new Error(formatParsingError(errors2[0]));
+					throw new Error(formatParsingError(errors2[0], "Deployments"));
 				}
 
 				const { rows: contents, errors: err3 } = await readXlsxFile(file, {
@@ -54,7 +57,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					sheet: "Content",
 				});
 				if (err3.length > 0) {
-					throw new Error(formatParsingError(err3[0]));
+					throw new Error(formatParsingError(err3[0], "Content"));
 				}
 
 				const { rows: recipients, errors: err4 } = await readXlsxFile(file, {
@@ -62,7 +65,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					sheet: "Recipients",
 				});
 				if (err4.length > 0) {
-					throw new Error(formatParsingError(err4[0]));
+					throw new Error(formatParsingError(err4[0], "Recipients"));
 				}
 
 				const { rows: languages, errors: err5 } = await readXlsxFile(file, {
@@ -70,7 +73,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					sheet: "Languages",
 				});
 				if (err5.length > 0) {
-					throw new Error(formatParsingError(err5[0]));
+					throw new Error(formatParsingError(err5[0], "Languages"));
 				}
 
 				// Save to db
@@ -95,7 +98,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 				const playlistPositions: Record<string, number> = {}; // title: index
 				for (let i = 0; i < contents.length; i++) {
 					if (playlistPositions[contents[i].playlist_title as string] == null) {
-						playlistPositions[contents[i].playlist_title as string] = i;
+						playlistPositions[contents[i].playlist_title as string] = i + 1;
 					}
 				}
 
@@ -112,6 +115,8 @@ export const useProgramSpecImport = defineStore("specImport", {
 						const playlist = new Playlist();
 						playlist.title = title;
 						playlist.position = playlistPositions[title];
+						// @ts-ignore
+						playlist.deployment_number = d.deploymentnumber as number;
 
 						playlist.messages = mappedPlaylists[title].map((m, index) => {
 							if (m.sdg_goals != null) {
@@ -126,6 +131,8 @@ export const useProgramSpecImport = defineStore("specImport", {
 							m.sdg_target_id = m.sdg_targets as string;
 							m.program_id = program.program_id;
 							m.languages = (m.languages as string[]).join(",");
+
+							playlist.audience = m.audience as string;
 
 							return m;
 						}) as unknown as Message[];
@@ -148,6 +155,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 
 				spec.recipients = recipients.map((row, index) => {
 					row.program_id = program.program_id;
+					row.groupname ??= row.group_name;
 					row.numhouseholds ??= 0;
 					row.support_entity ??= "";
 					row.numtbs ??= 0;
@@ -170,6 +178,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 
 				return await spec.updateSpec();
 			} catch (error) {
+				console.error(error);
 				notification.error({
 					description: error.message,
 					message: "Import error",
@@ -199,7 +208,7 @@ const RECIPIENT_SCHEMA = {
 	Region: { prop: "region", type: String, required: true },
 	District: { prop: "district", type: String, required: true },
 	Community: { prop: "community_name", type: String, required: false },
-	Agent: { prop: "agent", type: String, required: true },
+	Agent: { prop: "agent", type: String, required: false },
 	"Language Code": { prop: "language", type: String, required: true },
 	"Group Name": { prop: "group_name", type: String, required: false },
 	"Group Size": { prop: "group_size", type: Number, required: false },
@@ -320,7 +329,7 @@ const GENERAL_SCHEMA = {
 	},
 	"Deployments First": {
 		prop: "deployments_first",
-		type: Date,
+		type: String, // TODO: validate date
 		required: true,
 	},
 	"Feedback Frequency": {
