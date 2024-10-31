@@ -388,7 +388,9 @@ async function createExcel() {
           playlist_title: p.title,
           message_title: m.title,
           key_points: m.key_points,
-          languagecode: (m.languages as any).map((l: any) => l.language_code).join(","),
+          languagecode: Array.isArray(m.languages)
+            ? (m.languages as any).map((l: any) => l.language_code).join(",")
+            : m.languages,
           variant: m.variant,
           format: m.format,
           audience: p.audience,
