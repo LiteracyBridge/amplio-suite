@@ -206,7 +206,7 @@ async function onUpload() {
   // const data = await readFileData(selectedFile.value, true);
   const result = await uploadSpec(specStore.programId, selectedFile.value);
 
-  if (result.status === "ok") {
+  if (result.statusCode === 200) {
     notification.success({
       message: "Program specification spreadsheet uploaded successfully.",
     });
@@ -214,6 +214,11 @@ async function onUpload() {
     specStore.setSpec({
       programId: specStore.programId,
       programspec: result.data,
+    });
+  } else {
+    notification.error({
+      description: result.message,
+      message: "Error uploading program specification spreadsheet.",
     });
   }
   // let diffs = result?.diff || [];
