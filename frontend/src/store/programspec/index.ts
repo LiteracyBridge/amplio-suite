@@ -353,14 +353,11 @@ export const useProgramSpecStore = defineStore("programspec", {
 					dup.startdate = depl.start_date;
 					dup.enddate = depl.end_date;
 
-					delete dup.start_date;
-					delete dup.end_date;
-
 					return dup;
 				}),
 				recipients: recipients.map((recip) => {
 					// If this recipient has a temporary ID, set it to null so the server can supply a proper id.
-					if (recip.id != null && recip.id.match(TEMP_RECIPIENT_RE)) {
+					if (recip.id?.match(TEMP_RECIPIENT_RE)) {
 						recip.id = null;
 					}
 
@@ -390,9 +387,13 @@ export const useProgramSpecStore = defineStore("programspec", {
 						message: "Success",
 						description: "Program specification updated successfully.",
 					});
+					return true;
 				})
 				.finally(() => {
 					this.loading = false;
+				})
+				.catch((_) => {
+					return false;
 				});
 		},
 

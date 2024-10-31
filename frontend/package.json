@@ -33,6 +33,7 @@
     "papaparse": "^5.4.1",
     "pinia": "^2.2.1",
     "portal-vue": "^3.0.0",
+    "read-excel-file": "^5.8.6",
     "tailwindcss": "^3.4.8",
     "vue": "^3.4.36",
     "vue-chartjs": "^5.3.1",
