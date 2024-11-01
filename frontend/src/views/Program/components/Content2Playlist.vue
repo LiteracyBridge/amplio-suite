@@ -9,11 +9,23 @@
 
         Playlist {{ playlist.position }}
       </Button>
-
     </Col>
 
     <Col :span="10">
-      <Input v-model:value="playlist.title" placeholder="Playlist Title" />
+      <FormItem
+        :help="'Title cannot contain these characters: \/:*?\<>|&quot;'"
+        :extra="playlist._error_message"
+      >
+        <Input
+          :aria-label="`playlist ${playlist.title}`"
+          placeholder="Playlist Title"
+          type="text"
+          :name="`playlist-${playlist.title}`"
+          v-model:value="playlist.title"
+          :status="playlist._form_status"
+          @change="($event) => validatePlaylistTitle($event.target.value, playlist)"
+        />
+      </FormItem>
     </Col>
     <Col :span="8">
       <Button
@@ -44,7 +56,7 @@
     </Col>
   </Row>
 
-  <div class="my-4 ml-20 ">
+  <div class="my-4 ml-20">
     <div v-if="expanded">
       <draggable
         v-model="messages"
@@ -74,7 +86,7 @@
 <script lang="ts" setup>
 import Content2Message from "./Content2Message.vue";
 import Draggable from "vuedraggable";
-import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
+import { Row, Col, Input, Button, FormItem, Popconfirm } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import type { Deployment } from "@/models/deployment";
 import type { Playlist } from "@/models/playlist";
@@ -87,8 +99,8 @@ const props = defineProps<{
 }>();
 
 const store = useProgramSpecStore();
-const expanded = ref(false),
-  dragging = ref(false);
+const expanded = ref(false);
+const dragging = ref(false);
 
 const canAddMessage = computed(() => {
   return (
@@ -110,10 +122,6 @@ const duplicateTitles = computed(() => {
   return duplicates;
 });
 
-const icon = computed(() => {
-  return expanded.value ? "caret-down" : "caret-right";
-});
-
 const messages = computed({
   get() {
     return props.playlist.messages;
@@ -133,13 +141,24 @@ function onToggleExpanded() {
 
 function onAddMessage() {
   if (canAddMessage.value) {
-    store.addMessage({ deployment: props.deployment, playlist: props.playlist });
+    store.addMessage(props.playlist);
   }
 }
 
 function onRemovePlaylist() {
   if (canRemovePlaylist.value) {
     store.removePlaylist({ deployment: props.deployment, playlist: props.playlist });
+  }
+}
+
+function validatePlaylistTitle(title: string, playlist: Playlist) {
+  store.setMessageOrPlaylistTitle(title, playlist);
+  if (new TextEncoder().encode(title).length > 32) {
+    playlist._error_message = "Playlist title is too long!";
+    playlist._form_status = "error";
+  } else {
+    playlist._error_message = "";
+    playlist._form_status = undefined;
   }
 }
 </script>

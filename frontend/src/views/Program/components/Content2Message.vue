@@ -20,7 +20,7 @@
 
       <Col :span="14">
         <FormItem
-          help='Message title cannot contain these characters: \/:*?\<>|"'
+          help='Message title cannot contain \/:*?\<>|"'
           class="mt-3 w-full"
         >
           <Input
@@ -28,15 +28,8 @@
             placeholder="Message Title"
             type="text"
             :name="`message-${message.title}`"
-            :value="message.title"
-            @input="
-              store.setMessageTitle({
-                deployment,
-                playlist,
-                message,
-                title: $event.target.value,
-              })
-            "
+            v-model:value="message.title"
+            @change="store.setMessageOrPlaylistTitle($event.target.value, message)"
           /> </FormItem
       ></Col>
       <Col :span="4" align="center">
@@ -44,7 +37,7 @@
           title="Are you sure you want to delete this message?"
           ok-text="Yes"
           cancel-text="No"
-          @click="queryDeleteMessage()"
+          @confirm="deleteMessage()"
         >
           <Button
             class="mt-3"
@@ -85,7 +78,7 @@
     <!-- Form for editing the details of a message -->
     <div class="px-10">
       <div
-        :class="expanded ? 'h-104 md:h-96' : 'h-0'"
+        :class="expanded ? 'min-h-104 md:min-h-96' : 'h-0'"
         class="transition-all duration-300"
       >
         <content2-message-form
@@ -97,24 +90,12 @@
       </div>
     </div>
 
-    <!-- For delete confirmation modal components -->
-    <!-- <portal to="modalBody" v-if="modal.show">
-      <p class="my-5">Are you sure you want to delete the message?</p>
-    </portal>
-
-    <portal to="modalFooter" v-if="modal.show">
-      <footer class="flex flex-row-reverse justify-between">
-        <VButton label="Delete Message" variant="warning" @click="confirmDeleteMessage" />
-        <VButton label="Do Not Delete" @click="cancelDeleteMessage" />
-      </footer>
-    </portal> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import Content2MessageForm from "./Content2MessageForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { useUIStore } from "@/store/ui";
 import { computed, onMounted, ref } from "vue";
 import type { Playlist } from "@/models/playlist";
 import type { Message } from "@/models/message";
@@ -131,14 +112,10 @@ const props = defineProps<{
 
 const store = useProgramSpecStore();
 
-const expanded = ref(false),
-  modal = ref({
-    show: false,
-    eleIndex: -1,
-  });
-
-const icon = computed(() => {
-  return expanded.value ? "caret-down" : "caret-right";
+const expanded = ref(false);
+const modal = ref({
+  show: false,
+  eleIndex: -1,
 });
 
 onMounted(() => {
@@ -151,22 +128,7 @@ function toggleExpanded() {
   expanded.value = !expanded.value;
 }
 
-function queryDeleteMessage() {
-  modal.value.show = true;
-  useUIStore().setModal("Delete Message");
-}
-
-function cancelDeleteMessage() {
-  modal.value.show = false;
-  useUIStore().closeModal();
-}
-
-function confirmDeleteMessage() {
-  store.removeMessage({
-    deployment: props.deployment,
-    playlist: props.playlist,
-    message: props.message,
-  });
-  cancelDeleteMessage();
+function deleteMessage() {
+  store.removeMessage(props.message, props.playlist);
 }
 </script>
