@@ -131,17 +131,15 @@
 
 <script lang="ts" setup>
 import { Alert, Button, Divider, Modal, notification, Spin } from "ant-design-vue";
-import VButton from "@/components/VButton.vue";
-import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
-import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
-import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
-import { approveSpec, uploadSpec } from "@/api/programspec.api";
-import axios from "axios";
-import { ApiRequest } from "@/api";
+// import { approveSpec, uploadSpec } from "@/api/programspec.api";
+import { useProgramSpecStore } from "@/store/programspec";
 import { Workbook } from "exceljs";
+import { useProgramSpecImport } from "@/store/spec-import.store";
+import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
 
 const specStore = useProgramSpecStore();
+const specImport = useProgramSpecImport();
 
 const exportUnpublished = ref(false);
 const selectedFile = ref(null);
@@ -153,9 +151,9 @@ const showModal = ref({
   visible: false,
 });
 
-const showUnpublishedOption = computed(() => {
-  return exportUnpublished;
-});
+// const showUnpublishedOption = computed(() => {
+//   return exportUnpublished;
+// });
 
 /**
  * Export the published program spec for the current program. (The "alt" key can be used to enable an option
@@ -202,58 +200,43 @@ async function onUpload() {
 
   showModal.value.showSpinner = true;
 
-  // Upload it.
-  // const data = await readFileData(selectedFile.value, true);
-  const result = await uploadSpec(specStore.programId, selectedFile.value);
-
-  if (result.statusCode === 200) {
+  const ok = await specImport.readfile(selectedFile.value);
+  if (ok) {
     notification.success({
       message: "Program specification spreadsheet uploaded successfully.",
     });
-
-    specStore.setSpec({
-      programId: specStore.programId,
-      programspec: result.data,
-    });
+    onCancel();
   } else {
-    notification.error({
-      description: result.message,
-      message: "Error uploading program specification spreadsheet.",
-    });
-  }
-  // let diffs = result?.diff || [];
-
-  // diffs = diffs.map((line: string) =>
-  //   line.replace(/^ */, (match) => "\xa0\xa0".repeat(match.length))
-  // );
-  // console.log(diffs);
-
-  onCancel();
-  // onOpenModal("showDiffs", "Import Program Specification");
-}
-
-async function onApprove() {
-  if (!selectedFile.value) return;
-  showModal.value.showSpinner = true;
-
-  const result = await approveSpec({
-    programId: specStore.programId,
-    publish: publishImported,
-  });
-
-  console.log(result);
-  if (result && result.status !== "ok") {
-    notification.error({ message: result.errors.join() });
-  } else {
-    notification.success({
-      message: `Program specification spreadsheet imported${
-        publishImported.value ? " and published" : ""
-      }.`,
+    notification.info({
+      message: "Correct all errors and reupload the excel file",
     });
   }
 
-  onCancel();
+  showModal.value.showSpinner = false;
 }
+
+// async function onApprove() {
+//   if (!selectedFile.value) return;
+//   showModal.value.showSpinner = true;
+
+//   const result = await approveSpec({
+//     programId: specStore.programId,
+//     publish: publishImported,
+//   });
+
+//   console.log(result);
+//   if (result && result.status !== "ok") {
+//     notification.error({ message: result.errors.join() });
+//   } else {
+//     notification.success({
+//       message: `Program specification spreadsheet imported${
+//         publishImported.value ? " and published" : ""
+//       }.`,
+//     });
+//   }
+
+//   onCancel();
+// }
 
 function onCancel() {
   showModal.value = {
@@ -405,7 +388,9 @@ async function createExcel() {
           playlist_title: p.title,
           message_title: m.title,
           key_points: m.key_points,
-          languagecode: m.languages,
+          languagecode: Array.isArray(m.languages)
+            ? (m.languages as any).map((l: any) => l.language_code).join(",")
+            : m.languages,
           variant: m.variant,
           format: m.format,
           audience: p.audience,
