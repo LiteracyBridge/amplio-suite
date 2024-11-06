@@ -18,9 +18,21 @@ import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import type { Deployment } from "@/models/deployment";
 import { DownOutlined } from "@ant-design/icons-vue";
+import { DateTime } from "luxon";
+
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net";
+
+// DataTable.use(DataTablesCore);
+
+const data = [
+  [1, 2],
+  [3, 4],
+];
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
+const includeTesting = ref(false);
 
 const selectedDeployment = ref(undefined);
 const columns = [
@@ -113,10 +125,10 @@ const rows = ref<DataItem[]>([]);
 async function fetchStats(deployment: Deployment) {
   selectedDeployment.value = deployment.deployment;
 
-  const data = await store.getRecipients(deployment.deployment);
+  const [data] = await store.getRecipients(deployment.deployment);
 
   console.log(data);
-  const byGroup = groupBy(data, (d) => d.community_name);
+  const byGroup = groupBy(data.recipients, (d) => d.community_name);
 
   const mapped = Object.keys(byGroup).map((name) => {
     const recipients = (byGroup[name] || []).map((r) => {
@@ -173,15 +185,226 @@ async function fetchStats(deployment: Deployment) {
     return community;
   });
 
-  console.log(mapped);
+  // console.log(mapped);
   rows.value = [...mapped];
+}
+
+async function fetchStats2(deployment: Deployment) {
+  selectedDeployment.value = deployment.deployment;
+
+  const sameInMostGroupsOfACommunity = [
+    "program",
+    "country",
+    "region",
+    "district",
+    "supportentity",
+    "model",
+    "languagecode",
+  ];
+
+  const [data] = await store.getRecipients(deployment.deployment);
+
+  // All tb deployment events have been organized by recipient. Compute some per-recipient data. NOTE: this
+  // also includes extraneous recipients.
+  const recipients = data.recipients.map((r) => {
+    // let talkingbookids = Object.keys(r);
+    // @ts-ignore
+    r.num_TBsInstalled = r.talkingbooks_deployed.length;
+    (r && Object.keys(r).length) || 0;
+    // installedThisRecipient.tbsInstalled = {};
+    if (includeTesting.value) {
+      // @ts-ignore
+      r.num_TBTestsInstalled = 0;
+    }
+    let days = 0;
+    for (const tb of r.talkingbooks_deployed) {
+      if (includeTesting.value && tb.testing) {
+        // @ts-ignore
+        r.num_TBTestsInstalled += 1;
+      }
+      // let tbInstalledTimestamp = tb.deployed_timestamp;
+      const tbDaysToInstall = DateTime.fromJSDate(tb.deployed_timestamp).diff(
+        DateTime.fromISO(deployment.start_date)
+      ).days;
+      // @ts-ignore
+      r.daystoinstall = tbDaysToInstall;
+      // @ts-ignore
+      tb.daystoinstall = tbDaysToInstall;
+      // @ts-ignore
+      r.tbid = tb.talkingbook_id;
+      // move installation event from installedThisRecipient to installedThisRecipient.tbsInstalled
+      // r.tbsInstalled[tb] = r[tb];
+      // delete r[tb];
+      days += tbDaysToInstall;
+    }
+
+    // @ts-ignore
+    r.daystoinstall = Math.round(days / r.num_TBsInstalled);
+    return r;
+  });
+
+  // Aggregate the communities' groups into one line, keeping the details.
+  const communitiesByName: { [community_name: string]: Record<string, any> } = {};
+  for (const recip of recipients) {
+    let communityName = recip.community_name;
+    let community = communitiesByName[communityName];
+    if (community) {
+      community.groups.push(recip);
+      community.numGroups++;
+      community.num_HHs += recip.numhouseholds;
+      community.num_TBs += recip.numtbs;
+      // @ts-ignore
+      community.num_TBsInstalled += recip.num_TBsInstalled;
+      if (includeTesting.value) {
+        // @ts-ignore
+        community.num_TBTestsInstalled += recip.num_TBTestsInstalled;
+      }
+      // Common properties are almost always the same for all groups in a community. But that's not a hard requirement,
+      // so if they are different, include them only in the group details.
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      sameInMostGroupsOfACommunity.forEach((p) => {
+        // @ts-ignore
+        if (community[p] !== recip[p]) {
+          community[p] = "";
+        }
+      });
+    } else {
+      // New community.
+      community = Object.assign({}, recip);
+      community.groups = [];
+      community.numGroups = 0;
+      if (community.groupname) {
+        community.groups.push(recip);
+        community.numGroups = 1;
+        delete community.groupname;
+        delete community.recipientid;
+        delete community.tbsInstalled;
+      }
+    }
+    communitiesByName[communityName] = community;
+  }
+
+  // Turn it back to an array.
+  let communitiesList = Object.keys(communitiesByName).map(
+    (name) => communitiesByName[name]
+  );
+
+  // Now get daystoinstall for the communities with multiple groups.
+  for (const community of communitiesList) {
+    if (community.numGroups) {
+      let days = 0;
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      community.groups.forEach((group: any) => {
+        console.log(group)
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        group.talkingbooks_deployed.forEach((tb) => {
+          days += tb.daystoinstall;
+        });
+      });
+      community.daystoinstall = Math.round(days / community.num_TBsInstalled);
+    }
+  }
+
+  // let extraneousRecipients = Object.keys(installedPerRecipient).map((recipientid) => {
+  //   // the intalledPerRecipient already has a tbsInstalled (map of talkingbookids to deployment events)
+  //   // and daystoinstall, and possibly a num_TBTestsInstalled; Just add the recipientid, and we're good.
+  //   let extraneousRecipient = installedPerRecipient[recipientid];
+  //   extraneousRecipient.recipientid = recipientid;
+  //   let recipient = allRecipients.find((elem) => elem.recipientid === recipientid);
+  //   // If we can get the community name, do so, otherwise just use the recipientid.
+  //   extraneousRecipient.communityname = recipient ? recipient.communityname : recipientid;
+  //   extraneousRecipient.supportentity = recipient ? recipient.supportentity : "";
+  //   return extraneousRecipient;
+  // });
+
+  const result = {
+    communities: communitiesList,
+    // deploymentInfo: deploymentInfo,
+    // extraneousRecipients: extraneousRecipients,
+    summary: {
+      num_TBs: communitiesList.reduce((s, v) => {
+        return s + v.num_TBs;
+      }, 0),
+      num_TBsInstalled: communitiesList.reduce((s, v) => {
+        return s + v.num_TBsInstalled;
+      }, 0),
+      num_communities: communitiesList.length,
+      num_groups: communitiesList.reduce((s, v) => {
+        return s + (v.numGroups || 0);
+      }, 0),
+    },
+  };
+console.log("hhereee")
+  console.log(result)
+
+  // console.log(data);
+  // const byGroup = groupBy(data.recipients, (d) => d.community_name);
+
+  // const mapped = Object.keys(byGroup).map((name) => {
+  //   const recipients = (byGroup[name] || []).map((r) => {
+  //     // @ts-ignore
+  //     r.key = r.id;
+
+  //     // Sort tb deployed by date and pick the last one
+  //     const sorted = (r.talkingbooks_deployed || []).sort((a, b) => {
+  //       return (
+  //         new Date(b.deployed_timestamp).getTime() -
+  //         new Date(a.deployed_timestamp).getTime()
+  //       );
+  //     });
+
+  //     // Calculate days to install since deployment start date
+  //     // @ts-ignore
+  //     r.days_to_install = 0;
+
+  //     if (sorted.length > 0) {
+  //       // @ts-ignore
+  //       r.days_to_install = Math.round(
+  //         (new Date().getTime() - new Date(sorted[0].deployed_timestamp).getTime()) /
+  //           (1000 * 60 * 60 * 24)
+  //       );
+  //     }
+
+  //     // @ts-ignore
+  //     r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
+
+  //     // @ts-ignore
+  //     r.installed = r.talkingbooks_deployed.length || 0;
+
+  //     // @ts-ignore
+  //     r.percent_installed = Math.round((r.installed / r.num_tbs) * 100);
+  //     return r;
+  //   });
+
+  //   if (recipients.length === 0) {
+  //     return;
+  //   }
+
+  //   // @ts-ignore
+  //   const community: DataItem = Object.assign({}, recipients[0]);
+  //   community.key = Math.random() * 9999999 + 1; // Generates a random number between 1 and 9999999
+
+  //   community.group_name = recipients[0].community_name;
+  //   community.num_tbs = sumBy(recipients, (r) => r.numtbs);
+  //   community.num_households = sumBy(recipients, (r) => r.numhouseholds);
+  //   community.children = (((recipients || []) as unknown) as DataItem[]).map((r) => {
+  //     r.district = "";
+  //     return r;
+  //   });
+
+  //   return community;
+  // });
+
+  // console.log(mapped);
+  rows.value = [...result.communities];
 }
 
 onMounted(async () => {
   if (selectedDeployment.value == null) {
     const count = appStore.deployments.length;
     if (count > 1) {
-      await fetchStats(appStore.deployments[count - 1]);
+      // await fetchStats(appStore.deployments[count - 1]);
+      await fetchStats2(appStore.deployments[count - 1]);
     }
   }
 });
@@ -196,7 +419,7 @@ onMounted(async () => {
             <MenuItem
               :key="d.deploymentnumber"
               v-for="d in appStore.deployments"
-              @click="fetchStats(d)"
+              @click="fetchStats2(d)"
             >
               <span>Deployment {{ d.deploymentnumber }}</span>
             </MenuItem>
@@ -216,6 +439,15 @@ onMounted(async () => {
       </template>
     </Alert>
   </PageHeader>
+
+  <DataTable :data="data" class="display">
+    <thead>
+      <tr>
+        <th>A</th>
+        <th>B</th>
+      </tr>
+    </thead>
+  </DataTable>
 
   <!-- <Divider></Divider> -->
   <Row class="my-5">

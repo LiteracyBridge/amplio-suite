@@ -9,4 +9,5 @@ export class TalkingBookDeployed {
   deployment_uuid: string;
   content_package: string;
   deployment: Deployment;
+  testing: boolean
 }
