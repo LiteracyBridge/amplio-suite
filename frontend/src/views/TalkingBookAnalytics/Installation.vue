@@ -32,9 +32,9 @@ const data = [
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
-const includeTesting = ref(false);
 
 const selectedDeployment = ref(undefined);
+const summary = ref({ installed: 0, communities: 0, groups: 0, test_installs: 0 });
 const columns = [
   {
     title: "District",
@@ -133,13 +133,17 @@ interface DataItem {
 const rows = ref<DataItem[]>([]);
 
 async function fetchStats2(deployment: Deployment) {
+  console.log(deployment);
   selectedDeployment.value = deployment.deployment;
 
   const [data] = await store.getRecipients(deployment.deployment);
-
-  const table: { [community: string]: { row: DataItem; days_to_install: number } } = {}; // community->parentRow->children[]
+  const _summary = { installed: 0, communities: 0, groups: 0, test_installs: 0 };
+  const table: { [community: string]: DataItem } = {}; // community->parentRow->children[]
   for (const r of data.recipients) {
-    const community = table[r.district] ?? ({} as any);
+    if (table[r.community_name] == null) {
+      _summary.communities++;
+    }
+
     let installed = 0;
     let test_installs = 0;
 
@@ -166,7 +170,7 @@ async function fetchStats2(deployment: Deployment) {
       }
     });
 
-    const parent: DataItem = community?.row ?? {
+    const parent: DataItem = table[r.community_name] ?? {
       key: Math.random() * 9999999 + 1, // use random number as id
       district: r.district,
       group_name: r.community_name,
@@ -234,12 +238,6 @@ async function fetchStats2(deployment: Deployment) {
 
     parent.days_to_install =
       parent.days_to_install > days_to_install ? parent.days_to_install : days_to_install;
-    // community.days_to_install ??= 0;
-    // community.days_to_install =
-    //   community.days_to_install > days_to_install
-    //     ? community.days_to_install
-    //     : days_to_install;
-    // parent.days_to_install = community.days_to_install / (parent.children.length + 1);
     parent.children.push({
       key: r.id,
       district: "",
@@ -257,7 +255,8 @@ async function fetchStats2(deployment: Deployment) {
       test_installs: test_installs,
     });
 
-    table[r.district] = { row: parent, days_to_install };
+    table[r.community_name] = parent;
+    _summary.installed += installed;
   }
 
   // console.log(data);
@@ -319,7 +318,11 @@ async function fetchStats2(deployment: Deployment) {
   // });
 
   console.log(table);
-  rows.value = Object.values(table).map((t) => t.row);
+  rows.value = Object.values(table).map((t) => {
+    _summary.groups += Object.values(groupBy(t.children, (r) => r.group_name)).length;
+    return t;
+  });
+  summary.value = _summary;
 }
 
 onMounted(async () => {
@@ -357,8 +360,11 @@ onMounted(async () => {
 
     <Alert type="info" :closable="true" v-if="selectedDeployment != null">
       <template #message>
-        You'r viewing talking books installation for
-        {{ selectedDeployment }} deployment
+        You're viewing talking books installation for
+        {{ selectedDeployment }} deployment. The Deployment has been installed to
+        {{ summary.installed }} Talking Books in {{ summary.communities }} communities and
+        {{ summary.groups }}
+        groups.
       </template>
     </Alert>
   </PageHeader>
