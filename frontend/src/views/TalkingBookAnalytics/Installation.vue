@@ -123,7 +123,6 @@ interface DataItem {
 const rows = ref<DataItem[]>([]);
 
 async function fetchStats(deployment: Deployment) {
-  console.log(deployment);
   selectedDeployment.value = deployment.deployment;
 
   const recipients = await store.getRecipients();
@@ -249,65 +248,6 @@ async function fetchStats(deployment: Deployment) {
     _summary.installed += installed;
   }
 
-  // console.log(data);
-  // const byGroup = groupBy(data.recipients, (d) => d.community_name);
-
-  // const mapped = Object.keys(byGroup).map((name) => {
-  //   const recipients = (byGroup[name] || []).map((r) => {
-  //     // @ts-ignore
-  //     r.key = r.id;
-
-  //     // Sort tb deployed by date and pick the last one
-  //     const sorted = (r.talkingbooks_deployed || []).sort((a, b) => {
-  //       return (
-  //         new Date(b.deployed_timestamp).getTime() -
-  //         new Date(a.deployed_timestamp).getTime()
-  //       );
-  //     });
-
-  //     // Calculate days to install since deployment start date
-  //     // @ts-ignore
-  //     r.days_to_install = 0;
-
-  //     if (sorted.length > 0) {
-  //       // @ts-ignore
-  //       r.days_to_install = Math.round(
-  //         (new Date().getTime() - new Date(sorted[0].deployed_timestamp).getTime()) /
-  //           (1000 * 60 * 60 * 24)
-  //       );
-  //     }
-
-  //     // @ts-ignore
-  //     r.talkingbook_id = sorted.map((t) => t.talkingbook_id).join(", ");
-
-  //     // @ts-ignore
-  //     r.installed = r.talkingbooks_deployed.length || 0;
-
-  //     // @ts-ignore
-  //     r.percent_installed = Math.round((r.installed / r.num_tbs) * 100);
-  //     return r;
-  //   });
-
-  //   if (recipients.length === 0) {
-  //     return;
-  //   }
-
-  //   // @ts-ignore
-  //   const community: DataItem = Object.assign({}, recipients[0]);
-  //   community.key = Math.random() * 9999999 + 1; // Generates a random number between 1 and 9999999
-
-  //   community.group_name = recipients[0].community_name;
-  //   community.num_tbs = sumBy(recipients, (r) => r.numtbs);
-  //   community.num_households = sumBy(recipients, (r) => r.numhouseholds);
-  //   community.children = (((recipients || []) as unknown) as DataItem[]).map((r) => {
-  //     r.district = "";
-  //     return r;
-  //   });
-
-  //   return community;
-  // });
-
-  console.log(table);
   rows.value = Object.values(table).map((t) => {
     _summary.groups += Object.values(groupBy(t.children, (r) => r.group_name)).length;
     return t;
