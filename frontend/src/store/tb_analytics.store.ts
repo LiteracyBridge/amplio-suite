@@ -14,15 +14,11 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 				`tb-analytics/${useAppStore().programCode}/status?selector=${selector}`,
 			);
 		},
-		async getRecipients(deployment: string) {
+		async getRecipients() {
 			this.loading = true;
 
-			return ApiRequest.get<{
-				recipients: Recipient[];
-				tbs_deployed: Record<string, any>[];
-				deployment: Deployment;
-			}>(
-				`tb-analytics/${useAppStore().programCode}/installations/${deployment}`,
+			return ApiRequest.get<Recipient>(
+				`tb-analytics/${useAppStore().programCode}/installations`,
 			)
 				.then((resp) => resp)
 				.finally(() => (this.loading = false));

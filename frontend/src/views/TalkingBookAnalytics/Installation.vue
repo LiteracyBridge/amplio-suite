@@ -18,17 +18,7 @@ import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import type { Deployment } from "@/models/deployment";
 import { DownOutlined } from "@ant-design/icons-vue";
-import { DateTime } from "luxon";
 
-import DataTable from "datatables.net-vue3";
-import DataTablesCore from "datatables.net";
-
-// DataTable.use(DataTablesCore);
-
-const data = [
-  [1, 2],
-  [3, 4],
-];
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
@@ -132,14 +122,14 @@ interface DataItem {
 
 const rows = ref<DataItem[]>([]);
 
-async function fetchStats2(deployment: Deployment) {
+async function fetchStats(deployment: Deployment) {
   console.log(deployment);
   selectedDeployment.value = deployment.deployment;
 
-  const [data] = await store.getRecipients(deployment.deployment);
+  const recipients = await store.getRecipients();
   const _summary = { installed: 0, communities: 0, groups: 0, test_installs: 0 };
   const table: { [community: string]: DataItem } = {}; // community->parentRow->children[]
-  for (const r of data.recipients) {
+  for (const r of recipients) {
     if (table[r.community_name] == null) {
       _summary.communities++;
     }
@@ -330,7 +320,7 @@ onMounted(async () => {
     const count = appStore.deployments.length;
     if (count > 1) {
       // await fetchStats(appStore.deployments[count - 1]);
-      await fetchStats2(appStore.deployments[count - 1]);
+      await fetchStats(appStore.deployments[count - 1]);
     }
   }
 });
@@ -345,7 +335,7 @@ onMounted(async () => {
             <MenuItem
               :key="d.deploymentnumber"
               v-for="d in appStore.deployments"
-              @click="fetchStats2(d)"
+              @click="fetchStats(d)"
             >
               <span>Deployment {{ d.deploymentnumber }}</span>
             </MenuItem>
