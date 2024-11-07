@@ -10,4 +10,7 @@ export class TalkingBookDeployed {
   content_package: string;
   deployment: Deployment;
   testing: boolean
+  location: string;
+  username: string;
+  tbcdid: string;
 }

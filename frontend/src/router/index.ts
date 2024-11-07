@@ -147,6 +147,12 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import("../views/TalkingBookAnalytics/Installation.vue"),
       },
+      {
+        path: "installations-details",
+        name: "tb_analytics.installations-details",
+        component: () =>
+          import("../views/TalkingBookAnalytics/InstallationDetails.vue"),
+      },
       // Tableau
       {
         path: "tableau",

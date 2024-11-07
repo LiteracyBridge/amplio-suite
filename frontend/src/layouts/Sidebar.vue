@@ -76,13 +76,6 @@ const config = ref({
           <AreaChartOutlined />
         </template>
 
-        <MenuItem key="tableau">
-          <template #icon> <BarChartOutlined /> </template>
-
-          <router-link to="/tb-analytics/tableau">
-            <span role="link"> Tableau Analytics </span>
-          </router-link>
-        </MenuItem>
         <MenuItem key="installations">
           <template #icon> <DotChartOutlined /> </template>
 
@@ -90,6 +83,24 @@ const config = ref({
             <span role="link"> Installations </span>
           </router-link>
         </MenuItem>
+
+
+        <MenuItem key="installation-details">
+          <template #icon> <DotChartOutlined /> </template>
+
+          <router-link to="/tb-analytics/installations-details">
+            <span role="link"> Installation Details</span>
+          </router-link>
+        </MenuItem>
+
+        <MenuItem key="tableau">
+          <template #icon> <BarChartOutlined /> </template>
+
+          <router-link to="/tb-analytics/tableau">
+            <span role="link"> Tableau Analytics </span>
+          </router-link>
+        </MenuItem>
+
       </Menu.SubMenu>
 
       <Menu.SubMenu
