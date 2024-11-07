@@ -10,15 +10,16 @@ import {
   Button,
   Dropdown,
   MenuItem,
+  TreeSelect,
   Alert,
   Menu,
 } from "ant-design-vue";
+import type { TreeSelectProps } from "ant-design-vue";
 import { groupBy, sumBy, uniqBy } from "lodash";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
-import type { Deployment } from "@/models/deployment";
-import { DownOutlined } from "@ant-design/icons-vue";
-
+import { pad } from "@/utils";
+import { DateTime } from "luxon";
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
@@ -89,23 +90,47 @@ interface DataItem {
   test: string;
   tbId: string;
   loaderId: string;
+  _date_raw: DateTime;
 }
 
 const rows = ref<DataItem[]>([]);
+const treeData = ref<TreeSelectProps["treeData"]>([]);
+const selectedDate = ref<string>(null);
 
-async function fetchStats(deployment: Deployment) {
-  console.log(deployment);
-  selectedDeployment.value = deployment.deployment;
+async function fetchStats(selection: string) {
+  console.log(selection);
+  // selectedDeployment.value = deployment.deployment;
 
   const recipients = await store.getRecipients();
+  const dailies: Record<string, any> = {};
+  // const dates: { [year: string]: { label: string; value: string; children: {[any]} } } = {};
 
-  const _rows = recipients.flatMap((r) => {
+  const _rows = (recipients.flatMap((r) => {
     return r.talkingbooks_deployed.map((tb) => {
+      const date = DateTime.fromISO(tb.deployed_timestamp);
+      const year = date.year;
+      dailies[year] ??= { label: year, value: year.toString(), months: {} };
+
+      const yearlies = dailies[year];
+      const month = pad(date.month, 2);
+      yearlies.months[month] ??= {
+        label: date.monthLong,
+        value: `${year}-${date.month}`,
+        days: {},
+      };
+
+      const monthlies = yearlies.months[month];
+      const day = pad(date.day, 2);
+      monthlies.days[day] = {
+        label: date.toFormat("EEEE, dd"),
+        value: `${year}-${date.month}-${date.day}`,
+      };
+
       return {
         community: r.community_name,
         component: r.component,
         group: r.group_name,
-        date: tb.deployed_timestamp,
+        date: date.toFormat("EEEE, MMMM d, yyyy, h:mm a"),
         deployment: tb.deployment_name,
         package: tb.content_package,
         whereUpdated: tb.location,
@@ -113,93 +138,95 @@ async function fetchStats(deployment: Deployment) {
         test: tb.testing ? "Yes" : "No",
         tbId: tb.talkingbook_id,
         loaderId: tb.tbcdid,
+        _date_raw: date,
       };
     });
-  }) as unknown as DataItem[];
+  }) as unknown) as DataItem[];
 
-  rows.value = _rows
+  // Filter by date
+  console.log(selection);
+  if (selection === "all" || selection == null) {
+    rows.value = _rows;
+  } else {
+    const [year, month, day] = selection.split("-");
+    rows.value = _rows.filter((r) => {
+      let ok = true;
+      if (year != null) {
+        ok = r._date_raw.year === +year;
+      }
+      if (month != null) {
+        ok = r._date_raw.month === +month;
+      }
+      if (day != null) {
+        ok = r._date_raw.day === +day;
+      }
+      return ok;
+    });
+  }
+
+  // Generate date tree selection
+  treeData.value = [
+    { label: "All Installations", value: "all" },
+    ...Object.keys(dailies).map((year) => {
+      return {
+        label: dailies[year].label,
+        value: dailies[year].value,
+        children: Object.values(dailies[year].months).map((month: any) => {
+          // months sub tree
+          return {
+            label: month.label,
+            value: month.value,
+            children: Object.values(month.days).map((day: any) => {
+              // days sub tree
+              return {
+                label: day.label,
+                value: day.value,
+              };
+            }),
+          };
+        }),
+      };
+    }),
+  ];
 }
 
 onMounted(async () => {
-  if (selectedDeployment.value == null) {
-    const count = appStore.deployments.length;
-    if (count > 1) {
-      await fetchStats(appStore.deployments[count - 1]);
-    }
-  }
+  await fetchStats(null);
 });
 </script>
 
 <template>
   <PageHeader title="Installation Details" sub-title="Track talking book installations">
     <template #extra>
-      <Dropdown>
-        <template #overlay>
-          <Menu>
-            <MenuItem
-              :key="d.deploymentnumber"
-              v-for="d in appStore.deployments"
-              @click="fetchStats(d)"
-            >
-              <span>Deployment {{ d.deploymentnumber }}</span>
-            </MenuItem>
-          </Menu>
-        </template>
-        <Button>
-          Change Deployment
-          <DownOutlined />
-        </Button>
-      </Dropdown>
+      <div style="width: 200px">
+        <TreeSelect
+          v-model:value="selectedDate"
+          show-search
+          class="w"
+          style="width: 100%"
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          placeholder="Please select"
+          allow-clear
+          tree-default-expand-all
+          :tree-data="treeData"
+          tree-node-filter-prop="label"
+          @change="fetchStats($event)"
+        >
+          <!-- <template #title="{ value: val, label }">
+        <b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
+        <template v-else>{{ label }}</template>
+      </template> -->
+        </TreeSelect>
+      </div>
     </template>
 
-    <!-- <Alert type="info" :closable="true" v-if="selectedDeployment != null">
+    <Alert type="info" :closable="true">
       <template #message>
-        You're viewing talking books installation for
-        {{ selectedDeployment }} deployment. The Deployment has been installed to
-        {{ summary.installed }} Talking Books in {{ summary.communities }} communities and
-        {{ summary.groups }}
-        groups.
+        Installations statistics uploaded on {{ selectedDate }},
+        {{ rows.length }} Deployments to TBs.
       </template>
-    </Alert> -->
+    </Alert>
   </PageHeader>
-
-  <!-- <Divider></Divider> -->
-  <Row class="my-5">
-    <Tooltip>
-      <template #title
-        >An excess of Talking Books seem to have been installed. This may be fine, but
-        needs explanation.</template
-      >
-      <Tag color="purple"> &gt;100% Excess </Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title>Perfect!</template>
-      <Tag color="pink">100% Great! </Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Acceptable, provided there is a good rationale for missing
-        installations.</template
-      >
-      <Tag color="orange">85 - 99% Acceptable</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Unacceptable performance against contractual obligations.</template
-      >
-      <Tag color="green">60 - 84% Unacceptable</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title>This is a failure to meet our contractual obligations.</template>
-      <Tag color="cyan">21 - 59% Failed</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Is the community / group still participating in the Program?</template
-      >
-      <Tag color="blue">0 - 20% Dead</Tag>
-    </Tooltip>
-  </Row>
 
   <Table
     :columns="columns"
