@@ -22,9 +22,6 @@ import { pad } from "@/utils";
 import { DateTime } from "luxon";
 
 const store = useTalkingBookAnalyticStore();
-const appStore = useAppStore();
-
-const selectedDeployment = ref(undefined);
 const columns = [
   {
     title: "Talking Book",
@@ -94,20 +91,24 @@ interface DataItem {
 }
 
 const rows = ref<DataItem[]>([]);
+const recipients = ref<DataItem[]>([]);
 const treeData = ref<TreeSelectProps["treeData"]>([]);
 const selectedDate = ref<string>(null);
 
-async function fetchStats(selection: string) {
-  console.log(selection);
-  // selectedDeployment.value = deployment.deployment;
-
-  const recipients = await store.getRecipients();
+async function fetchStats() {
+  const data = await store.getRecipients();
   const dailies: Record<string, any> = {};
-  // const dates: { [year: string]: { label: string; value: string; children: {[any]} } } = {};
+  let latestDeployment: DateTime = null;
 
-  const _rows = (recipients.flatMap((r) => {
+  const _rows = (data.flatMap((r) => {
     return r.talkingbooks_deployed.map((tb) => {
       const date = DateTime.fromISO(tb.deployed_timestamp);
+      if (latestDeployment == null) {
+        latestDeployment = date;
+      } else if (date > latestDeployment) {
+        latestDeployment = date;
+      }
+
       const year = date.year;
       dailies[year] ??= { label: year, value: year.toString(), months: {} };
 
@@ -143,26 +144,10 @@ async function fetchStats(selection: string) {
     });
   }) as unknown) as DataItem[];
 
-  // Filter by date
-  console.log(selection);
-  if (selection === "all" || selection == null) {
-    rows.value = _rows;
-  } else {
-    const [year, month, day] = selection.split("-");
-    rows.value = _rows.filter((r) => {
-      let ok = true;
-      if (year != null) {
-        ok = r._date_raw.year === +year;
-      }
-      if (month != null) {
-        ok = r._date_raw.month === +month;
-      }
-      if (day != null) {
-        ok = r._date_raw.day === +day;
-      }
-      return ok;
-    });
-  }
+  recipients.value = _rows;
+
+  selectedDate.value = latestDeployment?.toFormat("yyyy-mm-dd");
+  onDateChanged(selectedDate.value);
 
   // Generate date tree selection
   treeData.value = [
@@ -190,14 +175,38 @@ async function fetchStats(selection: string) {
   ];
 }
 
+async function onDateChanged(selection: string) {
+  console.log(selection);
+
+  if (selection === "all" || selection == null) {
+    rows.value = [...recipients.value];
+  } else {
+    const [year, month, day] = selection.split("-");
+    rows.value = recipients.value.filter((r) => {
+      let ok = true;
+      if (year != null) {
+        ok = r._date_raw.year === +year;
+      }
+      if (month != null) {
+        ok = r._date_raw.month === +month;
+      }
+      if (day != null) {
+        ok = r._date_raw.day === +day;
+      }
+      return ok;
+    });
+  }
+}
+
 onMounted(async () => {
-  await fetchStats(null);
+  await fetchStats();
 });
 </script>
 
 <template>
   <PageHeader title="Installation Details" sub-title="Track talking book installations">
     <template #extra>
+      <span>Filter by Date:</span>
       <div style="width: 200px">
         <TreeSelect
           v-model:value="selectedDate"
@@ -210,12 +219,8 @@ onMounted(async () => {
           tree-default-expand-all
           :tree-data="treeData"
           tree-node-filter-prop="label"
-          @change="fetchStats($event)"
+          @change="onDateChanged($event)"
         >
-          <!-- <template #title="{ value: val, label }">
-        <b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
-        <template v-else>{{ label }}</template>
-      </template> -->
         </TreeSelect>
       </div>
     </template>
@@ -239,45 +244,46 @@ onMounted(async () => {
     class="ant-table-striped"
   >
     <template #headerCell="{ column }">
-      <template v-if="column.key === 'installed'">
+      <template v-if="column.key === 'group'">
         <Tooltip>
           <template #title
-            >The number of Talking Books reported to have been installed.</template
+            >The group's name, or Support Entity's name, if there is no group. Support
+            Entity names are prefixed with SE:.</template
           >
-          # Installed
+          Group
         </Tooltip>
       </template>
-      <template v-if="column.key === 'days_to_install'">
+      <template v-if="column.key === 'whereUpdated'">
         <Tooltip>
           <template #title
-            >The average number of days before the Talking Books were installed with the
-            Deployment.</template
+            >Where did the updater indicate they were, during the installation?</template
           >
-          Days to Install
+          Location
         </Tooltip>
       </template>
-      <template v-if="column.key === 'agent'">
-        <Tooltip>
-          <template #title>Who installed the content onto the Talking Books.</template>
-          Updated By
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'talkingbook_id'">
+      <template v-if="column.key === 'loaderId'">
         <Tooltip>
           <template #title
-            >TB-Loader ID of the laptop/phone that performed the update of the Talking
-            Books.</template
+            >The TB-Loader id of the laptop or phone that performed the
+            installation.</template
           >
-          TBLoader ID
+          ID
         </Tooltip>
       </template>
-      <template v-if="column.key === 'test_installs'">
+      <template v-if="column.key === 'date'">
         <Tooltip>
           <template #title
-            >Number of installations to this community / group for which the installer
-            checked</template
+            >When was this Talking Book installed? Time is in UTC..</template
           >
-          # Test Installs
+          Date and Time
+        </Tooltip>
+      </template>
+      <template v-if="column.key === 'test'">
+        <Tooltip>
+          <template #title
+            >Was the 'Testing the Deployment' box checked on the TB-Loader?</template
+          >
+          Test?
         </Tooltip>
       </template>
     </template>
