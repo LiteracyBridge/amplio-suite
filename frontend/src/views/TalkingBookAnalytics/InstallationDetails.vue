@@ -279,49 +279,6 @@ onMounted(async () => {
         </Tooltip>
       </template>
     </template>
-
-    <template #bodyCell="{ record, column }">
-      <template v-if="column.key === 'percent_installed'">
-        <Tag
-          class="w-full text-center"
-          v-if="record.percent_installed > 100"
-          color="purple"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed == 100"
-          color="pink"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
-          color="orange"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
-          color="green"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
-          color="cyan"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag class="w-full text-center" v-else color="blue">
-          {{ record.installed }}
-        </Tag>
-      </template>
-    </template>
   </Table>
 </template>
 

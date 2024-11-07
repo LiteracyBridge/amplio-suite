@@ -2,7 +2,7 @@ import { Deployment } from "./deployment";
 
 export class TalkingBookDeployed {
   talkingbook_id: string;
-  deployed_timestamp: Date;
+  deployed_timestamp: string;
   recipient_id: string;
   project: string;
   deployment_name: string;
