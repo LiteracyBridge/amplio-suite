@@ -1,3 +1,16 @@
+## [0.3.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.3.0...v0.3.1) (2024-11-08)
+
+
+
+# [0.3.0](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.2...v0.3.0) (2024-11-01)
+
+
+### Features
+
+* implement spec sheet import on the frontend, and send the parsed data to the backend ([#386](https://github.com/LiteracyBridge/amplio-suite/issues/386)) ([bb8ae81](https://github.com/LiteracyBridge/amplio-suite/commit/bb8ae819b63d07bed093dd6bbb5b5dd5098435a8))
+
+
+
 ## [0.2.2](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.1...v0.2.2) (2024-10-25)
 
 
@@ -25,24 +38,6 @@
 ### Reverts
 
 * Revert "refactor(checkout): update checkout list endpoint" ([3db1b50](https://github.com/LiteracyBridge/amplio-suite/commit/3db1b502311a74f57f93ebc3405c4a77b8bc2170))
-
-
-
-## [0.1.4](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.3...v0.1.4) (2024-09-10)
-
-
-### Bug Fixes
-
-* tableau viz display error ([8adc52b](https://github.com/LiteracyBridge/amplio-suite/commit/8adc52b0fcceaa13d0f3e76fdc6ba26f3de99179))
-
-
-
-## [0.1.3](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.2...v0.1.3) (2024-09-04)
-
-
-### Bug Fixes
-
-* **spec:** program spec export error ([554a8f6](https://github.com/LiteracyBridge/amplio-suite/commit/554a8f6673219c1ddd91a7f1c61af988e4296261))
 
 
 

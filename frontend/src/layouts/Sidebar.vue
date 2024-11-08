@@ -15,6 +15,8 @@ import {
   DownloadOutlined,
   AreaChartOutlined,
   TableOutlined,
+  CalculatorOutlined,
+  StockOutlined,
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -76,6 +78,27 @@ const config = ref({
           <AreaChartOutlined />
         </template>
 
+        <MenuItem key="installations">
+          <template #icon> <DotChartOutlined /> </template>
+
+          <router-link to="/tb-analytics/installations">
+            <span role="link"> Installations </span>
+          </router-link>
+        </MenuItem>
+        <MenuItem key="installation-details">
+          <template #icon> <StockOutlined /> </template>
+
+          <router-link to="/tb-analytics/installations-details">
+            <span role="link"> Installation Details</span>
+          </router-link>
+        </MenuItem>
+        <MenuItem key="inventory">
+          <template #icon> <CalculatorOutlined /></template>
+
+          <router-link to="/tb-analytics/inventory">
+            <span role="link"> Inventory</span>
+          </router-link>
+        </MenuItem>
         <MenuItem key="tableau">
           <template #icon> <BarChartOutlined /> </template>
 
@@ -83,13 +106,7 @@ const config = ref({
             <span role="link"> Tableau Analytics </span>
           </router-link>
         </MenuItem>
-        <!-- <MenuItem key="installations">
-          <template #icon> <DotChartOutlined /> </template>
 
-          <router-link to="/tb-analytics/installations">
-            <span role="link"> Installations </span>
-          </router-link>
-        </MenuItem> -->
       </Menu.SubMenu>
 
       <Menu.SubMenu
