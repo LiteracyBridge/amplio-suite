@@ -1,10 +1,12 @@
 <template>
+  <!-- <AppLoadingIndicator v-if="useAppStore().loading" /> -->
+
   <ConfigProvider
     :theme="{
       token: {
         colorPrimary: '#289b6a',
       },
-      hashed: false
+      hashed: false,
     }"
   >
     <component :is="layout">
@@ -28,9 +30,6 @@ const layout = computed(() => {
 onMounted(() => {
   try {
     getUser();
-  } catch (ignore) {
-
-  }
-  console.log("App mounted");
+  } catch (ignore) {}
 });
 </script>

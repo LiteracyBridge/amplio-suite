@@ -26,12 +26,13 @@
         <Button type="primary" @click="onExportProgramSpec()">Export Spreadsheet </Button>
       </div>
 
-      <div class="col-span-4 mr-4 ml-4">
+      <!-- <div class="col-span-4 mr-4 ml-4">
         <div v-if="showUnpublishedOption">
           <input type="checkbox" id="checkbox" v-model="exportUnpublished" />
           <label for="checkbox"> Export the un-published program specification.</label>
         </div>
       </div>
+      -->
     </div>
 
     <Alert type="info" message="Remember" class="mt-5">
@@ -130,14 +131,15 @@
 
 <script lang="ts" setup>
 import { Alert, Button, Divider, Modal, notification, Spin } from "ant-design-vue";
-import VButton from "@/components/VButton.vue";
-import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
-import ProgramSpecImportDiffs from "@/components/ProgramSpecImportDiffs.vue";
-import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
-import { approveSpec, uploadSpec } from "@/api/programspec.api";
+// import { approveSpec, uploadSpec } from "@/api/programspec.api";
+import { useProgramSpecStore } from "@/store/programspec";
+import { Workbook } from "exceljs";
+import { useProgramSpecImport } from "@/store/spec-import.store";
+import ProgramSpecImportForm from "@/components/ProgramSpecImportForm.vue";
 
 const specStore = useProgramSpecStore();
+const specImport = useProgramSpecImport();
 
 const exportUnpublished = ref(false);
 const selectedFile = ref(null);
@@ -149,9 +151,9 @@ const showModal = ref({
   visible: false,
 });
 
-const showUnpublishedOption = computed(() => {
-  return exportUnpublished;
-});
+// const showUnpublishedOption = computed(() => {
+//   return exportUnpublished;
+// });
 
 /**
  * Export the published program spec for the current program. (The "alt" key can be used to enable an option
@@ -166,30 +168,23 @@ async function onExportProgramSpec() {
     } Program Specification for ${specStore.programId}`,
   });
 
-  const downloadLink = await specStore.getExportLink({
-    programId: specStore.programId,
-    artifact: exportUnpublished ? "unpublished" : "published",
+  const buffer = await (await createExcel()).xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
-  if (downloadLink.status === "ok") {
-    const downloadUrl = downloadLink.url;
-    console.log(
-      `Export ${
-        exportUnpublished.value ? "unpublished " : ""
-      } Program Specification for ${specStore.programId} from ${downloadLink.url}`
-    );
-    // Download the object.
-    const fetch_response = await fetch(downloadUrl);
-    // Get the bits, and add them to an <a> element.
-    const data = await fetch_response.arrayBuffer();
-    const blob = new Blob([data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = downloadLink.object.filename;
-    // Simulate a click on the <a>
-    link.click();
-  }
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${specStore.programId}_program_spec_${
+    exportUnpublished.value ? "unpublished" : "published"
+  }.xlsx`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+
+  notification.success({
+    description: "Program spec exported successfully.",
+    message: "Success",
+  });
 }
 
 function onFileSelected(file: any) {
@@ -205,61 +200,20 @@ async function onUpload() {
 
   showModal.value.showSpinner = true;
 
-  // Upload it.
-  // const data = await readFileData(selectedFile.value, true);
-  const result = await uploadSpec(specStore.programId, selectedFile.value);
-
-  if (result.status === "ok") {
+  const ok = await specImport.readfile(selectedFile.value);
+  if (ok) {
     notification.success({
       message: "Program specification spreadsheet uploaded successfully.",
     });
-
-    specStore.setSpec({
-      programId: specStore.programId,
-      programspec: result.data,
-    });
-  }
-  // let diffs = result?.diff || [];
-
-  // diffs = diffs.map((line: string) =>
-  //   line.replace(/^ */, (match) => "\xa0\xa0".repeat(match.length))
-  // );
-  // console.log(diffs);
-
-  onCancel();
-  // onOpenModal("showDiffs", "Import Program Specification");
-}
-
-async function onApprove() {
-  if (!selectedFile.value) return;
-  showModal.value.showSpinner = true;
-
-  const result = await approveSpec({
-    programId: specStore.programId,
-    publish: publishImported,
-  });
-
-  console.log(result);
-  if (result && result.status !== "ok") {
-    notification.error({ message: result.errors.join() });
+    onCancel();
   } else {
-    notification.success({
-      message: `Program specification spreadsheet imported${
-        publishImported.value ? " and published" : ""
-      }.`,
+    notification.info({
+      message: "Correct all errors and reupload the excel file",
     });
   }
 
-  onCancel();
+  showModal.value.showSpinner = false;
 }
-
-// function onOpenModal(modal, title) {
-//   for (const k of Object.keys(showModal.value)) {
-//     showModal.value[k] = false;
-//   }
-//   showModal.value[modal] = true;
-//   // this.setModal(title);
-// }
 
 function onCancel() {
   showModal.value = {
@@ -268,5 +222,198 @@ function onCancel() {
     showDiffs: false,
   };
   selectedFile.value = null;
+}
+
+async function createExcel() {
+  const workbook = new Workbook();
+  const response = await fetch("/program-spec-template.xlsx");
+  // console.log(await response.blob());
+
+  // Convert Blob to ArrayBuffer
+  await workbook.xlsx.load(await response.arrayBuffer());
+
+  const headers = {
+    general: {
+      program_id: "Program ID",
+      country: "Country",
+      region: "Regions",
+      languages: "Languages",
+      deployments_count: "Deployments Count",
+      deployments_length: "Deployments Length",
+      deployments_first: "Deployments First",
+      listening_models: "Listening Models",
+      feedback_frequency: "Feedback Frequency",
+      sustainable_development_goals: "Sustainable Development Goals",
+      direct_beneficiaries_map: "Direct Beneficiaries Map",
+      direct_beneficiaries_additional_map: "Direct Beneficiaries Additional Map",
+      affiliate: "Affiliate",
+      partner: "Partner",
+    },
+    deployment: {
+      deploymentnumber: "Deployment #",
+      startdate: "Start Date", // date
+      enddate: "End Date", // date
+      //  'deployment': 'Deployment',
+      deploymentname: "Deployment Name",
+    },
+    content: {
+      deployment_num: "Deployment #",
+      playlist_title: "Playlist Title",
+      message_title: "Message Title",
+      key_points: "Key Points",
+      languagecode: "Language Code",
+      variant: "Variant",
+      format: "Format",
+      audience: "Audience",
+      default_category: "Default Category",
+      sdg_goals: "SDG Goals",
+      sdg_targets: "SDG Targets",
+    },
+    recipient: {
+      country: "Country",
+      language: "Language Code",
+      region: "Region",
+      district: "District",
+      communityname: "Community",
+      groupname: "Group Name",
+      agent: "Agent",
+      variant: "Variant",
+      listening_model: "Listening Model",
+      group_size: "Group Size",
+      numhouseholds: "# HH",
+      numtbs: "# TBs",
+      supportentity: "Support Entity",
+      agent_gender: "Agent Gender",
+      direct_beneficiaries: "Direct Beneficiaries",
+      direct_beneficiaries_additional: "Direct Beneficiaries Additional",
+      indirect_beneficiaries: "Indirect Beneficiaries",
+      deployments: "Deployments",
+      recipientid: "RecipientID",
+      affiliate: "Affiliate",
+      partner: "Partner",
+      component: "Component",
+    },
+    languages: { name: "name", code: "code" },
+  };
+  // Create general sheet
+  const generalSheet = workbook.addWorksheet("General");
+  generalSheet.columns = Object.keys(headers.general).map((k) => ({
+    // @ts-ignore
+
+    header: headers.general[k],
+    key: k,
+  }));
+  generalSheet.addRow({
+    program_id: specStore.general.program_id,
+    country: specStore.general.country,
+    region: specStore.general.region,
+    languages: specStore.languages.map((l) => l.code),
+    deployments_count: specStore.deployments.length,
+    deployments_length: specStore.general.deployments_length,
+    deployments_first: specStore.general.deployments_first,
+    listening_models: specStore.general.listening_models,
+    feedback_frequency: specStore.general.feedback_frequency,
+    sustainable_development_goals: specStore.general.sustainable_development_goals,
+    direct_beneficiaries_map: specStore.general.direct_beneficiaries_map,
+    direct_beneficiaries_additional_map:
+      specStore.general.direct_beneficiaries_additional_map,
+    affiliate: specStore.general.affiliate,
+    partner: specStore.general.partner,
+  });
+
+  // Create deployments sheet
+  const deploymentSheet = workbook.addWorksheet("Deployments");
+  deploymentSheet.columns = Object.keys(headers.deployment).map((k) => ({
+    // @ts-ignore
+
+    header: headers.deployment[k],
+    key: k,
+  }));
+  for (const d of specStore.deployments) {
+    deploymentSheet.addRow({
+      deploymentnumber: d.deploymentnumber,
+      startdate: d.start_date,
+      enddate: d.end_date,
+      deploymentname: d.deploymentname,
+    });
+  }
+
+  // Languages sheet
+  const langSheet = workbook.addWorksheet("Languages");
+  langSheet.columns = Object.keys(headers.languages).map((k) => ({
+    // @ts-ignore
+
+    header: headers.languages[k],
+    key: k,
+  }));
+  for (const l of specStore.languages) {
+    langSheet.addRow({ name: l.name, code: l.code });
+  }
+
+  // Contents sheet
+  const contentSheet = workbook.addWorksheet("Content");
+  contentSheet.columns = Object.keys(headers.content).map((k) => ({
+    // @ts-ignore
+    header: headers.content[k],
+    key: k,
+  }));
+  for (const d of specStore.deployments) {
+    for (const p of d.playlists) {
+      for (const m of p.messages) {
+        contentSheet.addRow({
+          deployment_num: d.deploymentnumber,
+          playlist_title: p.title,
+          message_title: m.title,
+          key_points: m.key_points,
+          languagecode: Array.isArray(m.languages)
+            ? (m.languages as any).map((l: any) => l.language_code).join(",")
+            : m.languages,
+          variant: m.variant,
+          format: m.format,
+          audience: p.audience,
+          default_category: m.default_category_code,
+          sdg_goals: m.sdg_goal_id, // TODO: read from relation
+          sdg_targets: m.sdg_target_id, // TODO: read from relation
+        });
+      }
+    }
+  }
+
+  // Recipients sheet
+  const recipientSheet = workbook.addWorksheet("Recipients");
+  recipientSheet.columns = Object.keys(headers.recipient).map((k) => ({
+    // @ts-ignore
+
+    header: headers.recipient[k],
+    key: k,
+  }));
+  for (const r of specStore.recipients) {
+    recipientSheet.addRow({
+      country: r.country,
+      language: r.language,
+      region: r.region,
+      district: r.district,
+      communityname: r.community_name,
+      groupname: r.group_name,
+      agent: r.agent,
+      variant: r.variant,
+      listening_model: r.listening_model,
+      group_size: r.group_size,
+      numhouseholds: r.numhouseholds ?? 0,
+      numtbs: r.numtbs,
+      supportentity: r.support_entity,
+      agent_gender: r.agent_gender,
+      direct_beneficiaries: r.direct_beneficiaries,
+      direct_beneficiaries_additional: r.direct_beneficiaries_additional,
+      indirect_beneficiaries: r.indirect_beneficiaries,
+      deployments: r.deployments,
+      recipientid: r.id,
+      affiliate: r.affiliate,
+      partner: r.partner,
+      component: r.component,
+    });
+  }
+
+  return workbook;
 }
 </script>

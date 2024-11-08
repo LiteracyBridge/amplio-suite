@@ -96,7 +96,7 @@
             <languages-selector
               name="language"
               class="w-full"
-              :options="state.general.languages"
+              :options="state.languages"
               :languages="recipient.language"
               @language-selected="
                 onSetRecipientValue({ field: 'language', value: $event })
@@ -414,9 +414,9 @@
         v-for="opt in beneficiariesAdditionalFields"
         :key="opt.key"
         :label="opt.value"
-        :val="recipient.direct_beneficiaries_additional[opt.key]"
+        :val="(recipient.direct_beneficiaries_additional ?? {})[opt.key]"
         :showTooltip="
-          recipient.direct_beneficiaries_additional[opt.key] >
+          (recipient.direct_beneficiaries_additional ?? {})[opt.key] >
           recipient.direct_beneficiaries
         "
         @input="

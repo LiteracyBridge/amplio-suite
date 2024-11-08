@@ -1,10 +1,13 @@
 import { ApiRequest } from "@/api";
 import { Language } from "@/models/language";
 import { defineStore } from "pinia";
+import { useProgramSpecStore } from "../programspec";
+import { sys } from "typescript";
 
 export const useLanguagesStore = defineStore("languages", {
   state: () => ({
     loading: false,
+    loaded: false,
     languages: [] as Language[],
   }),
   actions: {
@@ -24,6 +27,7 @@ export const useLanguagesStore = defineStore("languages", {
       });
       return infos;
     },
+
     generateNewLanguageCode(lang: { name: string; code: string }) {
       const genCode = (name: string, code: string) => {
         if (name.length == code.length) {
@@ -49,11 +53,38 @@ export const useLanguagesStore = defineStore("languages", {
       }
       return code;
     },
+    mergeWithSystemLanguages(opts: {
+      newLangs: Language[], systemLanguages?: Language[]
+    }) {
+      const newLangs: Language[] = []
+      const codes = new Set<string>((opts.systemLanguages ?? this.languages).map((i) => i.code));
+      for (const l of opts.newLangs) {
+        if (!codes.has(l.code)) {
+          newLangs.push(l);
+        }
+      }
+
+      this.languages = [...(opts.systemLanguages ?? this.languages), ...newLangs]
+    },
     //
     // API calls
     //
     async fetchLanguages() {
-      return ApiRequest.get<Language>("languages/supported");
+      if (this.loaded) return
+
+      this.loading = true
+      return ApiRequest.get<Language>("languages/supported")
+        .then((resp) => {
+          // Merge program spec languages with system languages
+          const codes = new Set<string>(resp!.map((i) => i.code));
+          for (const l of useProgramSpecStore().languages) {
+            if (!codes.has(l.code)) {
+              resp!.push(l);
+            }
+          }
+          this.mergeWithSystemLanguages({ systemLanguages: resp!, newLangs: useProgramSpecStore().languages });
+          this.loaded = true
+        }).finally(() => this.loading = false)
     },
   },
 });

@@ -54,7 +54,11 @@
         </div>
       </template>
 
-      <template #bodyCell="{ column, record }">
+      <template #bodyCell="{ column, record, index }">
+        <template v-if="column.key === 'index'">
+          {{ index + 1 }}
+        </template>
+
         <template v-if="column.key === 'region'">
           {{ record.region }}
         </template>
@@ -81,6 +85,10 @@
 
         <template v-if="column.key === 'numtbs'">
           {{ record.numtbs }}
+        </template>
+
+        <template v-if="column.key === 'variant'">
+          {{ record.variant }}
         </template>
 
         <template v-if="column.key === 'affiliate'">
@@ -112,19 +120,6 @@
                 ><CopyOutlined
               /></Button>
             </Tooltip>
-
-            <!-- <Popconfirm
-            title="Are you sure to delete this recipient?"
-            ok-text="Yes"
-            cancel-text="No"
-          >
-            <Button
-              class="mt-3"
-              :aria-label="`Delete message ${message.title}`"
-              :danger="true"
-              >Delete Message</Button
-            >
-          </Popconfirm> -->
           </div>
         </template>
       </template>
@@ -160,14 +155,17 @@ import { Recipient } from "@/models/recipient";
 import { Input, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
 import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vue";
 
-const columns: Array<{ title: string; key: keyof Recipient }> = [
+const columns = [
+  // @ts-ignore
+  { title: "#", key: "index", width: '60px' },
   { title: "Region/State", key: "region" },
   { title: "District/County", key: "district" },
   { title: "Community", key: "community_name" },
   { title: "Group", key: "group_name" },
   { title: "Agent", key: "agent" },
   { title: "Language", key: "language" },
-  { title: "# TBs", key: "numtbs" },
+  { title: "# TBs", key: "numtbs", width: '70px' },
+  { title: "Variant", key: "variant", width: '70px' },
   { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
 ];
 
@@ -266,7 +264,7 @@ const invalidBeneficiaries = computed(() => {
 function filterRecipient(val?: string) {
   if (val == null || val === undefined || val.trim().length === 0) {
     recipients.value = [...store.recipients];
-    return
+    return;
   }
 
   const input = val.trim().toLowerCase();

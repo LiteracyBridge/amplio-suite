@@ -4,26 +4,16 @@
       <Col :span="12">
         <FormItem label="Language">
           <languages-selector
-            :options="store.general.languages"
+            :options="store.languages"
             :languages="messageLanguages"
             @language-selected="
               (language) =>
                 store.addMessageLanguage({
-                  deployment: props.deployment,
-                  playlist,
                   message,
                   language,
                 })
             "
-            @language-deleted="
-              (code) =>
-                store.removeMessageLanguage({
-                  deployment: props.deployment,
-                  playlist,
-                  message,
-                  language: code,
-                })
-            "
+            @language-deleted="(code) => store.removeMessageLanguage(code, message)"
             :multiple="true"
           />
         </FormItem>
@@ -186,33 +176,27 @@ const props = defineProps<{
 const store = useProgramSpecStore();
 
 const formatOptions = ref([
-    { value: "Drama", label: "Drama" },
-    { value: "Endorsement", label: "Endorsement" },
-    { value: "Interview", label: "Interview" },
-    { value: "Message", label: "Message" },
-    { value: "Song", label: "Song" },
-    { value: "Other", label: "Other" },
-  ]);
+  { value: "Drama", label: "Drama" },
+  { value: "Endorsement", label: "Endorsement" },
+  { value: "Interview", label: "Interview" },
+  { value: "Message", label: "Message" },
+  { value: "Song", label: "Song" },
+  { value: "Other", label: "Other" },
+]);
 const goals = ref(sustainableDevelopmentGoals);
 
 const messageLanguages = computed(() => {
   if (!props.message.languages) {
-    (store.general.languages || []).forEach((c) => {
+    store.languages.forEach((l) => {
       store.addMessageLanguage({
-        deployment: props.deployment,
-        playlist: props.playlist,
         message: props.message,
-        language: c,
+        language: l.code,
       });
     });
     // props.message.languages = (store.general.languages || []).join(",");
     // return store.general.languages;
   }
-  return store.getMessageLanguages({
-    deployment: props.deployment,
-    playlist: props.playlist,
-    message: props.message,
-  });
+  return store.getMessageLanguages(props.message);
 });
 
 const categories = computed(() => {
@@ -223,7 +207,7 @@ const targets = computed(() => {
   const goal = goals.value.find((goal) => goal.goalId == props.message.sdg_goal_id);
 
   if (goal) return goal.targets;
-  else return [];
+  return [];
 });
 
 const selectedCategory = computed(() => {

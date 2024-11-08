@@ -16,7 +16,7 @@ async function downloadReport() {
 
   // Fetch report from server
   const data = await store.fetchAnalysisReport();
-  if (data.length == 0) {
+  if (data.length === 0) {
     notification.error({
       message: "No Data Found",
       description: "No analysis data found to generate report!",

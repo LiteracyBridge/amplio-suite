@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import {
   AppstoreFilled,
@@ -26,8 +26,8 @@ const router = useRouter();
 const userStore = useAccountStore();
 const appStore = useAppStore();
 
-const profileVisible = ref(false),
-  feedbackModalVisible = ref(false);
+const profileVisible = ref(false);
+const feedbackModalVisible = ref(false);
 
 // async function signOut() {
 //   try {
@@ -69,6 +69,13 @@ function changeProgram(val: number) {
     },
   });
 }
+
+const userPrograms = computed(() =>
+  userStore.programs.map((item) => ({
+    value: item.id,
+    label: `${item.project.name} (${item.program_id})`,
+  }))
+);
 </script>
 
 <template>
@@ -98,18 +105,12 @@ function changeProgram(val: number) {
           v-model:value="appStore.activeProgram.id"
           :show-search="true"
           :filter-option="true"
+          :options="userPrograms"
+          :option-filter-prop="'label'"
           class="w-96"
           placeholder="Select a program"
           @change="changeProgram($event as number)"
         >
-          <SelectOption
-            v-for="item in userStore.programs"
-            :key="item.id"
-            :value="item.id"
-            :label="item.project?.name"
-          >
-            {{ item.project.name }} ({{ item.program_id }})
-          </SelectOption>
         </Select>
       </div>
 
@@ -125,7 +126,6 @@ function changeProgram(val: number) {
 
           <template #overlay>
             <Menu>
-
               <!-- <MenuItem key="profile" @click="profileVisible = true">
                 <UserOutlined />
                 <span> My Profile </span>

@@ -1,5 +1,7 @@
 <template>
-  <Authenticator :hide-sign-up="true">
+  <AppLoadingIndicator v-if="useAppStore().loading" />
+
+  <Authenticator :hide-sign-up="true" v-else>
     <template v-slot:header>
       <div style="padding: var(--amplify-space-large); text-align: center">
         <h1 class="visually_hidden">Log In into Amplio-Suite</h1>
@@ -19,7 +21,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useAppStore } from "@/store/app.store";
 import { Authenticator } from "@aws-amplify/ui-vue";
+import AppLoadingIndicator from "@/components/AppLoadingIndicator.vue";
 </script>
 
 <style>

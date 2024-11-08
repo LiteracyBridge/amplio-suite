@@ -57,7 +57,7 @@ const existingUserRoles = computed(() => {
 
 onMounted(() => {
   if (props.open) {
-    form.roles = existingUserRoles.value;
+    form.roles = Array.from(new Set(existingUserRoles.value));
   }
 });
 </script>

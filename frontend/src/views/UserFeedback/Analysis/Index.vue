@@ -35,8 +35,8 @@ import { UserFeedbackMessage } from "@/models/uf_message";
 import AnalyseMessage from "./AnalyseMessage.vue";
 import MessagesBrowser from "./MessagesBrowser.vue";
 
-const feedbackStore = useFeedbackAnalysis(),
-  store = useAppStore();
+const feedbackStore = useFeedbackAnalysis();
+// const store = useAppStore();
 
 const activeTab = ref("analyse");
 const deploymentChanged = ref("");

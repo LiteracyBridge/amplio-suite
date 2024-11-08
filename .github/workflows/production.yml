@@ -3,7 +3,7 @@ name: Publish site to Production
 on:
   push:
     branches:
-      - stable
+     - stable
 
 jobs:
   build:

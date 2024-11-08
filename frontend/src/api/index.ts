@@ -1,5 +1,6 @@
 import { API_URL } from "@/models/constants";
 import { useAccountStore } from "@/store/account";
+import { notification } from "ant-design-vue";
 import axios from "axios";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -13,6 +14,35 @@ export class ApiRequest {
       })
       .then((response) => {
         return response.data.data as T[];
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: error.response.data.message,
+        });
+
+        throw new Error(error.response.data.message);
+      });
+  }
+
+  static async download(path: string){
+    return axios
+      .get(`${API_URL}/${path}`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${useAccountStore().user.token}`,
+        },
+      })
+      .then((response) => {
+        return response.data
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: error.response.data.message,
+        });
+
+        throw new Error(error.response.data.message);
       });
   }
 
@@ -25,7 +55,13 @@ export class ApiRequest {
       })
       .then((response) => {
         return response.data.data as T[];
-        // Add your code here
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: error.response.data.message,
+        });
+        throw new Error(error.response.data.message);
       });
   }
 
@@ -38,6 +74,13 @@ export class ApiRequest {
       })
       .then((response) => {
         return response.data.data as T[];
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: error.response.data.message,
+        });
+        throw new Error(error.response.data.message);
       });
   }
 
@@ -50,6 +93,13 @@ export class ApiRequest {
       })
       .then((response) => {
         return response.data.data as T[];
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: error.response.data.message,
+        });
+        throw new Error(error.response.data.message);
       });
   }
 }

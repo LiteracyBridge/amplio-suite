@@ -78,7 +78,6 @@ export const useRolesStore = defineStore("roles-store", {
             message: "Error assigning role",
             description: err.message,
           });
-          throw err;
         })
         .finally(() => (this.loading = false));
     },

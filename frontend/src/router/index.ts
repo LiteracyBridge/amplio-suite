@@ -7,6 +7,7 @@ import SignIn from "@/views/SignIn.vue";
 import { Hub } from "@aws-amplify/core";
 import { notification } from "ant-design-vue";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
+import { useAppStore } from "@/store/app.store";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -146,6 +147,18 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import("../views/TalkingBookAnalytics/Installation.vue"),
       },
+      {
+        path: "installations-details",
+        name: "tb_analytics.installations-details",
+        component: () =>
+          import("../views/TalkingBookAnalytics/InstallationDetails.vue"),
+      },
+      {
+        path: "inventory",
+        name: "tb_analytics.inventory",
+        component: () =>
+          import("../views/TalkingBookAnalytics/Inventory.vue"),
+      },
       // Tableau
       {
         path: "tableau",
@@ -270,6 +283,8 @@ function checkAuth(to: any, from: any, next: any) {
 
 
 export async function getUser() {
+  useAppStore().loading = true;
+
   return fetchAuthSession()
     .then(async (data) => {
       if (data) {
@@ -277,14 +292,20 @@ export async function getUser() {
           data.tokens.idToken.toString(),
         ).then((_resp) => {
           return router.push({ path: "/dashboard" })
+        }).finally(() => {
+          useAppStore().loading = false
         });
       }
 
       return useAccountStore().logout();
     })
     .catch((err) => {
+      useAppStore().loading = false;
+
       notification.error({ message: "Login failed", description: err.message });
       return useAccountStore().logout();
+    }).finally(() => {
+      useAppStore().loading = false
     });
 }
 

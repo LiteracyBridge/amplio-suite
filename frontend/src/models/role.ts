@@ -11,7 +11,7 @@ export enum Permission {
   manage_playlist = "manage_playlist",
   manage_prompt = "manage_prompt",
   manage_content = "manage_content",
-  manage_acm_checkout = "manage_acm_checkout",
+  manage_acm_checkout = "manage_checkout",
 
   // Analytics
   view_tb_analytics = "view_tb_analytics",

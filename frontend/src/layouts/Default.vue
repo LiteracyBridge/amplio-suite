@@ -7,7 +7,6 @@ import {
   Layout,
   LayoutContent,
   LayoutFooter,
-  LayoutHeader,
   Button,
   Space,
   FloatButton,
@@ -27,36 +26,25 @@ import {
 // import FeedbackModal from "@/components/FeedbackModal.vue";
 import axios from "axios";
 import { useAccountStore } from "@/store/account";
+import { useAppStore } from "@/store/app.store";
 
 // Set default axios headers
 axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.headers.common["Accept"] = "application/json";
-axios.defaults.headers.common["Authorization"] = `Bearer ${
-  useAccountStore().user?.token
-}`;
+axios.defaults.headers.common.Accept = "application/json";
+axios.defaults.headers.common.Authorization = `Bearer ${useAccountStore().user?.token}`;
 
-const userStore = useAccountStore();
-// const appStore = AppStore();
-
-const route = useRoute(),
-  router = useRouter();
+const appStore = useAppStore();
 
 const feedbackModalVisible = ref(false);
 
-// Configure AWS Amplify with the provided configuration
-// Amplify.configure(awsconfig);
-
 // On component mount, download the lookup data if online
-onMounted(async () => {});
-
-function openDiscourse() {
-  window.open("https://sbcimpact.discourse.group", "_blank", 'rel="noopener"').focus();
-}
+onMounted(async () => {
+  appStore.loading = true;
+});
 </script>
 
 <template>
-  <!-- TODO: add loading state to app store -->
-  <div v-if="false" id="app-loader" style="margin-top: auto">
+  <div v-if="appStore.loading" id="app-loader" style="margin-top: auto">
     <figure class="image" style="width: 300px">
       <img src="@/assets/images/logo.png" />
     </figure>
@@ -64,45 +52,33 @@ function openDiscourse() {
     <h2 class="mt-3 text-center" style="font-weight: 630; font-size: 20px">
       Loading app, please wait...
     </h2>
-    <!-- <GridLoader :loading="true" :use-logo="true"></GridLoader> -->
+    <!-- < u :loading="true" :use-logo="true"></> -->
   </div>
 
-  <div v-else>
-    <!-- <div v-if="!userStore.loggedIn">
-      <router-view :key="$route.fullPath"></router-view>
-    </div> -->
-
-    <ConfigProvider
-      :theme="{
-        token: {
-          colorPrimary: '#289b6a',
-        },
-      }"
-    >
-      <Layout>
-        <!-- <FeedbackModal
+  <Layout v-else>
+    <!-- <FeedbackModal
           :visible="feedbackModalVisible"
           @close="feedbackModalVisible = false"
         >
         </FeedbackModal> -->
 
-        <Sidebar></Sidebar>
+    <Sidebar></Sidebar>
 
-        <Layout>
-          <Header></Header>
+    <Layout>
+      <Header></Header>
 
-          <LayoutContent
-            :style="{
-              margin: '10px 16px 0px 16px',
-              padding: '24px',
-              background: '#ffffff',
-              minHeight: '280px',
-            }"
-          >
-            <router-view :key="$route.fullPath"></router-view>
+      <LayoutContent
+        :style="{
+          margin: '10px 16px 0px 16px',
+          padding: '24px',
+          background: '#ffffff',
+          minHeight: '280px',
+        }"
+      >
+        <router-view :key="$route.fullPath"></router-view>
 
-            <!-- TODO: Implement clickup integration for bug reports -->
-<!--
+        <!-- TODO: Implement clickup integration for bug reports -->
+        <!--
             <FloatButtonGroup
               trigger="hover"
               type="primary"
@@ -132,17 +108,15 @@ function openDiscourse() {
                 </template>
               </FloatButton>
             </FloatButtonGroup> -->
-          </LayoutContent>
+      </LayoutContent>
 
-          <LayoutFooter class="text-center">
-            <span>
-              © {{ new Date().getFullYear() }} AMPLIO NETWORK. All rights reserved.</span
-            >
-          </LayoutFooter>
-        </Layout>
-      </Layout>
-    </ConfigProvider>
-  </div>
+      <LayoutFooter class="text-center">
+        <span>
+          © {{ new Date().getFullYear() }} AMPLIO NETWORK. All rights reserved.</span
+        >
+      </LayoutFooter>
+    </Layout>
+  </Layout>
 </template>
 
 <style>
