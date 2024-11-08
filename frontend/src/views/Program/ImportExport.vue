@@ -215,29 +215,6 @@ async function onUpload() {
   showModal.value.showSpinner = false;
 }
 
-// async function onApprove() {
-//   if (!selectedFile.value) return;
-//   showModal.value.showSpinner = true;
-
-//   const result = await approveSpec({
-//     programId: specStore.programId,
-//     publish: publishImported,
-//   });
-
-//   console.log(result);
-//   if (result && result.status !== "ok") {
-//     notification.error({ message: result.errors.join() });
-//   } else {
-//     notification.success({
-//       message: `Program specification spreadsheet imported${
-//         publishImported.value ? " and published" : ""
-//       }.`,
-//     });
-//   }
-
-//   onCancel();
-// }
-
 function onCancel() {
   showModal.value = {
     visible: false,

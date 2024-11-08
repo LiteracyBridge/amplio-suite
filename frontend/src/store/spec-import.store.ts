@@ -102,7 +102,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					}
 				}
 
-				spec.deployments = deployments.map((d) => {
+				spec.deployments = deployments.map((d: any) => {
 					d.program_id = spec.general.program_id;
 
 					const playlists: Playlist[] = [];
@@ -153,7 +153,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					specLanguages[row.name] = row.code;
 				}
 
-				spec.recipients = recipients.map((row, index) => {
+				spec.recipients = recipients.map((row: any, index: number) => {
 					row.program_id = program.program_id;
 					row.groupname ??= row.group_name;
 					row.numhouseholds ??= 0;
