@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { ApiRequest } from "@/api";
 import { useAppStore } from "@/store/app.store";
 import { Recipient } from "@/models/recipient";
-import type { Deployment } from "@/models/deployment";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 	state: () => ({
