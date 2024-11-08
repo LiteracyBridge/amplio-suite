@@ -1,3 +1,7 @@
+## [0.3.1](https://github.com/LiteracyBridge/amplio-suite/compare/v0.3.0...v0.3.1) (2024-11-08)
+
+
+
 # [0.3.0](https://github.com/LiteracyBridge/amplio-suite/compare/v0.2.2...v0.3.0) (2024-11-01)
 
 
@@ -34,15 +38,6 @@
 ### Reverts
 
 * Revert "refactor(checkout): update checkout list endpoint" ([3db1b50](https://github.com/LiteracyBridge/amplio-suite/commit/3db1b502311a74f57f93ebc3405c4a77b8bc2170))
-
-
-
-## [0.1.4](https://github.com/LiteracyBridge/amplio-suite/compare/v0.1.3...v0.1.4) (2024-09-10)
-
-
-### Bug Fixes
-
-* tableau viz display error ([8adc52b](https://github.com/LiteracyBridge/amplio-suite/commit/8adc52b0fcceaa13d0f3e76fdc6ba26f3de99179))
 
 
 
