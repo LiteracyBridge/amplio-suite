@@ -87,6 +87,10 @@
           {{ record.numtbs }}
         </template>
 
+        <template v-if="column.key === 'variant'">
+          {{ record.variant }}
+        </template>
+
         <template v-if="column.key === 'affiliate'">
           <div>
             <Tooltip placement="topLeft">
@@ -116,19 +120,6 @@
                 ><CopyOutlined
               /></Button>
             </Tooltip>
-
-            <!-- <Popconfirm
-            title="Are you sure to delete this recipient?"
-            ok-text="Yes"
-            cancel-text="No"
-          >
-            <Button
-              class="mt-3"
-              :aria-label="`Delete message ${message.title}`"
-              :danger="true"
-              >Delete Message</Button
-            >
-          </Popconfirm> -->
           </div>
         </template>
       </template>
@@ -174,6 +165,7 @@ const columns = [
   { title: "Agent", key: "agent" },
   { title: "Language", key: "language" },
   { title: "# TBs", key: "numtbs", width: '70px' },
+  { title: "Variant", key: "variant", width: '70px' },
   { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
 ];
 

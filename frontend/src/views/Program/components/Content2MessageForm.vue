@@ -13,15 +13,7 @@
                   language,
                 })
             "
-            @language-deleted="
-              (code) =>
-                store.removeMessageLanguage({
-                  deployment: props.deployment,
-                  playlist,
-                  message,
-                  language: code,
-                })
-            "
+            @language-deleted="(code) => store.removeMessageLanguage(code, message)"
             :multiple="true"
           />
         </FormItem>

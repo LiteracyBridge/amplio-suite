@@ -1,7 +1,6 @@
 <template>
   <Row :gutter="8">
     <Col :sm="6" :lg="6" :xl="4">
-
       <Button type="text" @click="onToggleExpanded">
         <template #icon>
           <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
@@ -83,21 +82,6 @@ const props = defineProps<{
 
 const store = useProgramSpecStore();
 const expanded = ref(false);
-// export default {
-//   props: {
-//     deployment: {
-//       type: Object,
-//       required: true,
-//     },
-//     canRemove: {
-//       type: Boolean,
-//       default: false,
-//     },
-//     index: {
-//       type: Number,
-//       default: -1,
-//     },
-//   },
 const name = computed(() => {
   // get() {
   return props.deployment.deploymentname || props.deployment.deployment;
@@ -113,10 +97,9 @@ const name = computed(() => {
 
 const canAddPlaylist = computed(() => {
   // No playlists at all, or some playlists and final playlist has a name.
-  let canAdd =
+  const canAdd =
     props.deployment.playlists.length === 0 ||
     props.deployment.playlists[props.deployment.playlists.length - 1].title;
-  console.log(`Can add playlist for ${name.value}: ${canAdd}`);
   return canAdd;
 });
 
