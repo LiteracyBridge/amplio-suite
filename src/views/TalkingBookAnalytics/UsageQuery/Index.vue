@@ -67,13 +67,6 @@ const reports = [
 const modalVisible = ref(false);
 
 async function fetchStats(q: string, group: string) {
-  // if (query.value == null) {
-  //   return notification.error({
-  //     message: "Error",
-  //     description: "Please select a report to view",
-  //   });
-  // }
-
   if (selectedDeployment.value == null) {
     return notification.error({
       message: "Error",
@@ -96,9 +89,6 @@ async function fetchStats(q: string, group: string) {
     key: k,
   }));
   rows.value = results;
-
-  // console.log(results);
-  // TODO: fetch data from the server
 }
 
 // onMounted(async () => {
@@ -113,7 +103,7 @@ async function fetchStats(q: string, group: string) {
 </script>
 
 <template>
-  <PageHeader title="TB Installations" sub-title="Track talking book installations">
+  <PageHeader title="Usage Query" sub-title="">
     <template #extra>
       <Dropdown>
         <template #overlay>
@@ -172,43 +162,6 @@ async function fetchStats(q: string, group: string) {
     </Alert> -->
   </PageHeader>
 
-  <!-- <Divider></Divider> -->
-  <Row class="my-5">
-    <Tooltip>
-      <template #title
-        >An excess of Talking Books seem to have been installed. This may be fine, but
-        needs explanation.</template
-      >
-      <Tag color="purple"> &gt;100% Excess </Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title>Perfect!</template>
-      <Tag color="pink">100% Great! </Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Acceptable, provided there is a good rationale for missing
-        installations.</template
-      >
-      <Tag color="orange">85 - 99% Acceptable</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Unacceptable performance against contractual obligations.</template
-      >
-      <Tag color="green">60 - 84% Unacceptable</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title>This is a failure to meet our contractual obligations.</template>
-      <Tag color="cyan">21 - 59% Failed</Tag>
-    </Tooltip>
-    <Tooltip>
-      <template #title
-        >Is the community / group still participating in the Program?</template
-      >
-      <Tag color="blue">0 - 20% Dead</Tag>
-    </Tooltip>
-  </Row>
 
   <Table
     :columns="columns"
@@ -220,92 +173,6 @@ async function fetchStats(q: string, group: string) {
     :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
     class="ant-table-striped"
   >
-    <template #headerCell="{ column }">
-      <template v-if="column.key === 'installed'">
-        <Tooltip>
-          <template #title
-            >The number of Talking Books reported to have been installed.</template
-          >
-          # Installed
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'days_to_install'">
-        <Tooltip>
-          <template #title
-            >The average number of days before the Talking Books were installed with the
-            Deployment.</template
-          >
-          Days to Install
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'agent'">
-        <Tooltip>
-          <template #title>Who installed the content onto the Talking Books.</template>
-          Updated By
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'talkingbook_id'">
-        <Tooltip>
-          <template #title
-            >TB-Loader ID of the laptop/phone that performed the update of the Talking
-            Books.</template
-          >
-          TBLoader ID
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'test_installs'">
-        <Tooltip>
-          <template #title
-            >Number of installations to this community / group for which the installer
-            checked</template
-          >
-          # Test Installs
-        </Tooltip>
-      </template>
-    </template>
-
-    <template #bodyCell="{ record, column }">
-      <template v-if="column.key === 'percent_installed'">
-        <Tag
-          class="w-full text-center"
-          v-if="record.percent_installed > 100"
-          color="purple"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed == 100"
-          color="pink"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
-          color="orange"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
-          color="green"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
-          color="cyan"
-        >
-          {{ record.installed }}
-        </Tag>
-        <Tag class="w-full text-center" v-else color="blue">
-          {{ record.installed }}
-        </Tag>
-      </template>
-    </template>
   </Table>
 
   <Modal v-model:open="modalVisible" title="Basic Modal">
