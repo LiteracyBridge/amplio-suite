@@ -99,6 +99,13 @@ const config = ref({
             <span role="link"> Inventory</span>
           </router-link>
         </MenuItem>
+        <MenuItem key="usage-query">
+          <template #icon> <BarChartOutlined /> </template>
+
+          <router-link to="/tb-analytics/usage-query">
+            <span role="link"> Usage Query </span>
+          </router-link>
+        </MenuItem>
         <MenuItem key="tableau">
           <template #icon> <BarChartOutlined /> </template>
 

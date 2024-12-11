@@ -38,5 +38,16 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 					this.loading = false;
 				});
 		},
+		async getUsage(opts: {deployment: number, columns: string, group: string}) {
+			this.loading = true;
+
+			return ApiRequest.get<Record<string, any>>(
+				`tb-analytics/${useAppStore().programCode}/usage?deployment=${opts.deployment}&columns=${opts.columns}&group=${opts.group}`,
+			)
+				.then((resp) => resp)
+				.finally(() => {
+					this.loading = false;
+				});
+		},
 	},
 });
