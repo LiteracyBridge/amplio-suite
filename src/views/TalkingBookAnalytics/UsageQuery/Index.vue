@@ -34,33 +34,39 @@ const reports = [
     key: "district-cat",
     title: "Usage by Playlist Category",
     query:
-      'category AS "Category", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"',
-    group: "category",
+      'deploymentnumber AS "Deployment", category AS "Category", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"',
+    group: "category,deploymentnumber",
   },
   {
     key: "district",
     title: "Usage by District",
-    query: "deploymentnumber,district,sum(completions),sum(played_seconds)",
+    query: `deploymentnumber  AS "Deployment", district AS "District", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
+    group: "deploymentnumber,district",
   },
   {
     key: "msg",
     title: "Usage by Message",
-    query: "deploymentnumber,title,sum(completions),sum(played_seconds)",
+    query: `deploymentnumber  AS "Deployment", title AS "Title", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
+    group: "deploymentnumber,title",
   },
   {
     key: "msg-in-district",
     title: "Usage by Message in District",
-    query: "deploymentnumber,district,title,sum(completions),sum(played_seconds)",
+    query: `deploymentnumber  AS "Deployment", district AS "District", title AS "Title", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
+    group: "deploymentnumber,title,district",
   },
   {
     key: "lang-in-district",
     title: "Usage by Language in District",
-    query: "deploymentnumber,district,language,sum(completions),sum(played_seconds)",
+    query: `deploymentnumber  AS "Deployment", district AS "District", language AS "Language", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
+    group: "deploymentnumber,district,language",
+
   },
   {
     key: "playlist-in-district",
     title: "Usage by Playlist in District",
-    query: "deploymentnumber,district,category,sum(completions),sum(played_seconds)",
+    query: `deploymentnumber  AS "Deployment", district AS "District", category AS "Category", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
+    group: "deploymentnumber,district,category",
   },
   { key: "custom", title: "Custom Report", query: null },
 ];
@@ -75,7 +81,7 @@ async function fetchStats(q: string, group: string) {
   }
 
   const results = await store.getUsage({
-    deployment: selectedDeployment.value,
+    deployment: selectedDeployment.value === "all" ? null : selectedDeployment.value,
     columns: q,
     group,
   });
@@ -108,6 +114,12 @@ async function fetchStats(q: string, group: string) {
       <Dropdown>
         <template #overlay>
           <Menu>
+            <MenuItem
+              key="all"
+              @click="selectedDeployment = 'all'"
+            >
+              <span>All Deployments</span>
+            </MenuItem>
             <MenuItem
               :key="d.deploymentnumber"
               v-for="d in appStore.deployments"
