@@ -4,7 +4,7 @@ import { COLUMNS } from "./usage-query-builder";
 import { CSS } from "@/utils";
 
 const emit = defineEmits<{
-  (event: "save", query: string): string;
+  (event: "save", col: string, group: string): string;
   (event: "delete"): void;
 }>();
 
@@ -28,6 +28,7 @@ const normalizeCol = ref<{
 
 function buildQuery() {
   let q = "";
+  let group = null;
 
   if (isAggregate.value && isNormalize.value) {
     q = `
@@ -35,19 +36,21 @@ function buildQuery() {
       ${normalizeCol.value.aggregation.toUpperCase()}(${normalizeCol.value.name}))
       AS "${aggregateCol.value.heading} / ${normalizeCol.value.heading}"
     `.trim();
-    emit("save", q);
+
+    emit("save", q, group);
     return;
   }
 
   if (isAggregate.value) {
     q = `${aggregateCol.value.aggregation.toUpperCase()}(${
       aggregateCol.value.name
-    }) AS "${aggregateCol.value.heading}"`;
-  } else {
-    q = `${aggregateCol.value.name} AS "${aggregateCol.value.heading}"`;
+      }) AS "${aggregateCol.value.heading}"`;
+    } else {
+    group = `"${aggregateCol.value.heading}"`;
+    q = `${aggregateCol.value.name} AS ${group}`;
   }
 
-  emit("save", q.trim());
+  emit("save", q.trim(), group);
   return q;
 }
 

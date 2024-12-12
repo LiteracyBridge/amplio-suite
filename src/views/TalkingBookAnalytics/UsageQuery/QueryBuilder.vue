@@ -22,23 +22,28 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (event: "save", query: string): string;
+  (event: "save", columns: string, group: string): string;
   (event: "close"): void;
 }>();
 
-const columns = ref<string[]>([]);
+const columns = ref<{ col: string; group: string }[]>([]);
 const visible = ref(props.visible);
 
 function saveQuery() {
-  const arr = Array.from(new Set(columns.value)).filter((v) => v != null);
+  const cols = Array.from(new Set(columns.value.map((i) => i.col))).filter(
+    (v) => v != null && v !== ""
+  );
+  const group = Array.from(new Set(columns.value.map((i) => i.group))).filter(
+    (v) => v != null && v !== ""
+  );
   visible.value = false;
 
-  emit("save", arr.join(", "));
+  emit("save", cols.join(", "), group.join(", "));
   emit("close");
 }
 
 function addColumn() {
-  columns.value.push(null);
+  columns.value.push({ col: null, group: null });
   console.log(columns.value);
 }
 </script>
@@ -59,7 +64,12 @@ function addColumn() {
       <div v-for="(_, idx) in columns">
         <ColumnBuilder
           :key="idx"
-          @save="(q) => (columns[idx] = q)"
+          @save="
+            (q, g) => {
+              columns[idx].col = q;
+              columns[idx].group = g;
+            }
+          "
           @delete="columns = columns.splice(idx, 1)"
         />
       </div>

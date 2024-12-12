@@ -185,7 +185,7 @@ async function fetchStats(q: string, group: string) {
   <div v-if="modalVisible">
     <QueryBuilder
       :visible="modalVisible"
-      @save="(q) => fetchStats(q, '')"
+      @save="(q, g) => fetchStats(q, g)"
       @close="modalVisible = false"
     />
   </div>
