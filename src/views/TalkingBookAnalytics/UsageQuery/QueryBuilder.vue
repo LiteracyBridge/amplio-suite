@@ -20,14 +20,21 @@ import ColumnBuilder from "./ColumnBuilder.vue";
 const props = defineProps<{
   visible?: boolean;
 }>();
-const emit = defineEmits<(event: "save", query: string) => string>();
+
+const emit = defineEmits<{
+  (event: "save", query: string): string;
+  (event: "close"): void;
+}>();
 
 const columns = ref<string[]>([]);
-const modalVisible = ref(false);
+const visible = ref(props.visible);
 
 function saveQuery() {
-  const arr = Array.from(new Set(columns.value));
+  const arr = Array.from(new Set(columns.value)).filter((v) => v != null);
+  visible.value = false;
+
   emit("save", arr.join(", "));
+  emit("close");
 }
 
 function addColumn() {
@@ -38,55 +45,26 @@ function addColumn() {
 
 <template>
   <Modal
-    v-model:open="props.visible"
+    v-model:open="visible"
     :mask-closable="false"
     @ok="saveQuery"
     ok-text="Save"
+    @cancel="
+      visible = false;
+      emit('close');
+    "
+    title="Edit Query"
   >
-    <template #title>
-      <Button @click="addColumn()">Add Column</Button>
-    </template>
-
     <div>
       <div v-for="(_, idx) in columns">
-        <ColumnBuilder :key="idx" @save-query="(q) => (columns[idx] = q)" />
-      </div>
-
-      <div class="query-builder form-inline" id="builder-basic">
-        <div class="rules-group-container rules-group-header">
-          <div class="btn-group pull-right group-actions">
-            <button
-              class="btn btn-xs btn-success"
-              data-add="group"
-              id="add-column"
-              type="button"
-            >
-              <i class="glyphicon glyphicon-plus-sign"></i> Add Column
-            </button>
-          </div>
-          <div class="btn-group group-conditions">
-            <label class="btn btn-xs btn-primary active disabled">
-              <input
-                disabled
-                name="builder-basic_group_0_cond"
-                type="radio"
-                value="AND"
-              />
-              SELECT
-            </label>
-            <!--<div class="error-container" data-toggle="tooltip"><i
-                            class="glyphicon glyphicon-warning-sign"></i>
-                    </div>-->
-          </div>
-          <div class="rules-list" id="columns-list"></div>
-        </div>
-
-        <!-- div>
-                <p> SELECT DISTINCT <span id="query-display-query"></span> FROM usage-info;</p>
-                <p> Strings: <span id="query-display-strings"></span></p>
-                <p> Toolips: <span id="query-display-tooltips"></span></p>
-            </div -->
+        <ColumnBuilder
+          :key="idx"
+          @save="(q) => (columns[idx] = q)"
+          @delete="columns = columns.splice(idx, 1)"
+        />
       </div>
     </div>
+
+    <Button @click="addColumn()" type="primary" ghost class="mt-5">Add Column</Button>
   </Modal>
 </template>

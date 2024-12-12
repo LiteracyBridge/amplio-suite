@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { COLUMNS } from "./usage-query-builder";
 import { CSS } from "@/utils";
 
-const emit = defineEmits<(event: "saveQuery", query: string) => string>();
+const emit = defineEmits<{
+  (event: "save", query: string): string;
+  (event: "delete"): void;
+}>();
 
 const isAggregate = ref(false);
 const isNormalize = ref(false);
@@ -26,6 +29,16 @@ const normalizeCol = ref<{
 function buildQuery() {
   let q = "";
 
+  if (isAggregate.value && isNormalize.value) {
+    q = `
+      (${aggregateCol.value.aggregation.toUpperCase()}(${aggregateCol.value.name})/
+      ${normalizeCol.value.aggregation.toUpperCase()}(${normalizeCol.value.name}))
+      AS "${aggregateCol.value.heading} / ${normalizeCol.value.heading}"
+    `.trim();
+    emit("save", q);
+    return;
+  }
+
   if (isAggregate.value) {
     q = `${aggregateCol.value.aggregation.toUpperCase()}(${
       aggregateCol.value.name
@@ -34,14 +47,7 @@ function buildQuery() {
     q = `${aggregateCol.value.name} AS "${aggregateCol.value.heading}"`;
   }
 
-  if (isNormalize.value) {
-    q = `(${q} / ${normalizeCol.value.aggregation.toUpperCase()}(${
-      normalizeCol.value.name
-    }) AS "${normalizeCol.value.heading}")`;
-  }
-
-  console.log(q);
-  emit("saveQuery", q);
+  emit("save", q.trim());
   return q;
 }
 
@@ -69,7 +75,18 @@ const handleOptionChange = (e: Event) => {
   if (target.value === "normalize") {
     isNormalize.value = !isNormalize.value;
   }
+  if (target.value === "delete") {
+    emit("delete");
+  }
 };
+
+onMounted(() => {
+  // select first aggregate col by default
+  const col = COLUMNS[0];
+  col.aggregation ??= "count";
+  // @ts-ignore
+  aggregateCol.value = col;
+});
 </script>
 
 <template>
@@ -84,7 +101,10 @@ const handleOptionChange = (e: Event) => {
       </div>
 
       <select :class="CSS.select" @change="($e) => handleColumnChange($e, true)">
-        <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
+        <option selected>Choose Column</option>
+        <option v-for="(col, idx) in COLUMNS" :value="col.name">
+          {{ col.heading }}
+        </option>
       </select>
 
       <div v-if="isNormalize">
@@ -95,6 +115,7 @@ const handleOptionChange = (e: Event) => {
         </select>
 
         <select :class="CSS.select" @change="($e) => handleColumnChange($e, false)">
+          <option selected>Choose Column</option>
           <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
         </select>
       </div>
