@@ -15,11 +15,11 @@ import {
   Modal,
   notification,
 } from "ant-design-vue";
-import { groupBy, sumBy, uniqBy } from "lodash";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import type { Deployment } from "@/models/deployment";
 import { DownOutlined } from "@ant-design/icons-vue";
+import QueryBuilder from "./QueryBuilder.vue";
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
@@ -60,7 +60,6 @@ const reports = [
     title: "Usage by Language in District",
     query: `deploymentnumber  AS "Deployment", district AS "District", language AS "Language", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
     group: "deploymentnumber,district,language",
-
   },
   {
     key: "playlist-in-district",
@@ -68,7 +67,7 @@ const reports = [
     query: `deploymentnumber  AS "Deployment", district AS "District", category AS "Category", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
     group: "deploymentnumber,district,category",
   },
-  { key: "custom", title: "Custom Report", query: null },
+  { key: "custom", title: "Custom Report", query: "" },
 ];
 const modalVisible = ref(false);
 
@@ -114,10 +113,7 @@ async function fetchStats(q: string, group: string) {
       <Dropdown>
         <template #overlay>
           <Menu>
-            <MenuItem
-              key="all"
-              @click="selectedDeployment = 'all'"
-            >
+            <MenuItem key="all" @click="selectedDeployment = 'all'">
               <span>All Deployments</span>
             </MenuItem>
             <MenuItem
@@ -174,7 +170,6 @@ async function fetchStats(q: string, group: string) {
     </Alert> -->
   </PageHeader>
 
-
   <Table
     :columns="columns"
     :data-source="rows"
@@ -188,9 +183,9 @@ async function fetchStats(q: string, group: string) {
   </Table>
 
   <Modal v-model:open="modalVisible" title="Basic Modal">
-    <p>Some contents...</p>
-    <p>Some contents...</p>
-    <p>Some contents...</p>
+    <QueryBuilder />
+
+
     <div class="query-builder form-inline" id="builder-basic">
       <div class="rules-group-container rules-group-header">
         <div class="btn-group pull-right group-actions">

@@ -1,3 +1,8 @@
+export const CSS = {
+	select:
+		"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+};
+
 export const DeploymentInterval = Object.freeze({
 	one_month: 1,
 	one_quarter: 3,
@@ -27,7 +32,7 @@ export function toTitleCase(str: string) {
 }
 
 export function pad(num: number, len: number): string {
-  let zeros = new Array(5).join('0');
+	let zeros = new Array(5).join("0");
 
 	const str = String(num);
 	const diff = len - str.length;
