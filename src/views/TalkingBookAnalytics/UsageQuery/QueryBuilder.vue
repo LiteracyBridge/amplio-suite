@@ -59,8 +59,9 @@ function addColumn() {
       emit('close');
     "
     title="Edit Query"
+    width="800px"
   >
-    <div>
+    <div id="builder">
       <div v-for="(_, idx) in columns">
         <ColumnBuilder
           :key="idx"
@@ -78,3 +79,16 @@ function addColumn() {
     <Button @click="addColumn()" type="primary" ghost class="mt-5">Add Column</Button>
   </Modal>
 </template>
+
+<style lang="css" scoped>
+#builder {
+  padding: 10px 10px 6px;
+  border: 1px solid #dcc896;
+  background: hsla(45, 80%, 90%, 0.5);
+}
+
+#builder > div {
+  background: white;
+  display: inline
+}
+</style>

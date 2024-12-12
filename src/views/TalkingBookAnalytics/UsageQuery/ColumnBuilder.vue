@@ -44,8 +44,8 @@ function buildQuery() {
   if (isAggregate.value) {
     q = `${aggregateCol.value.aggregation.toUpperCase()}(${
       aggregateCol.value.name
-      }) AS "${aggregateCol.value.heading}"`;
-    } else {
+    }) AS "${aggregateCol.value.heading}"`;
+  } else {
     group = `"${aggregateCol.value.heading}"`;
     q = `${aggregateCol.value.name} AS ${group}`;
   }
@@ -93,44 +93,51 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="row justify-between inline-block">
-    <div class="w-2/3">
-      <div v-if="isAggregate">
-        <select :class="CSS.select">
-          <option :value="aggregateCol?.aggregation" selected>
-            {{ aggregateCol?.aggregation }}
-          </option>
-        </select>
-      </div>
-
-      <select :class="CSS.select" @change="($e) => handleColumnChange($e, true)">
-        <option selected>Choose Column</option>
-        <option v-for="(col, idx) in COLUMNS" :value="col.name">
-          {{ col.heading }}
+  <div class="grid grid-rows-4 grid-flow-col gap-4">
+      <select :class="CSS.select" class="max-w-fit" v-if="isAggregate">
+        <option :value="aggregateCol?.aggregation" selected>
+          {{ aggregateCol?.aggregation }}
         </option>
       </select>
 
-      <div v-if="isNormalize">
-        <select :class="CSS.select">
-          <option :value="normalizeCol?.aggregation" selected>
-            {{ normalizeCol?.aggregation }}
-          </option>
-        </select>
+    <select
+      :class="CSS.select"
+      @change="($e) => handleColumnChange($e, true)"
+      class="max-w-fit flex"
+    >
+      <option selected>Choose Column</option>
+      <option v-for="(col, idx) in COLUMNS" :value="col.name">
+        {{ col.heading }}
+      </option>
+    </select>
 
-        <select :class="CSS.select" @change="($e) => handleColumnChange($e, false)">
-          <option selected>Choose Column</option>
-          <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
-        </select>
-      </div>
-    </div>
+    <div v-if="isNormalize">
+      <select :class="CSS.select" class="max-w-fit">
+        <option :value="normalizeCol?.aggregation" selected>
+          {{ normalizeCol?.aggregation }}
+        </option>
+      </select>
 
-    <div>
-      <select name="" id="options" @change="handleOptionChange">
-        <option value="" selected>Options</option>
-        <option value="aggregate">Aggregate</option>
-        <option value="normalize">Normalize</option>
-        <option value="delete">Delete</option>
+      <select
+        :class="CSS.select"
+        @change="($e) => handleColumnChange($e, false)"
+        class="max-w-fit"
+      >
+        <option selected>Choose Column</option>
+        <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
       </select>
     </div>
+
+    <select
+      :class="CSS.select"
+      id="options"
+      @change="handleOptionChange"
+      class="max-w-fit"
+    >
+      <option value="" selected>Options</option>
+      <option value="aggregate">Aggregate</option>
+      <option value="normalize" :disabled="!isAggregate">Normalize</option>
+      <option value="delete">Delete</option>
+    </select>
   </div>
 </template>
