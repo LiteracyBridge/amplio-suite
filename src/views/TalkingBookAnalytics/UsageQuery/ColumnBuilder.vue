@@ -3,6 +3,8 @@ import { ref } from "vue";
 import { COLUMNS } from "./usage-query-builder";
 import { CSS } from "@/utils";
 
+const emit = defineEmits<(event: "saveQuery", query: string) => string>();
+
 const isAggregate = ref(false);
 const isNormalize = ref(false);
 
@@ -33,12 +35,13 @@ function buildQuery() {
   }
 
   if (isNormalize.value) {
-    q += `, ${normalizeCol.value.aggregation.toUpperCase()}(${
+    q = `(${q} / ${normalizeCol.value.aggregation.toUpperCase()}(${
       normalizeCol.value.name
-    }) AS "${normalizeCol.value.heading}"`;
+    }) AS "${normalizeCol.value.heading}")`;
   }
 
-  console.log(q)
+  console.log(q);
+  emit("saveQuery", q);
   return q;
 }
 
@@ -70,7 +73,7 @@ const handleOptionChange = (e: Event) => {
 </script>
 
 <template>
-  <div class="row justify-between">
+  <div class="row justify-between inline-block">
     <div class="w-2/3">
       <div v-if="isAggregate">
         <select :class="CSS.select">
