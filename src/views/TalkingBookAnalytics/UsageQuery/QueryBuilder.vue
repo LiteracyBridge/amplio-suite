@@ -61,8 +61,13 @@ function addColumn() {
     title="Edit Query"
     width="800px"
   >
-    <div id="builder">
-      <div v-for="(_, idx) in columns">
+    <div id="query-body">
+      <div class="top-labels">
+        <div class="query-label">SELECT</div>
+        <button class="add-column-btn"><span class="plus">+</span> Add Column</button>
+      </div>
+
+      <div v-for="(_, idx) in columns" class="options-body">
         <ColumnBuilder
           :key="idx"
           @save="
@@ -81,14 +86,38 @@ function addColumn() {
 </template>
 
 <style lang="css" scoped>
-#builder {
-  padding: 10px 10px 6px;
-  border: 1px solid #dcc896;
-  background: hsla(45, 80%, 90%, 0.5);
+#query-body {
+  margin: 20px;
+  border-radius: 5px;
+  border: 2px solid #cec8b0;
+  background-color: #fdf7e9;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
 }
 
-#builder > div {
-  background: white;
-  display: inline
+.top-labels {
+  display: flex;
+  justify-content: space-between;
 }
+
+.add-column-btn {
+  background-color: #5db558;
+}
+
+.options-body {
+  position: relative;
+  padding-left: 20px;
+}
+
+.options-body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 88%;
+  background-color: #d0cdc6;
+}
+
 </style>

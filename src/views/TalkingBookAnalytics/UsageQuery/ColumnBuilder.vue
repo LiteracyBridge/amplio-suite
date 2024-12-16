@@ -93,17 +93,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="grid grid-rows-4 grid-flow-col gap-4">
-      <select :class="CSS.select" class="max-w-fit" v-if="isAggregate">
-        <option :value="aggregateCol?.aggregation" selected>
-          {{ aggregateCol?.aggregation }}
-        </option>
-      </select>
+  <div class="query-row">
+    <select :class="CSS.select" class="drop-dwn-1" v-if="isAggregate">
+      <option :value="aggregateCol?.aggregation" selected>
+        {{ aggregateCol?.aggregation }}
+      </option>
+    </select>
 
     <select
       :class="CSS.select"
       @change="($e) => handleColumnChange($e, true)"
-      class="max-w-fit flex"
+      class="drop-dwn-1"
     >
       <option selected>Choose Column</option>
       <option v-for="(col, idx) in COLUMNS" :value="col.name">
@@ -112,7 +112,7 @@ onMounted(() => {
     </select>
 
     <div v-if="isNormalize">
-      <select :class="CSS.select" class="max-w-fit">
+      <select :class="CSS.select" class="drop-dwn-1">
         <option :value="normalizeCol?.aggregation" selected>
           {{ normalizeCol?.aggregation }}
         </option>
@@ -121,7 +121,7 @@ onMounted(() => {
       <select
         :class="CSS.select"
         @change="($e) => handleColumnChange($e, false)"
-        class="max-w-fit"
+        class="drop-dwn-1"
       >
         <option selected>Choose Column</option>
         <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
@@ -130,9 +130,8 @@ onMounted(() => {
 
     <select
       :class="CSS.select"
-      id="options"
+      class="drop-dwn-2"
       @change="handleOptionChange"
-      class="max-w-fit"
     >
       <option value="" selected>Options</option>
       <option value="aggregate">Aggregate</option>
@@ -141,3 +140,138 @@ onMounted(() => {
     </select>
   </div>
 </template>
+
+<style scoped>
+.query-builder {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 900px;
+  margin: 0 auto;
+}
+
+.query-header {
+  background-color: #3979b4;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px 4px 0 0;
+}
+
+/* .query-body {
+  margin: 20px;
+  border-radius: 5px;
+  border: 2px solid #cec8b0;
+  background-color: #fdf7e9;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+} */
+
+.query-row {
+  display: flex;
+  position: relative;
+  align-items: start;
+  justify-content: space-between;
+  background-color: #fffefc;
+  margin: 5px -17px;
+  padding: 5px 5px 5px 20px;
+}
+
+.query-row::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20px;
+  height: 3px;
+  background-color: #d0cdc6;
+}
+
+.drop-dwn-1,
+.query-row input {
+  margin-right: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: transparent;
+}
+
+.drop-dwn-2 {
+  background-color: #60bede;
+  color: whitesmoke;
+  border: none;
+  border-radius: 2px;
+}
+
+.query-label {
+  background-color: #7191ac;
+  color: whitesmoke;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.add-column-btn {
+  display: flex;
+  align-items: center;
+  background-color: #5cb85c;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.plus {
+  background-color: white;
+  border-radius: 50%;
+  color: #5db558;
+  padding: 2px;
+  display: flex;
+  font-weight: bolder;
+  justify-content: center;
+  align-items: center;
+  height: 10px;
+  width: 10px;
+}
+
+.add-column-btn:hover {
+  background-color: #4cae4c;
+}
+
+.query-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+}
+
+.footer-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #ddd;
+  color: #333;
+}
+
+.btn-ok {
+  background-color: #428bca;
+  color: #fff;
+}
+
+.footer-btn:hover {
+  opacity: 0.9;
+}
+</style>
