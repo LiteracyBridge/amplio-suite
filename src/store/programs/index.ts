@@ -10,7 +10,7 @@ export const useProgramsStore = defineStore("programs", {
   state: () => ({
     loading: false,
     organisationPrograms: [] as Program[],
-    programs: [],
+    programs: [] as any[],
   }),
   actions: {
     // requestInit() {
@@ -87,7 +87,7 @@ export const useProgramsStore = defineStore("programs", {
       this.loading = true;
 
       return ApiRequest.delete<Program>(
-        `programs/${opts.programId}/organisations/${opts.organisationId}`,
+        `programs/${opts.programId}/organisations/${opts.organisationId}`
       )
         .then(async (resp) => {
           this.organisationPrograms = resp;
@@ -104,7 +104,7 @@ export const useProgramsStore = defineStore("programs", {
     async removeUserFromProgram(opts: { programId: number; userId: number }) {
       this.loading = true;
       return ApiRequest.delete<Program>(
-        `programs/${opts.programId}/users?user_id=${opts.userId}`,
+        `programs/${opts.programId}/users?user_id=${opts.userId}`
       )
         .then(async (resp) => {
           this.organisationPrograms = resp;

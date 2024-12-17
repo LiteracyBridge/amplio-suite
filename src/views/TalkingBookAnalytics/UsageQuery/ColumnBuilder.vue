@@ -94,17 +94,13 @@ onMounted(() => {
 
 <template>
   <div class="query-row">
-    <select :class="CSS.select" class="drop-dwn-1" v-if="isAggregate">
+    <select class="drop-dwn-1" v-if="isAggregate">
       <option :value="aggregateCol?.aggregation" selected>
         {{ aggregateCol?.aggregation }}
       </option>
     </select>
 
-    <select
-      :class="CSS.select"
-      @change="($e) => handleColumnChange($e, true)"
-      class="drop-dwn-1"
-    >
+    <select @change="($e) => handleColumnChange($e, true)" class="drop-dwn-1">
       <option selected>Choose Column</option>
       <option v-for="(col, idx) in COLUMNS" :value="col.name">
         {{ col.heading }}
@@ -112,27 +108,24 @@ onMounted(() => {
     </select>
 
     <div v-if="isNormalize">
-      <select :class="CSS.select" class="drop-dwn-1">
+      <select class="drop-dwn-1">
         <option :value="normalizeCol?.aggregation" selected>
           {{ normalizeCol?.aggregation }}
         </option>
       </select>
 
       <select
-        :class="CSS.select"
         @change="($e) => handleColumnChange($e, false)"
         class="drop-dwn-1"
       >
         <option selected>Choose Column</option>
-        <option v-for="col in COLUMNS" :value="col.name">{{ col.heading }}</option>
+        <option v-for="col in COLUMNS" :value="col.name">
+          {{ col.heading }}
+        </option>
       </select>
     </div>
 
-    <select
-      :class="CSS.select"
-      class="drop-dwn-2"
-      @change="handleOptionChange"
-    >
+    <select class="drop-dwn-2" @change="handleOptionChange">
       <option value="" selected>Options</option>
       <option value="aggregate">Aggregate</option>
       <option value="normalize" :disabled="!isAggregate">Normalize</option>
@@ -202,7 +195,8 @@ onMounted(() => {
   background-color: #60bede;
   color: whitesmoke;
   border: none;
-  border-radius: 2px;
+  border-radius: 3px;
+  padding: 3px;
 }
 
 .query-label {

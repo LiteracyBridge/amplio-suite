@@ -64,11 +64,13 @@ function addColumn() {
     <div id="query-body">
       <div class="top-labels">
         <div class="query-label">SELECT</div>
-        <button class="add-column-btn"><span class="plus">+</span> Add Column</button>
+        <button class="add-column-btn">
+          <span class="plus">+</span> Add Column
+        </button>
       </div>
-
-      <div v-for="(_, idx) in columns" class="options-body">
+      <div class="options-body">
         <ColumnBuilder
+          v-for="(_, idx) in columns"
           :key="idx"
           @save="
             (q, g) => {
@@ -81,7 +83,9 @@ function addColumn() {
       </div>
     </div>
 
-    <Button @click="addColumn()" type="primary" ghost class="mt-5">Add Column</Button>
+    <Button @click="addColumn()" type="primary" ghost class="mt-5"
+      >Add Column</Button
+    >
   </Modal>
 </template>
 
@@ -101,8 +105,39 @@ function addColumn() {
   justify-content: space-between;
 }
 
+.query-label {
+  background-color: #7191ac;
+  color: whitesmoke;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px;
+  border-radius: 4px;
+}
 .add-column-btn {
+  display: flex;
+  align-items: center;
+  background-color: #5cb85c;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* .add-column-btn {
   background-color: #5db558;
+} */
+.add-column-btn {
+  display: flex;
+  align-items: center;
+  background-color: #5cb85c;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .options-body {
@@ -116,8 +151,7 @@ function addColumn() {
   top: 0;
   left: 0;
   width: 3px;
-  height: 88%;
+  height: 95%;
   background-color: #d0cdc6;
 }
-
 </style>

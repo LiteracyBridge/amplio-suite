@@ -8,7 +8,7 @@ export const useRoadmapStore = defineStore("roadmap", {
     status: "",
     programId: "",
 
-    roadmap: [],
+    roadmap: [] as any[],
   }),
 
   actions: {
