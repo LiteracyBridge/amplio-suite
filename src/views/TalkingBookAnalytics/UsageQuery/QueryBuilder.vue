@@ -1,18 +1,9 @@
 <script lang="ts" setup>
 import {
-  Tag,
   Row,
-  Tooltip,
-  Table,
-  PageHeader,
-  Divider,
+  Col,
   Button,
-  Dropdown,
-  MenuItem,
-  Alert,
-  Menu,
   Modal,
-  notification,
 } from "ant-design-vue";
 import { ref } from "vue";
 import ColumnBuilder from "./ColumnBuilder.vue";
@@ -59,15 +50,23 @@ function addColumn() {
       emit('close');
     "
     title="Edit Query"
-    width="800px"
+    width="900px"
   >
     <div id="query-body">
-      <div class="top-labels">
+      <!-- <div class="top-labels">
         <div class="query-label">SELECT</div>
         <button class="add-column-btn">
-          <span class="plus">+</span> Add Column
+
         </button>
-      </div>
+      </div> -->
+      <Row align="middle" class="my-1">
+        <Col :span="6"><span class="float-left query-label">SELECT</span></Col>
+        <Col :span="18" >
+          <Button @click="addColumn()" :inline=true type="primary" ghost class="float-right"
+            ><span class="plus mr-1">+</span> Add Column</Button
+          ></Col
+        >
+      </Row>
       <div class="options-body">
         <ColumnBuilder
           v-for="(_, idx) in columns"
@@ -83,9 +82,9 @@ function addColumn() {
       </div>
     </div>
 
-    <Button @click="addColumn()" type="primary" ghost class="mt-5"
-      >Add Column</Button
-    >
+    <!-- <Button @click="addColumn()" type="primary" ghost class="mt-5"
+      >Add Column</Button>
+    > -->
   </Modal>
 </template>
 
@@ -93,9 +92,9 @@ function addColumn() {
 #query-body {
   margin: 20px;
   border-radius: 5px;
+  padding: 30px;
   border: 2px solid #cec8b0;
   background-color: #fdf7e9;
-  padding: 30px;
   display: flex;
   flex-direction: column;
 }
@@ -143,6 +142,7 @@ function addColumn() {
 .options-body {
   position: relative;
   padding-left: 20px;
+  margin-left: 10px;
 }
 
 .options-body::before {
