@@ -31,7 +31,6 @@ jobs:
 
     - name: Build frontend
       run: |
-        cd frontend
         yarn config set "strict-ssl" false -g
         yarn install
         yarn production-build
