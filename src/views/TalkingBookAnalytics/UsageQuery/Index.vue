@@ -183,7 +183,7 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
-      <Dropdown v-if="deploymentDates.length > 0">
+      <Dropdown>
         <MenuItem
           key="all"
           @click="
