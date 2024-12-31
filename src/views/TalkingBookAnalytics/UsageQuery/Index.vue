@@ -80,7 +80,7 @@ async function fetchStats(q: string, group: string) {
     deployment: selectedDeployment.value === "all" ? null : selectedDeployment.value,
     columns: q,
     group,
-    date: selectedDate.value
+    date: selectedDate.value,
   });
 
   // Update table
@@ -129,7 +129,12 @@ async function exportReport() {
 async function fetchTimestamps() {
   const d = selectedDeployment.value;
   store.getDeploymentDates(d === "all" ? null : d).then((resp) => {
-    deploymentDates.value = resp.flatMap((r) => DateTime.fromISO(r.date).toISODate());
+    if (resp.length === 0) {
+      deploymentDates.value = [];
+      selectedDate.value = null;
+    } else {
+      deploymentDates.value = resp.flatMap((r) => DateTime.fromISO(r.date).toISODate());
+    }
   });
 }
 
@@ -161,7 +166,10 @@ onMounted(async () => {
             <MenuItem
               :key="d.deploymentnumber"
               v-for="(d, idx) in appStore.deployments"
-              @click="selectedDeployment = d.deploymentnumber; onDeploymentChange()"
+              @click="
+                selectedDeployment = d.deploymentnumber;
+                onDeploymentChange();
+              "
             >
               <span>#{{ idx + 1 }} {{ d.start_date }} - {{ d.end_date }}</span>
             </MenuItem>
@@ -175,13 +183,16 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
-      <Dropdown>
+      <Dropdown v-if="deploymentDates.length > 0">
         <template #overlay>
           <Menu>
             <MenuItem
               :key="t"
               v-for="t in deploymentDates"
-              @click="selectedDate = t; onDeploymentChange()"
+              @click="
+                selectedDate = t;
+                onDeploymentChange();
+              "
             >
               <span>{{ DateTime.fromISO(t).toLocaleString(DateTime.DATE_MED) }}</span>
             </MenuItem>

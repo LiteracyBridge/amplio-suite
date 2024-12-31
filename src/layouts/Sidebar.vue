@@ -17,6 +17,7 @@ import {
   TableOutlined,
   CalculatorOutlined,
   StockOutlined,
+  PieChartOutlined
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -100,7 +101,7 @@ const config = ref({
           </router-link>
         </MenuItem>
         <MenuItem key="usage-query">
-          <template #icon> <BarChartOutlined /> </template>
+          <template #icon> <PieChartOutlined /> </template>
 
           <router-link to="/tb-analytics/usage-query">
             <span role="link"> Usage Query </span>
