@@ -38,11 +38,27 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 					this.loading = false;
 				});
 		},
-		async getUsage(opts: {deployment: number, columns: string, group: string}) {
+		async getUsage(opts: {
+			deployment: number;
+			columns: string;
+			group: string;
+			date?: string;
+		}) {
 			this.loading = true;
 
 			return ApiRequest.get<Record<string, any>>(
-				`tb-analytics/${useAppStore().programCode}/usage?deployment=${opts.deployment}&columns=${opts.columns}&group=${opts.group}`,
+				`tb-analytics/${useAppStore().programCode}/usage?deployment=${opts.deployment}&columns=${opts.columns}&group=${opts.group}&date=${opts.date}`,
+			)
+				.then((resp) => resp)
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		async getDeploymentDates(deployment?: number) {
+			this.loading = true;
+
+			return ApiRequest.get<{ date: string }>(
+				`tb-analytics/${useAppStore().programCode}/deployment-dates?deployment=${deployment}`,
 			)
 				.then((resp) => resp)
 				.finally(() => {
