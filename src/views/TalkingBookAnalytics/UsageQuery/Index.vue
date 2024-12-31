@@ -20,9 +20,11 @@ const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
 
 const selectedDeployment = ref(undefined);
-const query = ref<string>(null);
+const query = ref<{ query: string; group: string }>(null);
 const columns = ref([]);
 const rows = ref<Record<string, any>[]>([]);
+const deploymentDates = ref<string[]>([]);
+const selectedDate = ref<string>();
 
 const reports = [
   {
@@ -78,6 +80,7 @@ async function fetchStats(q: string, group: string) {
     deployment: selectedDeployment.value === "all" ? null : selectedDeployment.value,
     columns: q,
     group,
+    date: selectedDate.value
   });
 
   // Update table
@@ -123,11 +126,25 @@ async function exportReport() {
   });
 }
 
+async function fetchTimestamps() {
+  const d = selectedDeployment.value;
+  store.getDeploymentDates(d === "all" ? null : d).then((resp) => {
+    deploymentDates.value = resp.flatMap((r) => DateTime.fromISO(r.date).toISODate());
+  });
+}
+
+async function onDeploymentChange() {
+  fetchTimestamps();
+  fetchStats(query.value.query, query.value.group);
+}
+
 onMounted(async () => {
   const rpt = reports.find((r) => r.key === "msg");
 
   selectedDeployment.value = "all";
-  query.value = rpt.query;
+  query.value = { query: rpt.query, group: rpt.group };
+
+  fetchTimestamps();
   fetchStats(rpt.query, rpt.group);
 });
 </script>
@@ -143,10 +160,10 @@ onMounted(async () => {
             </MenuItem>
             <MenuItem
               :key="d.deploymentnumber"
-              v-for="d in appStore.deployments"
-              @click="selectedDeployment = d.deploymentnumber"
+              v-for="(d, idx) in appStore.deployments"
+              @click="selectedDeployment = d.deploymentnumber; onDeploymentChange()"
             >
-              <span>Deployment {{ d.deploymentnumber }}</span>
+              <span>#{{ idx + 1 }} {{ d.start_date }} - {{ d.end_date }}</span>
             </MenuItem>
           </Menu>
         </template>
@@ -162,6 +179,25 @@ onMounted(async () => {
         <template #overlay>
           <Menu>
             <MenuItem
+              :key="t"
+              v-for="t in deploymentDates"
+              @click="selectedDate = t; onDeploymentChange()"
+            >
+              <span>{{ DateTime.fromISO(t).toLocaleString(DateTime.DATE_MED) }}</span>
+            </MenuItem>
+          </Menu>
+        </template>
+        <Button>
+          <span v-if="selectedDate == null">Choose Deployment Date</span>
+          <span v-else>{{ selectedDate }}</span>
+          <DownOutlined />
+        </Button>
+      </Dropdown>
+
+      <Dropdown>
+        <template #overlay>
+          <Menu>
+            <MenuItem
               :key="r.key"
               v-for="r in reports"
               @click="
@@ -169,7 +205,7 @@ onMounted(async () => {
                   if (r.key == 'custom') {
                     modalVisible = true;
                   } else {
-                    query = r.query;
+                    query = { query: r.query, group: r.group };
                     fetchStats(r.query, r.group);
                   }
                 }
@@ -181,7 +217,7 @@ onMounted(async () => {
         </template>
         <Button>
           <span v-if="query == null">Choose Report</span>
-          <span v-else>{{ reports.find((r) => r.query == query).title }}</span>
+          <span v-else>{{ reports.find((r) => r.query == query.query).title }}</span>
           <DownOutlined />
         </Button>
       </Dropdown>
