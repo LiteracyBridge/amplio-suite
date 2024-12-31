@@ -45,4 +45,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.PRODUCTION__AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.PRODUCTION__AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-west-2'
-        SOURCE_DIR: 'frontend/dist'
+        SOURCE_DIR: 'dist'
