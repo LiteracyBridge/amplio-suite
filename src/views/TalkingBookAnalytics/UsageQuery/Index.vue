@@ -184,6 +184,15 @@ onMounted(async () => {
       </Dropdown>
 
       <Dropdown v-if="deploymentDates.length > 0">
+        <MenuItem
+          key="all"
+          @click="
+            selectedDate = null;
+            onDeploymentChange();
+          "
+        >
+          <span>All Dates</span>
+        </MenuItem>
         <template #overlay>
           <Menu>
             <MenuItem
