@@ -94,8 +94,8 @@ if (import.meta.env.DEV) {
   Amplify.configure({
     ...awsconfig,
     aws_user_pools_web_client_id: import.meta.env
-      .VITE_APP_AWS_USER_POOLS_CLIENT_ID || awsconfig.aws_user_pools_web_client_id,
-    aws_user_pools_id: import.meta.env.VITE_APP_AWS_USER_POOLS_ID || awsconfig.aws_user_pools_id,
+      .VITE_APP_COGNITO_CLIENT_ID || awsconfig.aws_user_pools_web_client_id,
+    aws_user_pools_id: import.meta.env.VITE_APP_COGNITO_USER_POOL_ID || awsconfig.aws_user_pools_id,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   } as any);
 } else {
