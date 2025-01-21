@@ -344,6 +344,7 @@ onMounted(async () => {
     :loading="store.loading"
     :sticky="true"
     :scroll="{ x: '70%' }"
+    :pagination="false"
     :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
     class="ant-table-striped"
   >
