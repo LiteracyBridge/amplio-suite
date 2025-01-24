@@ -4,9 +4,9 @@ installer/lib
 installer/jre
 
 # Frontend
-frontend/dist
-frontend/node_modules
-frontend/tsconfig.tsbuildinfo
+dist
+node_modules
+tsconfig.tsbuildinfo
 yarn-debug.log*
 yarn-error.log*
 
