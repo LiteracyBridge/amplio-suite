@@ -49,6 +49,16 @@ const config = ref({
     <Menu v-model:selectedKeys="config.activeMenu" theme="light" mode="inline">
       <!-- FIXME: Add permission check here -->
 
+      <MenuItem key="home">
+        <template #icon>
+          <InsertRowRightOutlined />
+        </template>
+
+        <router-link to="/dashboard">
+          <span role="link"> Home </span>
+        </router-link>
+      </MenuItem>
+
       <MenuItem key="program-spec" v-if="account.can(Permission.manage_specification)">
         <template #icon>
           <InsertRowRightOutlined />
