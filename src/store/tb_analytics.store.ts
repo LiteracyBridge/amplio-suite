@@ -38,6 +38,15 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 					this.loading = false;
 				});
 		},
+		async summaries() {
+			this.loading = true;
+
+			return ApiRequest.get<any>(`tb-analytics/${useAppStore().programCode}/summaries`)
+				.then((resp) => resp)
+				.finally(() => {
+					this.loading = false;
+				});
+		},
 		async getUsage(opts: {
 			deployment: number;
 			columns: string;

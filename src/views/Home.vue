@@ -1,33 +1,16 @@
 <script setup lang="ts">
-import Map from "ol/Map.js";
-import OSM from "ol/source/OSM.js";
-import TileLayer from "ol/layer/Tile.js";
-import View from "ol/View.js";
-import "ol/ol.css";
-import { onMounted } from "vue";
+import { TabPane, Tabs } from "ant-design-vue";
+import { ref } from "vue";
+import Analytics from './TalkingBookAnalytics/Analytics.vue'
 
-onMounted(() => {
-  const map = new Map({
-    target: "map",
-    layers: [
-      new TileLayer({
-        source: new OSM(),
-      }),
-    ],
-    view: new View({
-      center: [0, 0],
-      zoom: 2,
-    }),
-  });
-});
+const activeKey = ref("home");
 </script>
 
 <template>
-  <div id="map"></div>
+  <Analytics></Analytics>
+  <!-- <Tabs v-model:activeKey="activeKey" :size="large">
+    <TabPane key="home" tab="Home">Content of tab 1</TabPane>
+    <TabPane key="2" tab="Tab 2">Content of tab 2</TabPane>
+    <TabPane key="3" tab="Tab 3">Content of tab 3</TabPane>
+  </Tabs> -->
 </template>
-
-<style scoped>
-#map {
-  height: 180px;
-}
-</style>
