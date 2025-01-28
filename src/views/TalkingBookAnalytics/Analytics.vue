@@ -2,7 +2,9 @@
 import { TabPane, Col, Statistic, Tabs, Row, Spin } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import UsageMap from "./components/UsageMap.vue";
+import Content from "./components/Content.vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+import { groupBy } from "lodash";
 
 const activeKey = ref("home");
 const store = useTalkingBookAnalyticStore();
@@ -12,6 +14,27 @@ async function fetchData() {
   const data = await store.summaries();
   stats.value = data[0];
   console.log(data[0]);
+
+  const cols = Object.keys(data[0]);
+  const mapped = groupBy(data, (d) => d.Playlist);
+  const raw: any= {}
+
+  for (const k in mapped) {
+    const messages = mapped[k]
+    raw[k] = {
+      messages: groupBy(messages, (m)=> m.Message),
+    }
+    raw[k].first = messages[0]
+    raw[k].span = messages.length
+    // raw[k].messagesSpan = Object.keys(raw[k].messages)
+
+    // const items = mapped[k];
+    // rowSpans.value[k] = items.length;
+    // mapped[k] = {
+    //   playlistRowSpan: mapped[k].length,
+    //   messagesRowSpan: Object.values(groupBy(mapped[k], (d) => d.Message)).length,
+    // };
+  }
 }
 
 onMounted(() => {
@@ -40,7 +63,11 @@ onMounted(() => {
           <UsageMap :data="stats.map?.data" :centroid="stats.map?.centroid"></UsageMap>
         </div>
       </TabPane>
-      <TabPane key="2" tab="Tab 2">Content of tab 2</TabPane>
+      <TabPane key="content" tab="Content">
+        <div v-if="!store.loading && stats != null">
+          <Content :data="stats.usage"></Content>
+        </div>
+      </TabPane>
       <TabPane key="3" tab="Tab 3">Content of tab 3</TabPane>
     </Tabs>
   </Spin>

@@ -22,7 +22,6 @@ const props = defineProps<{
   data: Array<Recipient & { played_minutes: number; played_seconds: number }>;
   centroid: { latitude: number; longitude: number };
 }>();
-const popup = ref<VNodeRef>();
 
 onMounted(() => {
   const map = new Map({
@@ -83,25 +82,27 @@ onMounted(() => {
       const coordinate = event.coordinate;
 
       const recipient = props.data.find(
-        (r) => r.id == map.getFeaturesAtPixel(event.pixel)[0].getId()
+        (r) => r.id === map.getFeaturesAtPixel(event.pixel)[0].getId()
       )!;
 
       console.log(map.getFeaturesAtPixel(event.pixel));
       // @ts-ignore
       document.getElementById(
         "ol-popup-content"
-      ).innerHTML = `<strong>District: </strong> ${
+      ).innerHTML = `<strong>Region: </strong> ${
+        recipient.region || "N/A"
+      }<br/> <strong>District: </strong> ${
         recipient.district || "N/A"
       } <br/> <strong>Group: </strong> ${
-        recipient.group || "N/A"
+        recipient.group_name || "N/A"
       }<br /> <strong>Community: </strong> ${
         recipient.community_name || "N/A"
-      }<br /> <strong>Talking Books Assigned: </strong>  ${
+      }<br /> <strong>Number of TBs Installed: </strong>  ${
         recipient.numtbs || 0
-      } <br/> <strong>Time Played (in seconds): </strong> ${
-        recipient.played_seconds || 0
-      } <br/> <strong>Time Played (in minutes): </strong> ${
+      } <br/> <strong>Number of Minutes Played: </strong> ${
         recipient.played_minutes || 0
+      } <br/> <strong>Number of Minutes Played per TB: </strong> ${
+        (recipient.played_minutes || 0) / (recipient.numtbs || 0)
       } <br/> `;
       overlay.setPosition(coordinate);
     } else {
@@ -113,24 +114,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="map"></div>
-  <div
-    id="ol-popup"
-    class="ol-popup bg-white rounded-lg shadow-lg border-b p-1 justify-between items-center"
-  >
-    <a
-      href="#"
-      id="ol-popup-closer"
-      class="ol-popup-closer text-black float-end text-lg block mx-2"
-      :onclick="($el:any) =>{$el.target.parentElement.style.visibility = 'hidden';}"
-      >x</a
+  <div>
+    <div id="map"></div>
+    <div
+      id="ol-popup"
+      class="ol-popup bg-white rounded-lg shadow-lg border-b p-1 justify-between items-center"
     >
-    <div id="ol-popup-content" class="p-2"></div>
+      <a
+        href="#"
+        id="ol-popup-closer"
+        class="ol-popup-closer text-black float-end text-lg block mx-2"
+        :onclick="($el:any) =>{$el.target.parentElement.style.visibility = 'hidden';}"
+        >x</a
+      >
+      <div id="ol-popup-content" class="p-2"></div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 #map {
-  height: 100vh;
+  height: 90vh;
 }
 </style>
