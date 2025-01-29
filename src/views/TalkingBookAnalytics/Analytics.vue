@@ -23,7 +23,7 @@ onMounted(() => {
 
 <template>
   <Spin :spinning="store.loading">
-    <Tabs v-model:activeKey="activeKey" size="large">
+    <Tabs v-model:activeKey="activeKey" size="large" centered>
       <TabPane key="home" tab="Home">
         <Row :justify="'space-around'">
           <Col :span="12">

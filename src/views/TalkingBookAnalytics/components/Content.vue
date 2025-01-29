@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { Table } from "ant-design-vue";
-import type { TableColumnType } from "ant-design-vue";
-import { countBy, groupBy, sumBy } from "lodash";
+import { computed } from "vue";
+import { groupBy } from "lodash";
 
-interface DataItem {
+export interface UsageDataItem {
   TB: string;
   Agent: string;
   "Deployment #": string;
@@ -27,76 +25,19 @@ interface DataItem {
 }
 
 const props = defineProps<{
-  data: Array<DataItem>;
+  data: Array<UsageDataItem>;
 }>();
 
 const rowSpans: { [playlistOrMessage: string]: boolean } = {};
-const columns: TableColumnType[] = [
-  {
-    title: "Playlist",
-    dataIndex: "Playlist",
-    // customCell: (record, index) => {
-    //     return { rowSpan: rowSpans.value[record.Playlist] ||1 };
-    // },
-  },
-  {
-    title: "Message",
-    dataIndex: "Message",
-    // customCell: sharedOnCell,
-  },
-  {
-    title: "Duration (in min)",
-    dataIndex: "Duration",
-  },
-  {
-    title: "Language",
-    dataIndex: "Language",
-  },
-  {
-    title: "Format",
-    dataIndex: "Format",
-  },
-  {
-    title: "Deployment #",
-    dataIndex: "Deployment",
-  },
-  {
-    title: "Position",
-    dataIndex: "Position",
-  },
-];
 
 const isPlaylistRendered = computed(() => {
   return (playlist: string | number) => {
     if (rowSpans[playlist]) {
-      console.log(playlist, rowSpans);
       return true;
     }
     rowSpans[playlist] = true;
     return false;
   };
-});
-onMounted(() => {
-  // Generate table columns
-  // 'Playlist' & 'Message' spans multiple rows
-  // const temp1 = countBy(props.data, (d) => d.Playlist)
-  // const temp2 = countBy(props.data, (d) => d.Message)
-  // rowSpans.value = {...temp1, ...temp2}
-  // console.log(rowSpans.value)
-  // const cols = Object.keys(props.data[0])
-  // const mapped = groupBy(props.data, (d) => d.Playlist)
-  // for(const k in mapped){
-  //   const items = mapped[k]
-  //   rowSpans.value[k]=items.length
-  //   mapped[k] = {
-  //     playlistRowSpan: mapped[k].length,
-  //     messagesRowSpan: Object.values(groupBy(mapped[k], (d) => d.Message)).length
-  //   }
-  // }
-  // const c: Record<string, {index: number, span: number}> = {}
-  // for(let i=0; i < props.data.length; i++){
-  // }
-  // const playlistColSpan = sumBy(props.data, (d) => d.Playlist)
 });
 </script>
 
@@ -154,10 +95,10 @@ onMounted(() => {
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
               <template
-                v-for="(messages, playlist, pIndex) in groupBy(data, (p) => p.Playlist)"
+                v-for="(messages, playlist) in groupBy(data, (p) => p.Playlist)"
               >
                 <template
-                  v-for="(items, title, mIndex) in groupBy(messages, (p) => p.Message)"
+                  v-for="(items, title) in groupBy(messages, (p) => p.Message)"
                 >
                   <template v-for="(item, tIndex) of items">
                     <tr class="hover:bg-gray-100 dark:hover:bg-neutral-200">
