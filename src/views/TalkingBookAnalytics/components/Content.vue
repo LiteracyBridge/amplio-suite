@@ -17,7 +17,7 @@ interface DataItem {
   Variant: string;
   Playlist: string;
   Position: string;
-  Duration: string;
+  Duration: number;
   "Total Starts": string;
   "Total 1/4 Plays": string;
   "Total 1/2 Plays": string;
@@ -104,55 +104,55 @@ onMounted(() => {
   <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
       <div class="p-1.5 min-w-full inline-block align-middle">
-        <div class="overflow-hidden">
-          <table class="">
+        <div class="overflow-hidden dark:border-neutral-700">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
             <thead>
               <tr>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Playlist
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Message
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Duration (in min)
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Language
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Format
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Deployment #
                 </th>
                 <th
                   scope="col"
-                  class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+                  class="text-center text-xs font-bold uppercase text-black"
                 >
                   Position
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
               <template
                 v-for="(messages, playlist, pIndex) in groupBy(data, (p) => p.Playlist)"
               >
@@ -160,43 +160,48 @@ onMounted(() => {
                   v-for="(items, title, mIndex) in groupBy(messages, (p) => p.Message)"
                 >
                   <template v-for="(item, tIndex) of items">
-                    <tr>
+                    <tr class="hover:bg-gray-100 dark:hover:bg-neutral-200">
                       <!-- playlist title, displayed only -->
                       <td
                         :rowspan="messages.length"
                         v-if="!isPlaylistRendered(playlist)"
+                        class="py-1 text-center text-sm"
                       >
                         {{ playlist }}
                       </td>
-                      <!-- <td v-else></td> -->
 
                       <!-- message title, displayed only once for each messages set -->
-                      <td :rowspan="items.length" v-if="tIndex == 0">{{ title }}</td>
-                      <!-- <td v-else></td> -->
+                      <td
+                        :rowspan="items.length"
+                        v-if="tIndex == 0"
+                        class="py-1 text-center text-sm"
+                      >
+                        {{ title }}
+                      </td>
 
                       <!-- other columns -->
-                      <td>{{ item.Duration }}</td>
-                      <td>{{ item.Language }}</td>
-                      <td>{{ item.Format }}</td>
-                      <td>{{ item["Deployment #"] }}</td>
-                      <td>{{ item.Position }}</td>
+                      <td class="py-1 text-center text-sm">
+                        <!-- rounded to 2dp -->
+                        {{
+                          Math.round(((item.Duration || 0) / 60 + Number.EPSILON) * 10) /
+                          10
+                        }}
+                      </td>
+                      <td class="py-1 text-center text-sm">
+                        {{ item.Language }}
+                      </td>
+                      <td class="py-1 text-center text-sm">
+                        {{ item.Format }}
+                      </td>
+                      <td class="py-1 text-center text-sm">
+                        {{ item["Deployment #"] }}
+                      </td>
+                      <td class="py-1 text-center text-sm">
+                        {{ item.Position }}
+                      </td>
                     </tr>
                   </template>
                 </template>
-                <!-- <tr class="">
-                  <td :rowspan="messages.length" class="" v-if="!rowSpans[playlist]">
-                    {{ playlist }}
-                  </td>
-                  <td v-else>{{ (rowSpans[playlist] = true) }}</td>
-
-                  <template v-for="(items, title) in groupBy(messages, (m) => m.Message)">
-                    <td :rowspan="items.length">{{ title }}</td>
-
-                    <template v-for="t of items">
-                      <td>{{ t.Language }}</td>
-                    </template>
-                  </template>
-                </tr> -->
               </template>
             </tbody>
           </table>
@@ -206,4 +211,11 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+table {
+  table-layout: fixed;
+  width: 100%;
+  overflow: scroll;
+  word-wrap: none;
+}
+</style>

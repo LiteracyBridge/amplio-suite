@@ -14,27 +14,6 @@ async function fetchData() {
   const data = await store.summaries();
   stats.value = data[0];
   console.log(data[0]);
-
-  const cols = Object.keys(data[0]);
-  const mapped = groupBy(data, (d) => d.Playlist);
-  const raw: any= {}
-
-  for (const k in mapped) {
-    const messages = mapped[k]
-    raw[k] = {
-      messages: groupBy(messages, (m)=> m.Message),
-    }
-    raw[k].first = messages[0]
-    raw[k].span = messages.length
-    // raw[k].messagesSpan = Object.keys(raw[k].messages)
-
-    // const items = mapped[k];
-    // rowSpans.value[k] = items.length;
-    // mapped[k] = {
-    //   playlistRowSpan: mapped[k].length,
-    //   messagesRowSpan: Object.values(groupBy(mapped[k], (d) => d.Message)).length,
-    // };
-  }
 }
 
 onMounted(() => {
@@ -65,7 +44,7 @@ onMounted(() => {
       </TabPane>
       <TabPane key="content" tab="Content">
         <div v-if="!store.loading && stats != null">
-          <Content :data="stats.usage"></Content>
+          <Content :data="stats.content"></Content>
         </div>
       </TabPane>
       <TabPane key="3" tab="Tab 3">Content of tab 3</TabPane>
