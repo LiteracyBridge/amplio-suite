@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { Table } from "ant-design-vue";
-import type { TableColumnType } from "ant-design-vue";
-import { countBy, groupBy, sumBy } from "lodash";
+import { computed, onMounted } from "vue";
+import { groupBy } from "lodash";
 
 interface DataItem {
   TB: string;
@@ -27,40 +25,6 @@ const props = defineProps<{
 }>();
 
 const rowSpans: { [tb: string]: boolean } = {};
-const columns: TableColumnType[] = [
-  {
-    title: "Playlist",
-    dataIndex: "Playlist",
-    // customCell: (record, index) => {
-    //     return { rowSpan: rowSpans.value[record.Playlist] ||1 };
-    // },
-  },
-  {
-    title: "Message",
-    dataIndex: "Message",
-    // customCell: sharedOnCell,
-  },
-  {
-    title: "Duration (in min)",
-    dataIndex: "Duration",
-  },
-  {
-    title: "Language",
-    dataIndex: "Language",
-  },
-  {
-    title: "Format",
-    dataIndex: "Format",
-  },
-  {
-    title: "Deployment #",
-    dataIndex: "Deployment",
-  },
-  {
-    title: "Position",
-    dataIndex: "Position",
-  },
-];
 
 const isColRendered = computed(() => {
   return (key: string | number) => {
