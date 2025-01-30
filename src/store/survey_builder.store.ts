@@ -123,14 +123,15 @@ export const useSurveyBuilder = defineStore("survey-builder", {
         );
       return this.$state.activeSurvey.questions;
     },
-    deleteQuestion(item: Question) {
-      return (this.$state.activeSurvey.questions =
-        this.$state.activeSurvey.questions.map((q) => {
-          if (q._id === item._id) {
-            q.is_deleted = true;
-          }
-          return q;
-        }));
+
+    /// remove a specific question from the active survey.
+    deleteQuestion(item: Question) { 
+      const questions = this.$state.activeSurvey.questions; // Get all questions
+      const index = questions.findIndex((q) => q._id === item._id);// Get the index
+      if (index > -1) {
+        questions.splice(index, 1); // Remove from array
+        this.$state.activeSurvey.questions = questions;// updates the questions array in the store's state with the modified array that no longer includes the deleted question.
+      }
     },
     deleteSection(id: string | number) {
       return (this.$state.activeSurvey.sections =
