@@ -3,8 +3,8 @@ import { TabPane, Col, Statistic, Tabs, Row, Spin } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import UsageMap from "./components/UsageMap.vue";
 import Content from "./components/Content.vue";
+import Operations from "./components/Operations.vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
-import { groupBy } from "lodash";
 
 const activeKey = ref("home");
 const store = useTalkingBookAnalyticStore();
@@ -47,7 +47,12 @@ onMounted(() => {
           <Content :data="stats.content"></Content>
         </div>
       </TabPane>
-      <TabPane key="3" tab="Tab 3">Content of tab 3</TabPane>
+      <TabPane key="operations" tab="Operations">
+        <div v-if="!store.loading && stats != null">
+          <Operations :data="stats.operations"></Operations>
+        </div>
+      </TabPane>
+      <TabPane key="3" tab="Tab 3">Operations of tab 3</TabPane>
     </Tabs>
   </Spin>
 </template>

@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { groupBy } from "lodash";
 
-export interface UsageDataItem {
+interface UsageDataItem {
   TB: string;
   Agent: string;
   "Deployment #": string;
@@ -94,12 +94,8 @@ const isPlaylistRendered = computed(() => {
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
-              <template
-                v-for="(messages, playlist) in groupBy(data, (p) => p.Playlist)"
-              >
-                <template
-                  v-for="(items, title) in groupBy(messages, (p) => p.Message)"
-                >
+              <template v-for="(messages, playlist) in groupBy(data, (p) => p.Playlist)">
+                <template v-for="(items, title) in groupBy(messages, (p) => p.Message)">
                   <template v-for="(item, tIndex) of items">
                     <tr class="hover:bg-gray-100 dark:hover:bg-neutral-200">
                       <!-- playlist title, displayed only -->
