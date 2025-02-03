@@ -14,6 +14,8 @@ import {
   CategoryScale,
   BarElement,
   Colors,
+  Legend,
+  Tooltip,
 } from "chart.js";
 
 Chart.register(
@@ -25,7 +27,9 @@ Chart.register(
   Title,
   CategoryScale,
   BarElement,
-  Colors
+  Colors,
+  Legend,
+  Tooltip
 );
 
 interface DataItem {
@@ -66,7 +70,7 @@ onMounted(() => {
     completions[key] += +row["Total Completions"];
   }
 
-  console.log(completions);
+  // console.log(completions);
   // @ts-ignore
   new Chart(document.getElementById("completions"), {
     type: "bar",
@@ -143,8 +147,7 @@ onMounted(() => {
       scrollbar: { enabled: true },
       maintainAspectRatio: true,
       scales: {
-        x: {
-        },
+        x: {},
         y: {
           ticks: {
             font: {
@@ -165,15 +168,55 @@ onMounted(() => {
     },
   });
 
+  // partial play
+  const partialPlays: Record<
+    string,
+    { completions: number; 3_4: number; 1_2: number; 1_4: number; starts: number }
+  > = {};
+  for (const row of props.data) {
+    const key = row.Message ?? row.Playlist;
+    partialPlays[key] ??= { completions: 0, 14: 0, "34": 0, "12": 0, starts: 0 };
+    partialPlays[key].completions += +row["Total Completions"];
+    partialPlays[key]["14"] += +row["Total 1/4 Plays"] / 60;
+    partialPlays[key]["12"] += +row["Total 1/2 Plays"] / 60;
+    partialPlays[key]["34"] += +row["Total 3/4 Plays"] / 60;
+    partialPlays[key].starts += +row["Total Starts"] / 60;
+  }
+
+  const keys = Object.keys(minutesPlayed);
+  console.log(props.data);
   // @ts-ignore
   new Chart(document.getElementById("partial-plays"), {
     type: "bar",
+
     data: {
-      labels: Object.keys(minutesPlayed),
+      labels: keys,
       datasets: [
         {
-          label: "Minutes Played",
-          data: Object.values(minutesPlayed),
+          label: "Total Completions",
+          data: keys.map((k) => partialPlays[k].completions),
+          // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+        },
+        {
+          label: "Total 3/4 Plays",
+          data: keys.map((k) => partialPlays[k]["34"]),
+          // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
+        },
+
+        {
+          label: "Total 1/2 Plays",
+          data: keys.map((k) => partialPlays[k]["12"]),
+          // backgroundColor: ["yellow"],
+        },
+        {
+          label: "Total 1/4 Plays",
+          data: keys.map((k) => partialPlays[k]["14"]),
+          // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
+        },
+
+        {
+          label: "Total Start",
+          data: keys.map((k) => partialPlays[k].starts),
         },
       ],
     },
@@ -203,10 +246,40 @@ onMounted(() => {
       plugins: {
         legend: {
           position: "right",
+          display: true,
+          labels: {
+            color: "rgb(255, 99, 132)",
+          },
+        },
+        tooltip: {
+          // callbacks: {
+          //   label: (context) => {
+          //     console.log(context);
+          //     // console.log(context.dataset.label)
+          //     const record = props.data.find(
+          //       (i) => i.Message === context.label || i.Playlist === context.label
+          //     );
+          //     console.log(record);
+          //     let label = context.dataset.label || "";
+          //     label += `Message: ${record.Message}\n`;
+          //     label += `Playlist: ${record.Playlist}\n`;
+
+          //     // if (label) {
+          //     //   label += ": ";
+          //     // }
+          //     // if (context.parsed.y !== null) {
+          //     //   label += new Intl.NumberFormat("en-US", {
+          //     //     style: "currency",
+          //     //     currency: "USD",
+          //     //   }).format(context.parsed.y);
+          //     // }
+          //     return [label,'',`Total Plays: ${record.Playlist}\n`, `Minutes Played: ${record.Playlist}\n`];
+          //   },
+          // },
         },
         title: {
           display: true,
-          text: "Minutes Played",
+          text: "Partial Plays",
         },
       },
     },
@@ -229,6 +302,9 @@ onMounted(() => {
 
     <div>
       <canvas id="minutes-played"></canvas>
+    </div>
+    <div>
+      <canvas id="partial-plays"></canvas>
     </div>
   </div>
   <!-- <Tabs size="large" centered tab-position="left">
