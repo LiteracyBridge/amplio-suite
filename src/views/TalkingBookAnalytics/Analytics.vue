@@ -5,6 +5,7 @@ import UsageMap from "./components/UsageMap.vue";
 import Content from "./components/Content.vue";
 import Operations from "./components/Operations.vue";
 import OverallUsage from "./components/OverallUsage.vue";
+import UsagePerTB from "./components/UsagePerTB.vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 
 const activeKey = ref("home");
@@ -56,6 +57,11 @@ onMounted(() => {
       <TabPane key="ov-usage" tab="Usage (Overall)">
         <div v-if="!store.loading && stats != null">
           <OverallUsage :data="stats.usage"></OverallUsage>
+        </div>
+      </TabPane>
+      <TabPane key="usage-per-tb" tab="Usage (Avg TB)">
+        <div v-if="!store.loading && stats != null">
+          <UsagePerTB :data="stats.usage" :tbs="+stats.tbs"></UsagePerTB>
         </div>
       </TabPane>
     </Tabs>

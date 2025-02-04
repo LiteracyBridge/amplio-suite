@@ -26,6 +26,7 @@
     "aws-amplify": "^6.5.0",
     "axios": "^1.7.3",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "eslint-plugin-unused-imports": "^4.0.1",
     "exceljs": "^4.4.0",
     "lodash": "^4.17.21",
