@@ -7,6 +7,36 @@ import Operations from "./components/Operations.vue";
 import OverallUsage from "./components/OverallUsage.vue";
 import UsagePerTB from "./components/UsagePerTB.vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+import {
+  Chart,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  BarController,
+  CategoryScale,
+  BarElement,
+  Colors,
+  Legend,
+  Tooltip,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
+Chart.register(
+  LineController,
+  BarController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  BarElement,
+  Colors,
+  Legend,
+  Tooltip,
+  ChartDataLabels
+);
 
 const activeKey = ref("home");
 const store = useTalkingBookAnalyticStore();

@@ -1,80 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { Table, Card, Row, Col, Tabs, TabPane } from "ant-design-vue";
-import type { TableColumnType } from "ant-design-vue";
-import { countBy, groupBy, sumBy } from "lodash";
-import {
-  Chart,
-  LineController,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  BarController,
-  CategoryScale,
-  BarElement,
-  Colors,
-  Legend,
-  Tooltip,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Chart } from "chart.js";
+import { baseChartConfig, type DataItem } from "./chart_config";
+import Filters from "./Filters.vue";
 
-Chart.register(
-  LineController,
-  BarController,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  CategoryScale,
-  BarElement,
-  Colors,
-  Legend,
-  Tooltip,
-  ChartDataLabels
-);
-
-interface DataItem {
-  tbs: number;
-  TB: string;
-  Agent: string;
-  "Deployment #": string;
-  Region: string;
-  District: string;
-  Community: string;
-  Message: string;
-  Language: string;
-  Format: string;
-  Variant: string;
-  Playlist: string;
-  Position: string;
-  Duration: number;
-  "Total Starts": string;
-  "Total 1/4 Plays": string;
-  "Total 1/2 Plays": string;
-  "Total 3/4 Plays": string;
-  "Total Completions": number;
-  "Total Seconds Played": number;
-  "Total Plays": string;
-}
 
 const props = defineProps<{
   data: Array<DataItem>;
   tbs: number;
 }>();
 
-const rowSpans: { [tb: string]: boolean } = {};
-
 onMounted(() => {
-  // Completions graph
-  // const completions: Record<string, number> = {};
-  // for (const row of props.data) {
-  //   const key = row.Message ?? row.Playlist;
-  //   completions[key] ??= 0;
-  //   completions[key] += +row["Total Completions"];
-  // }
-
-  console.log(props.data.map((d) => +d["Total Completions"] / 88));
   // @ts-ignore
   new Chart(document.getElementById("completions-per-tb"), {
     type: "bar",
@@ -90,28 +27,10 @@ onMounted(() => {
       ],
     },
     options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-          categoryPercentage: 1.0,
-        },
-      },
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
-      scales: {
-        y: {
-          ticks: {
-            font: {
-              size: 10,
-            },
-          },
-        },
-      },
+      ...baseChartConfig,
       plugins: {
         legend: {
-          position: "bottom",
+          position: "right",
           display: true,
         },
         title: {
@@ -119,14 +38,10 @@ onMounted(() => {
           text: "Message Completions per TB",
         },
         datalabels: {
-          anchor: "end", // Position of the labels (start, end, center, etc.)
-          align: "end", // Alignment of the labels (start, end, center, etc.)
-          // color: 'blue', // Color of the labels
+          anchor: "center",
+          align: "end",
           font: {
             weight: "bold",
-          },
-          formatter: (value: any, _context: any) => {
-            return value;
           },
         },
       },
@@ -148,38 +63,19 @@ onMounted(() => {
       ],
     },
     options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-          categoryPercentage: 1.0,
-        },
-      },
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
-      scales: {
-        y: {
-          ticks: {
-            font: {
-              size: 10,
-            },
-          },
-        },
-      },
+      ...baseChartConfig,
       plugins: {
         legend: {
-          position: "bottom",
+          position: "right",
           display: true,
         },
         title: {
           display: true,
-          text: "Minute Played per TB",
+          text: "Minute Played Per TB",
         },
         datalabels: {
-          anchor: "end", // Position of the labels (start, end, center, etc.)
-          align: "end", // Alignment of the labels (start, end, center, etc.)
-          // color: 'blue', // Color of the labels
+          anchor: "center",
+          align: "end",
           font: {
             weight: "bold",
           },
@@ -190,58 +86,6 @@ onMounted(() => {
       },
     },
   });
-
-  // Minute Played
-  // const minutesPlayed: Record<string, number> = {};
-  // for (const row of props.data) {
-  //   const key = row.Message ?? row.Playlist;
-  //   minutesPlayed[key] ??= 0;
-  //   minutesPlayed[key] += +row["Total Seconds Played"] / 60;
-  // }
-
-  // // @ts-ignore
-  // new Chart(document.getElementById("minutes-played"), {
-  //   type: "bar",
-  //   data: {
-  //     labels: Object.keys(minutesPlayed),
-  //     datasets: [
-  //       {
-  //         label: "Minutes Played",
-  //         data: Object.values(minutesPlayed),
-  //       },
-  //     ],
-  //   },
-  //   options: {
-  //     indexAxis: "y",
-  //     elements: {
-  //       bar: {
-  //         borderWidth: 2,
-  //       },
-  //     },
-  //     responsive: true,
-  //     scrollbar: { enabled: true },
-  //     maintainAspectRatio: true,
-  //     scales: {
-  //       x: {},
-  //       y: {
-  //         ticks: {
-  //           font: {
-  //             size: 10,
-  //           },
-  //         },
-  //       },
-  //     },
-  //     plugins: {
-  //       legend: {
-  //         position: "right",
-  //       },
-  //       title: {
-  //         display: true,
-  //         text: "Minutes Played",
-  //       },
-  //     },
-  //   },
-  // });
 
   // @ts-ignore
   new Chart(document.getElementById("partial-plays-per-tb"), {
@@ -258,39 +102,25 @@ onMounted(() => {
         {
           label: "Total 3/4 Plays",
           data: props.data.flatMap((d) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)),
-          // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
         },
 
         {
           label: "Total 1/2 Plays",
           data: props.data.flatMap((d) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)),
-          // data: keys.map((k) => partialPlays[k]["12"]),
-          // backgroundColor: ["yellow"],
         },
         {
           label: "Total 1/4 Plays",
           data: props.data.flatMap((d) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)),
-          // data: keys.map((k) => partialPlays[k]["14"]),
-          // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
         },
 
         {
           label: "Total Start",
           data: props.data.flatMap((d) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)),
-          // data: keys.map((k) => partialPlays[k].starts),
         },
       ],
     },
     options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-        },
-      },
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
+      ...baseChartConfig,
       scales: {
         x: {
           stacked: true,
@@ -356,14 +186,15 @@ onMounted(() => {
       </Card>
     </Col>
   </Row> -->
+  <Filters></Filters>
   <div class="grid grid-flow-row-dense grid-cols-1 grid-rows-1">
-    <Card class="mb-3" title="completions-per-tb">
+    <Card class="mb-3" title="Message Completions per TB">
       <canvas id="completions-per-tb"></canvas>
     </Card>
-    <Card class="mb-3">
+    <Card class="mb-3" title="Minute Played Per TB">
       <canvas id="minutes-per-tb"></canvas>
     </Card>
-    <Card class="mb-3">
+    <Card class="mb-3" title="Partial Plays by Message per TB">
       <canvas id="partial-plays-per-tb"></canvas>
     </Card>
 
