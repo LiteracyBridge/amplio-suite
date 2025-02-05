@@ -129,11 +129,14 @@ async function exportReport() {
 async function fetchTimestamps() {
   const d = selectedDeployment.value;
   store.getDeploymentDates(d === "all" ? null : d).then((resp) => {
-    if (resp.length === 0) {
+    const collection_dates = resp.collections;
+    if (collection_dates.length === 0) {
       deploymentDates.value = [];
       selectedDate.value = null;
     } else {
-      deploymentDates.value = resp.flatMap((r) => DateTime.fromISO(r.date).toISODate());
+      deploymentDates.value = collection_dates.flatMap((r) =>
+        DateTime.fromISO(r.date).toISODate()
+      );
     }
   });
 }
@@ -157,6 +160,7 @@ onMounted(async () => {
 <template>
   <PageHeader title="Usage Query" sub-title="">
     <template #extra>
+      <span>Deployment:</span>
       <Dropdown>
         <template #overlay>
           <Menu>
@@ -183,6 +187,7 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
+      <span class="ms-5">Statistics Collection Date:</span>
       <Dropdown v-if="deploymentDates.length > 0">
         <template #overlay>
           <Menu>
@@ -208,7 +213,7 @@ onMounted(async () => {
           </Menu>
         </template>
         <Button>
-          <span v-if="selectedDate == null">Choose Deployment Date</span>
+          <span v-if="selectedDate == null">Choose Date</span>
           <span v-else>{{ selectedDate }}</span>
           <DownOutlined />
         </Button>
