@@ -133,6 +133,64 @@ onMounted(() => {
     },
   });
 
+  // @ts-ignore
+  new Chart(document.getElementById("minutes-per-tb"), {
+    type: "bar",
+    data: {
+      labels: props.data.flatMap((d) => d.Message ?? d.Playlist),
+      datasets: [
+        {
+          label: "Message Completions per TB",
+          data: props.data.flatMap(
+            (d) => +(+d["Total Seconds Played"] / 60 / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y",
+      elements: {
+        bar: {
+          borderWidth: 2,
+          categoryPercentage: 1.0,
+        },
+      },
+      responsive: true,
+      scrollbar: { enabled: true },
+      maintainAspectRatio: true,
+      scales: {
+        y: {
+          ticks: {
+            font: {
+              size: 10,
+            },
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          position: "bottom",
+          display: true,
+        },
+        title: {
+          display: true,
+          text: "Minute Played per TB",
+        },
+        datalabels: {
+          anchor: "end", // Position of the labels (start, end, center, etc.)
+          align: "end", // Alignment of the labels (start, end, center, etc.)
+          // color: 'blue', // Color of the labels
+          font: {
+            weight: "bold",
+          },
+          formatter: (value: any, _context: any) => {
+            return value;
+          },
+        },
+      },
+    },
+  });
+
   // Minute Played
   // const minutesPlayed: Record<string, number> = {};
   // for (const row of props.data) {
@@ -185,121 +243,108 @@ onMounted(() => {
   //   },
   // });
 
-  // // partial play
-  // const partialPlays: Record<
-  //   string,
-  //   { completions: number; 3_4: number; 1_2: number; 1_4: number; starts: number }
-  // > = {};
-  // for (const row of props.data) {
-  //   const key = row.Message ?? row.Playlist;
-  //   partialPlays[key] ??= { completions: 0, 14: 0, "34": 0, "12": 0, starts: 0 };
-  //   partialPlays[key].completions += +row["Total Completions"];
-  //   partialPlays[key]["14"] += +row["Total 1/4 Plays"] / 60;
-  //   partialPlays[key]["12"] += +row["Total 1/2 Plays"] / 60;
-  //   partialPlays[key]["34"] += +row["Total 3/4 Plays"] / 60;
-  //   partialPlays[key].starts += +row["Total Starts"] / 60;
-  // }
+  // @ts-ignore
+  new Chart(document.getElementById("partial-plays-per-tb"), {
+    type: "bar",
+    data: {
+      labels: props.data.flatMap((d) => d.Message ?? d.Playlist),
+      datasets: [
+        {
+          label: "Total Completions",
+          data: props.data.flatMap(
+            (d) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ), // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+        },
+        {
+          label: "Total 3/4 Plays",
+          data: props.data.flatMap((d) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)),
+          // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
+        },
 
-  // const keys = Object.keys(minutesPlayed);
-  // console.log(props.data);
-  // // @ts-ignore
-  // new Chart(document.getElementById("partial-plays"), {
-  //   type: "bar",
+        {
+          label: "Total 1/2 Plays",
+          data: props.data.flatMap((d) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)),
+          // data: keys.map((k) => partialPlays[k]["12"]),
+          // backgroundColor: ["yellow"],
+        },
+        {
+          label: "Total 1/4 Plays",
+          data: props.data.flatMap((d) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)),
+          // data: keys.map((k) => partialPlays[k]["14"]),
+          // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
+        },
 
-  //   data: {
-  //     labels: keys,
-  //     datasets: [
-  //       {
-  //         label: "Total Completions",
-  //         data: keys.map((k) => partialPlays[k].completions),
-  //         // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
-  //       },
-  //       {
-  //         label: "Total 3/4 Plays",
-  //         data: keys.map((k) => partialPlays[k]["34"]),
-  //         // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
-  //       },
-
-  //       {
-  //         label: "Total 1/2 Plays",
-  //         data: keys.map((k) => partialPlays[k]["12"]),
-  //         // backgroundColor: ["yellow"],
-  //       },
-  //       {
-  //         label: "Total 1/4 Plays",
-  //         data: keys.map((k) => partialPlays[k]["14"]),
-  //         // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
-  //       },
-
-  //       {
-  //         label: "Total Start",
-  //         data: keys.map((k) => partialPlays[k].starts),
-  //       },
-  //     ],
-  //   },
-  //   options: {
-  //     indexAxis: "y",
-  //     elements: {
-  //       bar: {
-  //         borderWidth: 2,
-  //       },
-  //     },
-  //     responsive: true,
-  //     scrollbar: { enabled: true },
-  //     maintainAspectRatio: true,
-  //     scales: {
-  //       x: {
-  //         stacked: true,
-  //       },
-  //       y: {
-  //         stacked: true,
-  //         ticks: {
-  //           font: {
-  //             size: 10,
-  //           },
-  //         },
-  //       },
-  //     },
-  //     plugins: {
-  //       legend: {
-  //         position: "right",
-  //         display: true,
-  //         labels: {
-  //           color: "rgb(255, 99, 132)",
-  //         },
-  //       },
-  //       tooltip: {
-  //         // callbacks: {
-  //         //   label: (context) => {
-  //         //     console.log(context);
-  //         //     // console.log(context.dataset.label)
-  //         //     const record = props.data.find(
-  //         //       (i) => i.Message === context.label || i.Playlist === context.label
-  //         //     );
-  //         //     console.log(record);
-  //         //     let label = context.dataset.label || "";
-  //         //     label += `Message: ${record.Message}\n`;
-  //         //     label += `Playlist: ${record.Playlist}\n`;
-  //         //     // if (label) {
-  //         //     //   label += ": ";
-  //         //     // }
-  //         //     // if (context.parsed.y !== null) {
-  //         //     //   label += new Intl.NumberFormat("en-US", {
-  //         //     //     style: "currency",
-  //         //     //     currency: "USD",
-  //         //     //   }).format(context.parsed.y);
-  //         //     // }
-  //         //     return [label,'',`Total Plays: ${record.Playlist}\n`, `Minutes Played: ${record.Playlist}\n`];
-  //         //   },
-  //         // },
-  //       },
-  //       title: {
-  //         display: true,
-  //         text: "Partial Plays",
-  //       },
-  //     },
-  //   },
-  // });
+        {
+          label: "Total Start",
+          data: props.data.flatMap((d) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)),
+          // data: keys.map((k) => partialPlays[k].starts),
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y",
+      elements: {
+        bar: {
+          borderWidth: 2,
+        },
+      },
+      responsive: true,
+      scrollbar: { enabled: true },
+      maintainAspectRatio: true,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            font: {
+              size: 10,
+            },
+          },
+        },
+      },
+      plugins: {
+        datalabels: { display: false },
+        legend: {
+          position: "right",
+          display: true,
+          labels: {
+            color: "rgb(255, 99, 132)",
+          },
+        },
+        tooltip: {
+          // callbacks: {
+          //   label: (context) => {
+          //     console.log(context);
+          //     // console.log(context.dataset.label)
+          //     const record = props.data.find(
+          //       (i) => i.Message === context.label || i.Playlist === context.label
+          //     );
+          //     console.log(record);
+          //     let label = context.dataset.label || "";
+          //     label += `Message: ${record.Message}\n`;
+          //     label += `Playlist: ${record.Playlist}\n`;
+          //     // if (label) {
+          //     //   label += ": ";
+          //     // }
+          //     // if (context.parsed.y !== null) {
+          //     //   label += new Intl.NumberFormat("en-US", {
+          //     //     style: "currency",
+          //     //     currency: "USD",
+          //     //   }).format(context.parsed.y);
+          //     // }
+          //     return [label,'',`Total Plays: ${record.Playlist}\n`, `Minutes Played: ${record.Playlist}\n`];
+          //   },
+          // },
+        },
+        title: {
+          display: true,
+          text: "Partial Plays by Message per TB",
+        },
+      },
+    },
+  });
 });
 </script>
 
@@ -312,9 +357,15 @@ onMounted(() => {
     </Col>
   </Row> -->
   <div class="grid grid-flow-row-dense grid-cols-1 grid-rows-1">
-    <div>
+    <Card class="mb-3" title="completions-per-tb">
       <canvas id="completions-per-tb"></canvas>
-    </div>
+    </Card>
+    <Card class="mb-3">
+      <canvas id="minutes-per-tb"></canvas>
+    </Card>
+    <Card class="mb-3">
+      <canvas id="partial-plays-per-tb"></canvas>
+    </Card>
 
     <!-- <div>
       <canvas id="minutes-played"></canvas>
