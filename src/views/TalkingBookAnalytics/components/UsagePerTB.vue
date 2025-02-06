@@ -2,12 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import { Table, Card, Row, Col, Tabs, TabPane } from "ant-design-vue";
 import { Chart } from "chart.js";
-import { baseChartConfig, type DataItem } from "./chart_config";
+import { baseChartConfig, type SummaryDataItem } from "./chart_config";
 import Filters from "./Filters.vue";
 
 
 const props = defineProps<{
-  data: Array<DataItem>;
+  data: Array<SummaryDataItem>;
   tbs: number;
 }>();
 

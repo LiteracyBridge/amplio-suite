@@ -23,6 +23,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { baseChartConfig } from "./components/chart_config";
+import type { SummaryDataItem } from "./components/chart_config";
 
 Chart.register(
   LineController,
@@ -187,6 +188,134 @@ async function fetchData() {
         title: {
           display: true,
           text: "Message Partial Plays",
+        },
+      },
+    },
+  });
+
+  console.log(store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ))
+  // @ts-ignore
+  new Chart(document.getElementById("completions-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Message Completions per TB",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      plugins: {
+        ...baseChartConfig.plugins,
+        title: {
+          display: true,
+          text: "Message Completions per TB",
+        },
+      },
+    },
+  });
+
+  // @ts-ignore
+  new Chart(document.getElementById("minutes-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Message Completions per TB",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) =>
+              +(+d["Total Seconds Played"] / 60 / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      plugins: {
+        ...baseChartConfig.plugins,
+        title: {
+          display: true,
+          text: "Minute Played Per TB",
+        },
+      },
+    },
+  });
+
+  // @ts-ignore
+  new Chart(document.getElementById("partial-plays-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Total Completions",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ), // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+        },
+        {
+          label: "Total 3/4 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+
+        {
+          label: "Total 1/2 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+        {
+          label: "Total 1/4 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+
+        {
+          label: "Total Start",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            font: {
+              size: 10,
+            },
+          },
+        },
+      },
+      plugins: {
+        ...baseChartConfig.plugins,
+        datalabels: { display: false },
+        title: {
+          display: true,
+          text: "Partial Plays by Message per TB",
         },
       },
     },
@@ -590,15 +719,33 @@ onMounted(() => {
         </div>
 
         <div
-          class="col-span-6 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-spa-6"
+          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
         >
           <canvas id="completions" class="max-h-104"></canvas>
         </div>
 
         <div
-          class="col-span-6 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-spa-6"
+          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
         >
           <canvas id="partial-plays" class="max-h-104"></canvas>
+        </div>
+
+        <div
+          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
+        >
+          <canvas id="completions-per-tb" class="max-h-104"></canvas>
+        </div>
+
+        <div
+          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
+        >
+          <canvas id="minutes-per-tb" class="max-h-104"></canvas>
+        </div>
+
+        <div
+          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-12"
+        >
+          <canvas id="partial-plays-per-tb" class="max-h-104"></canvas>
         </div>
       </div>
       <!-- <include src="./partials/map-01.html" /> -->

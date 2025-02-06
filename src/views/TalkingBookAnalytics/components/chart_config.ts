@@ -4,7 +4,7 @@ import type { ChartConfiguration, ChartConfigurationCustomTypesPerDataset } from
  * Structure of the stats response received from the backend.
  * Note that the field varies based on the request type.
  */
-export interface DataItem {
+export interface SummaryDataItem {
     tbs: number;
     TB: string;
     Agent: string;
