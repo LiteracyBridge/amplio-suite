@@ -14,10 +14,20 @@ import {
   SelectOption,
 } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
+import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+
+interface FilterForm {
+  deployment: string;
+  district: string;
+  community: string;
+  language: string;
+  playlist: string;
+}
 
 const spec = useProgramSpecStore();
+const store = useTalkingBookAnalyticStore();
 
-const form = ref({
+const form = ref<FilterForm>({
   deployment: null,
   district: null,
   community: null,
@@ -25,7 +35,9 @@ const form = ref({
   playlist: null,
 });
 
-async function filterResults() {}
+async function filterResults() {
+  store.getDashboardSummaries(form.value);
+}
 </script>
 
 <template>

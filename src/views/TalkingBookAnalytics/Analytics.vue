@@ -40,11 +40,11 @@ Chart.register(
 
 const activeKey = ref("home");
 const store = useTalkingBookAnalyticStore();
-const stats = ref<Record<string, any>>(null);
+// const stats = ref<Record<string, any>>(null);
 
 async function fetchData() {
-  const data = await store.summaries();
-  stats.value = data[0];
+  const data = await store.getDashboardSummaries();
+  // stats.value = data[0];
   console.log(data[0]);
 }
 
@@ -70,28 +70,34 @@ onMounted(() => {
           </Col>
         </Row>
 
-        <div v-if="!store.loading && stats != null">
-          <UsageMap :data="stats.map?.data" :centroid="stats.map?.centroid"></UsageMap>
+        <div v-if="!store.loading && store.summaries != null">
+          <UsageMap
+            :data="store.summaries.map?.data"
+            :centroid="store.summaries.map?.centroid"
+          ></UsageMap>
         </div>
       </TabPane>
       <TabPane key="content" tab="Content">
-        <div v-if="!store.loading && stats != null">
-          <Content :data="stats.content"></Content>
+        <div v-if="!store.loading && store.summaries != null">
+          <Content :data="store.summaries.content"></Content>
         </div>
       </TabPane>
       <TabPane key="operations" tab="Operations">
-        <div v-if="!store.loading && stats != null">
-          <Operations :data="stats.operations"></Operations>
+        <div v-if="!store.loading && store.summaries != null">
+          <Operations :data="store.summaries.operations"></Operations>
         </div>
       </TabPane>
       <TabPane key="ov-usage" tab="Usage (Overall)">
-        <div v-if="!store.loading && stats != null">
-          <OverallUsage :data="stats.usage"></OverallUsage>
+        <div v-if="!store.loading && store.summaries != null">
+          <OverallUsage :data="store.summaries.usage"></OverallUsage>
         </div>
       </TabPane>
       <TabPane key="usage-per-tb" tab="Usage (Avg TB)">
-        <div v-if="!store.loading && stats != null">
-          <UsagePerTB :data="stats.usage" :tbs="+stats.tbs"></UsagePerTB>
+        <div v-if="!store.loading && store.summaries != null">
+          <UsagePerTB
+            :data="store.summaries.usage"
+            :tbs="+store.summaries.tbs"
+          ></UsagePerTB>
         </div>
       </TabPane>
     </Tabs>

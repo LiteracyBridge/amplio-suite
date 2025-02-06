@@ -6,6 +6,7 @@ import { Recipient } from "@/models/recipient";
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 	state: () => ({
 		loading: false,
+		summaries: null as Record<string, any>
 	}),
 	actions: {
 		async getTbStatusBy(selector: string) {
@@ -38,11 +39,40 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 					this.loading = false;
 				});
 		},
-		async summaries() {
+		async getDashboardSummaries(opts?: {
+			deployment: string;
+			district: string;
+			community: string;
+			language: string;
+			playlist: string;
+		}) {
 			this.loading = true;
+			const query = []
+			if (opts?.deployment) {
+				query.push(`deployment=${opts.deployment}`)
+			}
 
-			return ApiRequest.get<any>(`tb-analytics/${useAppStore().programCode}/summaries`)
-				.then((resp) => resp)
+			if (opts?.district) {
+				query.push(`district=${opts.district}`)
+			}
+
+			if (opts?.community) {
+				query.push(`community=${opts.community}`)
+			}
+
+			if (opts?.language) {
+				query.push(`language=${opts.language}`)
+			}
+
+			if (opts?.playlist) {
+				query.push(`playlist=${opts.playlist}`)
+			}
+
+			return ApiRequest.get<any>(`tb-analytics/${useAppStore().programCode}/summaries?${query.join('&')}`)
+				.then((resp) => {
+					this.summaries = resp[0]
+					return resp
+				})
 				.finally(() => {
 					this.loading = false;
 				});
