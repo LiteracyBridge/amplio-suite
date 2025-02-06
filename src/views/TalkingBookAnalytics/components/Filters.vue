@@ -24,6 +24,10 @@ interface FilterForm {
   playlist: string;
 }
 
+const $emit = defineEmits<{
+  (e: "change", form: FilterForm): void;
+}>();
+
 const spec = useProgramSpecStore();
 const store = useTalkingBookAnalyticStore();
 
@@ -36,7 +40,7 @@ const form = ref<FilterForm>({
 });
 
 async function filterResults() {
-  store.getDashboardSummaries(form.value);
+  store.getDashboardSummaries(form.value).finally(() => $emit("change", form.value));
 }
 </script>
 

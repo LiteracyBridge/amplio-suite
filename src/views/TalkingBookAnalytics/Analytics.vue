@@ -46,12 +46,151 @@ Chart.register(
 );
 
 const store = useTalkingBookAnalyticStore();
+let chart1: Chart;
+let chart2: Chart;
+let chart3: Chart;
+let chart4: Chart;
+let chart5: Chart;
+let chart6: Chart;
 
-async function fetchData() {
-  const data = await store.getDashboardSummaries();
-  // stats.value = data[0];
-  console.log(data[0]);
+function updateCharts() {
+  // Minute Played
+  const minutesPlayed: Record<string, number> = {};
+  for (const row of store.summaries?.usage ?? []) {
+    const key = row.Message ?? row.Playlist;
+    minutesPlayed[key] ??= 0;
+    minutesPlayed[key] += +row["Total Seconds Played"] / 60;
+  }
 
+  chart1.data.datasets = [
+    {
+      label: "Minutes Played",
+      // @ts-ignore
+      data: Object.values(minutesPlayed).map((v) => v.toFixed(1)),
+    },
+  ];
+  chart1.update();
+
+  // Completions graph
+  const completions: Record<string, number> = {};
+  for (const row of store.summaries?.usage ?? []) {
+    const key = row.Message ?? row.Playlist;
+    completions[key] ??= 0;
+    completions[key] += +row["Total Completions"];
+  }
+
+  chart2.data.datasets = [
+    {
+      label: "Total Completions",
+      data: Object.values(completions),
+    },
+  ];
+  chart2.update();
+
+  // partial play
+  const partialPlays: Record<
+    string,
+    { completions: number; 3_4: number; 1_2: number; 1_4: number; starts: number }
+  > = {};
+  for (const row of store.summaries.usage) {
+    const key = row.Message ?? row.Playlist;
+    partialPlays[key] ??= { completions: 0, 14: 0, "34": 0, "12": 0, starts: 0 };
+    partialPlays[key].completions += +row["Total Completions"];
+    partialPlays[key]["14"] += +row["Total 1/4 Plays"] / 60;
+    partialPlays[key]["12"] += +row["Total 1/2 Plays"] / 60;
+    partialPlays[key]["34"] += +row["Total 3/4 Plays"] / 60;
+    partialPlays[key].starts += +row["Total Starts"] / 60;
+  }
+
+  const keys = Object.keys(minutesPlayed);
+  chart3.data.datasets = [
+    {
+      label: "Total Completions",
+      data: keys.map((k) => partialPlays[k].completions),
+      // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+    },
+    {
+      label: "Total 3/4 Plays",
+      data: keys.map((k) => partialPlays[k]["34"]),
+      // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
+    },
+
+    {
+      label: "Total 1/2 Plays",
+      data: keys.map((k) => partialPlays[k]["12"]),
+      // backgroundColor: ["yellow"],
+    },
+    {
+      label: "Total 1/4 Plays",
+      data: keys.map((k) => partialPlays[k]["14"]),
+      // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
+    },
+
+    {
+      label: "Total Start",
+      data: keys.map((k) => partialPlays[k].starts),
+    },
+  ];
+  chart3.update();
+
+  chart4.data.datasets = [
+    {
+      label: "Message Completions per TB",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart4.update();
+
+  chart5.data.datasets = [
+    {
+      label: "Message Completions per TB",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Seconds Played"] / 60 / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart5.update();
+
+  chart6.data.datasets = [
+    {
+      label: "Total Completions",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+      ), // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+    },
+    {
+      label: "Total 3/4 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+
+    {
+      label: "Total 1/2 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+    {
+      label: "Total 1/4 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+
+    {
+      label: "Total Start",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart6.update();
+}
+
+async function createCharts() {
   // Minute Played
   const minutesPlayed: Record<string, number> = {};
   console.log(store.summaries?.usage);
@@ -62,7 +201,7 @@ async function fetchData() {
   }
 
   // @ts-ignore
-  new Chart(document.getElementById("minutes-played"), {
+  chart1 = new Chart(document.getElementById("minutes-played"), {
     type: "bar",
     data: {
       labels: Object.keys(minutesPlayed),
@@ -95,7 +234,7 @@ async function fetchData() {
 
   // console.log(completions);
   // @ts-ignore
-  new Chart(document.getElementById("completions"), {
+  chart2 = new Chart(document.getElementById("completions"), {
     type: "bar",
     data: {
       labels: Object.keys(completions),
@@ -136,7 +275,7 @@ async function fetchData() {
 
   const keys = Object.keys(minutesPlayed);
   // @ts-ignore
-  new Chart(document.getElementById("partial-plays"), {
+  chart3 = new Chart(document.getElementById("partial-plays"), {
     type: "bar",
 
     data: {
@@ -202,7 +341,7 @@ async function fetchData() {
     )
   );
   // @ts-ignore
-  new Chart(document.getElementById("completions-per-tb"), {
+  chart4 = new Chart(document.getElementById("completions-per-tb"), {
     type: "bar",
     data: {
       labels: store.summaries.usage.flatMap(
@@ -230,7 +369,7 @@ async function fetchData() {
   });
 
   // @ts-ignore
-  new Chart(document.getElementById("minutes-per-tb"), {
+  chart5 = new Chart(document.getElementById("minutes-per-tb"), {
     type: "bar",
     data: {
       labels: store.summaries.usage.flatMap(
@@ -259,7 +398,7 @@ async function fetchData() {
   });
 
   // @ts-ignore
-  new Chart(document.getElementById("partial-plays-per-tb"), {
+  chart6 = new Chart(document.getElementById("partial-plays-per-tb"), {
     type: "bar",
     data: {
       labels: store.summaries.usage.flatMap(
@@ -327,6 +466,14 @@ async function fetchData() {
   });
 }
 
+async function fetchData() {
+  const data = await store.getDashboardSummaries();
+  // stats.value = data[0];
+  console.log(data[0]);
+
+  createCharts();
+}
+
 onMounted(() => {
   fetchData();
 
@@ -384,7 +531,7 @@ onMounted(() => {
     </Tabs> -->
 
     <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-      <Filters></Filters>
+      <Filters @change="updateCharts()"></Filters>
       <Divider></Divider>
 
       <div class="w-full flex justify-evenly">
