@@ -373,97 +373,56 @@ onMounted(() => {
 
       <div class="w-full flex justify-evenly">
         <div class="mx-auto lg:pb-2">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-6 mt-4">
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+          <div class="grid grid-cols-6 gap-4 sm:grid-cols-12 mt-4">
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
               <div class="px-4 sm:p-6">
                 <dl>
-                  <dt class="text-sm leading-5 font-bold dark:text-gray-400">
-                    Talking Books in Project
-                  </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-amplio-green dark:text-indigo-400"
-                  >
-                    1.6M
+                  <dt class="text-sm leading-5 font-bold">Talking Books in Project</dt>
+                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
+                    {{ store.summaries?.tbs?.project_tbs || 0 }}
                   </dd>
                 </dl>
               </div>
             </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
               <div class="px-4 sm:p-6">
                 <dl>
-                  <dt
-                    class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    Talking Books Installed
-                  </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400"
-                  >
-                    19.2K
+                  <dt class="text-sm leading-5 font-bold">Talking Books Installed</dt>
+                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
+                    {{ store.summaries?.tbs?.installed || 0 }}
                   </dd>
                 </dl>
               </div>
             </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-3">
               <div class="px-4 sm:p-6">
                 <dl>
-                  <dt
-                    class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400"
-                  >
+                  <dt class="text-sm leading-5 font-bold">
                     Talking Books Reporting Statistics
                   </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400"
-                  >
-                    19.2K
+                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
+                    {{ store.summaries?.tbs?.reporting_stats || 0 }}
                   </dd>
                 </dl>
               </div>
             </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt
-                    class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    Total Minutes Played
-                  </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400"
-                  >
-                    4.9K
-                  </dd>
-                </dl>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt
-                    class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    Total Minutes Played
-                  </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400"
-                  >
-                    4.9K
-                  </dd>
-                </dl>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg dark:bg-gray-900">
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
               <div class="px-4 py-5 sm:p-6">
                 <dl>
-                  <dt
-                    class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    Number of Messages
-                  </dt>
-                  <dd
-                    class="mt-1 text-3xl leading-9 font-semibold text-indigo-600 dark:text-indigo-400"
-                  >
-                    166.7K
+                  <dt class="text-sm leading-5 font-bold">Number of Messages</dt>
+                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
+                    {{ store.summaries?.tbs?.total_messages || 0 }}
+                  </dd>
+                </dl>
+              </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-3">
+              <div class="px-4 sm:p-6">
+                <dl>
+                  <dt class="text-sm leading-5 font-bold">Total Minutes Played</dt>
+                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
+                    {{ (+store.summaries?.tbs?.minutes_played)?.toLocaleString() || 0 }}
                   </dd>
                 </dl>
               </div>

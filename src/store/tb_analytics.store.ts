@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ApiRequest } from "@/api";
 import { useAppStore } from "@/store/app.store";
 import { Recipient } from "@/models/recipient";
+import { useProgramSpecStore } from "./programspec";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 	state: () => ({
@@ -40,7 +41,7 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 				});
 		},
 		async getDashboardSummaries(opts?: {
-			deployment: string;
+			deployment: number;
 			district: string;
 			community: string;
 			language: string;
@@ -50,6 +51,7 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 			const query = []
 			if (opts?.deployment) {
 				query.push(`deployment=${opts.deployment}`)
+				query.push(`deployment_name=${useProgramSpecStore().deployments.find(i => i.deploymentnumber == opts.deployment).deployment}`)
 			}
 
 			if (opts?.district) {

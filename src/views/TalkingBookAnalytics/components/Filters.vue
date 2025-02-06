@@ -17,7 +17,7 @@ import { useProgramSpecStore } from "@/store/programspec";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 
 interface FilterForm {
-  deployment: string;
+  deployment: number;
   district: string;
   community: string;
   language: string;
