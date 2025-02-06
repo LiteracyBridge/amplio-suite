@@ -47,11 +47,12 @@ async function filterResults() {
         <FormItem label="Deployment #" name="deployment" class="ms-3">
           <Select
             v-model:value="form.deployment"
-            class="min-w-4"
+            class="min-w-10"
             placeholder="Select deployment"
             :default-active-first-option="true"
             :show-arrow="true"
             :filter-option="false"
+            :allow-clear="true"
             @change="filterResults()"
           >
             <SelectOption :value="null">All</SelectOption>
@@ -70,6 +71,7 @@ async function filterResults() {
             :default-active-first-option="true"
             :show-arrow="true"
             :filter-option="false"
+            :allow-clear="true"
             @change="filterResults()"
           >
             <SelectOption :value="null">All</SelectOption>
@@ -91,11 +93,17 @@ async function filterResults() {
             :default-active-first-option="true"
             :show-arrow="true"
             :filter-option="false"
+            :allow-clear="true"
             @change="filterResults()"
           >
             <SelectOption :value="null">All</SelectOption>
             <SelectOption
-              v-for="(_r, k) of groupBy(spec.recipients, (r) => r.community_name)"
+              v-for="(_r, k) of groupBy(
+                spec.recipients.filter((f) =>
+                  form.district ? f.district == form.district : true
+                ),
+                (r) => r.community_name
+              )"
               :value="k"
               >{{ k }}</SelectOption
             >

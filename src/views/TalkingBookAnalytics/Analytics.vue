@@ -25,6 +25,10 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { baseChartConfig } from "./components/chart_config";
 import type { SummaryDataItem } from "./components/chart_config";
 import Filters from "./components/Filters.vue";
+import { useRequest } from "vue-request";
+import { useAppStore } from "@/store/app.store";
+import { useProgramSpecStore } from "@/store/programspec";
+import { LocalStorageKeys } from "@/models/constants";
 
 Chart.register(
   LineController,
@@ -41,9 +45,7 @@ Chart.register(
   ChartDataLabels
 );
 
-const activeKey = ref("home");
 const store = useTalkingBookAnalyticStore();
-// const stats = ref<Record<string, any>>(null);
 
 async function fetchData() {
   const data = await store.getDashboardSummaries();
@@ -327,6 +329,20 @@ async function fetchData() {
 
 onMounted(() => {
   fetchData();
+
+  // Download spec
+  useRequest(useProgramSpecStore().downloadSpec, {
+    defaultParams: [
+      useAppStore().activeProgram.data?.program_id ??
+        JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+    ],
+    onSuccess: (data) => {
+      useProgramSpecStore().setSpec({
+        programId: useAppStore().activeProgram.data.program_id,
+        programspec: data[0],
+      });
+    },
+  });
 });
 </script>
 
