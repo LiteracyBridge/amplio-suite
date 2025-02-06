@@ -42,7 +42,7 @@ async function filterResults() {
 
 <template>
   <Form layout="horizontal">
-    <Row class="my-4" align="middle">
+    <Row justify="end">
       <Col :span="4">
         <FormItem label="Deployment #" name="deployment" class="ms-3">
           <Select
