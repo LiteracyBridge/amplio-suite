@@ -114,8 +114,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <div id="map"></div>
+  <div
+
+  >
+    <h4 class="mb-2 text-xl font-bold text-black dark:text-white">Region labels</h4>
+    <div id="map" style="max-height: 650px;"></div>
+    <!-- <div id="map"></div> -->
     <div
       id="ol-popup"
       class="ol-popup bg-white rounded-lg shadow-lg border-b p-1 justify-between items-center"

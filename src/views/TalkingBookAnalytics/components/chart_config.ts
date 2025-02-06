@@ -58,7 +58,7 @@ export const baseChartConfig = {
             text: "Message Completions per TB",
         },
         datalabels: {
-            display: false,
+            display: true,
             anchor: "end", // Position of the labels (start, end, center, etc.)
             align: "end", // Alignment of the labels (start, end, center, etc.)
             // color: 'blue', // Color of the labels
