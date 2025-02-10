@@ -293,8 +293,8 @@ const CONTENT_SCHEMA = {
 
 const DEPLOYMENTS_SCHEMA = {
 	"Deployment #": { prop: "deploymentnumber", type: Number, required: true },
-	"Start Date": { prop: "start_date", type: String, required: true }, // fixme: validate these dates
-	"End Date": { prop: "end_date", type: String, required: true }, // fixme: validate these dates
+	"Start Date": { prop: "start_date", type: Date, required: true }, // fixme: validate these dates
+	"End Date": { prop: "end_date", type: Date, required: true }, // fixme: validate these dates
 	"Deployment Name": { prop: "deployment", type: String, required: true },
 };
 
@@ -329,7 +329,7 @@ const GENERAL_SCHEMA = {
 	},
 	"Deployments First": {
 		prop: "deployments_first",
-		type: String, // TODO: validate date
+		type: Date, // TODO: validate date
 		required: true,
 	},
 	"Feedback Frequency": {
