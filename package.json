@@ -68,7 +68,7 @@
     "sass": "^1.77.8",
     "sass-loader": "^16.0.0",
     "typescript": "^5.5.4",
-    "vite": "5.4.0",
+    "vite": "^6.0.9",
     "vite-svg-loader": "^5.1.0",
     "vue-axe": "^3.1.2",
     "vue-tsc": "^2.0.29"
