@@ -111,7 +111,7 @@ const canAddMessage = computed(() => {
 });
 
 const canRemovePlaylist = computed(() => {
-  return props.playlist.messages.length > 1;
+  return props.playlist.messages.length === 0;
 });
 
 const duplicateTitles = computed(() => {
