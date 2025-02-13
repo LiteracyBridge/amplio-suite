@@ -257,7 +257,7 @@ function duplicateQuestion(question: Question) {
             <Button type="primary" :danger="true" :ghost="true" @click="confirmDelete(question)">
               <template #icon>
                 <DeleteOutlined />
-              </template>Delete>>
+              </template>Delete
             </Button>
           </Space>
         </div>
