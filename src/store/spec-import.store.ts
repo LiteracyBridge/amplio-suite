@@ -97,8 +97,9 @@ export const useProgramSpecImport = defineStore("specImport", {
 
 				const playlistPositions: Record<string, number> = {}; // title: index
 				for (let i = 0; i < contents.length; i++) {
-					if (playlistPositions[contents[i].playlist_title as string] == null) {
-						playlistPositions[contents[i].playlist_title as string] = i + 1;
+					const key = `${contents[i].playlist_title}-${contents[i].deployment_number}`
+					if (playlistPositions[key] == null) {
+						playlistPositions[key] = i + 1;
 					}
 				}
 
@@ -114,7 +115,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					for (const title in mappedPlaylists) {
 						const playlist = new Playlist();
 						playlist.title = title;
-						playlist.position = playlistPositions[title];
+						playlist.position = playlistPositions[`${title}-${d.deploymentnumber}`];
 						// @ts-ignore
 						playlist.deployment_number = d.deploymentnumber as number;
 
