@@ -97,8 +97,9 @@ export const useProgramSpecImport = defineStore("specImport", {
 
 				const playlistPositions: Record<string, number> = {}; // title: index
 				for (let i = 0; i < contents.length; i++) {
-					if (playlistPositions[contents[i].playlist_title as string] == null) {
-						playlistPositions[contents[i].playlist_title as string] = i + 1;
+					const key = `${contents[i].playlist_title}-${contents[i].deployment_number}`
+					if (playlistPositions[key] == null) {
+						playlistPositions[key] = i + 1;
 					}
 				}
 
@@ -114,7 +115,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					for (const title in mappedPlaylists) {
 						const playlist = new Playlist();
 						playlist.title = title;
-						playlist.position = playlistPositions[title];
+						playlist.position = playlistPositions[`${title}-${d.deploymentnumber}`];
 						// @ts-ignore
 						playlist.deployment_number = d.deploymentnumber as number;
 
@@ -293,8 +294,8 @@ const CONTENT_SCHEMA = {
 
 const DEPLOYMENTS_SCHEMA = {
 	"Deployment #": { prop: "deploymentnumber", type: Number, required: true },
-	"Start Date": { prop: "start_date", type: String, required: true }, // fixme: validate these dates
-	"End Date": { prop: "end_date", type: String, required: true }, // fixme: validate these dates
+	"Start Date": { prop: "start_date", type: Date, required: true }, // fixme: validate these dates
+	"End Date": { prop: "end_date", type: Date, required: true }, // fixme: validate these dates
 	"Deployment Name": { prop: "deployment", type: String, required: true },
 };
 
@@ -329,7 +330,7 @@ const GENERAL_SCHEMA = {
 	},
 	"Deployments First": {
 		prop: "deployments_first",
-		type: String, // TODO: validate date
+		type: Date, // TODO: validate date
 		required: true,
 	},
 	"Feedback Frequency": {

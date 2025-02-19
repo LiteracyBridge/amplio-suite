@@ -8,6 +8,8 @@ import {
   MenuItem,
   Menu,
   notification,
+  Select,
+  SelectOption,
 } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
@@ -188,36 +190,24 @@ onMounted(async () => {
       </Dropdown>
 
       <span class="ms-5">Statistics Collection Date:</span>
-      <Dropdown v-if="deploymentDates.length > 0">
-        <template #overlay>
-          <Menu>
-            <MenuItem
-              key="all"
-              @click="
-                selectedDate = null;
-                onDeploymentChange();
-              "
-            >
-              <span>All Dates</span>
-            </MenuItem>
-            <MenuItem
-              :key="t"
-              v-for="t in deploymentDates"
-              @click="
-                selectedDate = t;
-                onDeploymentChange();
-              "
-            >
-              <span>{{ DateTime.fromISO(t).toLocaleString(DateTime.DATE_MED) }}</span>
-            </MenuItem>
-          </Menu>
-        </template>
-        <Button>
-          <span v-if="selectedDate == null">Choose Date</span>
-          <span v-else>{{ selectedDate }}</span>
-          <DownOutlined />
-        </Button>
-      </Dropdown>
+      <Select
+        v-model:value="selectedDate"
+        class="min-w-4"
+        placeholder="Choose collection date"
+        :default-active-first-option="true"
+        :show-arrow="true"
+        :filter-option="false"
+        @change="
+          (val) => {
+            onDeploymentChange();
+          }
+        "
+      >
+        <SelectOption :value="null" selected>All Dates</SelectOption>
+        <SelectOption v-for="d in deploymentDates" :value="d">{{
+          DateTime.fromISO(d).toLocaleString(DateTime.DATE_MED)
+        }}</SelectOption>
+      </Select>
 
       <Dropdown>
         <template #overlay>
