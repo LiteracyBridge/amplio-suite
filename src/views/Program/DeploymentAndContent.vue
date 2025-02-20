@@ -12,11 +12,28 @@
         @end="dragging = false"
         item-key="deploymentnumber"
       >
+
+      /// this is the previous implementation on how deployments are removed
+      /// it check the "canRemove" boolean if it is the last index in the list.
+      /// if so then it the delete button appears on the last deployment created. 
+
+        <!-- <template #item="{ element: deployment, index: index }">
+          <div class="my-3">
+            <Content2Deployment
+              :deployment="deployment"
+              :canRemove="index === store.deployments.length - 1" 
+            />
+          </div>
+        </template> -->
+
+        /// this new implementation check if the the 
+        /// created deployment is not been deployed and there are no playlist items in it.
+        
         <template #item="{ element: deployment, index: index }">
           <div class="my-3">
             <Content2Deployment
               :deployment="deployment"
-              :canRemove="index === store.deployments.length - 1"
+             :canRemove="!deployment.deployed && deployment.playlists.length === 0"
             />
           </div>
         </template>
