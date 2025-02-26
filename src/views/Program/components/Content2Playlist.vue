@@ -13,8 +13,11 @@
 
     <Col :span="10">
       <FormItem
-        :help="'Title cannot contain these characters: \/:*?\<>|&quot;'"
-        :extra="playlist._error_message"
+       :validateStatus="titleError ? 'error' : ''"
+      :help="titleError ? 'Invalid characters in Playlist Title' :
+       'Message title cannot contain these characters: \\/:*?<>|&quot;'"
+       class="mt-3 w-full"
+      :extra="playlist._error_message"
       >
         <Input
           :aria-label="`playlist ${playlist.title}`"
@@ -24,6 +27,7 @@
           v-model:value="playlist.title"
           :status="playlist._form_status"
           @change="($event) => validatePlaylistTitle($event.target.value, playlist)"
+          @input="handleTitleInput"
         />
       </FormItem>
     </Col>
@@ -101,6 +105,22 @@ const props = defineProps<{
 const store = useProgramSpecStore();
 const expanded = ref(false);
 const dragging = ref(false);
+const titleError = ref(false)
+
+// CHANGED: Added validation function
+const validateTitle = (title: string) => {
+  const invalidChars = /[\\/:*?<>_|"']/;
+  return !invalidChars.test(title);
+};
+
+// CHANGED: Added handler for real-time input validation
+const handleTitleInput = (event: Event) => {
+  const title = (event.target as HTMLInputElement).value;
+  titleError.value = !validateTitle(title); // Set error state based on validation
+  if (!titleError.value) {
+    store.setMessageOrPlaylistTitle(title, props.playlist); // Update title in store if valid
+  }
+};
 
 const canAddMessage = computed(() => {
   return (
