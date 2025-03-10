@@ -121,22 +121,24 @@ const titleError = ref(false)
 
 //  Added validation function
 const validateTitle = (title: string) => {
-  const invalidChars = /[\\/:*?<>_|"']/;
+  const invalidChars = /[^\d\w\s]/g;
   return !invalidChars.test(title);
 };
 
 //  Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
+  const regex = /[^\d\w\s]/g
   const title = (event.target as HTMLInputElement).value;
-  titleError.value = !validateTitle(title); 
+  titleError.value = regex.test(title)
   if (!titleError.value) {
-    store.setMessageOrPlaylistTitle(title, props.message);
+    store.setMessageOrPlaylistTitle(title.replace(regex, " ").trim(), props.message);
   }
 };
-const modal = ref({
-  show: false,
-  eleIndex: -1,
-});
+
+// const modal = ref({
+//   show: false,
+//   eleIndex: -1,
+// });
 
 onMounted(() => {
   if (props.message.title.length === 0) {
