@@ -116,7 +116,7 @@ const validateTitle = (title: string) => {
 // CHANGED: Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
   const title = (event.target as HTMLInputElement).value;
-  titleError.value = !validateTitle(title); // Set error state based on validation
+  titleError.value = /[^\d\w\s]/g.test(title); // Set error state based on validation
   if (!titleError.value) {
     store.setMessageOrPlaylistTitle(title, props.playlist); // Update title in store if valid
   }
