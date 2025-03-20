@@ -13,6 +13,7 @@ export class Deployment {
   component?: string;
   id: number;
   deployed: boolean = false;
+  is_published: boolean = false;
 
   playlists: Playlist[] = [];
 
