@@ -76,6 +76,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 			by: "region",
 			descending: true,
 		},
+		isPublished: false,
 	}),
 	getters: {
 		canPublish: (state) => {
@@ -83,7 +84,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 				depl.playlists.some((pl: any) => pl.messages.length > 0),
 			);
 			const hasOneRecipient = (state.recipients || []).length > 0;
-			return hasOneMessage && hasOneRecipient;
+			return hasOneMessage && hasOneRecipient && !state.isPublished;
 		},
 		labelUsed: (state) => {
 			console.log(state.recipients);

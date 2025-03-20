@@ -109,7 +109,7 @@ const titleError = ref(false)
 
 // CHANGED: Added validation function
 const validateTitle = (title: string) => {
-  const invalidChars = /[\\/:*?<>_|"']/;
+  const invalidChars = /[^\d\w\s]/g;
   return !invalidChars.test(title);
 };
 
