@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Bump version and push tag
-        uses: TriPSs/conventional-changelog-action@v3
+        uses: TriPSs/conventional-changelog-action@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           git-message: "change log (release): {version}"
