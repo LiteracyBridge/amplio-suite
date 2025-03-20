@@ -555,7 +555,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 		setMessageOrPlaylistTitle(title: string, item: Message | Playlist) {
 			// Since the title is used as the file name, we need to remove any characters that are not allowed in file names.
 			// See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-			item.title = title.replace(/[\\\/:\*\?"<>\|]/g, "");
+			item.title = title.replace(/[^\d\w\s]/g, "");
 			this.changed = true;
 		},
 
