@@ -8,6 +8,7 @@ import { notification } from "ant-design-vue";
 import { groupBy, orderBy } from "lodash";
 import readXlsxFile from "read-excel-file";
 import { useProgramSpecStore } from "./programspec";
+import { DateTime } from "luxon";
 
 function formatParsingError(
 	opts: {
@@ -96,9 +97,16 @@ export const useProgramSpecImport = defineStore("specImport", {
 				const mappedContents = groupBy(contents, "deployment_number");
 
 				const playlistPositions: Record<string, number> = {}; // title: index
-				for (let i = 0; i < contents.length; i++) {
-					if (playlistPositions[contents[i].playlist_title as string] == null) {
-						playlistPositions[contents[i].playlist_title as string] = i + 1;
+				for (const key in mappedContents) {
+					const _deploymentContents = mappedContents[key]
+					let position = 0;
+
+					for (let i = 0; i < _deploymentContents.length; i++) {
+						const key = `${_deploymentContents[i].playlist_title}-${_deploymentContents[i].deployment_number}`
+						if (playlistPositions[key] == null) {
+							position += 1
+							playlistPositions[key] = position;
+						}
 					}
 				}
 
@@ -114,7 +122,7 @@ export const useProgramSpecImport = defineStore("specImport", {
 					for (const title in mappedPlaylists) {
 						const playlist = new Playlist();
 						playlist.title = title;
-						playlist.position = playlistPositions[title];
+						playlist.position = playlistPositions[`${title}-${d.deploymentnumber}`];
 						// @ts-ignore
 						playlist.deployment_number = d.deploymentnumber as number;
 
@@ -293,8 +301,59 @@ const CONTENT_SCHEMA = {
 
 const DEPLOYMENTS_SCHEMA = {
 	"Deployment #": { prop: "deploymentnumber", type: Number, required: true },
-	"Start Date": { prop: "start_date", type: String, required: true }, // fixme: validate these dates
-	"End Date": { prop: "end_date", type: String, required: true }, // fixme: validate these dates
+	"Start Date": {
+		prop: "start_date",
+		type: (value: any) => {
+			try {
+				if (value == null || value == '') {
+					throw new Error(`Start date cannot be empty`)
+				}
+				if (typeof value === "object") {
+					// JS date of object, don't touch it
+					return value;
+				}
+				else if (typeof value === "string") {
+					// Raw date string, verify
+					const date = DateTime.fromISO(value);
+					if (!date.isValid) {
+						throw new Error(`Start Date '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+					}
+					return new Date(value);
+				}
+				throw new Error(`Start Date '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+			} catch (error) {
+				throw new Error(`${error}. ${errorMessageSuffix}`);
+			}
+		},
+		required: true
+	}, // fixme: validate these dates
+	"End Date": {
+		prop: "end_date",
+		type: (value: any) => {
+			try {
+				console.log(value)
+				if (value == null || value == '') {
+					throw new Error(`End date cannot be empty`)
+				}
+				if (typeof value === "object") {
+					// JS date of object, don't touch it
+					return value;
+				}
+				else if (typeof value === "string") {
+					// Raw date string, verify
+					const date = DateTime.fromISO(value);
+					if (!date.isValid) {
+						throw new Error(`End Date '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+					}
+					return new Date(value);
+				}
+				throw new Error(`End Date '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+			} catch (error) {
+				throw new Error(`${error}. ${errorMessageSuffix}`);
+			}
+		},
+		required: true
+	},
 	"Deployment Name": { prop: "deployment", type: String, required: true },
 };
 
@@ -329,7 +388,29 @@ const GENERAL_SCHEMA = {
 	},
 	"Deployments First": {
 		prop: "deployments_first",
-		type: String, // TODO: validate date
+		type: (value: any) => {
+			try {
+				console.log(value)
+				if (value == null || value == '') {
+					throw new Error(`'Deployment First cannot be empty`)
+				}
+				if (typeof value === "object") {
+					// JS date of object, don't touch it
+					return value;
+				}
+				else if (typeof value === "string") {
+					// Raw date string, verify
+					const date = DateTime.fromISO(value);
+					if (!date.isValid) {
+						throw new Error(`Deployment First '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+					}
+					return new Date(value);
+				}
+				throw new Error(`Deployment First '${value}' is invalid. Make sure it follows the format: Year-Month-Day`)
+			} catch (error) {
+				throw new Error(`${error}. ${errorMessageSuffix}`);
+			}
+		},
 		required: true,
 	},
 	"Feedback Frequency": {
