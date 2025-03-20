@@ -8,6 +8,8 @@ import {
   MenuItem,
   Menu,
   notification,
+  Select,
+  SelectOption,
 } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
@@ -129,11 +131,14 @@ async function exportReport() {
 async function fetchTimestamps() {
   const d = selectedDeployment.value;
   store.getDeploymentDates(d === "all" ? null : d).then((resp) => {
-    if (resp.length === 0) {
+    const collection_dates = resp.collections;
+    if (collection_dates.length === 0) {
       deploymentDates.value = [];
       selectedDate.value = null;
     } else {
-      deploymentDates.value = resp.flatMap((r) => DateTime.fromISO(r.date).toISODate());
+      deploymentDates.value = collection_dates.flatMap((r) =>
+        DateTime.fromISO(r.date).toISODate()
+      );
     }
   });
 }
@@ -157,6 +162,7 @@ onMounted(async () => {
 <template>
   <PageHeader title="Usage Query" sub-title="">
     <template #extra>
+      <span>Deployment:</span>
       <Dropdown>
         <template #overlay>
           <Menu>
@@ -183,36 +189,25 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
-      <Dropdown v-if="deploymentDates.length > 0">
-        <template #overlay>
-          <Menu>
-            <MenuItem
-              key="all"
-              @click="
-                selectedDate = null;
-                onDeploymentChange();
-              "
-            >
-              <span>All Dates</span>
-            </MenuItem>
-            <MenuItem
-              :key="t"
-              v-for="t in deploymentDates"
-              @click="
-                selectedDate = t;
-                onDeploymentChange();
-              "
-            >
-              <span>{{ DateTime.fromISO(t).toLocaleString(DateTime.DATE_MED) }}</span>
-            </MenuItem>
-          </Menu>
-        </template>
-        <Button>
-          <span v-if="selectedDate == null">Choose Deployment Date</span>
-          <span v-else>{{ selectedDate }}</span>
-          <DownOutlined />
-        </Button>
-      </Dropdown>
+      <span class="ms-5">Statistics Collection Date:</span>
+      <Select
+        v-model:value="selectedDate"
+        class="min-w-4"
+        placeholder="Choose collection date"
+        :default-active-first-option="true"
+        :show-arrow="true"
+        :filter-option="false"
+        @change="
+          (val) => {
+            onDeploymentChange();
+          }
+        "
+      >
+        <SelectOption :value="null" selected>All Dates</SelectOption>
+        <SelectOption v-for="d in deploymentDates" :value="d">{{
+          DateTime.fromISO(d).toLocaleString(DateTime.DATE_MED)
+        }}</SelectOption>
+      </Select>
 
       <Dropdown>
         <template #overlay>
@@ -261,6 +256,7 @@ onMounted(async () => {
     :loading="store.loading"
     :sticky="true"
     :scroll="{ x: '70%' }"
+    :pagination="false"
     :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
     class="ant-table-striped"
   >

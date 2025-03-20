@@ -132,7 +132,6 @@
 <script lang="ts" setup>
 import { Alert, Button, Divider, Modal, notification, Spin } from "ant-design-vue";
 import { computed, ref } from "vue";
-// import { approveSpec, uploadSpec } from "@/api/programspec.api";
 import { useProgramSpecStore } from "@/store/programspec";
 import { Workbook } from "exceljs";
 import { useProgramSpecImport } from "@/store/spec-import.store";
@@ -143,17 +142,11 @@ const specImport = useProgramSpecImport();
 
 const exportUnpublished = ref(false);
 const selectedFile = ref(null);
-const diffs = ref(null);
-const publishImported = ref(true);
 const showModal = ref({
   showSpinner: false,
   showDiffs: false,
   visible: false,
 });
-
-// const showUnpublishedOption = computed(() => {
-//   return exportUnpublished;
-// });
 
 /**
  * Export the published program spec for the current program. (The "alt" key can be used to enable an option
