@@ -19,8 +19,14 @@
       </Col>
 
       <Col :span="14">
+        <!-- CHANGED: Added validation status and error message -->
         <FormItem
-          help='Message title cannot contain \/:*?\<>|"'
+          :validateStatus="titleError ? 'error' : ''"
+          :help="
+            titleError
+              ? 'Invalid characters in Message Title'
+              : 'Message title cannot contain these characters: \\/:*?<>|&quot;'
+          "
           class="mt-3 w-full"
         >
           <Input
@@ -30,6 +36,7 @@
             :name="`message-${message.title}`"
             v-model:value="message.title"
             @change="store.setMessageOrPlaylistTitle($event.target.value, message)"
+            @input="handleTitleInput"
           /> </FormItem
       ></Col>
       <Col :span="4" align="center">
@@ -89,7 +96,6 @@
         />
       </div>
     </div>
-
   </div>
 </template>
 
@@ -113,10 +119,22 @@ const props = defineProps<{
 const store = useProgramSpecStore();
 
 const expanded = ref(false);
-const modal = ref({
-  show: false,
-  eleIndex: -1,
-});
+const titleError = ref(false);
+
+//  Added validation function
+// const validateTitle = (title: string) => {
+//   const invalidChars = /[\\/:*?<>_|"']/;
+//   return !invalidChars.test(title);
+// };
+
+//  Added handler for real-time input validation
+const handleTitleInput = (event: Event) => {
+  const title = (event.target as HTMLInputElement).value;
+  titleError.value = /[^\d\w\s]/g.test(title);
+  if (!titleError.value) {
+    store.setMessageOrPlaylistTitle(title, props.message);
+  }
+};
 
 onMounted(() => {
   if (props.message.title.length === 0) {
