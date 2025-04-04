@@ -97,6 +97,10 @@ async function fetchMessages() {
 onMounted(() => {
   fetchMessages();
 });
+
+function genUrl(u: UserFeedbackMessage){
+  return `https://amplio-uf.s3.us-west-2.amazonaws.com/collected/${u.program_id}/${u.deployment_number}/${u.message_uuid}.mp3`
+}
 </script>
 
 <template>
@@ -163,7 +167,7 @@ onMounted(() => {
 
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'audio'">
-        <audio controls :src="(record as UserFeedbackMessage).url" preload="none"></audio>
+        <audio controls :src="genUrl(record as UserFeedbackMessage)" preload="none"></audio>
       </template>
 
       <template v-if="column.key === 'title'">
