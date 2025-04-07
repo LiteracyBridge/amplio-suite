@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # install project dependencies
-RUN npm clean-install
+RUN yarn --frozen-lockfile
 
 COPY . .
 
@@ -20,9 +20,9 @@ ENV PORT=${PORT}
 
 RUN \
   if [ "${NODE_ENV}" == "production" ]; then \
-    npm run staging-build; \
-  else \
     npm run production-build; \
+  else \
+    npm run staging-build; \
   fi
 
 EXPOSE ${PORT}
