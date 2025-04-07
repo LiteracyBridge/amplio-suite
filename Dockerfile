@@ -27,4 +27,4 @@ RUN \
 
 EXPOSE ${PORT}
 
-CMD [ "http-server", "dist" ]
+CMD [ "http-server", "dist/" ]
