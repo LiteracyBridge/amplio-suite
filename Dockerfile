@@ -22,7 +22,7 @@ RUN \
   if [ "${NODE_ENV}" == "production" ]; then \
     npm run staging-build; \
   else \
-    npm run production-build \
+    npm run production-build; \
   fi
 
 EXPOSE ${PORT}
