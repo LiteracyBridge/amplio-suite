@@ -76,6 +76,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 			by: "region",
 			descending: true,
 		},
+		isPublished: false,
 	}),
 	getters: {
 		canPublish: (state) => {
@@ -83,7 +84,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 				depl.playlists.some((pl: any) => pl.messages.length > 0),
 			);
 			const hasOneRecipient = (state.recipients || []).length > 0;
-			return hasOneMessage && hasOneRecipient;
+			return hasOneMessage && hasOneRecipient && !state.isPublished;
 		},
 		labelUsed: (state) => {
 			console.log(state.recipients);
@@ -555,7 +556,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 		setMessageOrPlaylistTitle(title: string, item: Message | Playlist) {
 			// Since the title is used as the file name, we need to remove any characters that are not allowed in file names.
 			// See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-			item.title = title.replace(/[\\\/:\*\?"<>\|]/g, "");
+			item.title = title.replace(/[^\d\w\s]/g, "");
 			this.changed = true;
 		},
 

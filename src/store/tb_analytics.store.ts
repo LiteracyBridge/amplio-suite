@@ -98,10 +98,10 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 		async getDeploymentDates(deployment?: number) {
 			this.loading = true;
 
-			return ApiRequest.get<{ date: string }>(
+			return ApiRequest.get<{ collections: { date: string }[], deployments: { date: string }[] }>(
 				`tb-analytics/${useAppStore().programCode}/deployment-dates?deployment=${deployment}`,
 			)
-				.then((resp) => resp)
+				.then((resp) => resp[0])
 				.finally(() => {
 					this.loading = false;
 				});

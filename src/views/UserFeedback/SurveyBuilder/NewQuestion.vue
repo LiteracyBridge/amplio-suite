@@ -12,12 +12,13 @@ import {
   Textarea,
   Switch,
 } from "ant-design-vue";
-import {  DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
+import { DeleteOutlined, CopyOutlined } from "@ant-design/icons-vue";
 import { onBeforeUnmount, ref } from "vue";
 import { type Question, type QuestionChoice, QuestionType } from "@/models/question";
 import OptionIcon from "./OptionIcon.vue";
 import QuestionCondition from "./QuestionCondition.vue";
 import { useSurveyBuilder } from "@/store/survey_builder.store";
+import Modal from "ant-design-vue/es/modal/Modal";
 
 const props = defineProps<{
   question: Question;
@@ -120,6 +121,18 @@ function saveQuestion(q: Question) {
 //   emit("saved", null);
 // }
 
+function confirmDelete(question: Question) {
+  Modal.confirm({
+    title: "Are you sure?",
+    content: "This action cannot be undone.",
+    onOk: () => {
+
+      store.deleteQuestion(question);
+
+
+    }
+  });
+}
 onBeforeUnmount(() => {
   saveQuestion(form.value);
 });
@@ -135,45 +148,31 @@ function duplicateQuestion(question: Question) {
 
 <template>
   <Card type="inner" size="small" class="my-6" style="width: 58vw" :hoverable="true">
-    <QuestionCondition
-      :question="form"
-      :visible="config.modalVisible"
-      @closed="config.modalVisible = false"
-    ></QuestionCondition>
+    <QuestionCondition :question="form" :visible="config.modalVisible" @closed="config.modalVisible = false">
+    </QuestionCondition>
 
     <Form layout="vertical" @blur="saveQuestion(form)">
       <Row :gutter="10">
         <Col :span="19">
-          <FormItem label="">
-            <Input
-              size="large"
-              type="text"
-              class="w-full"
-              placeholder="Enter question text"
-              v-model:value="form.question_label"
-            />
-          </FormItem>
+        <FormItem label="">
+          <Input size="large" type="text" class="w-full" placeholder="Enter question text"
+            v-model:value="form.question_label" />
+        </FormItem>
         </Col>
 
         <Col :span="4">
-          <Button @click.prevent="config.modalVisible = true"> Condition</Button>
+        <Button @click.prevent="config.modalVisible = true"> Condition</Button>
         </Col>
       </Row>
 
       <div v-if="form.type === QuestionType.open_ended">
-        <Textarea
-          class="my-2"
-          placeholder="Open ended response..."
-          :disabled="true"
-        ></Textarea>
+        <Textarea class="my-2" placeholder="Open ended response..." :disabled="true"></Textarea>
       </div>
 
-      <div
-        v-if="
-          form.type === QuestionType.multi_choice ||
-          form.type === QuestionType.single_choice
-        "
-      >
+      <div v-if="
+        form.type === QuestionType.multi_choice ||
+        form.type === QuestionType.single_choice
+      ">
         <div v-for="(option, index) in form.choices">
           <!-- <div v-if="!(option.is_deleted || false)" class="flex">
           <div>
@@ -183,22 +182,12 @@ function duplicateQuestion(question: Question) {
           <div v-if="!(option.is_deleted || false)">
             <div class="flex">
               <OptionIcon :type="form.type" class="mt-6"></OptionIcon>
-              <Input
-                type="text"
-                class="my-2 mx-3 px-5"
-                placeholder="Enter an answer choice"
-                v-model:value="option.value"
-                :disabled="option.is_other"
-              />
+              <Input type="text" class="my-2 mx-3 px-5" placeholder="Enter an answer choice"
+                v-model:value="option.value" :disabled="option.is_other" />
 
               <span class="float-right mx-8 my-4 text-center">
-                <Button
-                  size="small"
-                  :ghost="true"
-                  :danger="true"
-                  @click="deleteQuestionOptionItem(option.choice_id)"
-                  v-if="index > 0"
-                >
+                <Button size="small" :ghost="true" :danger="true" @click="deleteQuestionOptionItem(option.choice_id)"
+                  v-if="index > 0">
                   <template #icon>
                     <DeleteOutlined class="pb-14"></DeleteOutlined>
                   </template>
@@ -212,21 +201,12 @@ function duplicateQuestion(question: Question) {
               <div v-for="sub in option.sub_options || []">
                 <div v-if="!(sub.is_deleted || false)" class="flex">
                   <OptionIcon :type="form.type" class="mt-6"></OptionIcon>
-                  <Input
-                    type="text"
-                    class="my-2 mx-3 px-5"
-                    placeholder="Enter an answer choice"
-                    v-model:value="sub.value"
-                    :disabled="sub.is_other"
-                  />
+                  <Input type="text" class="my-2 mx-3 px-5" placeholder="Enter an answer choice"
+                    v-model:value="sub.value" :disabled="sub.is_other" />
 
                   <span class="float-right mx-8 my-4 text-center">
-                    <Button
-                      size="small"
-                      :ghost="true"
-                      :danger="true"
-                      @click="deleteQuestionOptionItem(sub.choice_id, option.choice_id)"
-                    >
+                    <Button size="small" :ghost="true" :danger="true"
+                      @click="deleteQuestionOptionItem(sub.choice_id, option.choice_id)">
                       <template #icon>
                         <DeleteOutlined class="pb-14"></DeleteOutlined>
                       </template>
@@ -274,13 +254,10 @@ function duplicateQuestion(question: Question) {
             <Button @click="duplicateQuestion(question)">
               <CopyOutlined /> Duplicate
             </Button>
-            <Button
-              type="primary"
-              :danger="true"
-              :ghost="true"
-              @click="store.deleteQuestion(question)"
-            >
-              <template #icon> <DeleteOutlined /> </template>Delete
+            <Button type="primary" :danger="true" :ghost="true" @click="confirmDelete(question)">
+              <template #icon>
+                <DeleteOutlined />
+              </template>Delete
             </Button>
           </Space>
         </div>
