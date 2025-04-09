@@ -116,18 +116,18 @@ const data = ref({
 });
 
 // Download spec
-useRequest(store.downloadSpec, {
-  defaultParams: [
-    appStore.activeProgram.data?.program_id ??
-      JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
-  ],
-  onSuccess: (data) => {
-    store.setSpec({
-      programId: appStore.activeProgram.data.program_id,
-      programspec: data[0],
-    });
-  },
-});
+// useRequest(store.downloadSpec, {
+//   defaultParams: [
+//     appStore.activeProgram.data?.program_id ??
+//       JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+//   ],
+//   onSuccess: (data) => {
+//     store.setSpec({
+//       programId: appStore.activeProgram.data.program_id,
+//       programspec: data[0],
+//     });
+//   },
+// });
 
 // const anyTabChanged = computed(() => {
 //   return useProgramSpecStore().changed;

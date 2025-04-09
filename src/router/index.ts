@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/dashboard",
     component: () =>
-      import(/* webpackChunkName: "sign-up" */ "../views/Dashboard.vue"),
+      import(/* webpackChunkName: "sign-up" */ "../views/Home.vue"),
   },
   {
     path: "/password-reset",
