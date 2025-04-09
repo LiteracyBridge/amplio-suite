@@ -1,32 +1,5 @@
 <template>
   <section>
-    <!-- <header class="w-full inline-flex items-center justify-between">
-      <h2 class="visually_hidden">Recipients</h2>
-
-      <VButton tag="span" label="+ Add Recipient" @click="addNewRecipient" />
-
-      <div class="inline-flex">
-        <!-- <form v-on:submit.prevent="fetchRecipients(programId)">
-          <v-input
-            type="text"
-            name="filterColumns"
-            placeholder="Filter columns"
-            iconRight="search"
-            mx="mx-2"
-            :value="store.filterText"
-            @input="setFilterText($event.target.value)"
-          />
-        </form>
-        <VButton
-          tag="span"
-          label="Reset Filter"
-          :disabled="!tableIsFilter"
-          @click="store.resetFilters"
-        />
-        -->
-    <!-- </div> -->
-    <!-- </header> -->
-
     <Table
       :columns="columns"
       :data-source="recipients"
@@ -157,15 +130,15 @@ import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vu
 
 const columns = [
   // @ts-ignore
-  { title: "#", key: "index", width: '60px' },
+  { title: "#", key: "index", width: "60px" },
   { title: "Region/State", key: "region" },
   { title: "District/County", key: "district" },
   { title: "Community", key: "community_name" },
   { title: "Group", key: "group_name" },
   { title: "Agent", key: "agent" },
   { title: "Language", key: "language" },
-  { title: "# TBs", key: "numtbs", width: '70px' },
-  { title: "Variant", key: "variant", width: '70px' },
+  { title: "# TBs", key: "numtbs", width: "70px" },
+  { title: "Variant", key: "variant", width: "70px" },
   { title: "", key: "affiliate" }, // action buttons; we can't use 'actions' as the key because it is not in the Recipient model
 ];
 
@@ -283,7 +256,16 @@ function filterRecipient(val?: string) {
 
 function onAcceptEdit() {
   if (isRecipientInEditValid.value) {
-    store.updateRecipient({ recipient: data.value.recipientInEdit });
+    const recipient = data.value.recipientInEdit;
+    if (Recipient.isAccessCodeDuplicate(recipient.access_code)) {
+      notification.error({
+        message: "Duplicate access code!",
+        description: `${recipient.access_code} is assigned to another recipient!`,
+      });
+      return;
+    }
+
+    store.updateRecipient({ recipient: recipient });
     filterRecipient(); // trigger table refresh
     onCloseModal();
   } else {
