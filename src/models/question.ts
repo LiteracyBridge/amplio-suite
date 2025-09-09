@@ -48,6 +48,7 @@ export class Question extends FormProps {
   type?: QuestionType;
   order?: number;
   required?: boolean;
+  possition?: number;
 
   choices: QuestionChoice[] = [];
 
