@@ -532,7 +532,7 @@ const deployments = computed(() => {
 function onSetRecipientValue(payload: { field: keyof Recipient; value: any }) {
   const { field, value } = payload;
   // @ts-ignore
-  props.recipient[field] = value;
+  props.recipient[field] = value || '';
   //   this.$emit("changed", true);
 }
 
