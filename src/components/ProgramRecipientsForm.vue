@@ -216,7 +216,27 @@
       </Row>
 
       <Row :gutter="8">
-        <Col :span="12">
+        <Col :span="8">
+          <FormItem label="Access Code">
+            <Input name="access_code" v-model:value="recipient.access_code">
+              <template #suffix>
+                <Tooltip title="Unique code to access the Companion App">
+                  <InfoCircleOutlined style="color: rgba(0, 0, 0, 0.45)" />
+                </Tooltip>
+              </template>
+            </Input>
+
+            <template #extra>
+              <Button
+                type="link"
+                @click="recipient.access_code = Recipient.generateAccessCode()"
+                >Generate access code</Button
+              >
+            </template>
+          </FormItem>
+        </Col>
+
+        <Col :span="8">
           <FormItem label="Indirect beneficiaries">
             <Input
               name="indirectBeneficiaries"
@@ -231,7 +251,8 @@
             />
           </FormItem>
         </Col>
-        <Col :span="12">
+
+        <Col :span="8">
           <FormItem label="Direct Beneficiaries">
             <Input
               name="directBeneficiaries"
@@ -254,12 +275,6 @@
             </Input>
           </FormItem>
         </Col>
-      </Row>
-
-      <Row :gutter="8">
-        <Col :span="8"></Col>
-        <Col :span="8"></Col>
-        <Col :span="8"></Col>
       </Row>
     </Form>
 
@@ -463,17 +478,25 @@
 
 <script lang="ts" setup>
 import VButton from "@/components/VButton.vue";
-import VInput from "@/components/VInput.vue";
-import VTooltip from "@/components/VTooltip.vue";
 import LanguagesSelector from "@/components/LanguagesSelector.vue";
 import BeneficiariesField from "@/components/ProgramRecipientsFormBeneficiaries.vue";
 
 import listeningModels from "@/data/listeningModels.json";
 import { useProgramSpecStore } from "@/store/programspec";
 import { computed, onMounted, ref, watch } from "vue";
-import { Form, Row, Col, Input, FormItem, Select, Tooltip } from "ant-design-vue";
+import {
+  Form,
+  Row,
+  Col,
+  Space,
+  Input,
+  FormItem,
+  Select,
+  Tooltip,
+  Button,
+} from "ant-design-vue";
 import { Recipient } from "@/models/recipient";
-import { InfoCircleOutlined } from "@ant-design/icons-vue";
+import { InfoCircleOutlined, KeyOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   recipient: Recipient;
@@ -506,18 +529,8 @@ const deployments = computed(() => {
   return (state.deployments || []).map((item) => ({ value: item.deploymentnumber }));
 });
 
-// const listeningModelSelected = computed(() => {
-//   return listeningModels.find((opt) => opt.label === props.recipient.listening_model);
-// });
-
-// const recipientIndex = computed(() => {
-//   return state.recipients
-//     .map((recipient) => recipient.id)
-//     .indexOf(props.recipient.id);
-// });
-
 function onSetRecipientValue(payload: { field: keyof Recipient; value: any }) {
-  let { field, value } = payload;
+  const { field, value } = payload;
   // @ts-ignore
   props.recipient[field] = value || '';
   //   this.$emit("changed", true);

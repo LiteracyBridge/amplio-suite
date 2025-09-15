@@ -23,6 +23,8 @@ proxy/resolver
 # local env files
 .env.local
 .env.*.local
+.env.staging
+.env.production
 
 # Editor directories and files
 .idea
