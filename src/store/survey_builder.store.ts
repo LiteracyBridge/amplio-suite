@@ -86,6 +86,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
   },
   actions: {
     setSurvey(survey: Survey) {
+      const originalOrder = this.$state.activeSurvey?.questions?.map(q => q._id) || [];
       survey.questions = survey.questions.map((q) => {
         const question: Question = Object.create(Question.prototype);
         Object.assign(question, q);
@@ -99,6 +100,16 @@ export const useSurveyBuilder = defineStore("survey-builder", {
           .filter((c) => c.parent_id == null);
         return question;
       });
+      // Restore original order if it exists
+      if (originalOrder.length > 0) {
+        survey.questions.sort((a, b) => {
+          const aIndex = originalOrder.indexOf(a._id);
+          const bIndex = originalOrder.indexOf(b._id);
+          if (aIndex === -1) return 1; 
+          if (bIndex === -1) return -1;
+          return aIndex - bIndex;
+        });
+      }
       this.$state.activeSurvey = survey;
     },
     reorderQuestions(data: Question[]) {
@@ -107,6 +118,7 @@ export const useSurveyBuilder = defineStore("survey-builder", {
     },
     addQuestion(form: Question) {
       form.is_new = true;
+      form.possition = this.$state.activeSurvey.questions.length;
       this.$state.activeSurvey.questions = [
         ...this.$state.activeSurvey.questions,
         form,
