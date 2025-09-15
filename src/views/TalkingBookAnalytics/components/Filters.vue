@@ -45,36 +45,31 @@ async function filterResults() {
 </script>
 
 <template>
-  <Form layout="horizontal">
-    <Row justify="end">
-      <Col :span="4">
-        <FormItem label="Deployment #" name="deployment" class="ms-3">
+  <Form layout="horizontal" class="filter-form">
+    <Row :gutter="[16, 16]">
+      <!-- Deployment -->
+      <Col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+        <FormItem label="Deployment" name="deployment">
           <Select
             v-model:value="form.deployment"
-            class="min-w-10"
-            placeholder="Select deployment"
-            :default-active-first-option="true"
-            :show-arrow="true"
-            :filter-option="false"
+            placeholder="Deployment"
             :allow-clear="true"
             @change="filterResults()"
           >
             <SelectOption :value="null">All</SelectOption>
-            <SelectOption v-for="d in spec.deployments" :value="d.deploymentnumber">{{
-              d.deploymentname
-            }}</SelectOption>
+            <SelectOption v-for="d in spec.deployments" :value="d.deploymentnumber">
+              {{ d.deploymentname }}
+            </SelectOption>
           </Select>
         </FormItem>
       </Col>
-      <Col :span="4">
-        <FormItem label="District" name="district" class="ms-3">
+
+      <!-- District -->
+      <Col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+        <FormItem label="District" name="district">
           <Select
             v-model:value="form.district"
-            class="min-w-4"
-            placeholder="Select district"
-            :default-active-first-option="true"
-            :show-arrow="true"
-            :filter-option="false"
+            placeholder="District"
             :allow-clear="true"
             @change="filterResults()"
           >
@@ -82,21 +77,19 @@ async function filterResults() {
             <SelectOption
               v-for="(_r, k) of groupBy(spec.recipients, (r) => r.district)"
               :value="k"
-              >{{ k }}</SelectOption
             >
+              {{ k }}
+            </SelectOption>
           </Select>
         </FormItem>
       </Col>
 
-      <Col :span="4">
-        <FormItem label="Community" name="community" class="ms-3">
+      <!-- Community -->
+      <Col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+        <FormItem label="Community" name="community">
           <Select
             v-model:value="form.community"
-            class="min-w-4"
-            placeholder="Select Community"
-            :default-active-first-option="true"
-            :show-arrow="true"
-            :filter-option="false"
+            placeholder="Community"
             :allow-clear="true"
             @change="filterResults()"
           >
@@ -109,27 +102,26 @@ async function filterResults() {
                 (r) => r.community_name
               )"
               :value="k"
-              >{{ k }}</SelectOption
             >
+              {{ k }}
+            </SelectOption>
           </Select>
         </FormItem>
       </Col>
 
-      <Col :span="4">
-        <FormItem label="Language" name="language" class="ms-3">
+      <!-- Language -->
+      <Col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+        <FormItem label="Language" name="language">
           <Select
             v-model:value="form.language"
-            class="min-w-4"
-            placeholder="Select language"
-            :default-active-first-option="true"
-            :show-arrow="true"
-            :filter-option="false"
+            placeholder="Language"
+            :allow-clear="true"
             @change="filterResults()"
           >
             <SelectOption :value="null">All</SelectOption>
-            <SelectOption v-for="l of spec.languages" :value="l.code">{{
-              l.name
-            }}</SelectOption>
+            <SelectOption v-for="l of spec.languages" :value="l.code">
+              {{ l.name }}
+            </SelectOption>
           </Select>
         </FormItem>
       </Col>
@@ -137,4 +129,63 @@ async function filterResults() {
   </Form>
 </template>
 
-<style scoped></style>
+<style scoped>
+.filter-form {
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+  .filter-form {
+    padding: 8px;
+  }
+
+  :deep(.ant-form-item-label) {
+    text-align: left !important;
+    margin-bottom: 4px;
+  }
+
+  :deep(.ant-form-item-label > label) {
+    font-size: 13px;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 576px) and (max-width: 991px) {
+  .filter-form {
+    padding: 10px;
+  }
+}
+
+/* Desktop hover effects */
+@media (min-width: 992px) {
+  :deep(.ant-select-selector) {
+    transition: all 0.3s;
+  }
+
+  :deep(.ant-select-selector:hover) {
+    border-color: #289b6a !important;
+  }
+}
+
+/* Make selects full width on mobile */
+:deep(.ant-select) {
+  width: 100%;
+}
+
+/* Better spacing for form items */
+:deep(.ant-form-item) {
+  margin-bottom: 0;
+}
+
+/* Compact select dropdowns */
+:deep(.ant-select-dropdown) {
+  max-height: 300px;
+  overflow-y: auto;
+}
+</style>
+
+
