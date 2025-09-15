@@ -33,7 +33,7 @@ jobs:
       run: |
         yarn config set "strict-ssl" false -g
         yarn install
-        yarn production-build
+        yarn build:production
         cd ..
 
     - name: Deploy to S3
