@@ -497,7 +497,6 @@ onMounted(() => {
   <Spin :spinning="store.loading">
     <!-- <Tabs v-model:activeKey="activeKey" size="large" centered>
       <TabPane key="home" tab="Home">
-
         <div v-if="!store.loading && store.summaries != null">
           <UsageMap
             :data="store.summaries.map?.data"
@@ -530,153 +529,170 @@ onMounted(() => {
       </TabPane>
     </Tabs> -->
 
-    <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-      <Filters @change="updateCharts()"></Filters>
-      <Divider></Divider>
+    <div class="responsive-container">
+      <Filters @change="updateCharts()" />
+      <Divider class="my-4 md:my-6" />
 
-      <div class="w-full flex justify-evenly">
-        <div class="mx-auto lg:pb-2">
-          <div class="grid grid-cols-6 gap-4 sm:grid-cols-12 mt-4">
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt class="text-sm leading-5 font-bold">Talking Books in Project</dt>
-                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
-                    {{ store.summaries?.tbs?.project_tbs || 0 }}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt class="text-sm leading-5 font-bold">Talking Books Installed</dt>
-                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
-                    {{ store.summaries?.tbs?.installed || 0 }}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-3">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt class="text-sm leading-5 font-bold">
-                    Talking Books Reporting Statistics
-                  </dt>
-                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
-                    {{ store.summaries?.tbs?.reporting_stats || 0 }}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-2">
-              <div class="px-4 py-5 sm:p-6">
-                <dl>
-                  <dt class="text-sm leading-5 font-bold">Number of Messages</dt>
-                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
-                    {{ store.summaries?.tbs?.total_messages || 0 }}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow sm:rounded-lg col-span-3">
-              <div class="px-4 sm:p-6">
-                <dl>
-                  <dt class="text-sm leading-5 font-bold">Total Minutes Played</dt>
-                  <dd class="mt-1 text-3xl leading-9 font-semibold text-amplio-green">
-                    {{ (+store.summaries?.tbs?.minutes_played)?.toLocaleString() || 0 }}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
+      <!-- Stats Cards - Responsive Grid -->
+      <div class="stats-grid">
+        <div v-for="stat in [
+          { title: 'Talking Books in Project', value: store.summaries?.tbs?.project_tbs || 0 },
+          { title: 'Talking Books Installed', value: store.summaries?.tbs?.installed || 0 },
+          { title: 'Talking Books Reporting Statistics', value: store.summaries?.tbs?.reporting_stats || 0 },
+          { title: 'Number of Messages', value: store.summaries?.tbs?.total_messages || 0 },
+          { title: 'Total Minutes Played', value: (+store.summaries?.tbs?.minutes_played)?.toLocaleString() || 0 }
+        ]" :key="stat.title" class="stat-card">
+          <dl>
+            <dt>{{ stat.title }}</dt>
+            <dd>{{ stat.value }}</dd>
+          </dl>
         </div>
       </div>
 
-      <div class="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-12"
-        >
-          <canvas id="minutes-played" class="max-h-104"></canvas>
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <!-- Full-width charts -->
+        <div class="chart-container full-width">
+          <canvas id="minutes-played"></canvas>
         </div>
 
-        <!-- ====== Chart One Start -->
-        <!-- <include src="./partials/chart-01.html" /> -->
-        <!-- ====== Chart One End -->
-
-        <!-- ====== Chart Two Start -->
-        <!-- <include src="./partials/chart-02.html" /> -->
-        <!-- ====== Chart Two End -->
-
-        <!-- ====== Chart Three Start -->
-        <!-- <include src="./partials/chart-03.html" /> -->
-        <!-- ====== Chart Three End -->
-
-        <!-- ====== Map One Start -->
-
-        <div
-          v-if="!store.loading && store.summaries != null"
-          class="col-span-12 rounded-sm border border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-12"
-        >
+        <!-- Map Section -->
+        <div v-if="!store.loading && store.summaries != null" class="chart-container full-width">
           <UsageMap
             :data="store.summaries.map?.data"
             :centroid="store.summaries.map?.centroid"
-          ></UsageMap>
+          />
         </div>
 
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
-        >
-          <canvas id="completions" class="max-h-104"></canvas>
-        </div>
+        <!-- Paired charts -->
+        <template v-for="(pair, index) in [
+          ['completions', 'partial-plays'],
+          ['completions-per-tb', 'minutes-per-tb']
+        ]" :key="index">
+          <div class="chart-pair">
+            <div class="chart-container">
+              <canvas :id="pair[0]"></canvas>
+            </div>
+            <div class="chart-container">
+              <canvas :id="pair[1]"></canvas>
+            </div>
+          </div>
+        </template>
 
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
-        >
-          <canvas id="partial-plays" class="max-h-104"></canvas>
-        </div>
-
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
-        >
-          <canvas id="completions-per-tb" class="max-h-104"></canvas>
-        </div>
-
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-6"
-        >
-          <canvas id="minutes-per-tb" class="max-h-104"></canvas>
-        </div>
-
-        <div
-          class="col-span-12 rounded-sm border border-stroke bg-white px-3 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-3 xl:col-span-12"
-        >
-          <canvas id="partial-plays-per-tb" class="max-h-104"></canvas>
+        <!-- Final full-width chart -->
+        <div class="chart-container full-width">
+          <canvas id="partial-plays-per-tb"></canvas>
         </div>
       </div>
-      <!-- <include src="./partials/map-01.html" /> -->
-      <!-- ====== Map One End -->
 
-      <!-- ====== Table One Start -->
-      <Tabs size="large" centered>
+      <!-- Tabs Section -->
+      <Tabs class="responsive-tabs" size="large" centered>
         <TabPane key="content" tab="Content">
           <div v-if="!store.loading && store.summaries != null">
-            <Content :data="store.summaries.content"></Content>
+            <Content :data="store.summaries.content" />
           </div>
         </TabPane>
         <TabPane key="operations" tab="Operations">
           <div v-if="!store.loading && store.summaries != null">
-            <Operations :data="store.summaries.operations"></Operations>
+            <Operations :data="store.summaries.operations" />
           </div>
         </TabPane>
       </Tabs>
-      <!-- <div class="col-span-12 xl:col-span-8">
-          <include src="./partials/table-01.html" />
-        </div> -->
-      <!-- ====== Table One End -->
-
-      <!-- </div> -->
     </div>
   </Spin>
 </template>
+
+<style scoped>
+/* Base responsive container */
+.responsive-container {
+  padding: 1rem;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* Stats grid - responsive columns */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-card dt {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #4a5568;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card dd {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #38a169; /* amplio-green */
+}
+
+/* Charts grid system */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 1.5rem;
+  }
+  
+  .chart-pair {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    padding: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Canvas sizing */
+canvas {
+  width: 100%;
+  height: 400px;
+}
+
+/* Tabs styling */
+.responsive-tabs {
+  margin-top: 2rem;
+}
+</style>
