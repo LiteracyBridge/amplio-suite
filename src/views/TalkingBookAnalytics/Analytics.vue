@@ -669,7 +669,7 @@ onMounted(() => {
   .responsive-container {
     padding: 1.5rem;
   }
-  
+
   .chart-pair {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -679,7 +679,7 @@ onMounted(() => {
   .responsive-container {
     padding: 2rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(5, 1fr);
   }

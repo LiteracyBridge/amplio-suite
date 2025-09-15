@@ -65,6 +65,7 @@ function changeProgram(val: number) {
     cancelText: "No",
     onOk: () => {
       appStore.setActiveProgram(val);
+      window.location.reload();
       router.push("/");
     },
   });
