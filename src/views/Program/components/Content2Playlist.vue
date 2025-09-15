@@ -109,14 +109,14 @@ const titleError = ref(false)
 
 // CHANGED: Added validation function
 const validateTitle = (title: string) => {
-  const invalidChars = /[\\/:*?<>_|"']/;
+  const invalidChars = /[^\d\w\s]/g;
   return !invalidChars.test(title);
 };
 
 // CHANGED: Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
   const title = (event.target as HTMLInputElement).value;
-  titleError.value = !validateTitle(title); // Set error state based on validation
+  titleError.value = /[^\d\w\s]/g.test(title); // Set error state based on validation
   if (!titleError.value) {
     store.setMessageOrPlaylistTitle(title, props.playlist); // Update title in store if valid
   }
