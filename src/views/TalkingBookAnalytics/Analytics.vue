@@ -508,14 +508,29 @@ onMounted(() => {
           ></Overview>
         </div>
       </TabPane>
-      <!-- <TabPane key="overview" tab="Overview">
+      <TabPane key="ov-usage" tab="Usage">
+        <div v-if="!store.loading && store.summaries != null">
+          <OverallUsage :data="store.summaries.usage"></OverallUsage>
+        </div>
+      </TabPane>
+      <TabPane key="content" tab="Content">
+        <div v-if="!store.loading && store.summaries != null">
+          <Content :data="store.summaries.content" />
+        </div>
+      </TabPane>
+      <TabPane key="operations" tab="Operations">
+        <div v-if="!store.loading && store.summaries != null">
+          <Operations :data="store.summaries.operations" />
+        </div>
+      </TabPane>
+      <TabPane key="map" tab="Installation Map">
         <div v-if="!store.loading && store.summaries != null">
           <UsageMap
             :data="store.summaries.map?.data"
             :centroid="store.summaries.map?.centroid"
           ></UsageMap>
         </div>
-      </TabPane> -->
+      </TabPane>
     </Tabs>
     <!--
       <TabPane key="content" tab="Content">
@@ -544,62 +559,13 @@ onMounted(() => {
     </Tabs> -->
 
     <div class="responsive-container">
-
       <!-- Charts Grid -->
-      <div class="charts-grid">
-        <!-- Full-width charts -->
-        <div class="chart-container full-width">
-          <canvas id="minutes-played"></canvas>
-        </div>
-
-        <!-- Map Section -->
-        <div
-          v-if="!store.loading && store.summaries != null"
-          class="chart-container full-width"
-        >
-          <UsageMap
-            :data="store.summaries.map?.data"
-            :centroid="store.summaries.map?.centroid"
-          />
-        </div>
-
-        <!-- Paired charts -->
-        <template
-          v-for="(pair, index) in [
-            ['completions', 'partial-plays'],
-            ['completions-per-tb', 'minutes-per-tb'],
-          ]"
-          :key="index"
-        >
-          <div class="chart-pair">
-            <div class="chart-container">
-              <canvas :id="pair[0]"></canvas>
-            </div>
-            <div class="chart-container">
-              <canvas :id="pair[1]"></canvas>
-            </div>
-          </div>
-        </template>
-
-        <!-- Final full-width chart -->
-        <div class="chart-container full-width">
-          <canvas id="partial-plays-per-tb"></canvas>
-        </div>
-      </div>
 
       <!-- Tabs Section -->
-      <Tabs class="responsive-tabs" size="large" centered>
-        <TabPane key="content" tab="Content">
-          <div v-if="!store.loading && store.summaries != null">
-            <Content :data="store.summaries.content" />
-          </div>
-        </TabPane>
-        <TabPane key="operations" tab="Operations">
-          <div v-if="!store.loading && store.summaries != null">
-            <Operations :data="store.summaries.operations" />
-          </div>
-        </TabPane>
-      </Tabs>
+      <!-- <Tabs class="responsive-tabs" size="large" centered>
+
+
+      </Tabs> -->
     </div>
   </Spin>
 </template>
@@ -611,7 +577,6 @@ onMounted(() => {
   max-width: 1800px;
   margin: 0 auto;
 }
-
 
 /* Charts grid system */
 .charts-grid {
