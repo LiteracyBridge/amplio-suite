@@ -6,6 +6,7 @@ import Content from "./components/Content.vue";
 import Operations from "./components/Operations.vue";
 import OverallUsage from "./components/OverallUsage.vue";
 import UsagePerTB from "./components/UsagePerTB.vue";
+import Overview from "./components/Overview.vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 import {
   Chart,
@@ -45,6 +46,7 @@ Chart.register(
   ChartDataLabels
 );
 
+const activeKey = ref("overview");
 const store = useTalkingBookAnalyticStore();
 let chart1: Chart;
 let chart2: Chart;
@@ -495,15 +497,27 @@ onMounted(() => {
 
 <template>
   <Spin :spinning="store.loading">
-    <!-- <Tabs v-model:activeKey="activeKey" size="large" centered>
-      <TabPane key="home" tab="Home">
+    <Filters @change="updateCharts()" />
+
+    <Tabs v-model:activeKey="activeKey" size="large" lazy centered>
+      <TabPane key="overview" tab="Overview">
+        <div v-if="!store.loading && store.summaries != null">
+          <Overview
+            :data="store.summaries.map?.data"
+            :centroid="store.summaries.map?.centroid"
+          ></Overview>
+        </div>
+      </TabPane>
+      <!-- <TabPane key="overview" tab="Overview">
         <div v-if="!store.loading && store.summaries != null">
           <UsageMap
             :data="store.summaries.map?.data"
             :centroid="store.summaries.map?.centroid"
           ></UsageMap>
         </div>
-      </TabPane>
+      </TabPane> -->
+    </Tabs>
+    <!--
       <TabPane key="content" tab="Content">
         <div v-if="!store.loading && store.summaries != null">
           <Content :data="store.summaries.content"></Content>
@@ -530,24 +544,6 @@ onMounted(() => {
     </Tabs> -->
 
     <div class="responsive-container">
-      <Filters @change="updateCharts()" />
-      <Divider class="my-4 md:my-6" />
-
-      <!-- Stats Cards - Responsive Grid -->
-      <div class="stats-grid">
-        <div v-for="stat in [
-          { title: 'Talking Books in Project', value: store.summaries?.tbs?.project_tbs || 0 },
-          { title: 'Talking Books Installed', value: store.summaries?.tbs?.installed || 0 },
-          { title: 'Talking Books Reporting Statistics', value: store.summaries?.tbs?.reporting_stats || 0 },
-          { title: 'Number of Messages', value: store.summaries?.tbs?.total_messages || 0 },
-          { title: 'Total Minutes Played', value: (+store.summaries?.tbs?.minutes_played)?.toLocaleString() || 0 }
-        ]" :key="stat.title" class="stat-card">
-          <dl>
-            <dt>{{ stat.title }}</dt>
-            <dd>{{ stat.value }}</dd>
-          </dl>
-        </div>
-      </div>
 
       <!-- Charts Grid -->
       <div class="charts-grid">
@@ -557,7 +553,10 @@ onMounted(() => {
         </div>
 
         <!-- Map Section -->
-        <div v-if="!store.loading && store.summaries != null" class="chart-container full-width">
+        <div
+          v-if="!store.loading && store.summaries != null"
+          class="chart-container full-width"
+        >
           <UsageMap
             :data="store.summaries.map?.data"
             :centroid="store.summaries.map?.centroid"
@@ -565,10 +564,13 @@ onMounted(() => {
         </div>
 
         <!-- Paired charts -->
-        <template v-for="(pair, index) in [
-          ['completions', 'partial-plays'],
-          ['completions-per-tb', 'minutes-per-tb']
-        ]" :key="index">
+        <template
+          v-for="(pair, index) in [
+            ['completions', 'partial-plays'],
+            ['completions-per-tb', 'minutes-per-tb'],
+          ]"
+          :key="index"
+        >
           <div class="chart-pair">
             <div class="chart-container">
               <canvas :id="pair[0]"></canvas>
@@ -610,33 +612,6 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-/* Stats grid - responsive columns */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.stat-card dt {
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: #4a5568;
-  margin-bottom: 0.25rem;
-}
-
-.stat-card dd {
-  font-size: 1.875rem;
-  font-weight: 600;
-  color: #38a169; /* amplio-green */
-}
 
 /* Charts grid system */
 .charts-grid {
@@ -651,7 +626,7 @@ onMounted(() => {
   border-radius: 0.375rem;
   border: 1px solid #e2e8f0;
   padding: 1.5rem;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .full-width {
