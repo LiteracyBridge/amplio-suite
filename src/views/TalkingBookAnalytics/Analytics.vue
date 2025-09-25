@@ -507,12 +507,43 @@ onMounted(() => {
             :centroid="store.summaries.map?.centroid"
           ></Overview>
         </div>
+        <div class="responsive-container">
+          <div class="charts-grid">
+            <!-- Full-width charts -->
+            <div class="chart-container full-width">
+              <canvas id="minutes-played"></canvas>
+            </div>
+
+            <!-- Paired charts -->
+            <template
+              v-for="(pair, index) in [
+                ['completions', 'partial-plays'],
+                ['completions-per-tb', 'minutes-per-tb'],
+              ]"
+              :key="index"
+            >
+              <div class="chart-pair">
+                <div class="chart-container">
+                  <canvas :id="pair[0]"></canvas>
+                </div>
+                <div class="chart-container">
+                  <canvas :id="pair[1]"></canvas>
+                </div>
+              </div>
+            </template>
+
+            <!-- Final full-width chart -->
+            <div class="chart-container full-width">
+              <canvas id="partial-plays-per-tb"></canvas>
+            </div>
+          </div>
+        </div>
       </TabPane>
-      <TabPane key="ov-usage" tab="Usage">
+      <!-- <TabPane key="ov-usage" tab="Usage">
         <div v-if="!store.loading && store.summaries != null">
           <OverallUsage :data="store.summaries.usage"></OverallUsage>
         </div>
-      </TabPane>
+      </TabPane> -->
       <TabPane key="content" tab="Content">
         <div v-if="!store.loading && store.summaries != null">
           <Content :data="store.summaries.content" />
@@ -557,16 +588,6 @@ onMounted(() => {
         </div>
       </TabPane>
     </Tabs> -->
-
-    <div class="responsive-container">
-      <!-- Charts Grid -->
-
-      <!-- Tabs Section -->
-      <!-- <Tabs class="responsive-tabs" size="large" centered>
-
-
-      </Tabs> -->
-    </div>
   </Spin>
 </template>
 
