@@ -1,9 +1,9 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
 
-@import './a11y';
-@import './transition';
+@use './a11y';
+@use './transition';
 
 .whitespace-nowrap {
   white-space: nowrap;
@@ -41,5 +41,3 @@ table thead th {
   @apply text-2xl font-bold text-red-500;
   content: '*';
 }
-
-@import 'tailwindcss/utilities';

@@ -40,7 +40,7 @@ const form = ref<FilterForm>({
 });
 
 async function filterResults() {
-  store.getUsage(form.value).finally(() => $emit("change", form.value));
+  store.getDashboardSummaries(form.value).finally(() => $emit("change", form.value));
 }
 </script>
 
@@ -142,12 +142,12 @@ async function filterResults() {
   .filter-form {
     padding: 8px;
   }
-  
+
   :deep(.ant-form-item-label) {
     text-align: left !important;
     margin-bottom: 4px;
   }
-  
+
   :deep(.ant-form-item-label > label) {
     font-size: 13px;
   }
@@ -165,7 +165,7 @@ async function filterResults() {
   :deep(.ant-select-selector) {
     transition: all 0.3s;
   }
-  
+
   :deep(.ant-select-selector:hover) {
     border-color: #289b6a !important;
   }

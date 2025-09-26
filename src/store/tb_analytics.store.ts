@@ -2,10 +2,12 @@ import { defineStore } from "pinia";
 import { ApiRequest } from "@/api";
 import { useAppStore } from "@/store/app.store";
 import { Recipient } from "@/models/recipient";
+import { useProgramSpecStore } from "./programspec";
 
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 	state: () => ({
 		loading: false,
+		summaries: null as Record<string, any>
 	}),
 	actions: {
 		async getTbStatusBy(selector: string) {
@@ -34,6 +36,53 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 				deployment: string;
 			}>(`tb-analytics/${useAppStore().programCode}/inventory`)
 				.then((resp) => resp)
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		async getDashboardSummaries(opts?: {
+			deployment: number;
+			district: string;
+			community: string;
+			language: string;
+			playlist: string;
+		}) {
+			this.loading = true;
+			const query = [];
+			if (opts?.deployment) {
+				query.push(`deployment=${opts.deployment}`);
+				query.push(
+					`deployment_name=${useProgramSpecStore().deployments.find((i) => i.deploymentnumber == opts.deployment).deployment}`,
+				);
+			}
+
+			if (opts?.district) {
+				query.push(`district=${opts.district}`);
+			}
+
+			if (opts?.community) {
+				query.push(`community=${opts.community}`);
+			}
+
+			if (opts?.language) {
+				const name = useProgramSpecStore().languages.find(
+					(l) => l.code == opts.language,
+				)?.name!;
+				query.push(`languageCode=${opts.language}`);
+				query.push(`language=${name}`);
+			}
+
+			if (opts?.playlist) {
+				query.push(`playlist=${opts.playlist}`);
+			}
+
+			return ApiRequest.get<any>(
+				`tb-analytics/${useAppStore().programCode}/summaries?${query.join("&")}`,
+			)
+				.then((resp) => {
+					this.summaries = resp[0];
+					return resp;
+				})
 				.finally(() => {
 					this.loading = false;
 				});
