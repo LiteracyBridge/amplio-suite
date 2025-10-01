@@ -231,10 +231,25 @@ export const useProgramSpecStore = defineStore("programspec", {
 
 			this.deployments.forEach((d: { playlists: any[] }) => {
 				d.playlists.forEach(
-					(p: { position: any; messages: any[] }, ix: number) => {
+					(p: { position: any; messages: { position: any; languages?: any }[] }, ix: number) => {
 						p.position ??= ix + 1;
-						p.messages.forEach((m: { position: any }, ix: number) => {
+						p.messages.forEach((m: { position: any; languages?: any }, ix: number) => {
 							m.position ??= ix + 1;
+
+							// Normalize languages to a unique, comma-separated string
+
+							// here... when loading backend data or data from backend
+							// we just convert 'arrays/objects/strings' into one format: like example "en,fr,de"
+							// then using 'set' we can just remove duplicates
+							if (Array.isArray(m.languages)) {
+								const codes = m.languages.map((l: any) =>
+									typeof l === "string" ? l : l.language_code,
+								);
+								m.languages = Array.from(new Set(codes)).join(",");
+							} else if (typeof m.languages === "string") {
+								const codes = m.languages.split(/[,;]/).filter((l) => l !== "");
+								m.languages = Array.from(new Set(codes)).join(",");
+							}
 						});
 					},
 				);
@@ -564,22 +579,22 @@ export const useProgramSpecStore = defineStore("programspec", {
 			language: string;
 			message: Message;
 		}) {
-			// 'languages' is a list of comma-separated language names or codes.
 			const { language, message } = payload;
 
+			let languages: string[] = [];
+
+			// lets convert whatever we have into an array
 			if (Array.isArray(message.languages)) {
-				message.languages = message.languages
-					.map((l) => l.language_code)
-					.join(",");
+				languages = message.languages.map((l) =>
+					typeof l === "string" ? l : l.language_code,
+				);
+			} else if (typeof message.languages === "string") {
+				languages = message.languages.split(/[,;]/).filter((l) => l !== "");
 			}
 
-			const languages = (message.languages || "")
-				.split(/[,;]/)
-				.filter((l) => l !== "");
-
-			message.languages = Array.from(new Set([...languages, language])).join(
-				",",
-			);
+			// Add and deduplicate
+			languages = Array.from(new Set([...languages, language]));
+			message.languages = languages.join(",");
 			this.changed = true;
 		},
 
