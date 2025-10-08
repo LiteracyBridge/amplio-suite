@@ -12,12 +12,14 @@ import {
   MenuItem,
   Alert,
   Menu,
+  notification,
 } from "ant-design-vue";
 import { groupBy, sumBy, uniqBy } from "lodash";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import type { Deployment } from "@/models/deployment";
 import { DownOutlined } from "@ant-design/icons-vue";
+import { Workbook } from "exceljs";
 
 
 const store = useTalkingBookAnalyticStore();
@@ -221,7 +223,7 @@ async function fetchStats(deployment: Deployment) {
       // @ts-ignore
       days_to_install = Math.round(
         (new Date().getTime() - new Date(sorted[0].deployed_timestamp).getTime()) /
-          (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
       );
     }
 
@@ -255,6 +257,58 @@ async function fetchStats(deployment: Deployment) {
   summary.value = _summary;
 }
 
+// export function
+function exportToCSV() {
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet("TB Installations");
+
+  // Define headers
+  sheet.columns = columns.map((col) => ({
+    header: col.title,
+    key: col.dataIndex,
+    width: 20, // You can adjust the width as needed
+  }));
+
+
+  // Make headers bold
+  sheet.getRow(1).font = { bold: true };
+
+
+  // Add rows from the table
+  rows.value.flatMap((r) => [r, ...(r.children || [])]).forEach((row) => {
+    sheet.addRow(
+      columns.map((col) => row[col.dataIndex as keyof DataItem] ?? "")
+    );
+  });
+
+
+  // Generate CSV content
+  if (rows.value.length === 0) {
+    notification.warning({ message: "No data available to export." });
+    return;
+  }
+
+
+
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "TalkingBookInstallations.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    notification.success({
+      message: "Export successful!",
+      description: "Excel file has been downloaded.",
+    });
+  });
+}
+
 onMounted(async () => {
   if (selectedDeployment.value == null) {
     const count = appStore.deployments.length;
@@ -269,15 +323,12 @@ onMounted(async () => {
 <template>
   <PageHeader title="TB Installations" sub-title="Track talking book installations">
     <template #extra>
+      <Button type="primary" @click="exportToCSV">Export to Excell</Button>
       <Dropdown>
         <template #overlay>
           <Menu>
-            <MenuItem
-              :key="d.deploymentnumber"
-              v-for="d in appStore.deployments"
-              @click="fetchStats(d)"
-            >
-              <span>Deployment {{ d.deploymentnumber }}</span>
+            <MenuItem :key="d.deploymentnumber" v-for="d in appStore.deployments" @click="fetchStats(d)">
+            <span>Deployment {{ d.deploymentnumber }}</span>
             </MenuItem>
           </Menu>
         </template>
@@ -302,10 +353,8 @@ onMounted(async () => {
   <!-- <Divider></Divider> -->
   <Row class="my-5">
     <Tooltip>
-      <template #title
-        >An excess of Talking Books seem to have been installed. This may be fine, but
-        needs explanation.</template
-      >
+      <template #title>An excess of Talking Books seem to have been installed. This may be fine, but
+        needs explanation.</template>
       <Tag color="purple"> &gt;100% Excess </Tag>
     </Tooltip>
     <Tooltip>
@@ -313,16 +362,12 @@ onMounted(async () => {
       <Tag color="pink">100% Great! </Tag>
     </Tooltip>
     <Tooltip>
-      <template #title
-        >Acceptable, provided there is a good rationale for missing
-        installations.</template
-      >
+      <template #title>Acceptable, provided there is a good rationale for missing
+        installations.</template>
       <Tag color="orange">85 - 99% Acceptable</Tag>
     </Tooltip>
     <Tooltip>
-      <template #title
-        >Unacceptable performance against contractual obligations.</template
-      >
+      <template #title>Unacceptable performance against contractual obligations.</template>
       <Tag color="green">60 - 84% Unacceptable</Tag>
     </Tooltip>
     <Tooltip>
@@ -330,39 +375,25 @@ onMounted(async () => {
       <Tag color="cyan">21 - 59% Failed</Tag>
     </Tooltip>
     <Tooltip>
-      <template #title
-        >Is the community / group still participating in the Program?</template
-      >
+      <template #title>Is the community / group still participating in the Program?</template>
       <Tag color="blue">0 - 20% Dead</Tag>
     </Tooltip>
   </Row>
 
-  <Table
-    :columns="columns"
-    :data-source="rows"
-    size="small"
-    :loading="store.loading"
-    :sticky="true"
-    :scroll="{ x: '70%' }"
-    :pagination="false"
-    :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
-    class="ant-table-striped"
-  >
+  <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading" :sticky="true"
+    :scroll="{ x: '70%' }" :pagination="false"
+    :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" class="ant-table-striped">
     <template #headerCell="{ column }">
       <template v-if="column.key === 'installed'">
         <Tooltip>
-          <template #title
-            >The number of Talking Books reported to have been installed.</template
-          >
+          <template #title>The number of Talking Books reported to have been installed.</template>
           # Installed
         </Tooltip>
       </template>
       <template v-if="column.key === 'days_to_install'">
         <Tooltip>
-          <template #title
-            >The average number of days before the Talking Books were installed with the
-            Deployment.</template
-          >
+          <template #title>The average number of days before the Talking Books were installed with the
+            Deployment.</template>
           Days to Install
         </Tooltip>
       </template>
@@ -374,19 +405,15 @@ onMounted(async () => {
       </template>
       <template v-if="column.key === 'talkingbook_id'">
         <Tooltip>
-          <template #title
-            >TB-Loader ID of the laptop/phone that performed the update of the Talking
-            Books.</template
-          >
+          <template #title>TB-Loader ID of the laptop/phone that performed the update of the Talking
+            Books.</template>
           TBLoader ID
         </Tooltip>
       </template>
       <template v-if="column.key === 'test_installs'">
         <Tooltip>
-          <template #title
-            >Number of installations to this community / group for which the installer
-            checked</template
-          >
+          <template #title>Number of installations to this community / group for which the installer
+            checked</template>
           # Test Installs
         </Tooltip>
       </template>
@@ -394,39 +421,22 @@ onMounted(async () => {
 
     <template #bodyCell="{ record, column }">
       <template v-if="column.key === 'percent_installed'">
-        <Tag
-          class="w-full text-center"
-          v-if="record.percent_installed > 100"
-          color="purple"
-        >
+        <Tag class="w-full text-center" v-if="record.percent_installed > 100" color="purple">
           {{ record.installed }}
         </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed == 100"
-          color="pink"
-        >
+        <Tag class="w-full text-center" v-else-if="record.percent_installed == 100" color="pink">
           {{ record.installed }}
         </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
-          color="orange"
-        >
+        <Tag class="w-full text-center" v-else-if="record.percent_installed >= 85 && record.percent_installed <= 99"
+          color="orange">
           {{ record.installed }}
         </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
-          color="green"
-        >
+        <Tag class="w-full text-center" v-else-if="record.percent_installed >= 60 && record.percent_installed <= 84"
+          color="green">
           {{ record.installed }}
         </Tag>
-        <Tag
-          class="w-full text-center"
-          v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
-          color="cyan"
-        >
+        <Tag class="w-full text-center" v-else-if="record.percent_installed >= 21 && record.percent_installed <= 59"
+          color="cyan">
           {{ record.installed }}
         </Tag>
         <Tag class="w-full text-center" v-else color="blue">

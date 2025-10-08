@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
-import { Tag, Tooltip, Table, PageHeader } from "ant-design-vue";
+import {
+  Tag,
+  Tooltip,
+  Table,
+  PageHeader,
+  Button,
+  notification,
+} from "ant-design-vue";
 import { onMounted, ref } from "vue";
+import { Workbook } from "exceljs";
 
 interface Column {
   title: string;
@@ -18,16 +26,17 @@ async function fetchStats() {
   console.log(data);
 
   const communities: Record<string, any> = {};
-  const cols: {
-    [key: string]: Column;
-  } = { community: { title: "Community", dataIndex: "name", key: "name" } };
+  const cols: { [key: string]: Column } = {
+    community: { title: "Community", dataIndex: "name", key: "name" },
+  };
+
   for (const r of data) {
     const com: any = communities[r.community_name] ?? {};
     com[r.deployment] = r.deployed_tbs;
     com.name = r.community_name;
     communities[r.community_name] = com;
 
-    // update columns
+    // update columns dynamically
     cols[r.deployment] ??= {
       title: r.deployment,
       dataIndex: r.deployment,
@@ -35,9 +44,67 @@ async function fetchStats() {
     };
   }
 
-  console.log(communities);
   columns.value = Object.values(cols);
   rows.value = Object.values(communities);
+}
+
+// Export to Excel function
+function exportToExcel() {
+  if (rows.value.length === 0) {
+    notification.warning({ message: "No data available to export." });
+    return;
+  }
+
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet("Inventory");
+
+  // Define headers
+  sheet.columns = columns.value.map((col) => ({
+    header: col.title,
+    key: col.dataIndex,
+    width: 20,
+  }));
+
+  // Add data rows
+  rows.value.forEach((row) => {
+    sheet.addRow(
+      columns.value.map((col) => row[col.dataIndex] ?? "")
+    );
+  });
+
+  // Make headers bold
+  sheet.getRow(1).font = { bold: true };
+
+  // Auto-adjust column widths
+  sheet.columns.forEach((col) => {
+    let maxLength = 10;
+    col.eachCell({ includeEmpty: true }, (cell) => {
+      const len = cell.value ? cell.value.toString().length : 0;
+      if (len > maxLength) maxLength = len;
+    });
+    col.width = maxLength + 2;
+  });
+
+  // Download Excel file
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const fileName = `Inventory_${new Date().toISOString().split("T")[0]}.xlsx`;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    notification.success({
+      message: "Export successful!",
+      description: `${fileName} has been downloaded.`,
+    });
+  });
 }
 
 onMounted(async () => {
@@ -50,6 +117,10 @@ onMounted(async () => {
     title="Inventory"
     sub-title="Talking book installations of communities across all deployments"
   >
+    <template #extra>
+      <!-- Added Export to Excel button -->
+      <Button type="primary" @click="exportToExcel">Export to Excel</Button>
+    </template>
   </PageHeader>
 
   <Table
@@ -111,9 +182,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* .ant-table-striped :deep(.table-striped) td {
-  background-color: #fafafa;
-} */
 .ant-table-striped :deep(.table-striped) td {
   background-color: #fafafa;
 }

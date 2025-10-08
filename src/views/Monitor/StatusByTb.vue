@@ -1,18 +1,21 @@
 <template>
-  <Table
-    :columns="columns"
-    :data-source="tableData"
-    :loading="loading"
-  >
+  <Table :columns="columns" :data-source="tableData" :loading="loading">
     <template #title>
       <div class="flex justify-between">
         <TypographyTitle :level="5">
           Talking Book Stats & UF Collection Activity
         </TypographyTitle>
 
-        <Button type="primary" @click="fetchData('ByTb')" :ghost="true">
-          <ReloadOutlined /> Refresh Data
-        </Button>
+        <div class="flex gap-2">
+          <Button type="primary" @click="fetchData('ByTb')" :ghost="true">
+            <ReloadOutlined style="margin-right: 4px;" />
+            Refresh Data
+          </Button>
+          <Button type="primary" @click="onExportExcel">
+            Export to Excel
+          </Button>
+        </div>
+
       </div>
     </template>
     <template #headerCell="{ column }">
@@ -20,36 +23,26 @@
         <span>Recipient</span>
       </template>
     </template>
-    <template
-      #customFilterDropdown="{
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters,
-        column,
-      }"
-    >
+    <template #customFilterDropdown="{
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      column,
+    }">
       <div style="padding: 8px">
-        <Input
-          ref="searchInput"
-          :placeholder="`Search ${column.dataIndex}`"
-          :value="selectedKeys[0]"
+        <Input ref="searchInput" :placeholder="`Search ${column.dataIndex}`" :value="selectedKeys[0]"
           style="width: 188px; margin-bottom: 8px; display: block"
           @change="(e: any) => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
-        />
-        <Button
-          type="primary"
-          size="small"
-          style="width: 90px; margin-right: 8px"
-          @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
-        >
-          <template #icon><SearchOutlined /></template>
+          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)" />
+        <Button type="primary" size="small" style="width: 90px; margin-right: 8px"
+          @click="handleSearch(selectedKeys, confirm, column.dataIndex)">
+          <template #icon>
+            <SearchOutlined />
+          </template>
           Search
         </Button>
-        <Button size="small" style="width: 90px" @click="handleReset(clearFilters)"
-          >Reset</Button
-        >
+        <Button size="small" style="width: 90px" @click="handleReset(clearFilters)">Reset</Button>
       </div>
     </template>
     <template #customFilterIcon="{ filtered }">
@@ -57,16 +50,10 @@
     </template>
     <template #bodyCell="{ column, record }">
       <span v-if="state.searchText && state.searchedColumn === record.dataIndex">
-        <template
-          v-for="(fragment, i) in column
-            .toString()
-            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
-        >
-          <mark
-            v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
-            :key="i"
-            class="highlight"
-          >
+        <template v-for="(fragment, i) in column
+          .toString()
+          .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))">
+          <mark v-if="fragment.toLowerCase() === state.searchText.toLowerCase()" :key="i" class="highlight">
             {{ fragment }}
           </mark>
           <template v-else>{{ fragment }}</template>
@@ -106,10 +93,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { useRequest } from "vue-request";
-import { Table, TypographyTitle, Button, Input } from "ant-design-vue";
+import { Table, TypographyTitle, Input, notification, Button } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 import { SearchOutlined } from "@ant-design/icons-vue";
+import { Workbook } from "exceljs";
 
 const store = useTalkingBookAnalyticStore();
 const state = reactive({
@@ -206,6 +194,58 @@ const { loading, run: fetchData } = useRequest(store.getTbStatusBy, {
     loading.value = false;
   },
 });
+
+
+async function onExportExcel() {
+  if (!tableData.value || tableData.value.length === 0) {
+    notification.warning({ message: "No data available to export." });
+    return;
+  }
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet("Talking Book Status");
+
+  // Define headers
+  sheet.columns = [
+    { header: "Recipient", key: "recipient", width: 30 },
+    { header: "TB ID", key: "talkingbookid", width: 20 },
+    { header: "Current Content Deployment", key: "deployment_num", width: 25 },
+    { header: "Date of Last Content Update", key: "deployment_time", width: 25 },
+    { header: "User (Content Update)", key: "deployment_user", width: 20 },
+    { header: "Date of Last Data Collection", key: "collection_time", width: 25 },
+    { header: "User (Data Collection)", key: "collection_user", width: 20 },
+  ];
+  // Add rows from tableData
+  tableData.value.forEach((row: any) => {
+    sheet.addRow({
+      recipient: row.recipient,
+      talkingbookid: row.talkingbookid,
+      deployment_num: row.deployment_num,
+      deployment_time: row.deployment_time,
+      deployment_user: row.deployment_user,
+      collection_time: row.collection_time,
+      collection_user: row.collection_user,
+    });
+  });
+
+
+  // Make headers bold
+  sheet.getRow(1).font = { bold: true };
+
+  // Generate buffer
+  const buffer = await workbook.xlsx.writeBuffer();
+  // Export to Excel
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "TalkingBookStatus.xlsx";
+  a.click();
+  window.URL.revokeObjectURL(url);
+
+  notification.success({ message: "Data exported successfully.", description: "Excel file has been downloaded." });
+}
 </script>
 
 <style scoped>
