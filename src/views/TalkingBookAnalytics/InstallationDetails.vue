@@ -6,12 +6,15 @@ import {
   Table,
   PageHeader,
   TreeSelect,
+  Button,
   Alert,
+  notification,
 } from "ant-design-vue";
 import type { TreeSelectProps } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import { pad } from "@/utils";
 import { DateTime } from "luxon";
+import { Workbook } from "exceljs";
 
 const store = useTalkingBookAnalyticStore();
 const columns = [
@@ -190,6 +193,48 @@ async function onDateChanged(selection: string) {
   }
 }
 
+function exportToCSV() {
+
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Installations");
+
+    // Define columns
+    worksheet.columns = columns.map((col) => ({
+      header: col.title,
+      key: col.dataIndex,
+      width: 20,
+    }));
+
+    // Add rows
+    rows.value.forEach((row) => {
+      worksheet.addRow(
+        // Ensure all columns are represented, even if some data is missing
+        columns.map((col) => row[col.dataIndex as keyof DataItem] ?? "")
+      );
+    });
+
+      // Make headers bold
+    worksheet.getRow(1).font = { bold: true };
+
+    // Generate CSV content
+    if (rows.value.length === 0) {
+      notification.warning({ message: "No data available to export." });
+      return;
+    }
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `installations_${DateTime.now().toFormat("yyyyLLdd_HHmm")}.xlsx`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+}
+
 onMounted(async () => {
   await fetchStats();
 });
@@ -198,6 +243,8 @@ onMounted(async () => {
 <template>
   <PageHeader title="Installation Details" sub-title="Track talking book installations">
     <template #extra>
+      <Button type="primary" @click="exportToCSV">Export to Excel</Button>
+
       <span>Filter by Date:</span>
       <div style="width: 200px">
         <TreeSelect

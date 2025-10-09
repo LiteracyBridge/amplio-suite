@@ -2,11 +2,19 @@
   <Table :columns="columns" :data-source="tableData" :loading="loading" @change="onChange">
     <template #title>
       <div class="flex justify-between">
-      <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
+        <TypographyTitle :level="5"> Talking Book Deployment Activity </TypographyTitle>
 
-        <Button type="primary" @click="fetchData('ByDepl')" :ghost="true">
-          <ReloadOutlined /> Refresh Data
-        </Button>
+        <div class="flex gap-2">
+          <Button type="primary" @click="fetchData('ByDepl')" :ghost="true">
+            <ReloadOutlined /> Refresh Data
+          </Button>
+
+          <Button type="primary" @click="onExportExcel">
+            Export to Excel
+          </Button>
+
+        </div>
+
       </div>
     </template>
     <template #bodyCell="{ column, record }">
@@ -35,9 +43,10 @@
 
 <script setup lang="ts">
 import { useRequest } from "vue-request";
-import { Table, TypographyTitle, Button } from "ant-design-vue";
+import { Table, TypographyTitle, Button, notification } from "ant-design-vue";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
+import { Workbook } from "exceljs";
 
 const store = useTalkingBookAnalyticStore();
 
@@ -83,4 +92,53 @@ function onChange(pagination: any, filters: any, sorter: any, extra: any) {
 const { loading, data: tableData, run: fetchData } = useRequest(store.getTbStatusBy, {
   defaultParams: ["ByDepl"],
 });
+
+
+/**
+ * we Exporting table data to Excel for offline use
+ */
+async function onExportExcel() {
+  if (!tableData.value || tableData.value.length === 0) {
+    notification.warning({ message: "No data available to export." });
+    return;
+  }
+
+  const workbook = new Workbook();
+  const sheet = workbook.addWorksheet("TB Deployment Activity");
+
+  // Define headers
+  sheet.columns = [
+    { header: "Deployment", key: "deploymentnumber", width: 20 },
+    { header: "Earliest", key: "earliest", width: 20 },
+    { header: "Latest", key: "latest", width: 20 },
+    { header: "# TBs Installed", key: "deployed", width: 20 },
+    { header: "# TBs reporting data", key: "collected", width: 25 },
+  ];
+
+  // Make headers bold
+  sheet.getRow(1).font = { bold: true };
+
+  // Add rows from tableData
+  tableData.value.forEach((row: any) => {
+    sheet.addRow({
+      deploymentnumber: row.deploymentnumber,
+      earliest: row.earliest,
+      latest: row.latest,
+      deployed: row.deployed,
+      collected: row.collected,
+    });
+  });
+
+  // Export to Excel
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "TalkingBookDeployment.xlsx";
+  a.click();
+  window.URL.revokeObjectURL(url);
+
+  notification.success({ message: "Export successful!", description: "Excel file has been downloaded." });
+}
 </script>
