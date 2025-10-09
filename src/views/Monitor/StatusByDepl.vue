@@ -10,7 +10,7 @@
           </Button>
 
           <Button type="primary" @click="onExportExcel">
-            Export to Excell
+            Export to Excel
           </Button>
 
         </div>

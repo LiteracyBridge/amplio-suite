@@ -194,7 +194,7 @@ async function onDateChanged(selection: string) {
 }
 
 function exportToCSV() {
-  
+
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Installations");
 
@@ -243,8 +243,8 @@ onMounted(async () => {
 <template>
   <PageHeader title="Installation Details" sub-title="Track talking book installations">
     <template #extra>
-      <Button type="primary" @click="exportToCSV">Export to Excell</Button>
-      
+      <Button type="primary" @click="exportToCSV">Export to Excel</Button>
+
       <span>Filter by Date:</span>
       <div style="width: 200px">
         <TreeSelect

@@ -323,7 +323,7 @@ onMounted(async () => {
 <template>
   <PageHeader title="TB Installations" sub-title="Track talking book installations">
     <template #extra>
-      <Button type="primary" @click="exportToCSV">Export to Excell</Button>
+      <Button type="primary" @click="exportToCSV">Export to Excel</Button>
       <Dropdown>
         <template #overlay>
           <Menu>
