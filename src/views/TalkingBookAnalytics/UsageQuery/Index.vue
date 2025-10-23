@@ -10,6 +10,7 @@ import {
   notification,
   Select,
   SelectOption,
+  RangePicker,
 } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
@@ -17,7 +18,7 @@ import { DownOutlined } from "@ant-design/icons-vue";
 import QueryBuilder from "./QueryBuilder.vue";
 import { Workbook } from "exceljs";
 import { DateTime } from "luxon";
-
+import dayjs from 'dayjs';
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
 
@@ -25,8 +26,7 @@ const selectedDeployment = ref(undefined);
 const query = ref<{ query: string; group: string }>(null);
 const columns = ref([]);
 const rows = ref<Record<string, any>[]>([]);
-const deploymentDates = ref<string[]>([]);
-const selectedDate = ref<string>();
+const selectedDate = ref<[dayjs.Dayjs, dayjs.Dayjs]>();
 
 const reports = [
   {
@@ -82,11 +82,14 @@ async function fetchStats(q: string, group: string) {
     deployment: selectedDeployment.value === "all" ? null : selectedDeployment.value,
     columns: q,
     group,
-    date: selectedDate.value,
+    date: selectedDate.value?.map(v => v.toISOString()),
   });
 
   // Update table
-  if (results.length === 0) return;
+  if (results.length === 0) {
+    rows.value = [];
+    return;
+  }
 
   columns.value = Object.keys(results[0]).map((k) => ({
     title: k,
@@ -128,23 +131,7 @@ async function exportReport() {
   });
 }
 
-async function fetchTimestamps() {
-  const d = selectedDeployment.value;
-  store.getDeploymentDates(d === "all" ? null : d).then((resp) => {
-    const collection_dates = resp.collections;
-    if (collection_dates.length === 0) {
-      deploymentDates.value = [];
-      selectedDate.value = null;
-    } else {
-      deploymentDates.value = collection_dates.flatMap((r) =>
-        DateTime.fromISO(r.date).toISODate()
-      );
-    }
-  });
-}
-
 async function onDeploymentChange() {
-  fetchTimestamps();
   fetchStats(query.value.query, query.value.group);
 }
 
@@ -154,7 +141,6 @@ onMounted(async () => {
   selectedDeployment.value = "all";
   query.value = { query: rpt.query, group: rpt.group };
 
-  fetchTimestamps();
   fetchStats(rpt.query, rpt.group);
 });
 </script>
@@ -167,17 +153,13 @@ onMounted(async () => {
         <template #overlay>
           <Menu>
             <MenuItem key="all" @click="selectedDeployment = 'all'">
-              <span>All Deployments</span>
+            <span>All Deployments</span>
             </MenuItem>
-            <MenuItem
-              :key="d.deploymentnumber"
-              v-for="(d, idx) in appStore.deployments"
-              @click="
-                selectedDeployment = d.deploymentnumber;
-                onDeploymentChange();
-              "
-            >
-              <span>#{{ idx + 1 }} {{ d.start_date }} - {{ d.end_date }}</span>
+            <MenuItem :key="d.deploymentnumber" v-for="(d, idx) in appStore.deployments" @click="
+              selectedDeployment = d.deploymentnumber;
+            onDeploymentChange();
+            ">
+            <span>#{{ idx + 1 }} {{ d.start_date }} - {{ d.end_date }}</span>
             </MenuItem>
           </Menu>
         </template>
@@ -189,50 +171,29 @@ onMounted(async () => {
         </Button>
       </Dropdown>
 
-      <span class="ms-5">Statistics Collection Date:</span>
-      <Select
-        v-model:value="selectedDate"
-        class="min-w-4"
-        placeholder="Choose collection date"
-        :default-active-first-option="true"
-        :show-arrow="true"
-        :filter-option="false"
-        @change="
-          (val) => {
-            onDeploymentChange();
-          }
-        "
-      >
-        <SelectOption :value="null" selected>All Dates</SelectOption>
-        <SelectOption v-for="d in deploymentDates" :value="d">{{
-          DateTime.fromISO(d).toLocaleString(DateTime.DATE_MED)
-        }}</SelectOption>
-      </Select>
+      <span class="ms-5">Collection Date:</span>
+      <RangePicker v-model:value="selectedDate" @change="onDeploymentChange();" />
 
       <Dropdown>
         <template #overlay>
           <Menu>
-            <MenuItem
-              :key="r.key"
-              v-for="r in reports"
-              @click="
-                () => {
-                  if (r.key == 'custom') {
-                    modalVisible = true;
-                  } else {
-                    query = { query: r.query, group: r.group };
-                    fetchStats(r.query, r.group);
-                  }
+            <MenuItem :key="r.key" v-for="r in reports" @click="
+              () => {
+                if (r.key == 'custom') {
+                  modalVisible = true;
+                } else {
+                  query = { query: r.query, group: r.group };
+                  fetchStats(r.query, r.group);
                 }
-              "
-            >
-              <span> {{ r.title }}</span>
+              }
+            ">
+            <span> {{ r.title }}</span>
             </MenuItem>
           </Menu>
         </template>
         <Button>
           <span v-if="query == null">Choose Report</span>
-          <span v-else>{{ reports.find((r) => r.query == query.query).title }}</span>
+          <span v-else>{{reports.find((r) => r.query == query.query).title}}</span>
           <DownOutlined />
         </Button>
       </Dropdown>
@@ -249,29 +210,15 @@ onMounted(async () => {
     </Alert> -->
   </PageHeader>
 
-  <Table
-    :columns="columns"
-    :data-source="rows"
-    size="small"
-    :loading="store.loading"
-    :sticky="true"
-    :scroll="{ x: '70%' }"
-    :pagination="false"
-    :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
-    class="ant-table-striped"
-  >
+  <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading" :sticky="true"
+    :scroll="{ x: '70%' }" :pagination="false"
+    :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" class="ant-table-striped">
     <template #title>
-      <Button :disabled="rows.length === 0" @click="exportReport()" ghost type="primary"
-        >Download Report</Button
-      >
+      <Button :disabled="rows.length === 0" @click="exportReport()" ghost type="primary">Download Report</Button>
     </template>
   </Table>
 
   <div v-if="modalVisible">
-    <QueryBuilder
-      :visible="modalVisible"
-      @save="(q, g) => fetchStats(q, g)"
-      @close="modalVisible = false"
-    />
+    <QueryBuilder :visible="modalVisible" @save="(q, g) => fetchStats(q, g)" @close="modalVisible = false" />
   </div>
 </template>
