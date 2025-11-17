@@ -50,7 +50,7 @@ export class Deployment {
     deployment.end_date = enddate.toISOString().substring(0, 10);
     deployment.project = programId;
     deployment.deploymentname = deploymentname;
-    deployment.deployment = deploymentname;
+    deployment.deployment = `${programId}-${deploymentnumber}`;
     deployment.playlists = playlists;
 
     return deployment;
