@@ -354,7 +354,7 @@ const DEPLOYMENTS_SCHEMA = {
 		},
 		required: true
 	},
-	"Deployment Name": { prop: "deployment", type: String, required: true },
+	"Deployment Name": { prop: "deploymentname", type: String, required: true },
 };
 
 const GENERAL_SCHEMA = {
