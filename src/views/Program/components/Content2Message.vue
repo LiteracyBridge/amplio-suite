@@ -127,10 +127,21 @@ const titleError = ref(false);
 //   return !invalidChars.test(title);
 // };
 
+const validateTitle = (title: string) => {
+  // Disallow special characters (including underscore)
+  const hasInvalidChars = /[^a-zA-Z0-9\s]/g.test(title);
+  
+  // Disallow consecutive spaces (2 or more)
+  const hasDoubleSpaces = /\s{2,}/g.test(title);
+  
+  // Return false if either check fails
+  return !hasInvalidChars && !hasDoubleSpaces;
+};
+
 //  Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
   const title = (event.target as HTMLInputElement).value;
-  titleError.value = /[^\d\w\s]/g.test(title);
+  titleError.value = !validateTitle(title);
   if (!titleError.value) {
     store.setMessageOrPlaylistTitle(title, props.message);
   }
