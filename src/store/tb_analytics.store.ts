@@ -7,7 +7,7 @@ import { useProgramSpecStore } from "./programspec";
 export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 	state: () => ({
 		loading: false,
-		summaries: null as Record<string, any>
+		summaries: null as Record<string, any>,
 	}),
 	actions: {
 		async getTbStatusBy(selector: string) {
@@ -48,32 +48,40 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 			playlist: string;
 		}) {
 			this.loading = true;
-			const query = []
+			const query = [];
 			if (opts?.deployment) {
-				query.push(`deployment=${opts.deployment}`)
-				query.push(`deployment_name=${useProgramSpecStore().deployments.find(i => i.deploymentnumber == opts.deployment).deployment}`)
+				query.push(`deployment=${opts.deployment}`);
+				query.push(
+					`deployment_name=${useProgramSpecStore().deployments.find((i) => i.deploymentnumber == opts.deployment).deployment}`,
+				);
 			}
 
 			if (opts?.district) {
-				query.push(`district=${opts.district}`)
+				query.push(`district=${opts.district}`);
 			}
 
 			if (opts?.community) {
-				query.push(`community=${opts.community}`)
+				query.push(`community=${opts.community}`);
 			}
 
 			if (opts?.language) {
-				query.push(`language=${opts.language}`)
+				const name = useProgramSpecStore().languages.find(
+					(l) => l.code == opts.language,
+				)?.name!;
+				query.push(`languageCode=${opts.language}`);
+				query.push(`language=${name}`);
 			}
 
 			if (opts?.playlist) {
-				query.push(`playlist=${opts.playlist}`)
+				query.push(`playlist=${opts.playlist}`);
 			}
 
-			return ApiRequest.get<any>(`tb-analytics/${useAppStore().programCode}/summaries?${query.join('&')}`)
+			return ApiRequest.get<any>(
+				`tb-analytics/${useAppStore().programCode}/summaries?${query.join("&")}`,
+			)
 				.then((resp) => {
-					this.summaries = resp[0]
-					return resp
+					this.summaries = resp[0];
+					return resp;
 				})
 				.finally(() => {
 					this.loading = false;
@@ -83,13 +91,20 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 			deployment: number;
 			columns: string;
 			group: string;
-			date?: string;
+			date?: string[];
 		}) {
 			this.loading = true;
+			const date = opts.date;
 
-			return ApiRequest.get<Record<string, any>>(
-				`tb-analytics/${useAppStore().programCode}/usage?deployment=${opts.deployment}&columns=${opts.columns}&group=${opts.group}&date=${opts.date}`,
-			)
+			let url = `tb-analytics/${useAppStore().programCode}/usage?deployment=${opts.deployment}&columns=${opts.columns}&group=${opts.group}`;
+			if (date != null) {
+				if (typeof date === "string" || date.length == 1) {
+					url += `&date[]=${date}`;
+				} else if (Array.isArray(date)) {
+					url += '&' + date.map((d) => `date[]=${d}`).join("&");
+				}
+			}
+			return ApiRequest.get<Record<string, any>>(url)
 				.then((resp) => resp)
 				.finally(() => {
 					this.loading = false;
@@ -98,7 +113,10 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 		async getDeploymentDates(deployment?: number) {
 			this.loading = true;
 
-			return ApiRequest.get<{ collections: { date: string }[], deployments: { date: string }[] }>(
+			return ApiRequest.get<{
+				collections: { date: string }[];
+				deployments: { date: string }[];
+			}>(
 				`tb-analytics/${useAppStore().programCode}/deployment-dates?deployment=${deployment}`,
 			)
 				.then((resp) => resp[0])

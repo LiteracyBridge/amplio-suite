@@ -117,7 +117,7 @@ onMounted(() => {
   <div
 
   >
-    <h4 class="mb-2 text-xl font-bold text-black dark:text-white">Region labels</h4>
+    <h4 class="mb-2 text-xl font-bold text-black dark:text-white">Talking Books Installation Map</h4>
     <div id="map" style="max-height: 650px;"></div>
     <!-- <div id="map"></div> -->
     <div

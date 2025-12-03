@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { Table, Card, Row, Col, Tabs, TabPane } from "ant-design-vue";
-import type { TableColumnType } from "ant-design-vue";
-import { countBy, groupBy, sumBy } from "lodash";
+import { onMounted, ref } from "vue";
+import { useTalkingBookAnalyticStore } from "@/store/tb_analytics.store";
 import {
   Chart,
   LineController,
@@ -17,6 +15,8 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { baseChartConfig, type SummaryDataItem } from "./chart_config";
 
 Chart.register(
   LineController,
@@ -29,42 +29,192 @@ Chart.register(
   BarElement,
   Colors,
   Legend,
-  Tooltip
+  Tooltip,
+  ChartDataLabels
 );
 
-interface DataItem {
-  TB: string;
-  Agent: string;
-  "Deployment #": string;
-  Region: string;
-  District: string;
-  Community: string;
-  Message: string;
-  Language: string;
-  Format: string;
-  Variant: string;
-  Playlist: string;
-  Position: string;
-  Duration: number;
-  "Total Starts": string;
-  "Total 1/4 Plays": string;
-  "Total 1/2 Plays": string;
-  "Total 3/4 Plays": string;
-  "Total Completions": number;
-  "Total Seconds Played": number;
-  "Total Plays": string;
-}
+const store = useTalkingBookAnalyticStore();
+let chart1: Chart;
+let chart2: Chart;
+let chart3: Chart;
+let chart4: Chart;
+let chart5: Chart;
+let chart6: Chart;
 
-const props = defineProps<{
-  data: Array<DataItem>;
-}>();
+function updateCharts() {
+  // Minute Played
+  const minutesPlayed: Record<string, number> = {};
+  for (const row of store.summaries?.usage ?? []) {
+    const key = row.Message ?? row.Playlist;
+    minutesPlayed[key] ??= 0;
+    minutesPlayed[key] += +row["Total Seconds Played"] / 60;
+  }
 
-const rowSpans: { [tb: string]: boolean } = {};
+  chart1.data.datasets = [
+    {
+      label: "Minutes Played",
+      // @ts-ignore
+      data: Object.values(minutesPlayed).map((v) => v.toFixed(1)),
+    },
+  ];
+  chart1.update();
 
-onMounted(() => {
   // Completions graph
   const completions: Record<string, number> = {};
-  for (const row of props.data) {
+  for (const row of store.summaries?.usage ?? []) {
+    const key = row.Message ?? row.Playlist;
+    completions[key] ??= 0;
+    completions[key] += +row["Total Completions"];
+  }
+
+  chart2.data.datasets = [
+    {
+      label: "Total Completions",
+      data: Object.values(completions),
+    },
+  ];
+  chart2.update();
+
+  // partial play
+  const partialPlays: Record<
+    string,
+    { completions: number; 3_4: number; 1_2: number; 1_4: number; starts: number }
+  > = {};
+  for (const row of store.summaries.usage) {
+    const key = row.Message ?? row.Playlist;
+    partialPlays[key] ??= { completions: 0, 14: 0, "34": 0, "12": 0, starts: 0 };
+    partialPlays[key].completions += +row["Total Completions"];
+    partialPlays[key]["14"] += +row["Total 1/4 Plays"] / 60;
+    partialPlays[key]["12"] += +row["Total 1/2 Plays"] / 60;
+    partialPlays[key]["34"] += +row["Total 3/4 Plays"] / 60;
+    partialPlays[key].starts += +row["Total Starts"] / 60;
+  }
+
+  const keys = Object.keys(minutesPlayed);
+  chart3.data.datasets = [
+    {
+      label: "Total Completions",
+      data: keys.map((k) => partialPlays[k].completions),
+      // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+    },
+    {
+      label: "Total 3/4 Plays",
+      data: keys.map((k) => partialPlays[k]["34"]),
+      // backgroundColor: ["rgba(153, 102, 255, 0.2)"],
+    },
+
+    {
+      label: "Total 1/2 Plays",
+      data: keys.map((k) => partialPlays[k]["12"]),
+      // backgroundColor: ["yellow"],
+    },
+    {
+      label: "Total 1/4 Plays",
+      data: keys.map((k) => partialPlays[k]["14"]),
+      // backgroundColor: ["rgba(255, 205, 86, 0.2)"],
+    },
+
+    {
+      label: "Total Start",
+      data: keys.map((k) => partialPlays[k].starts),
+    },
+  ];
+  chart3.update();
+
+  chart4.data.datasets = [
+    {
+      label: "Message Completions per TB",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart4.update();
+
+  chart5.data.datasets = [
+    {
+      label: "Message Completions per TB",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Seconds Played"] / 60 / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart5.update();
+
+  chart6.data.datasets = [
+    {
+      label: "Total Completions",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+      ), // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+    },
+    {
+      label: "Total 3/4 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+
+    {
+      label: "Total 1/2 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+    {
+      label: "Total 1/4 Plays",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)
+      ),
+    },
+
+    {
+      label: "Total Start",
+      data: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)
+      ),
+    },
+  ];
+  chart6.update();
+}
+
+async function createCharts() {
+  // Minute Played
+  const minutesPlayed: Record<string, number> = {};
+  console.log(store.summaries?.usage);
+  for (const row of store.summaries?.usage ?? []) {
+    const key = row.Message ?? row.Playlist;
+    minutesPlayed[key] ??= 0;
+    minutesPlayed[key] += +row["Total Seconds Played"] / 60;
+  }
+
+  // @ts-ignore
+  chart1 = new Chart(document.getElementById("minutes-played"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(minutesPlayed),
+      datasets: [
+        {
+          label: "Minutes Played",
+          data: Object.values(minutesPlayed).map((v) => v.toFixed(1)),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      plugins: {
+        ...baseChartConfig.plugins,
+        title: {
+          display: true,
+          text: "Minutes Played",
+        },
+      },
+    },
+  });
+
+  // Completions graph
+  const completions: Record<string, number> = {};
+  for (const row of store.summaries?.usage ?? []) {
     const key = row.Message ?? row.Playlist;
     completions[key] ??= 0;
     completions[key] += +row["Total Completions"];
@@ -72,7 +222,7 @@ onMounted(() => {
 
   // console.log(completions);
   // @ts-ignore
-  new Chart(document.getElementById("completions"), {
+  chart2 = new Chart(document.getElementById("completions"), {
     type: "bar",
     data: {
       labels: Object.keys(completions),
@@ -84,85 +234,13 @@ onMounted(() => {
       ],
     },
     options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-          categoryPercentage: 1.0,
-        },
-      },
-
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
-      scales: {
-        y: {
-          ticks: {
-            font: {
-              size: 10,
-            },
-          },
-        },
-      },
+      ...baseChartConfig,
       plugins: {
-        legend: {
-          position: "right",
-        },
+        ...baseChartConfig.plugins,
         title: {
           display: true,
-          text: "Completions",
-        },
-      },
-    },
-  });
-
-  // Minute Played
-  const minutesPlayed: Record<string, number> = {};
-  for (const row of props.data) {
-    const key = row.Message ?? row.Playlist;
-    minutesPlayed[key] ??= 0;
-    minutesPlayed[key] += +row["Total Seconds Played"] / 60;
-  }
-
-  // @ts-ignore
-  new Chart(document.getElementById("minutes-played"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(minutesPlayed),
-      datasets: [
-        {
-          label: "Minutes Played",
-          data: Object.values(minutesPlayed),
-        },
-      ],
-    },
-    options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-        },
-      },
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
-      scales: {
-        x: {},
-        y: {
-          ticks: {
-            font: {
-              size: 10,
-            },
-          },
-        },
-      },
-      plugins: {
-        legend: {
-          position: "right",
-        },
-        title: {
-          display: true,
-          text: "Minutes Played",
+          text: "Message Completions",
+          font: { weight: "bold" },
         },
       },
     },
@@ -173,7 +251,7 @@ onMounted(() => {
     string,
     { completions: number; 3_4: number; 1_2: number; 1_4: number; starts: number }
   > = {};
-  for (const row of props.data) {
+  for (const row of store.summaries.usage) {
     const key = row.Message ?? row.Playlist;
     partialPlays[key] ??= { completions: 0, 14: 0, "34": 0, "12": 0, starts: 0 };
     partialPlays[key].completions += +row["Total Completions"];
@@ -184,9 +262,8 @@ onMounted(() => {
   }
 
   const keys = Object.keys(minutesPlayed);
-  console.log(props.data);
   // @ts-ignore
-  new Chart(document.getElementById("partial-plays"), {
+  chart3 = new Chart(document.getElementById("partial-plays"), {
     type: "bar",
 
     data: {
@@ -221,15 +298,7 @@ onMounted(() => {
       ],
     },
     options: {
-      indexAxis: "y",
-      elements: {
-        bar: {
-          borderWidth: 2,
-        },
-      },
-      responsive: true,
-      scrollbar: { enabled: true },
-      maintainAspectRatio: true,
+      ...baseChartConfig,
       scales: {
         x: {
           stacked: true,
@@ -244,95 +313,242 @@ onMounted(() => {
         },
       },
       plugins: {
-        legend: {
-          position: "right",
-          display: true,
-          labels: {
-            color: "rgb(255, 99, 132)",
-          },
-        },
-        tooltip: {
-          // callbacks: {
-          //   label: (context) => {
-          //     console.log(context);
-          //     // console.log(context.dataset.label)
-          //     const record = props.data.find(
-          //       (i) => i.Message === context.label || i.Playlist === context.label
-          //     );
-          //     console.log(record);
-          //     let label = context.dataset.label || "";
-          //     label += `Message: ${record.Message}\n`;
-          //     label += `Playlist: ${record.Playlist}\n`;
-
-          //     // if (label) {
-          //     //   label += ": ";
-          //     // }
-          //     // if (context.parsed.y !== null) {
-          //     //   label += new Intl.NumberFormat("en-US", {
-          //     //     style: "currency",
-          //     //     currency: "USD",
-          //     //   }).format(context.parsed.y);
-          //     // }
-          //     return [label,'',`Total Plays: ${record.Playlist}\n`, `Minutes Played: ${record.Playlist}\n`];
-          //   },
-          // },
-        },
+        ...baseChartConfig.plugins,
+        datalabels: { display: false },
         title: {
           display: true,
-          text: "Partial Plays",
+          text: "Message Partial Plays",
         },
       },
     },
   });
+
+  console.log(
+    store.summaries.usage.flatMap(
+      (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+    )
+  );
+  // @ts-ignore
+  chart4 = new Chart(document.getElementById("completions-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Message Completions per TB",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      plugins: {
+        ...baseChartConfig.plugins,
+        title: {
+          display: true,
+          text: "Message Completions per TB",
+        },
+      },
+    },
+  });
+
+  // @ts-ignore
+  chart5 = new Chart(document.getElementById("minutes-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Message Completions per TB",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) =>
+              +(+d["Total Seconds Played"] / 60 / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      plugins: {
+        ...baseChartConfig.plugins,
+        title: {
+          display: true,
+          text: "Minute Played Per TB",
+        },
+      },
+    },
+  });
+
+  // @ts-ignore
+  chart6 = new Chart(document.getElementById("partial-plays-per-tb"), {
+    type: "bar",
+    data: {
+      labels: store.summaries.usage.flatMap(
+        (d: SummaryDataItem) => d.Message ?? d.Playlist
+      ),
+      datasets: [
+        {
+          label: "Total Completions",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
+          ), // backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+        },
+        {
+          label: "Total 3/4 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 3/4 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+
+        {
+          label: "Total 1/2 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 1/2 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+        {
+          label: "Total 1/4 Plays",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total 1/4 Plays"] / d["tbs"]).toFixed(1)
+          ),
+        },
+
+        {
+          label: "Total Start",
+          data: store.summaries.usage.flatMap(
+            (d: SummaryDataItem) => +(+d["Total Starts"] / d["tbs"]).toFixed(1)
+          ),
+        },
+      ],
+    },
+    options: {
+      ...baseChartConfig,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            font: {
+              size: 10,
+            },
+          },
+        },
+      },
+      plugins: {
+        ...baseChartConfig.plugins,
+        datalabels: { display: false },
+        title: {
+          display: true,
+          text: "Partial Plays by Message per TB",
+        },
+      },
+    },
+  });
+}
+
+onMounted(() => {
+  createCharts()
 });
 </script>
 
 <template>
-  <!-- <Row>
-    <Col>
-      <Card title="Completions">
-        <canvas id="completions"></canvas>
-      </Card>
-    </Col>
-  </Row> -->
-  <div class="grid grid-flow-row-dense grid-cols-2 grid-rows-2">
-    <div>
-      <canvas id="completions"></canvas>
-    </div>
+  <div class="responsive-container">
+    <div class="charts-grid">
+      <!-- Full-width charts -->
+      <div class="chart-container full-width">
+        <canvas id="minutes-played"></canvas>
+      </div>
 
-    <div>
-      <canvas id="minutes-played"></canvas>
-    </div>
-    <div>
-      <canvas id="partial-plays"></canvas>
+      <!-- Paired charts -->
+      <template
+        v-for="(pair, index) in [
+          ['completions', 'partial-plays'],
+          ['completions-per-tb', 'minutes-per-tb'],
+        ]"
+        :key="index"
+      >
+        <div class="chart-pair">
+          <div class="chart-container">
+            <canvas :id="pair[0]"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas :id="pair[1]"></canvas>
+          </div>
+        </div>
+      </template>
+
+      <!-- Final full-width chart -->
+      <div class="chart-container full-width">
+        <canvas id="partial-plays-per-tb"></canvas>
+      </div>
     </div>
   </div>
-  <!-- <Tabs size="large" centered tab-position="left">
-    <TabPane key="home" tab="Home">
-      <canvas
-        id="completions"
-        style="position: relative; height: 40vh; width: 80vw"
-      ></canvas>
-    </TabPane>
-    <TabPane key="homde" tab="Home">
-</TabPane>
-  </Tabs> -->
 </template>
 
 <style scoped>
-.chartWrapper {
-  position: relative;
+/* Charts grid system */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-.chartWrapper > canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: none;
+.chart-container {
+  background: white;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.chartAreaWrapper {
-  width: 15000px;
-  overflow-x: scroll;
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 1.5rem;
+  }
+
+  .chart-pair {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    padding: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Canvas sizing */
+canvas {
+  width: 100%;
+  height: 400px;
+}
+
+/* Tabs styling */
+.responsive-tabs {
+  margin-top: 2rem;
 }
 </style>
