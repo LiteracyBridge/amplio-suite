@@ -129,6 +129,40 @@ async function getTBLoaderAppLatestVersion() {
           </CardMeta>
         </Card>
       </div>
+
+      <div class="p-4">
+  <Card hoverable style="width: 400px; height: 360px">
+    <template #cover>
+      <div class="flex justify-center">
+        <img
+          alt="Amplio Companion App"
+          src="https://www.amplio.org/_image?href=%2F_astro%2Ftech-main-bg.DaPO2TNW.jpg&w=1920&h=1080&f=webp"
+          class="inline-block"
+          width="400"
+          height="250"
+        />
+      </div>
+    </template>
+
+    <CardMeta title="Amplio Companion App">
+      <template #description>
+        Official Companion App for Talking Book devices. Install from Google Play.
+      </template>
+    </CardMeta>
+
+    <CardMeta>
+      <template #title>
+        <a
+          href="https://play.google.com/store/apps/details?id=org.amplio.talkingbook"
+          target="_blank"
+        >
+          <Button class="mt-4" block type="primary">Download</Button>
+        </a>
+      </template>
+    </CardMeta>
+  </Card>
+</div>
+
     </div>
   </main>
 </template>
