@@ -20,9 +20,9 @@ ENV PORT=${PORT}
 
 RUN \
   if [ "${NODE_ENV}" == "production" ]; then \
-    npm run production-build; \
+    npm run build:production; \
   else \
-    npm run staging-build; \
+    npm run build:staging; \
   fi
 
 EXPOSE ${PORT}

@@ -15,7 +15,7 @@
       <FormItem
        :validateStatus="titleError ? 'error' : ''"
       :help="titleError ? 'Invalid characters in Playlist Title' :
-       'Message title cannot contain these characters: \\/:*?<>|&quot;'"
+       'Playlist title can only contain: letters, numbers, and spaces.'"
        class="mt-3 w-full"
       :extra="playlist._error_message"
       >
@@ -108,15 +108,26 @@ const dragging = ref(false);
 const titleError = ref(false)
 
 // CHANGED: Added validation function
+// const validateTitle = (title: string) => {
+//   const invalidChars = /[^a-zA-Z0-9\s]/g;
+//   return !invalidChars.test(title);
+// };
+
 const validateTitle = (title: string) => {
-  const invalidChars = /[^\d\w\s]/g;
-  return !invalidChars.test(title);
+  // Disallow special characters (including underscore)
+  const hasInvalidChars = /[^a-zA-Z0-9\s]/g.test(title);
+  
+  // Disallow consecutive spaces (2 or more)
+  const hasDoubleSpaces = /\s{2,}/g.test(title);
+  
+  // Return false if either check fails
+  return !hasInvalidChars && !hasDoubleSpaces;
 };
 
 // CHANGED: Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
   const title = (event.target as HTMLInputElement).value;
-  titleError.value = /[^\d\w\s]/g.test(title); // Set error state based on validation
+  titleError.value = !validateTitle(title);
   if (!titleError.value) {
     store.setMessageOrPlaylistTitle(title, props.playlist); // Update title in store if valid
   }
