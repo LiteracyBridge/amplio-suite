@@ -239,12 +239,12 @@ onMounted(() => {
         <Form layout="vertical" class="mt-5 block">
           <div class="flex justify-center">
             <div class="grid grid-cols-1 gap-4 content-center">
-              <Tabs
+              <!-- <Tabs
                 v-model:activeKey="config.activeSection"
                 :bordered="true"
                 tab-position="left"
               >
-                <TabPane key="transcription" tab="Transcription">
+                <TabPane key="transcription" tab="Transcription"> -->
                   <Card type="inner" size="small" class="mb-6" style="width: 58vw">
                     <FormItem
                       key="field-transcription"
@@ -252,15 +252,15 @@ onMounted(() => {
                     >
                       <Textarea
                         class="my-2"
-                        :rows="20"
+                        :rows="9"
                         placeholder="Transcription..."
                         v-model:value="transcription"
                       ></Textarea>
                     </FormItem>
                   </Card>
-                </TabPane>
+              <!--  </TabPane> -->
 
-                <TabPane
+               <div
                   :key="section.id"
                   :tab="section.name"
                   v-for="section in feedbackStore.sections"
@@ -407,8 +407,8 @@ onMounted(() => {
                       </FormItem>
                     </template>
                   </Card>
-                </TabPane>
-              </Tabs>
+                </div>
+            <!--  </Tabs> -->
             </div>
           </div>
 
