@@ -49,7 +49,8 @@ const message = ref<UserFeedbackMessage>(new UserFeedbackMessage());
 const audioKey = ref(0);
 const nextUUID = ref<string>();
 const startTime = ref<Date>(null);
-const transcription = ref(null);
+const transcription = ref<string>(null);
+const transcriptionError = ref<string | null>(null);
 
 function updateUrl(skipMessage: boolean = false) {
   if (store.userFeedback?.deployment == null || store.userFeedback?.language == null) {
@@ -138,8 +139,17 @@ function validateResponse(feedback: Analysis) {
 function save(is_useless: boolean = false) {
   // Validate response
   if (is_useless === false) {
-    let isValid = true;
+    transcriptionError.value = null; // reset
+    if (transcription.value == null || transcription.value.trim() == "") {
+      transcriptionError.value = "Message transcription is empty!";
+      notification.error({
+        message: "Error",
+        description: transcriptionError.value,
+      });
+      return;
+    }
 
+    let isValid = true;
     for (const feedback of feedbackStore.questions) {
       isValid = validateResponse(feedback);
 
@@ -151,6 +161,7 @@ function save(is_useless: boolean = false) {
         return;
       }
     }
+
   }
 
   feedbackStore
@@ -241,6 +252,9 @@ onMounted(() => {
                 <FormItem key="field-transcription" label="Feedback Message Transcription">
                   <Textarea class="my-2" :rows="9" placeholder="Transcription..."
                     v-model:value="transcription"></Textarea>
+                  <!-- Error message -->
+                  <div class="text-red-500">{{ transcriptionError || "" }}</div>
+
                 </FormItem>
               </Card>
               <!--  </TabPane> -->
