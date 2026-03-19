@@ -43,23 +43,23 @@ const store = useSurveyBuilder();
 
 const config = ref({
   modalVisible: false,
-  activeSection: null,
-  sectionModal: {
-    visible: false,
-    form: new QuestionSection(),
-    close: () => {
-      config.value.sectionModal.visible = false;
-      config.value.sectionModal.form = new QuestionSection();
-    },
-    save: () => {
-      store.activeSurvey.sections.push({
-        _id: crypto.randomUUID(),
-        name: config.value.sectionModal.form.name,
-        is_new: true,
-      });
-      config.value.sectionModal.close();
-    },
-  },
+  // activeSection: null,
+  // sectionModal: {
+  //   visible: false,
+  //   form: new QuestionSection(),
+  //   close: () => {
+  //     config.value.sectionModal.visible = false;
+  //     config.value.sectionModal.form = new QuestionSection();
+  //   },
+  //   save: () => {
+  //     store.activeSurvey.sections.push({
+  //       _id: crypto.randomUUID(),
+  //       name: config.value.sectionModal.form.name,
+  //       is_new: true,
+  //     });
+  //     config.value.sectionModal.close();
+  //   },
+  // },
 });
 
 // function questionTypeChanged(type: QuestionType, sectionId: string) {
@@ -74,12 +74,12 @@ const config = ref({
 //   console.log(question.value);
 // }
 
-onMounted(() => {
-  // Set active section to the first section
-  if (store.sections?.length > 0) {
-    config.value.activeSection = store.sections[0].id;
-  }
-});
+// onMounted(() => {
+//   // Set active section to the first section
+//   if (store.sections?.length > 0) {
+//     config.value.activeSection = store.sections[0].id;
+//   }
+// });
 </script>
 
 <template>
@@ -89,43 +89,23 @@ onMounted(() => {
 
       <Popconfirm
         title="Publishing this survey will make it available for analysis. Are you sure you want to publish this survey?"
-        ok-text="Yes"
-        cancel-text="No"
-        @confirm="store.updateStatus(SurveyStatus.published)"
-      >
-        <Button
-          type="primary"
-          :ghost="true"
-          v-if="
-            store.activeSurvey.status == SurveyStatus.draft ||
-            store.activeSurvey.status == null
-          "
-        >
-          Publish</Button
-        >
+        ok-text="Yes" cancel-text="No" @confirm="store.updateStatus(SurveyStatus.published)">
+        <Button type="primary" :ghost="true" v-if="
+          store.activeSurvey.status == SurveyStatus.draft ||
+          store.activeSurvey.status == null
+        ">
+          Publish</Button>
       </Popconfirm>
 
-      <Popconfirm
-        title="Are you sure you want to unpublish this survey?"
-        ok-text="Yes"
-        cancel-text="No"
-        @confirm="store.updateStatus(SurveyStatus.draft)"
-      >
-        <Button
-          type="primary"
-          :ghost="true"
-          v-if="store.activeSurvey.status == SurveyStatus.published"
-        >
+      <Popconfirm title="Are you sure you want to unpublish this survey?" ok-text="Yes" cancel-text="No"
+        @confirm="store.updateStatus(SurveyStatus.draft)">
+        <Button type="primary" :ghost="true" v-if="store.activeSurvey.status == SurveyStatus.published">
           Unpublish
         </Button>
       </Popconfirm>
 
-      <Popconfirm
-        title="Are you sure you want to archive this survey?"
-        ok-text="Yes"
-        cancel-text="No"
-        @confirm="store.updateStatus(SurveyStatus.archived)"
-      >
+      <Popconfirm title="Are you sure you want to archive this survey?" ok-text="Yes" cancel-text="No"
+        @confirm="store.updateStatus(SurveyStatus.archived)">
         <Button type="primary" :danger="true" :ghost="true"> Archive</Button>
       </Popconfirm>
     </template>
@@ -148,50 +128,42 @@ onMounted(() => {
       <Divider></Divider>
 
       <div class="grid grid-cols-1 gap-4 content-center">
-        <Tabs
+        <!-- <Tabs
           v-model:activeKey="config.activeSection"
           :bordered="true"
           class="mx-10"
           tab-position="left"
           v-if="store.sections.length > 0"
-        >
-          <TabPane :key="section.id" v-for="section in store.sections">
-            <template #tab>
+        > -->
+        <div v-for="section in store.sections">
+          <!--  <template #tab>
               <span>{{ section.name }}</span>
-            </template>
+            </template> -->
 
-            <div class="block float-right mr-24">
-              <!-- TODO: add tooltip -->
-              <Space v-if="store.sectionHasQuestions(section.id)">
-                <Button size="small" @click.prevent="store.duplicateSection(section.id)">
-                  <CopyOutlined class="pb-10" />
-                  Duplicate
-                </Button>
+          <div class="block float-right mr-24">
+            <!-- TODO: add tooltip -->
+            <Space v-if="store.sectionHasQuestions(section.id)">
+              <Button size="small" @click.prevent="store.duplicateSection(section.id)">
+                <CopyOutlined class="pb-10" />
+                Duplicate
+              </Button>
 
-                <Button
-                  type="primary"
-                  size="small"
-                  @click.prevent="store.deleteSection(section.id)"
-                  :danger="true"
-                  :ghost="true"
-                >
-                  <template #icon>
-                    <DeleteOutlined class="pb-10" />
-                  </template>
-                  Delete
-                </Button>
-              </Space>
-            </div>
+              <Button type="primary" size="small" @click.prevent="store.deleteSection(section.id)" :danger="true"
+                :ghost="true">
+                <template #icon>
+                  <DeleteOutlined class="pb-10" />
+                </template>
+                Delete
+              </Button>
+            </Space>
+          </div>
 
-            <div class="flex justify-center items-center">
-                <!-- :sub-questions="false" -->
-              <QuestionsView
-                :section-id="section.id"
-                :section-uuid="section._id"
-              ></QuestionsView>
-            </div>
+          <div class="flex justify-center items-center">
+            <!-- :sub-questions="false" -->
+            <QuestionsView :section-id="section.id" :section-uuid="section._id"></QuestionsView>
+          </div>
 
-            <!--
+          <!--
         <div
           class="flex justify-center items-center"
           v-if="question != null && question.section_id == section.id"
@@ -204,25 +176,21 @@ onMounted(() => {
           ></NewQuestion>
         </div> -->
 
-            <Divider></Divider>
-            <div class="flex justify-center items-center my-10 mb-10">
-              <Space>
-                <span class="font-bold">New Question:</span>
-                <Button
-                  v-for="(questionType, index) in QuestionTypesList"
-                  :key="index"
-                  @click="
-                    store.addQuestion({
-                      ...Question.create(questionType.value, section._id),
-                      question_label: 'Untitled question',
-                    })
-                  "
-                >
-                  {{ questionType.label }}
-                </Button>
-              </Space>
+          <Divider></Divider>
+          <div class="flex justify-center items-center my-10 mb-10">
+            <Space>
+              <span class="font-bold">New Question:</span>
+              <Button v-for="(questionType, index) in QuestionTypesList" :key="index" @click="
+                store.addQuestion({
+                  ...Question.create(questionType.value, section._id),
+                  question_label: 'Untitled question',
+                })
+                ">
+                {{ questionType.label }}
+              </Button>
+            </Space>
 
-              <!-- <Dropdown>
+            <!-- <Dropdown>
             <template #overlay>
               <Menu>
                 <MenuItem
@@ -240,27 +208,26 @@ onMounted(() => {
               <DownOutlined />
             </Button>
           </Dropdown> -->
-            </div>
-          </TabPane>
-        </Tabs>
+          </div>
+        </div>
+        <!-- </Tabs> -->
       </div>
       <Divider></Divider>
       <div class="flex justify-center items-center mt-10 mb-10">
         <Space>
-          <Button size="large" @click="config.sectionModal.visible = true">
+          <!-- <Button size="large" @click="config.sectionModal.visible = true">
             Add Section</Button
-          >
+          > -->
 
           <Button type="primary" :block="true" size="large" @click="store.saveChanges()">
-            Save Changes</Button
-          >
+            Save Changes</Button>
         </Space>
       </div>
     </Spin>
   </div>
 
   <!-- New section modal -->
-  <Modal
+  <!--  <Modal
     title="New Section"
     v-model:open="config.sectionModal.visible"
     @cancel="config.sectionModal.close()"
@@ -281,7 +248,7 @@ onMounted(() => {
         />
       </FormItem>
     </Form>
-  </Modal>
+  </Modal> -->
 </template>
 
 <style scoped>
