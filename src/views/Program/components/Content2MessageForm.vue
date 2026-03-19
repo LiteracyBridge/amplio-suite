@@ -186,16 +186,16 @@ const formatOptions = ref([
 const goals = ref(sustainableDevelopmentGoals);
 
 const messageLanguages = computed(() => {
-  if (!props.message.languages) {
-    store.languages.forEach((l) => {
-      store.addMessageLanguage({
-        message: props.message,
-        language: l.code,
-      });
-    });
+  // if (!props.message.languages) {
+    // store.languages.forEach((l) => {
+    //   store.addMessageLanguage({
+    //     message: props.message,
+    //     language: l.code,
+    //   });
+    // });
     // props.message.languages = (store.general.languages || []).join(",");
     // return store.general.languages;
-  }
+  // }
   return store.getMessageLanguages(props.message);
 });
 
