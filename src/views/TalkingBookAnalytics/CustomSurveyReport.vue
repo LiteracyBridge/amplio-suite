@@ -49,11 +49,20 @@ async function fetchStats() {
 
   const data = await store.getCustomSurveyReport("SatisfactionSurvey");
   console.log(data)
-  columns.value = Object.keys(data[0]).map((header) => ({
-    title: header,
-    dataIndex: header,
-    key: header.replaceAll(" ", "_").toLowerCase(),
-  }));
+  columns.value = Object.keys(data[0]).map((header) => {
+
+    const fixed = ["Community", "Group", "District", "Language", "Region", "Completed"].indexOf(header) > -1;
+    const label = header == "complete" ? "Completed" : header;
+
+    return {
+      title: label,
+      dataIndex: label,
+      key: label.replaceAll(" ", "_").toLowerCase(),
+      // resizable: true,
+      fixed: fixed,
+      width: fixed ? 100 : 7 * 1.333 * label.length
+    }
+  });
 
   rows.value = data as any;
 
