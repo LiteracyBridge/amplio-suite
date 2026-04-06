@@ -10,9 +10,7 @@ import {
   Alert,
   notification,
 } from "ant-design-vue";
-import type { TreeSelectProps } from "ant-design-vue";
 import { onMounted, ref } from "vue";
-import { pad } from "@/utils";
 import { DateTime } from "luxon";
 import { Workbook } from "exceljs";
 import { useAppStore } from "@/store/app.store";
@@ -21,27 +19,7 @@ const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
 
 const columns = ref([]);
-
-interface DataItem {
-  community: string;
-  component: string;
-  group: string;
-  date: string;
-  deployment: string;
-  package: string;
-  whereUpdated: string;
-  updater: string;
-  test: string;
-  tbId: string;
-  loaderId: string;
-  _date_raw: DateTime;
-}
-
-const rows = ref<DataItem[]>([]);
-const recipients = ref<DataItem[]>([]);
-const treeData = ref<TreeSelectProps["treeData"]>([]);
-const selectedDate = ref<string>(null);
-
+const rows = ref([]);
 const selectedSurvey = ref<string>(null);
 
 async function fetchStats() {
@@ -53,7 +31,7 @@ async function fetchStats() {
 
     const fixed = ["Community", "Group", "District", "Language", "Region", "complete"].indexOf(header) > -1;
     return {
-      title:  header == "complete" ? "Completed" : header,
+      title: header == "complete" ? "Completed" : header,
       dataIndex: header,
       key: header.replaceAll(" ", "_").toLowerCase(),
       // resizable: true,
@@ -63,112 +41,13 @@ async function fetchStats() {
   });
 
   rows.value = data as any;
-
-  // const dailies: Record<string, any> = {};
-  // let latestDeployment: DateTime = null;
-
-  // const _rows = (data.flatMap((r) => {
-  //   return r.talkingbooks_deployed.map((tb) => {
-  //     const date = DateTime.fromISO(tb.deployed_timestamp);
-  //     if (latestDeployment == null) {
-  //       latestDeployment = date;
-  //     } else if (date > latestDeployment) {
-  //       latestDeployment = date;
-  //     }
-
-  //     const year = date.year;
-  //     dailies[year] ??= { label: year, value: year.toString(), months: {} };
-
-  //     const yearlies = dailies[year];
-  //     const month = pad(date.month, 2);
-  //     yearlies.months[month] ??= {
-  //       label: date.monthLong,
-  //       value: `${year}-${date.month}`,
-  //       days: {},
-  //     };
-
-  //     const monthlies = yearlies.months[month];
-  //     const day = pad(date.day, 2);
-  //     monthlies.days[day] = {
-  //       label: date.toFormat("EEEE, dd"),
-  //       value: `${year}-${date.month}-${date.day}`,
-  //     };
-
-  //     return {
-  //       community: r.community_name,
-  //       component: r.component,
-  //       group: r.group_name,
-  //       date: date.toFormat("EEEE, MMMM d, yyyy, h:mm a"),
-  //       deployment: tb.deployment_name,
-  //       package: tb.content_package,
-  //       whereUpdated: tb.location,
-  //       updater: tb.username,
-  //       test: tb.testing ? "Yes" : "No",
-  //       tbId: tb.talkingbook_id,
-  //       loaderId: tb.tbcdid,
-  //       _date_raw: date,
-  //     };
-  //   });
-  // }) as unknown) as DataItem[];
-
-  // recipients.value = _rows;
-
-  // selectedDate.value = latestDeployment?.toFormat("yyyy-mm-dd");
-  // onDateChanged(selectedDate.value);
-
-  // // Generate date tree selection
-  // treeData.value = [
-  //   { label: "All Installations", value: "all" },
-  //   ...Object.keys(dailies).map((year) => {
-  //     return {
-  //       label: dailies[year].label,
-  //       value: dailies[year].value,
-  //       children: Object.values(dailies[year].months).map((month: any) => {
-  //         // months sub tree
-  //         return {
-  //           label: month.label,
-  //           value: month.value,
-  //           children: Object.values(month.days).map((day: any) => {
-  //             // days sub tree
-  //             return {
-  //               label: day.label,
-  //               value: day.value,
-  //             };
-  //           }),
-  //         };
-  //       }),
-  //     };
-  //   }),
-  // ];
 }
 
-async function onDateChanged(selection: string) {
-  console.log(selection);
-
-  if (selection === "all" || selection == null) {
-    rows.value = [...recipients.value];
-  } else {
-    const [year, month, day] = selection.split("-");
-    rows.value = recipients.value.filter((r) => {
-      let ok = true;
-      if (year != null) {
-        ok = r._date_raw.year === +year;
-      }
-      if (month != null) {
-        ok = r._date_raw.month === +month;
-      }
-      if (day != null) {
-        ok = r._date_raw.day === +day;
-      }
-      return ok;
-    });
-  }
-}
 
 function exportToCSV() {
 
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Installations");
+  const worksheet = workbook.addWorksheet("Report");
 
   // Define columns
   worksheet.columns = columns.value.map((col) => ({
@@ -181,7 +60,7 @@ function exportToCSV() {
   rows.value.forEach((row) => {
     worksheet.addRow(
       // Ensure all columns are represented, even if some data is missing
-      columns.value.map((col) => row[col.dataIndex as keyof DataItem] ?? "")
+      columns.value.map((col) => row[col.dataIndex] ?? "")
     );
   });
 
@@ -201,7 +80,7 @@ function exportToCSV() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `installations_${DateTime.now().toFormat("yyyyLLdd_HHmm")}.xlsx`;
+    a.download = `Custom_Survey_Report_${DateTime.now().toFormat("yyyyLLdd_HHmm")}.xlsx`;
     a.click();
     window.URL.revokeObjectURL(url);
   });
@@ -213,10 +92,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <PageHeader title="Installation Details" sub-title="Track talking book installations">
+  <PageHeader title="Custom Survey Report" sub-title="Download custom talking book survey report">
     <template #extra>
       <Button type="primary" @click="exportToCSV">Export to Excel</Button>
 
+      <!--
       <span>Filter by Date:</span>
       <div style="width: 200px">
         <TreeSelect v-model:value="selectedDate" show-search class="w" style="width: 100%"
@@ -224,53 +104,15 @@ onMounted(async () => {
           tree-default-expand-all :tree-data="treeData" tree-node-filter-prop="label" @change="onDateChanged($event)">
         </TreeSelect>
       </div>
+      -->
     </template>
 
-    <Alert type="info" :closable="true">
-      <template #message>
-        Installations statistics uploaded on {{ selectedDate }},
-        {{ rows.length }} Deployments to TBs.
-      </template>
-    </Alert>
   </PageHeader>
 
   <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading" :sticky="true"
     :scroll="{ x: '70%' }" :pagination="false"
     :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)" class="ant-table-striped">
-    <template #headerCell="{ column }">
-      <template v-if="column.key === 'group'">
-        <Tooltip>
-          <template #title>The group's name, or Support Entity's name, if there is no group. Support
-            Entity names are prefixed with SE:.</template>
-          Group
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'whereUpdated'">
-        <Tooltip>
-          <template #title>Where did the updater indicate they were, during the installation?</template>
-          Location
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'loaderId'">
-        <Tooltip>
-          <template #title>The TB-Loader id of the laptop or phone that performed the
-            installation.</template>
-          ID
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'date'">
-        <Tooltip>
-          <template #title>When was this Talking Book installed? Time is in UTC..</template>
-          Date and Time
-        </Tooltip>
-      </template>
-      <template v-if="column.key === 'test'">
-        <Tooltip>
-          <template #title>Was the 'Testing the Deployment' box checked on the TB-Loader?</template>
-          Test?
-        </Tooltip>
-      </template>
-    </template>
+
   </Table>
 </template>
 
