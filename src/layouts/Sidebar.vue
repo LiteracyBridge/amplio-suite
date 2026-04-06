@@ -17,7 +17,8 @@ import {
   TableOutlined,
   CalculatorOutlined,
   StockOutlined,
-  PieChartOutlined
+  PieChartOutlined,
+  HomeOutlined
 } from "@ant-design/icons-vue";
 import LogoLarge from "@/assets/images/logo.png";
 import { useAppStore } from "@/store/app.store";
@@ -51,7 +52,7 @@ const config = ref({
 
       <MenuItem key="home">
         <template #icon>
-          <InsertRowRightOutlined />
+          <HomeOutlined />
         </template>
 
         <router-link to="/dashboard">
@@ -117,13 +118,14 @@ const config = ref({
             <span role="link"> Usage Query </span>
           </router-link>
         </MenuItem>
-        <MenuItem key="tableau">
+
+        <!-- <MenuItem key="tableau">
           <template #icon> <BarChartOutlined /> </template>
 
           <router-link to="/tb-analytics/tableau">
             <span role="link"> Tableau Analytics </span>
           </router-link>
-        </MenuItem>
+        </MenuItem> -->
 
       </Menu.SubMenu>
 
@@ -162,7 +164,7 @@ const config = ref({
         <MenuItem key="survey-builder" v-if="account.can(Permission.manage_survey)">
           <template #icon> <BuildOutlined /> </template>
           <router-link to="/user-feedback/surveys">
-            <span role="link"> Survey Builder </span>
+            <span role="link">Questionnaire Builder </span>
           </router-link>
         </MenuItem>
       </Menu.SubMenu>
