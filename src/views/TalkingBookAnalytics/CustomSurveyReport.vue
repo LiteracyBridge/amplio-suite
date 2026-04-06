@@ -51,16 +51,14 @@ async function fetchStats() {
   console.log(data)
   columns.value = Object.keys(data[0]).map((header) => {
 
-    const fixed = ["Community", "Group", "District", "Language", "Region", "Completed"].indexOf(header) > -1;
-    const label = header == "complete" ? "Completed" : header;
-
+    const fixed = ["Community", "Group", "District", "Language", "Region", "complete"].indexOf(header) > -1;
     return {
-      title: label,
-      dataIndex: label,
-      key: label.replaceAll(" ", "_").toLowerCase(),
+      title:  header == "complete" ? "Completed" : header,
+      dataIndex: header,
+      key: header.replaceAll(" ", "_").toLowerCase(),
       // resizable: true,
       fixed: fixed,
-      width: fixed ? 100 : 7 * 1.333 * label.length
+      width: fixed ? 100 : 7 * 1.333 * header.length
     }
   });
 
