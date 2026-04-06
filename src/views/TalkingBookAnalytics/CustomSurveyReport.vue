@@ -8,25 +8,26 @@ import {
   TreeSelect,
   Button,
   Alert,
+  SubMenu,
+  MenuItem,
+  Menu,
+  Dropdown,
   notification,
 } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import { DateTime } from "luxon";
 import { Workbook } from "exceljs";
 import { useAppStore } from "@/store/app.store";
+import { DownOutlined } from "@ant-design/icons-vue";
 
 const store = useTalkingBookAnalyticStore();
 const appStore = useAppStore();
 
 const columns = ref([]);
 const rows = ref([]);
-const selectedSurvey = ref<string>(null);
 
-async function fetchStats() {
-  console.log(appStore.deployments[0].playlists);
-
-  const data = await store.getCustomSurveyReport("SatisfactionSurvey");
-  console.log(data)
+async function fetchStats(surveyName: string) {
+  const data = await store.getCustomSurveyReport(surveyName);
   columns.value = Object.keys(data[0]).map((header) => {
 
     const fixed = ["Community", "Group", "District", "Language", "Region", "complete"].indexOf(header) > -1;
@@ -86,25 +87,40 @@ function exportToCSV() {
   });
 }
 
-onMounted(async () => {
-  await fetchStats();
-});
+// onMounted(async () => {
+//   await fetchStats();
+// });
 </script>
 
 <template>
   <PageHeader title="Custom Survey Report" sub-title="Download custom talking book survey report">
     <template #extra>
+
+      <Dropdown>
+        <template #overlay>
+          <Menu>
+            <SubMenu :key="deployment.deploymentnumber" v-for="deployment in appStore.deployments">
+              <template #title>
+                <span>Deployment {{ deployment.deploymentnumber }}</span>
+              </template>
+
+              <MenuItem :key="playlist.id"
+                v-for="playlist in deployment.playlists.filter((i) => i.title.toLowerCase().endsWith('survey'))"
+                @click="fetchStats(playlist.title)">
+              <span>{{ playlist.title }}</span>
+              </MenuItem>
+            </SubMenu>
+          </Menu>
+        </template>
+
+        <Button>
+          Choose Survey
+          <DownOutlined />
+        </Button>
+      </Dropdown>
+
       <Button type="primary" @click="exportToCSV">Export to Excel</Button>
 
-      <!--
-      <span>Filter by Date:</span>
-      <div style="width: 200px">
-        <TreeSelect v-model:value="selectedDate" show-search class="w" style="width: 100%"
-          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" placeholder="Please select" allow-clear
-          tree-default-expand-all :tree-data="treeData" tree-node-filter-prop="label" @change="onDateChanged($event)">
-        </TreeSelect>
-      </div>
-      -->
     </template>
 
   </PageHeader>
