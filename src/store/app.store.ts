@@ -31,7 +31,6 @@ export const useAppStore = defineStore("app-config-store", {
       );
     },
     languages: (state) => {
-      console.log(state.activeProgram.data)
       return state.activeProgram.data?.project.languages || [];
     },
   },

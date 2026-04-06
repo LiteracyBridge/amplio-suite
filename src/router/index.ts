@@ -165,13 +165,19 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import("../views/TalkingBookAnalytics/UsageQuery/Index.vue"),
       },
-      // Tableau
       {
-        path: "tableau",
-        name: "tb_analytics.tableau",
+        path: "custom-survey-report",
+        name: "tb_analytics.custom-survey",
         component: () =>
-          import(/* webpackChunkName: "tableau" */ "../views/TalkingBookAnalytics/Tableau.vue"),
-      }
+          import("../views/TalkingBookAnalytics/CustomSurveyReport.vue"),
+      },
+      // Tableau
+      // {
+      //   path: "tableau",
+      //   name: "tb_analytics.tableau",
+      //   component: () =>
+      //     import(/* webpackChunkName: "tableau" */ "../views/TalkingBookAnalytics/Tableau.vue"),
+      // }
     ],
   },
   // User feedback

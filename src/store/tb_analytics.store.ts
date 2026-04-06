@@ -101,9 +101,19 @@ export const useTalkingBookAnalyticStore = defineStore("tb-analytics", {
 				if (typeof date === "string" || date.length == 1) {
 					url += `&date[]=${date}`;
 				} else if (Array.isArray(date)) {
-					url += '&' + date.map((d) => `date[]=${d}`).join("&");
+					url += "&" + date.map((d) => `date[]=${d}`).join("&");
 				}
 			}
+			return ApiRequest.get<Record<string, any>>(url)
+				.then((resp) => resp)
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		async getCustomSurveyReport(surveyName: string) {
+			this.loading = true;
+
+			let url = `tb-analytics/${useAppStore().programCode}/custom-survey-report?survey=${surveyName}`;
 			return ApiRequest.get<Record<string, any>>(url)
 				.then((resp) => resp)
 				.finally(() => {
