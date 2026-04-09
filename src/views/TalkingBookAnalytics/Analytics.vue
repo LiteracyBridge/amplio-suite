@@ -195,7 +195,6 @@ function updateCharts() {
 async function createCharts() {
   // Minute Played
   const minutesPlayed: Record<string, number> = {};
-  console.log(store.summaries?.usage);
   for (const row of store.summaries?.usage ?? []) {
     const key = row.Message ?? row.Playlist;
     minutesPlayed[key] ??= 0;
@@ -337,11 +336,7 @@ async function createCharts() {
     },
   });
 
-  console.log(
-    store.summaries.usage.flatMap(
-      (d: SummaryDataItem) => +(+d["Total Completions"] / d["tbs"]).toFixed(1)
-    )
-  );
+
   // @ts-ignore
   chart4 = new Chart(document.getElementById("completions-per-tb"), {
     type: "bar",
@@ -469,10 +464,7 @@ async function createCharts() {
 }
 
 async function fetchData() {
-  const data = await store.getDashboardSummaries();
-  // stats.value = data[0];
-  console.log(data[0]);
-
+  await store.getDashboardSummaries();
   createCharts();
 }
 
@@ -483,7 +475,7 @@ onMounted(() => {
   useRequest(useProgramSpecStore().downloadSpec, {
     defaultParams: [
       useAppStore().activeProgram.data?.program_id ??
-        JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
+      JSON.parse(localStorage.getItem(LocalStorageKeys.active_program) ?? "{}").id,
     ],
     onSuccess: (data) => {
       useProgramSpecStore().setSpec({
@@ -502,10 +494,7 @@ onMounted(() => {
     <Tabs v-model:activeKey="activeKey" size="large" lazy centered>
       <TabPane key="overview" tab="Overview">
         <div v-if="!store.loading && store.summaries != null">
-          <Overview
-            :data="store.summaries.map?.data"
-            :centroid="store.summaries.map?.centroid"
-          ></Overview>
+          <Overview :data="store.summaries.map?.data" :centroid="store.summaries.map?.centroid"></Overview>
         </div>
         <div class="responsive-container">
           <div class="charts-grid">
@@ -515,13 +504,10 @@ onMounted(() => {
             </div>
 
             <!-- Paired charts -->
-            <template
-              v-for="(pair, index) in [
-                ['completions', 'partial-plays'],
-                ['completions-per-tb', 'minutes-per-tb'],
-              ]"
-              :key="index"
-            >
+            <template v-for="(pair, index) in [
+              ['completions', 'partial-plays'],
+              ['completions-per-tb', 'minutes-per-tb'],
+            ]" :key="index">
               <div class="chart-pair">
                 <div class="chart-container">
                   <canvas :id="pair[0]"></canvas>
@@ -556,10 +542,7 @@ onMounted(() => {
       </TabPane>
       <TabPane key="map" tab="Installation Map">
         <div v-if="!store.loading && store.summaries != null">
-          <UsageMap
-            :data="store.summaries.map?.data"
-            :centroid="store.summaries.map?.centroid"
-          ></UsageMap>
+          <UsageMap :data="store.summaries.map?.data" :centroid="store.summaries.map?.centroid"></UsageMap>
         </div>
       </TabPane>
     </Tabs>
