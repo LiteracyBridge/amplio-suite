@@ -119,11 +119,11 @@ const config = ref({
           </router-link>
         </MenuItem>
 
-        <!-- <MenuItem key="tableau">
+        <MenuItem key="tableau">
           <template #icon> <BarChartOutlined /> </template>
 
-          <router-link to="/tb-analytics/tableau">
-            <span role="link"> Tableau Analytics </span>
+          <router-link to="/tb-analytics/custom-survey-report">
+            <span role="link"> Custom Survey Report </span>
           </router-link>
         </MenuItem> -->
 
