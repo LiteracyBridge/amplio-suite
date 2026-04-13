@@ -5,8 +5,9 @@ import { useFeedbackAnalysis } from "@/store/feedback_analysis.store";
 import { useAppStore } from "@/store/app.store";
 import AnalysisReport from "../components/AnalysisReport.vue";
 import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdown.vue";
-import AnalyseMessage from "./AnalyseMessage.vue";
-import LocationDropdownFilter from "../components/LocationDropdownFilter.vue";
+import LocationFilterDropdown from "./LocationDropdownFilter.vue";
+import AnalyseMessage from "../Analysis/AnalyseMessage.vue";
+import MessagesBrowser from "../Analysis/MessagesBrowser.vue";
 import type { UserFeedbackMessage } from "@/models/uf_message";
 
 const feedbackStore = useFeedbackAnalysis();
@@ -33,9 +34,6 @@ const fetchLocations = async () => {
   try {
     loadingLocations.value = true;
     const messages = await feedbackStore.fetchSampleMessages();
-    console.log("_____________________________________________________");
-    console.log("messages", messages);
-    console.log("_____________________________________________________");
     locationMessages.value = (messages as UserFeedbackMessage[]) || [];
   } catch (error) {
     console.error("Could not fetch location messages", error);
@@ -67,8 +65,8 @@ watch(
     <template #extra>
       <AnalysisReport v-if="feedbackStore.survey != null" class="mr-5" />
 
-      <!-- Cascading location filter (Region → District → Community → Group) -->
-      <LocationDropdownFilter
+      <!-- location drop down -->
+      <LocationFilterDropdown
         :messages="locationMessages"
         :loading="loadingLocations"
         :selected-location="selectedLocation"

@@ -77,6 +77,11 @@ function updateUrl(skipMessage: boolean = false) {
   transcription.value = null;
 
   const [locationType, locationValue] = (props.selectedLocation || "").split("::");
+
+  const locationParams = locationType && locationValue
+    ? `&location_type=${encodeURIComponent(locationType)}&location_value=${encodeURIComponent(locationValue)}`
+    : "";
+    
   return ApiRequest.get<UserFeedbackMessage>(
     `user-feedback/messages/${store.programCode}?deployment=${
       store.userFeedback.deployment
@@ -84,7 +89,7 @@ function updateUrl(skipMessage: boolean = false) {
       skipMessage ? null : current_message_uuid.value || null
     }&skipped_messages=${feedbackStore.skipped_messages.join(",")}&survey_id=${
       feedbackStore.survey?.id
-    }`
+    }${locationParams}`
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]

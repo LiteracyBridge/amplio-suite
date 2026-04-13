@@ -7,6 +7,7 @@ import {
   Dropdown,
   MenuItem,
   Menu,
+  SubMenu,
   notification,
   Select,
   SelectOption,
@@ -118,7 +119,25 @@ const reports = [
 
   { key: "custom", title: "Custom Report", query: "" },
 ];
+const fullPlaytimeReportKeys = [
+  "full-playtime-seconds",
+  "full-playtime-minutes",
+  "full-playtime-hours",
+];
+const standardReports = reports.filter((r) => !fullPlaytimeReportKeys.includes(r.key));
+const fullPlaytimeReports = reports.filter((r) => fullPlaytimeReportKeys.includes(r.key));
 const modalVisible = ref(false);
+
+function onReportSelect(r: { key: string; query: string; group?: string }) {
+  if (r.key == "custom") {
+    modalVisible.value = true;
+    return;
+  }
+
+  selectedReportKey.value = r.key;
+  query.value = { query: r.query, group: r.group };
+  fetchStats(r.query, r.group);
+}
 
 async function fetchStats(q: string, group: string) {
   if (!selectedDeployment.value) {
@@ -330,19 +349,14 @@ onMounted(async () => {
       <Dropdown>
         <template #overlay>
           <Menu>
-            <MenuItem :key="r.key" v-for="r in reports" @click="
-              () => {
-                if (r.key == 'custom') {
-                  modalVisible = true;
-                } else {
-                  selectedReportKey = r.key;
-                  query = { query: r.query, group: r.group };
-                  fetchStats(r.query, r.group);
-                }
-              }
-            ">
+            <MenuItem :key="r.key" v-for="r in standardReports" @click="onReportSelect(r)">
             <span> {{ r.title }}</span>
             </MenuItem>
+            <SubMenu key="full-playtime-group" title="Full playtime">
+              <MenuItem :key="r.key" v-for="r in fullPlaytimeReports" @click="onReportSelect(r)">
+                <span>{{ r.title }}</span>
+              </MenuItem>
+            </SubMenu>
           </Menu>
         </template>
         <Button>
