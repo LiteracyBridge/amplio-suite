@@ -15,8 +15,6 @@ import {
   Radio,
   Empty,
   notification,
-  PageHeader,
-  Alert,
   Row,
   Col,
   Spin,
@@ -34,6 +32,7 @@ import Stats from "./Stats.vue";
 
 const props = defineProps<{
   deploymentChanged: string;
+  selectedLocation: string | null;
 }>();
 
 const feedbackStore = useFeedbackAnalysis();
@@ -49,7 +48,21 @@ const message = ref<UserFeedbackMessage>(new UserFeedbackMessage());
 const audioKey = ref(0);
 const nextUUID = ref<string>();
 const startTime = ref<Date>(null);
-const transcription = ref<string>(null);
+const transcription = ref(null);
+
+const selectedLocationLabel = computed(() => {
+  if (!props.selectedLocation) return "All locations";
+  const [type, value] = props.selectedLocation.split("::");
+  const prefixMap: Record<string, string> = {
+    group: "Group",
+    community: "Community",
+    district: "District",
+    region: "Region",
+  };
+  const prefix = prefixMap[type] ?? type;
+  return `${prefix}: ${value}`;
+});
+// const transcription = ref<string>(null);
 const transcriptionError = ref<string | null>(null);
 
 function updateUrl(skipMessage: boolean = false) {
@@ -63,11 +76,20 @@ function updateUrl(skipMessage: boolean = false) {
   feedbackStore.loading = true;
   transcription.value = null;
 
+  const [locationType, locationValue] = (props.selectedLocation || "").split("::");
+
+  const locationParams = locationType && locationValue
+    ? `&location_type=${encodeURIComponent(locationType)}&location_value=${encodeURIComponent(locationValue)}`
+    : "";
+    
   return ApiRequest.get<UserFeedbackMessage>(
-    `user-feedback/messages/${store.programCode}?deployment=${store.userFeedback.deployment
-    }&language=${store.userFeedback.language}&message_id=${skipMessage ? null : current_message_uuid.value || null
-    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}&survey_id=${feedbackStore.survey?.id
-    }`
+    `user-feedback/messages/${store.programCode}?deployment=${
+      store.userFeedback.deployment
+    }&language=${store.userFeedback.language}&message_id=${
+      skipMessage ? null : current_message_uuid.value || null
+    }&skipped_messages=${feedbackStore.skipped_messages.join(",")}&survey_id=${
+      feedbackStore.survey?.id
+    }${locationParams}`
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
@@ -75,6 +97,7 @@ function updateUrl(skipMessage: boolean = false) {
 
       current_message_uuid.value = msg?.message_uuid;
       message.value = msg || new UserFeedbackMessage();
+      audioKey.value += 1;
       startTime.value = new Date();
 
       if (msg?.transcription != null) {
@@ -195,12 +218,25 @@ watch(nextUUID, (newUUID) => {
 });
 
 watch(
-  props,
-  (newProps, _oldProps) => {
-    console.log(newProps);
+  () => props.selectedLocation,
+  (newLocation, oldLocation) => {
+    if (newLocation === oldLocation) return;
+
+    // When location filter changes, start a fresh queue of messages
+    current_message_uuid.value = "";
+    feedbackStore.skipped_messages = [];
     updateUrl(true);
-  },
-  { deep: true }
+  }
+);
+
+watch(
+  () => props.deploymentChanged,
+  () => {
+    // When deployment/language changes, also reset queue
+    current_message_uuid.value = "";
+    feedbackStore.skipped_messages = [];
+    updateUrl(true);
+  }
 );
 
 onMounted(() => {
@@ -229,6 +265,23 @@ onMounted(() => {
       </Empty>
 
       <div v-else>
+        <!-- Current filter + message location context -->
+        <div class="mb-2 flex justify-between text-xs text-gray-500">
+          <span>
+            Filter:
+            <strong>{{ selectedLocationLabel }}</strong>
+          </span>
+          <span v-if="message?.recipient">
+            Location:
+            <strong>
+              {{ message.recipient?.district || "Unknown district" }}
+              <span v-if="message.recipient?.region">
+                ({{ message.recipient.region }})
+              </span>
+            </strong>
+          </span>
+        </div>
+
         <Row v-if="message.url != '' || message.url != null" :gutter="5">
           <Col :span="20">
             <AudioPlayer :key="audioKey" @srcError="updateUrl" @next="skipCurrentMessage" @useless="save($event)"
