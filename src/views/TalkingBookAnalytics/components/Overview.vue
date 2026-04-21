@@ -28,6 +28,10 @@ const store = useTalkingBookAnalyticStore();
           title: 'Total Minutes Played',
           value: (+store.summaries?.tbs?.minutes_played)?.toLocaleString() || 0,
         },
+        {
+          title: 'Total Hours Played',
+          value: (+store.summaries?.tbs?.minutes_played / 3600)?.toLocaleString() || 0,
+        },
       ]"
       :key="stat.title"
       class="stat-card"

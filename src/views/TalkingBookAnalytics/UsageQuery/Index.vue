@@ -7,6 +7,7 @@ import {
   Dropdown,
   MenuItem,
   Menu,
+  SubMenu,
   notification,
   Select,
   SelectOption,
@@ -27,6 +28,9 @@ const query = ref<{ query: string; group: string }>(null);
 const columns = ref([]);
 const rows = ref<Record<string, any>[]>([]);
 const selectedDate = ref<[dayjs.Dayjs, dayjs.Dayjs]>();
+const selectedReportKey = ref<string>('msg');
+const report = ref(false);
+const data = ref({ headers: [], rows: [] });
 
 const reports = [
   {
@@ -66,16 +70,79 @@ const reports = [
     query: `deploymentnumber  AS "Deployment", district AS "District", category AS "Category", SUM(completions) AS "Completions", SUM(played_seconds) AS "Played Seconds"`,
     group: "deploymentnumber,district,category",
   },
+
+  {
+    key: "full-playtime-seconds",
+    title: "Full playtime - seconds",
+    query: `
+    region AS "Region",
+    district AS "District",
+    communityname AS "Community",
+    groupname AS "Group Name",
+    title AS "Message Title",
+    SUM(played_seconds) AS "Played Seconds",
+    SUM(completions) AS "Completions"
+  `,
+    group: "region, district, communityname, groupname, title"
+  },
+
+  {
+    key: "full-playtime-minutes",
+    title: "Full playtime - Minutes",
+    query: `
+    region AS "Region",
+    district AS "District",
+    communityname AS "Community",
+    groupname AS "Group Name",
+    title AS "Message Title",
+    ROUND(SUM(played_seconds)::numeric / 60, 0) AS "Played Minutes",
+    SUM(completions) AS "Completions"
+  `,
+    group: "region, district, communityname, groupname, title"
+  },
+
+  {
+    key: "full-playtime-hours",
+    title: "Full playtime Hours",
+    query: `
+    region AS "Region",
+    district AS "District",
+    communityname AS "Community",
+    groupname AS "Group Name",
+    title AS "Message Title",
+    ROUND(SUM(played_seconds)::numeric / 3600, 0) AS "Played Hours",
+    SUM(completions) AS "Completions"
+  `,
+    group: "region, district, communityname, groupname, title"
+  },
+
+
   { key: "custom", title: "Custom Report", query: "" },
 ];
+const fullPlaytimeReportKeys = [
+  "full-playtime-seconds",
+  "full-playtime-minutes",
+  "full-playtime-hours",
+];
+const standardReports = reports.filter((r) => !fullPlaytimeReportKeys.includes(r.key));
+const fullPlaytimeReports = reports.filter((r) => fullPlaytimeReportKeys.includes(r.key));
 const modalVisible = ref(false);
 
+function onReportSelect(r: { key: string; query: string; group?: string }) {
+  if (r.key == "custom") {
+    modalVisible.value = true;
+    return;
+  }
+
+  selectedReportKey.value = r.key;
+  query.value = { query: r.query, group: r.group };
+  fetchStats(r.query, r.group);
+}
+
 async function fetchStats(q: string, group: string) {
-  if (selectedDeployment.value == null) {
-    return notification.error({
-      message: "Error",
-      description: "Please select a deployment to view",
-    });
+  if (!selectedDeployment.value) {
+    notification.error({ message: "Error", description: "Select a deployment first" });
+    return;
   }
 
   const results = await store.getUsage({
@@ -85,18 +152,40 @@ async function fetchStats(q: string, group: string) {
     date: selectedDate.value?.map(v => v.toISOString()),
   });
 
-  // Update table
-  if (results.length === 0) {
-    rows.value = [];
-    return;
-  }
+  const queryKeys = ['full-playtime-seconds', 'full-playtime-minutes', 'full-playtime-hours'];
 
-  columns.value = Object.keys(results[0]).map((k) => ({
-    title: k,
-    dataIndex: k,
-    key: k,
-  }));
-  rows.value = results;
+  if (queryKeys.includes(selectedReportKey.value) && results.length > 0) {
+    const pivoted = groupMessageData(results);
+    data.value = pivoted;
+    report.value = true;
+
+    columns.value = pivoted.headers.map((h, idx) => ({
+      title: h,
+      dataIndex: h,
+      key: h,
+      width: idx < 4 ? 140 : 130,
+      align: idx >= 4 ? 'right' : 'left',
+      fixed: idx < 4 ? 'left' : undefined,
+    }));
+    rows.value = pivoted.rows;
+
+  } else {
+    report.value = false;
+    data.value = { headers: [], rows: [] };
+
+    if (results.length > 0) {
+      columns.value = Object.keys(results[0]).map(k => ({
+        title: k,
+        dataIndex: k,
+        key: k,
+        align: ['Played Seconds', 'Played Minutes', 'Played Hours', 'Completions'].includes(k) ? 'right' : 'left',
+      }));
+      rows.value = results;
+    } else {
+      columns.value = [];
+      rows.value = [];
+    }
+  }
 }
 
 async function exportReport() {
@@ -104,13 +193,26 @@ async function exportReport() {
     message: "Downloading Usage Query",
   });
 
+  let dataToExport = rows.value;
+  let headers: string[] = [];
+
+  if (['group-message-detail', 'full-playtime-seconds', 'full-playtime-minutes', 'full-playtime-hours']
+    .includes(selectedReportKey.value)) {
+    const pivot = data.value;
+    dataToExport = pivot.rows;
+    headers = pivot.headers;
+  } else if (rows.value.length > 0) {
+    headers = Object.keys(rows.value[0]);
+    dataToExport = rows.value;
+  }
+
   const workbook = new Workbook();
   const sheet = workbook.addWorksheet("Report");
-  sheet.columns = Object.keys(rows.value[0]).map((k) => ({
-    header: k,
-    key: k,
-  }));
-  sheet.addRows(rows.value);
+
+  if (headers.length > 0) {
+    sheet.columns = headers.map(h => ({ header: h, key: h }));
+  }
+  sheet.addRows(dataToExport);
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
@@ -131,6 +233,76 @@ async function exportReport() {
   });
 }
 
+function groupMessageData(flatRows: Record<string, any>[]) {
+  if (!flatRows?.length) return { headers: [], rows: [] };
+
+  // Detect which time column we are pivoting (based on report)
+  let timeColumn = 'Played Seconds';
+  if (selectedReportKey.value === 'full-playtime-minutes') timeColumn = 'Played Minutes';
+  if (selectedReportKey.value === 'full-playtime-hours') timeColumn = 'Played Hours';
+
+  const groupMap = new Map<string, {
+    Region: string;
+    District: string;
+    Community: string;
+    'Group Name': string;
+    values: Record<string, number>;
+    total: number;
+  }>();
+  const messageSet = new Set<string>();
+
+  flatRows.forEach(row => {
+    const groupKey = [
+      row.Region || '',
+      row.District || '',
+      row.Community || '',
+      row['Group Name'] || ''
+    ].join('|');
+
+    const message = row['Message Title'] || '';
+    if (message) messageSet.add(message);
+
+    if (!groupMap.has(groupKey)) {
+      groupMap.set(groupKey, {
+        Region: row.Region || '',
+        District: row.District || '',
+        Community: row.Community || '',
+        'Group Name': row['Group Name'] || '',
+        values: {},
+        total: 0
+      });
+    }
+
+    const g = groupMap.get(groupKey);
+    const value = Number(row[timeColumn] || 0);
+    g.values[message] = (g.values[message] || 0) + value;
+    g.total += value;
+  });
+
+  const messages = [...messageSet].sort();
+
+  const pivotRows: Array<Record<string, string | number>> = [];
+  groupMap.forEach(g => {
+    const row: Record<string, string | number> = {
+      Region: g.Region,
+      District: g.District,
+      Community: g.Community,
+      'Group Name': g['Group Name']
+    };
+
+    messages.forEach((msg) => {
+      row[msg] = g.values[msg] ?? 0;
+    });
+
+    row['Total'] = Math.round(g.total);
+
+    pivotRows.push(row);
+  });
+
+  const headers = ['Region', 'District', 'Community', 'Group Name', ...messages, 'Total'];
+
+  return { headers, rows: pivotRows };
+}
 async function onDeploymentChange() {
   fetchStats(query.value.query, query.value.group);
 }
@@ -177,18 +349,14 @@ onMounted(async () => {
       <Dropdown>
         <template #overlay>
           <Menu>
-            <MenuItem :key="r.key" v-for="r in reports" @click="
-              () => {
-                if (r.key == 'custom') {
-                  modalVisible = true;
-                } else {
-                  query = { query: r.query, group: r.group };
-                  fetchStats(r.query, r.group);
-                }
-              }
-            ">
+            <MenuItem :key="r.key" v-for="r in standardReports" @click="onReportSelect(r)">
             <span> {{ r.title }}</span>
             </MenuItem>
+            <SubMenu key="full-playtime-group" title="Full playtime">
+              <MenuItem :key="r.key" v-for="r in fullPlaytimeReports" @click="onReportSelect(r)">
+                <span>{{ r.title }}</span>
+              </MenuItem>
+            </SubMenu>
           </Menu>
         </template>
         <Button>
@@ -198,16 +366,7 @@ onMounted(async () => {
         </Button>
       </Dropdown>
     </template>
-    <!--
-    <Alert type="info" :closable="true" v-if="selectedDeployment != null">
-      <template #message>
-        You're viewing talking books installation for
-        {{ selectedDeployment }} deployment. The Deployment has been installed to
-        {{ summary.installed }} Talking Books in {{ summary.communities }} communities and
-        {{ summary.groups }}
-        groups.
-      </template>
-    </Alert> -->
+
   </PageHeader>
 
   <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading" :sticky="true"

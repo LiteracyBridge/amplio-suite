@@ -15,8 +15,6 @@ import {
   Radio,
   Empty,
   notification,
-  PageHeader,
-  Alert,
   Row,
   Col,
   Spin,
@@ -34,6 +32,7 @@ import Stats from "./Stats.vue";
 
 const props = defineProps<{
   deploymentChanged: string;
+  selectedLocation: string | null;
 }>();
 
 const feedbackStore = useFeedbackAnalysis();
@@ -51,6 +50,21 @@ const nextUUID = ref<string>();
 const startTime = ref<Date>(null);
 const transcription = ref(null);
 
+const selectedLocationLabel = computed(() => {
+  if (!props.selectedLocation) return "All locations";
+  const [type, value] = props.selectedLocation.split("::");
+  const prefixMap: Record<string, string> = {
+    group: "Group",
+    community: "Community",
+    district: "District",
+    region: "Region",
+  };
+  const prefix = prefixMap[type] ?? type;
+  return `${prefix}: ${value}`;
+});
+// const transcription = ref<string>(null);
+const transcriptionError = ref<string | null>(null);
+
 function updateUrl(skipMessage: boolean = false) {
   if (store.userFeedback?.deployment == null || store.userFeedback?.language == null) {
     notification.error({
@@ -62,6 +76,12 @@ function updateUrl(skipMessage: boolean = false) {
   feedbackStore.loading = true;
   transcription.value = null;
 
+  const [locationType, locationValue] = (props.selectedLocation || "").split("::");
+
+  const locationParams = locationType && locationValue
+    ? `&location_type=${encodeURIComponent(locationType)}&location_value=${encodeURIComponent(locationValue)}`
+    : "";
+    
   return ApiRequest.get<UserFeedbackMessage>(
     `user-feedback/messages/${store.programCode}?deployment=${
       store.userFeedback.deployment
@@ -69,7 +89,7 @@ function updateUrl(skipMessage: boolean = false) {
       skipMessage ? null : current_message_uuid.value || null
     }&skipped_messages=${feedbackStore.skipped_messages.join(",")}&survey_id=${
       feedbackStore.survey?.id
-    }`
+    }${locationParams}`
   )
     .then(([msg]) => {
       // TODO: check for not empty response [when there are no messages ]
@@ -77,6 +97,7 @@ function updateUrl(skipMessage: boolean = false) {
 
       current_message_uuid.value = msg?.message_uuid;
       message.value = msg || new UserFeedbackMessage();
+      audioKey.value += 1;
       startTime.value = new Date();
 
       if (msg?.transcription != null) {
@@ -100,6 +121,7 @@ const skipCurrentMessage = () => {
   updateUrl(true);
 };
 
+
 function validateResponse(feedback: Analysis) {
   let isValid = true;
 
@@ -107,13 +129,14 @@ function validateResponse(feedback: Analysis) {
 
   // Reset error
   feedback.error = null;
+  const msg = "This question is required!";
 
   if (feedback.question.required) {
     if (
       feedback.question.type === QuestionType.open_ended &&
-      (feedback.response == null || feedback.response === "")
+      (feedback.response == null || feedback.response.trim() === "")
     ) {
-      feedback.error = "This question is required!";
+      feedback.error = "This field cannot be empty!";
       isValid = false;
     }
 
@@ -121,7 +144,7 @@ function validateResponse(feedback: Analysis) {
       feedback.question.type === QuestionType.multi_choice &&
       (feedback.choices || []).length === 0
     ) {
-      feedback.error = "This question is required!";
+      feedback.error = msg;
       isValid = false;
     }
 
@@ -129,7 +152,7 @@ function validateResponse(feedback: Analysis) {
       feedback.question.type === QuestionType.single_choice &&
       feedback.single_choice?.value == null
     ) {
-      feedback.error = "This question is required!";
+      feedback.error = msg;
       isValid = false;
     }
   }
@@ -139,18 +162,29 @@ function validateResponse(feedback: Analysis) {
 function save(is_useless: boolean = false) {
   // Validate response
   if (is_useless === false) {
-    let isValid = true;
-    for (const feedback of feedbackStore.questions) {
-      isValid = validateResponse(feedback);
-    }
-
-    if (!isValid) {
+    transcriptionError.value = null; // reset
+    if (transcription.value == null || transcription.value.trim() == "") {
+      transcriptionError.value = "Message transcription is empty!";
       notification.error({
         message: "Error",
-        description: "Please answer all required questions!",
+        description: transcriptionError.value,
       });
       return;
     }
+
+    let isValid = true;
+    for (const feedback of feedbackStore.questions) {
+      isValid = validateResponse(feedback);
+
+      if (!isValid) {
+        notification.error({
+          message: "Error",
+          description: "Please answer all required questions!",
+        });
+        return;
+      }
+    }
+
   }
 
   feedbackStore
@@ -184,12 +218,25 @@ watch(nextUUID, (newUUID) => {
 });
 
 watch(
-  props,
-  (newProps, _oldProps) => {
-    console.log(newProps);
+  () => props.selectedLocation,
+  (newLocation, oldLocation) => {
+    if (newLocation === oldLocation) return;
+
+    // When location filter changes, start a fresh queue of messages
+    current_message_uuid.value = "";
+    feedbackStore.skipped_messages = [];
     updateUrl(true);
-  },
-  { deep: true }
+  }
+);
+
+watch(
+  () => props.deploymentChanged,
+  () => {
+    // When deployment/language changes, also reset queue
+    current_message_uuid.value = "";
+    feedbackStore.skipped_messages = [];
+    updateUrl(true);
+  }
 );
 
 onMounted(() => {
@@ -199,9 +246,7 @@ onMounted(() => {
 
 <template>
   <Spin :spinning="feedbackStore.loading">
-    <Empty
-      v-if="(useSurveyBuilder().published || []).length == 0 && !feedbackStore.loading"
-    >
+    <Empty v-if="(useSurveyBuilder().published || []).length == 0 && !feedbackStore.loading">
       <template #description>
         <span> You do not have any surveys </span>
       </template>
@@ -220,16 +265,27 @@ onMounted(() => {
       </Empty>
 
       <div v-else>
+        <!-- Current filter + message location context -->
+        <div class="mb-2 flex justify-between text-xs text-gray-500">
+          <span>
+            Filter:
+            <strong>{{ selectedLocationLabel }}</strong>
+          </span>
+          <span v-if="message?.recipient">
+            Location:
+            <strong>
+              {{ message.recipient?.district || "Unknown district" }}
+              <span v-if="message.recipient?.region">
+                ({{ message.recipient.region }})
+              </span>
+            </strong>
+          </span>
+        </div>
+
         <Row v-if="message.url != '' || message.url != null" :gutter="5">
           <Col :span="20">
-            <AudioPlayer
-              :key="audioKey"
-              @srcError="updateUrl"
-              @next="skipCurrentMessage"
-              @useless="save($event)"
-              :message="message"
-              :mini="false"
-            />
+            <AudioPlayer :key="audioKey" @srcError="updateUrl" @next="skipCurrentMessage" @useless="save($event)"
+              :message="message" :mini="false" />
           </Col>
           <Col :span="4">
             <Stats class="h-full" />
@@ -239,193 +295,139 @@ onMounted(() => {
         <Form layout="vertical" class="mt-5 block">
           <div class="flex justify-center">
             <div class="grid grid-cols-1 gap-4 content-center">
-              <Tabs
+              <!-- <Tabs
                 v-model:activeKey="config.activeSection"
                 :bordered="true"
                 tab-position="left"
               >
-                <TabPane key="transcription" tab="Transcription">
-                  <Card type="inner" size="small" class="mb-6" style="width: 58vw">
-                    <FormItem
-                      key="field-transcription"
-                      label="Feedback Message Transcription"
-                    >
-                      <Textarea
-                        class="my-2"
-                        :rows="20"
-                        placeholder="Transcription..."
-                        v-model:value="transcription"
-                      ></Textarea>
-                    </FormItem>
-                  </Card>
-                </TabPane>
+                <TabPane key="transcription" tab="Transcription"> -->
+              <Card type="inner" size="small" class="mb-6" style="width: 58vw">
+                <FormItem key="field-transcription" label="Feedback Message Transcription">
+                  <Textarea class="my-2" :rows="9" placeholder="Transcription..."
+                    v-model:value="transcription"></Textarea>
+                  <!-- Error message -->
+                  <div class="text-red-500">{{ transcriptionError || "" }}</div>
 
-                <TabPane
-                  :key="section.id"
-                  :tab="section.name"
-                  v-for="section in feedbackStore.sections"
-                >
-                  <Card type="inner" size="small" class="mb-6" style="width: 58vw">
-                    <template v-for="(analysis, index) in feedbackStore.questions">
-                      <FormItem
-                        :key="analysis.id"
-                        :required="analysis.question.required"
-                        v-if="analysis.show"
-                        @change="
-                          feedbackStore.updateQuestionConditions(analysis.question_id);
+                </FormItem>
+              </Card>
+              <!--  </TabPane> -->
+
+              <div :key="section.id" :tab="section.name" v-for="section in feedbackStore.sections">
+                <Card type="inner" size="small" class="mb-6" style="width: 58vw">
+                  <template v-for="(analysis, index) in feedbackStore.questions">
+                    <FormItem :key="analysis.id" :required="analysis.question.required" v-if="analysis.show" @change="
+                      feedbackStore.updateQuestionConditions(analysis.question_id);
+                    validateResponse(analysis);
+                    ">
+                      <template #label>
+                        {{ index + 1 }}. {{ analysis.question.question_label }}
+                      </template>
+
+                      <!-- Open Ended Question -->
+                      <div v-if="analysis.question.type === QuestionType.open_ended">
+                        <Textarea class="my-2" placeholder="Open ended response..." v-model:value="feedbackStore.questions[
+                          feedbackStore.getQuestionIndexById(analysis.question_id)
+                        ].response
+                          " @change="
+                            feedbackStore.updateQuestionConditions(
+                              analysis.question_id
+                            );
                           validateResponse(analysis);
-                        "
-                      >
-                        <template #label>
-                          {{ index + 1 }}. {{ analysis.question.question_label }}
-                        </template>
+                          " :required="analysis.question.required"></Textarea>
+                      </div>
 
-                        <!-- Open Ended Question -->
-                        <div v-if="analysis.question.type === QuestionType.open_ended">
-                          <Textarea
-                            class="my-2"
-                            placeholder="Open ended response..."
-                            v-model:value="
-                              feedbackStore.questions[
-                                feedbackStore.getQuestionIndexById(analysis.question_id)
-                              ].response
-                            "
-                            @change="
-                              feedbackStore.updateQuestionConditions(
-                                analysis.question_id
-                              );
-                              validateResponse(analysis);
-                            "
-                            :required="analysis.question.required"
-                          ></Textarea>
-                        </div>
+                      <!-- Multi Choice Question -->
+                      <div v-if="analysis.question.type === QuestionType.multi_choice">
+                        <CheckboxGroup v-model:value="analysis.choices" style="width: 100%; display: block">
+                          <div v-for="option in analysis.question.choices">
+                            <Checkbox :value="option.choice_id" @change="
+                              () => {
+                                if (
+                                  feedbackStore.selectedChoice[option.choice_id] ==
+                                  null
+                                ) {
+                                  feedbackStore.selectedChoice[option.choice_id] = {
+                                    selected: true,
+                                    sub: option.sub_options || [],
+                                  };
+                                } else {
+                                  feedbackStore.selectedChoice[option.choice_id] = {
+                                    selected: !feedbackStore.selectedChoice[
+                                      option.choice_id
+                                    ].selected,
+                                    sub: option.sub_options || [],
+                                  };
+                                }
+                              }
+                            ">{{ option.value }}</Checkbox>
 
-                        <!-- Multi Choice Question -->
-                        <div v-if="analysis.question.type === QuestionType.multi_choice">
-                          <CheckboxGroup
-                            v-model:value="analysis.choices"
-                            style="width: 100%; display: block"
-                          >
-                            <div v-for="option in analysis.question.choices">
-                              <Checkbox
-                                :value="option.choice_id"
-                                @change="
-                                  () => {
-                                    if (
-                                      feedbackStore.selectedChoice[option.choice_id] ==
-                                      null
-                                    ) {
-                                      feedbackStore.selectedChoice[option.choice_id] = {
-                                        selected: true,
-                                        sub: option.sub_options || [],
-                                      };
-                                    } else {
-                                      feedbackStore.selectedChoice[option.choice_id] = {
-                                        selected: !feedbackStore.selectedChoice[
-                                          option.choice_id
-                                        ].selected,
-                                        sub: option.sub_options || [],
-                                      };
-                                    }
-                                  }
-                                "
-                                >{{ option.value }}</Checkbox
-                              >
+                            <!-- Sub options -->
+                            <div class="ml-10">
+                              <div v-for="sub in option.sub_options || []">
+                                <Checkbox :value="sub.choice_id" v-if="
+                                  feedbackStore.selectedChoice[option.choice_id]
+                                    ?.selected == true
+                                ">{{ sub.value }}</Checkbox>
+                              </div>
+                            </div>
+                          </div>
+                        </CheckboxGroup>
 
-                              <!-- Sub options -->
-                              <div class="ml-10">
+                        <!-- TODO: show sub options -->
+                      </div>
+
+                      <!-- Single choice -->
+                      <div v-if="analysis.question.type === QuestionType.single_choice">
+                        <RadioGroup v-model:value="analysis.single_choice.value" @change=""
+                          style="width: 100%; display: block">
+                          <!-- TODO: add onchange event -->
+                          <div v-for="option in analysis.question.choices">
+                            <Radio :value="option.choice_id">{{ option.value }}</Radio>
+
+                            <!-- Sub options -->
+                            <div>
+                              <RadioGroup v-if="analysis.single_choice.value == option.choice_id" class="ml-10"
+                                v-model:value="analysis.single_choice.sub_choice" @change=""
+                                style="width: 100%; display: block">
                                 <div v-for="sub in option.sub_options || []">
-                                  <Checkbox
-                                    :value="sub.choice_id"
-                                    v-if="
-                                      feedbackStore.selectedChoice[option.choice_id]
-                                        ?.selected == true
-                                    "
-                                    >{{ sub.value }}</Checkbox
-                                  >
+                                  <Radio :value="sub.choice_id">{{ sub.value }}</Radio>
                                 </div>
-                              </div>
+                              </RadioGroup>
                             </div>
-                          </CheckboxGroup>
+                          </div>
 
-                          <!-- TODO: show sub options -->
-                        </div>
+                          <div class="ml-10" v-if="
+                            isOptionOther(
+                              analysis.question.choices,
+                              analysis.single_choice.value
+                            )
+                          ">
+                            <Textarea class="my-2" v-model:value="feedbackStore.questions[
+                              feedbackStore.getQuestionIndexById(
+                                analysis.question_id
+                              )
+                            ].response
+                              " :required="true"></Textarea>
+                          </div>
+                        </RadioGroup>
+                      </div>
 
-                        <!-- Single choice -->
-                        <div v-if="analysis.question.type === QuestionType.single_choice">
-                          <RadioGroup
-                            v-model:value="analysis.single_choice.value"
-                            @change=""
-                            style="width: 100%; display: block"
-                          >
-                            <!-- TODO: add onchange event -->
-                            <div v-for="option in analysis.question.choices">
-                              <Radio :value="option.choice_id">{{ option.value }}</Radio>
-
-                              <!-- Sub options -->
-                              <div>
-                                <RadioGroup
-                                  v-if="analysis.single_choice.value == option.choice_id"
-                                  class="ml-10"
-                                  v-model:value="analysis.single_choice.sub_choice"
-                                  @change=""
-                                  style="width: 100%; display: block"
-                                >
-                                  <div v-for="sub in option.sub_options || []">
-                                    <Radio :value="sub.choice_id">{{ sub.value }}</Radio>
-                                  </div>
-                                </RadioGroup>
-                              </div>
-                            </div>
-
-                            <div
-                              class="ml-10"
-                              v-if="
-                                isOptionOther(
-                                  analysis.question.choices,
-                                  analysis.single_choice.value
-                                )
-                              "
-                            >
-                              <Textarea
-                                class="my-2"
-                                v-model:value="
-                                  feedbackStore.questions[
-                                    feedbackStore.getQuestionIndexById(
-                                      analysis.question_id
-                                    )
-                                  ].response
-                                "
-                                :required="true"
-                              ></Textarea>
-                            </div>
-                          </RadioGroup>
-                        </div>
-
-                        <!-- Error message -->
-                        <div class="text-red-500">{{ analysis.error || "" }}</div>
-                      </FormItem>
-                    </template>
-                  </Card>
-                </TabPane>
-              </Tabs>
+                      <!-- Error message -->
+                      <div class="text-red-500">{{ analysis.error || "" }}</div>
+                    </FormItem>
+                  </template>
+                </Card>
+              </div>
+              <!--  </Tabs> -->
             </div>
           </div>
 
           <Divider />
           <div class="flex items-end justify-center my-4 mx-3">
             <Space>
-              <Button type="primary" size="large" @click="save()"
-                >Submit and Continue</Button
-              >
-              <Button
-                size="large"
-                type="primary"
-                :ghost="true"
-                :danger="true"
-                @click="feedbackStore.resetResponses()"
-                >Reset</Button
-              >
+              <Button type="primary" size="large" @click="save()">Submit and Continue</Button>
+              <Button size="large" type="primary" :ghost="true" :danger="true"
+                @click="feedbackStore.resetResponses()">Reset</Button>
             </Space>
           </div>
         </Form>
