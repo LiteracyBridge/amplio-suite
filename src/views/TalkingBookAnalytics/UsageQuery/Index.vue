@@ -366,16 +366,7 @@ onMounted(async () => {
         </Button>
       </Dropdown>
     </template>
-    <!--
-    <Alert type="info" :closable="true" v-if="selectedDeployment != null">
-      <template #message>
-        You're viewing talking books installation for
-        {{ selectedDeployment }} deployment. The Deployment has been installed to
-        {{ summary.installed }} Talking Books in {{ summary.communities }} communities and
-        {{ summary.groups }}
-        groups.
-      </template>
-    </Alert> -->
+
   </PageHeader>
 
   <Table :columns="columns" :data-source="rows" size="small" :loading="store.loading" :sticky="true"

@@ -33,9 +33,6 @@ const fetchLocations = async () => {
   try {
     loadingLocations.value = true;
     const messages = await feedbackStore.fetchSampleMessages();
-    console.log("_____________________________________________________");
-    console.log("messages", messages);
-    console.log("_____________________________________________________");
     locationMessages.value = (messages as UserFeedbackMessage[]) || [];
   } catch (error) {
     console.error("Could not fetch location messages", error);

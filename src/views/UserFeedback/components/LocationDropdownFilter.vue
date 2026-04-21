@@ -43,12 +43,6 @@ const hierarchy = computed(() => {
       if (!regionMap.has(district)) regionMap.set(district, new Map());
       const districtMap = regionMap.get(district)!;
 
-      // if (community) {
-      //   if (!districtMap.has(community)) districtMap.set(community, new Set());
-      //   const communitySet = districtMap.get(community)!;
-
-      //   if (group) communitySet.add(group);
-      // }
     }
   }
 
@@ -144,20 +138,6 @@ const hasSelection = computed(() => !!props.selectedLocation);
                     <template #title>
                       <span @click.stop="select('community', community)">{{ community }}</span>
                     </template>
-
-                    <!--label -->
-                    <!-- <MenuItem disabled style="color: #888; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: default;">
-                       Groups
-                    </MenuItem> -->
-
-                    <!-- Group -->
-                    <!-- <MenuItem
-                      v-for="group in groupSet"
-                      :key="group"
-                      @click="select('group', group)"
-                    >
-                      {{ group }}
-                    </MenuItem> -->
 
                   </SubMenu>
                 </template>
