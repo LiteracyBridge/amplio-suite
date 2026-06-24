@@ -9,6 +9,7 @@ export class UserFeedbackMessage {
   length_seconds: number;
   length_bytes: number;
   transcription: string;
+  ai_transcription?: string;
   is_useless: boolean = false;
   relation: string;
   recipient_id: string;

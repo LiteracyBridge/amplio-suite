@@ -49,6 +49,7 @@ const audioKey = ref(0);
 const nextUUID = ref<string>();
 const startTime = ref<Date>(null);
 const transcription = ref(null);
+const aiTranscription = ref(null);
 
 const selectedLocationLabel = computed(() => {
   if (!props.selectedLocation) return "All locations";
@@ -81,7 +82,7 @@ function updateUrl(skipMessage: boolean = false) {
   const locationParams = locationType && locationValue
     ? `&location_type=${encodeURIComponent(locationType)}&location_value=${encodeURIComponent(locationValue)}`
     : "";
-    
+
   return ApiRequest.get<UserFeedbackMessage>(
     `user-feedback/messages/${store.programCode}?deployment=${
       store.userFeedback.deployment
@@ -100,9 +101,10 @@ function updateUrl(skipMessage: boolean = false) {
       audioKey.value += 1;
       startTime.value = new Date();
 
-      if (msg?.transcription != null) {
-        transcription.value = msg.transcription;
-      }
+      // if (msg?.transcription != null) {
+      transcription.value = msg.transcription;
+      // }
+      aiTranscription.value = msg?.ai_transcription
     })
     .catch((err) => {
       console.log(`caught:${err}`);
@@ -301,6 +303,13 @@ onMounted(() => {
                 tab-position="left"
               >
                 <TabPane key="transcription" tab="Transcription"> -->
+              <Card type="inner" size="small" class="mb-6" style="width: 58vw" v-if="aiTranscription != null">
+                <FormItem key="field-transcription" label="AI Transcription">
+                  <Textarea class="my-2" :rows="9" placeholder="Transcription..."
+                    v-model:value="aiTranscription" :disabled="true" readonly></Textarea>
+                </FormItem>
+              </Card>
+
               <Card type="inner" size="small" class="mb-6" style="width: 58vw">
                 <FormItem key="field-transcription" label="Feedback Message Transcription">
                   <Textarea class="my-2" :rows="9" placeholder="Transcription..."
