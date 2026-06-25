@@ -1,35 +1,41 @@
 <template>
   <section>
-    <Table
-      :columns="columns"
-      :data-source="recipients"
-      :sticky="true"
-      :pagination="false"
-      class="ant-table-striped"
-      :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
-    >
+    <Table :columns="columns" :data-source="paginatedRecipients" :sticky="true" :pagination="paginationConfig"
+      class="ant-table-striped" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+
       <template #title>
-        <div class="flex justify-end">
-          <Input
-            type="text"
-            class="mr-10"
-            placeholder="Search recipient"
-            @change="filterRecipient($event.target.value)"
-          >
+        <div class="flex items-center gap-3" style="
+      background: #289B6A;
+      margin: -16px -16px 0;
+      padding: 12px 16px;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 1px solid #f0f0f0;
+    ">
+          <!-- Search far left -->
+          <Input v-model:value="searchQuery" type="text" placeholder="Search recipients…" allow-clear
+            style="width: 280px;" @change="filterRecipient($event.target.value)" @clear="filterRecipient('')">
             <template #prefix>
               <SearchOutlined />
             </template>
           </Input>
 
-          <Button @click="addNewRecipient()" type="primary" :ghost="true"
-            >+ Add Recipient</Button
-          >
+          <!-- Count right beside the search bar -->
+          <span style="font-size: 15px; color: #fff; white-space: nowrap;">
+            <strong style="color: inherit;">{{ recipients.length }}</strong> of {{ store.recipients.length }} recipients
+          </span>
+
+          <!-- Spacer pushes button to the right -->
+          <div style="flex: 1;" />
+
+          <Button @click="addNewRecipient()" type="primary" :ghost="true" style="background: white;">
+            + Add Recipient
+          </Button>
         </div>
       </template>
 
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.key === 'index'">
-          {{ index + 1 }}
+          {{ (currentPage - 1) * pageSize + index + 1 }}
         </template>
 
         <template v-if="column.key === 'region'">
@@ -70,28 +76,20 @@
               <template #title>
                 <span>Edit recipient {{ record.id }}</span>
               </template>
-              <Button
-                class="mr-3"
-                :aria-label="`Edit recipient ${record.id}`"
-                @click="editRecipient(record as any)"
-                size="small"
-                type="primary"
-                :ghost="true"
-                ><EditOutlined
-              /></Button>
+              <Button class="mr-3" :aria-label="`Edit recipient ${record.id}`" @click="editRecipient(record as any)"
+                size="small" type="primary" :ghost="true">
+                <EditOutlined />
+              </Button>
             </Tooltip>
 
             <Tooltip placement="topLeft">
               <template #title>
                 <span>Duplicate recipient {{ record.id }}</span>
               </template>
-              <Button
-                class="mr-3"
-                :aria-label="`Duplicate recipient ${record.id}`"
-                @click="duplicateRecipient(record as any)"
-                size="small"
-                ><CopyOutlined
-              /></Button>
+              <Button class="mr-3" :aria-label="`Duplicate recipient ${record.id}`"
+                @click="duplicateRecipient(record as any)" size="small">
+                <CopyOutlined />
+              </Button>
             </Tooltip>
           </div>
         </template>
@@ -100,22 +98,11 @@
 
     <!-- Edit modal -->
     <!-- New language modal -->
-    <Modal
-      v-model:open="modal.open"
-      title="Recipient Details"
-      ok-text="Save"
-      @ok="onAcceptEdit"
-      @cancel="onCloseModal()"
-      :width="850"
-      :ok-button-props="{ disabled: isDuplicateRecipient || invalidBeneficiaries }"
-    >
-      <ProgramRecipientsForm
-        :recipient="data.recipientInEdit"
-        :isDuplicateRecipient="isDuplicateRecipient"
-        :invalidBeneficiaries="invalidBeneficiaries"
-        @changed="onRecipientEdited"
-        :invalid-constraint="true"
-      />
+    <Modal v-model:open="modal.open" title="Recipient Details" ok-text="Save" @ok="onAcceptEdit"
+      @cancel="onCloseModal()" :width="850"
+      :ok-button-props="{ disabled: isDuplicateRecipient || invalidBeneficiaries }">
+      <ProgramRecipientsForm :recipient="data.recipientInEdit" :isDuplicateRecipient="isDuplicateRecipient"
+        :invalidBeneficiaries="invalidBeneficiaries" @changed="onRecipientEdited" :invalid-constraint="true" />
     </Modal>
   </section>
 </template>
@@ -144,6 +131,11 @@ const columns = [
 
 const store = useProgramSpecStore();
 const recipients = ref([...store.recipients]);
+
+const currentPage = ref(1);
+const pageSize = ref(10);
+const searchQuery = ref('');
+
 const data = ref({
   selectedRecipientId: null,
   recipientInEdit: null as Recipient,
@@ -155,6 +147,21 @@ const modal = ref({
   open: false,
   state: undefined as "edit" | "new",
 });
+
+const paginatedRecipients = computed(() => {
+  const startIndex = (currentPage.value - 1) * pageSize.value;
+  const endIndex = startIndex + pageSize.value;
+  return recipients.value.slice(startIndex, endIndex);
+});
+
+const paginationConfig = computed(() => ({
+  current: currentPage.value,
+  pageSize: pageSize.value,
+  total: recipients.value.length,
+  onChange: (page: number) => {
+    currentPage.value = page;
+  },
+}));
 
 const isRecipientInEditValid = computed(() => {
   // nothing selected; can't be valid
@@ -235,11 +242,12 @@ const invalidBeneficiaries = computed(() => {
 });
 
 function filterRecipient(val?: string) {
-  if (val == null || val === undefined || val.trim().length === 0) {
+  currentPage.value = 1; // reset to page 1 on new search
+  if (!val || val.trim().length === 0) {
+    searchQuery.value = '';
     recipients.value = [...store.recipients];
     return;
   }
-
   const input = val.trim().toLowerCase();
   recipients.value = store.recipients.filter((recipient) => {
     return (
