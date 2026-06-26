@@ -4,7 +4,7 @@
     sub-title="Define your requirements and complete/modify the program specification document."
   >
     <template #extra>
-      <Button
+      <!-- <Button
         key="1"
         :ghost="true"
         :danger="true"
@@ -12,20 +12,40 @@
         @click="store.downloadSpec(appStore.activeProgram?.data.program_id)"
       >
         Discard Changes
-      </Button>
+      </Button> -->
+
+      <Popconfirm
+  title="Are you sure you want to discard all unsaved changes?"
+  ok-text="Discard"
+  cancel-text="Cancel"
+  @confirm="store.downloadSpec(appStore.activeProgram?.data.program_id)"
+>
+  <Button
+    key="1"
+     :ghost="true"
+    danger
+    type="primary"
+  >
+    Discard Changes
+  </Button>
+</Popconfirm>
 
       <Button key="2" type="primary" @click="store.updateSpec()" :disabled="!store.changed">
         Save Changes
       </Button>
 
       <Popconfirm
+        placement="bottom"
         title="Are you sure you want to publish this program specification to the ACM?"
-        ok-text="Yes"
-        cancel-text="No"
+        ok-text="Publish"
+        cancel-text="Cancel"
         @confirm="onPublish"
       >
-        <Button key="3" :disabled="!store.canPublish" :ghost="true" type="primary"
-          >Publish</Button
+        <Button key="3"
+         :disabled="!store.canPublish"
+          :ghost="false"
+           type="primary"
+          >Publish Changes</Button
         >
       </Popconfirm>
     </template>
