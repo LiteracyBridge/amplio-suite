@@ -700,8 +700,8 @@ export const useProgramSpecStore = defineStore("programspec", {
 			const res = await ApiRequest.get<{ code: string }>(
 				`program-spec/generate-access-code?programid=${this.programId}`,
 			);
-			return res[0].code
 			this.loading = false;
+			return res[0].code
 		},
 	},
 });

@@ -265,13 +265,13 @@ function filterRecipient(val?: string) {
 function onAcceptEdit() {
   if (isRecipientInEditValid.value) {
     const recipient = data.value.recipientInEdit;
-    if (Recipient.isAccessCodeDuplicate(recipient.access_code)) {
-      notification.error({
-        message: "Duplicate access code!",
-        description: `${recipient.access_code} is assigned to another recipient!`,
-      });
-      return;
-    }
+    // if (Recipient.isAccessCodeDuplicate(recipient.access_code)) {
+    //   notification.error({
+    //     message: "Duplicate access code!",
+    //     description: `${recipient.access_code} is assigned to another recipient!`,
+    //   });
+    //   return;
+    // }
 
     store.updateRecipient({ recipient: recipient });
     filterRecipient(); // trigger table refresh
