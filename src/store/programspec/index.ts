@@ -231,26 +231,36 @@ export const useProgramSpecStore = defineStore("programspec", {
 
 			this.deployments.forEach((d: { playlists: any[] }) => {
 				d.playlists.forEach(
-					(p: { position: any; messages: { position: any; languages?: any }[] }, ix: number) => {
+					(
+						p: {
+							position: any;
+							messages: { position: any; languages?: any }[];
+						},
+						ix: number,
+					) => {
 						p.position ??= ix + 1;
-						p.messages.forEach((m: { position: any; languages?: any }, ix: number) => {
-							m.position ??= ix + 1;
+						p.messages.forEach(
+							(m: { position: any; languages?: any }, ix: number) => {
+								m.position ??= ix + 1;
 
-							// Normalize languages to a unique, comma-separated string
+								// Normalize languages to a unique, comma-separated string
 
-							// here... when loading backend data or data from backend
-							// we just convert 'arrays/objects/strings' into one format: like example "en,fr,de"
-							// then using 'set' we can just remove duplicates
-							if (Array.isArray(m.languages)) {
-								const codes = m.languages.map((l: any) =>
-									typeof l === "string" ? l : l.language_code,
-								);
-								m.languages = Array.from(new Set(codes)).join(",");
-							} else if (typeof m.languages === "string") {
-								const codes = m.languages.split(/[,;]/).filter((l) => l !== "");
-								m.languages = Array.from(new Set(codes)).join(",");
-							}
-						});
+								// here... when loading backend data or data from backend
+								// we just convert 'arrays/objects/strings' into one format: like example "en,fr,de"
+								// then using 'set' we can just remove duplicates
+								if (Array.isArray(m.languages)) {
+									const codes = m.languages.map((l: any) =>
+										typeof l === "string" ? l : l.language_code,
+									);
+									m.languages = Array.from(new Set(codes)).join(",");
+								} else if (typeof m.languages === "string") {
+									const codes = m.languages
+										.split(/[,;]/)
+										.filter((l) => l !== "");
+									m.languages = Array.from(new Set(codes)).join(",");
+								}
+							},
+						);
 					},
 				);
 			});
@@ -575,10 +585,7 @@ export const useProgramSpecStore = defineStore("programspec", {
 			this.changed = true;
 		},
 
-		addMessageLanguage(payload: {
-			language: string;
-			message: Message;
-		}) {
+		addMessageLanguage(payload: { language: string; message: Message }) {
 			const { language, message } = payload;
 
 			let languages: string[] = [];
@@ -687,6 +694,14 @@ export const useProgramSpecStore = defineStore("programspec", {
 		async downloadSpec(programId: string) {
 			this.loading = true;
 			return ApiRequest.get(`program-spec/content?programid=${programId}`);
+		},
+		async generateAccessCode() {
+			this.loading = true;
+			const res = await ApiRequest.get<{ code: string }>(
+				`program-spec/generate-access-code?programid=${this.programId}`,
+			);
+			return res[0].code
+			this.loading = false;
 		},
 	},
 });

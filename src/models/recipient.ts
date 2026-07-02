@@ -33,27 +33,27 @@ export class Recipient {
 	talkingbooks_deployed: TalkingBookDeployed[] = [];
 	access_code?: string;
 
-	static generateAccessCode(): string {
-		let code = "";
-		for (let i = 0; i < 5; i++) {
-			code += Math.floor(Math.random() * 11);
-		}
+	// static generateAccessCode(): string {
+	// 	let code = "";
+	// 	for (let i = 0; i < 5; i++) {
+	// 		code += Math.floor(Math.random() * 11);
+	// 	}
 
-		const isDuplicate = Recipient.isAccessCodeDuplicate(code);
-		if (isDuplicate) {
-			return Recipient.generateAccessCode();
-		}
+	// 	const isDuplicate = Recipient.isAccessCodeDuplicate(code);
+	// 	if (isDuplicate) {
+	// 		return Recipient.generateAccessCode();
+	// 	}
 
-		return code;
-	}
+	// 	return code;
+	// }
 
-	static isAccessCodeDuplicate(code?: string): boolean {
-    if(code == null) return false
+	// static isAccessCodeDuplicate(code?: string): boolean {
+    // if(code == null) return false
 
-		return (
-			useProgramSpecStore().recipients.findIndex(
-				(r) => r.access_code === code,
-			) > -1
-		);
-	}
+	// 	return (
+	// 		useProgramSpecStore().recipients.findIndex(
+	// 			(r) => r.access_code === code,
+	// 		) > -1
+	// 	);
+	// }
 }

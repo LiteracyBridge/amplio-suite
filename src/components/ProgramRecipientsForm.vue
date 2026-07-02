@@ -6,121 +6,69 @@
         reporting.
       </p>
 
-      <p
-        v-if="invalidConstraint"
-        class="col-span-2 md:col-span-4 text-center text-red-500"
-      >
+      <p v-if="invalidConstraint" class="col-span-2 md:col-span-4 text-center text-red-500">
         <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
         Region, District, Community, Group, Agent, and Language combination must be
         unique.
       </p>
 
-      <p
-        v-if="invalidBeneficiaries"
-        class="col-span-2 md:col-span-4 text-center text-red-500"
-      >
+      <p v-if="invalidBeneficiaries" class="col-span-2 md:col-span-4 text-center text-red-500">
         <font-awesome-icon icon="exclamation-circle" class="w-6 h-6" />
         Invalid Direct Beneficiaries details
       </p>
 
       <Row :gutter="8" class="mt-5">
         <Col :span="8">
-          <FormItem
-            required
-            :rules="[{ required: true, message: 'Please enter a region' }]"
-            label="Region/State"
-          >
-            <Select
-              :required="true"
-              id="region"
-              placeholder="Select a region"
-              :value="recipient.region"
-              :options="regionsOptions"
-              @select="onSetRecipientValue({ field: 'region', value: $event })"
-              @deselect="onSetRecipientValue({ field: 'region', value: $event })"
-            />
+          <FormItem required :rules="[{ required: true, message: 'Please enter a region' }]" label="Region/State">
+            <Select :required="true" id="region" placeholder="Select a region" :value="recipient.region"
+              :options="regionsOptions" @select="onSetRecipientValue({ field: 'region', value: $event })"
+              @deselect="onSetRecipientValue({ field: 'region', value: $event })" />
           </FormItem>
         </Col>
         <Col :span="8">
-          <FormItem
-            label="District/County"
-            required
-            :rules="[{ required: true, message: 'Please enter a district' }]"
-          >
-            <Input
-              name="district"
-              type="text"
-              :value="recipient.district"
-              @change="
-                onSetRecipientValue({ field: 'district', value: $event.target.value })
-              "
-            />
+          <FormItem label="District/County" required :rules="[{ required: true, message: 'Please enter a district' }]">
+            <Input name="district" type="text" :value="recipient.district" @change="
+              onSetRecipientValue({ field: 'district', value: $event.target.value })
+              " />
           </FormItem>
         </Col>
         <Col :span="8">
-          <FormItem
-            label="Community"
-            required
-            :rules="[{ required: true, message: 'Please enter a community' }]"
-          >
-            <Input
-              name="community"
-              type="text"
-              mx="mx-0 w-full"
-              :value="recipient.community_name"
-              @change="
-                onSetRecipientValue({
-                  field: 'community_name',
-                  value: $event.target.value,
-                })
-              "
-            /> </FormItem
-        ></Col>
+          <FormItem label="Community" required :rules="[{ required: true, message: 'Please enter a community' }]">
+            <Input name="community" type="text" mx="mx-0 w-full" :value="recipient.community_name" @change="
+              onSetRecipientValue({
+                field: 'community_name',
+                value: $event.target.value,
+              })
+              " />
+          </FormItem>
+        </Col>
       </Row>
 
       <Row :gutter="8">
         <Col :span="8">
           <FormItem label="Group Name">
-            <Input
-              name="group-name"
-              type="text"
-              :value="recipient.group_name"
-              @change="
-                onSetRecipientValue({ field: 'group_name', value: $event.target.value })
-              "
-            />
+            <Input name="group-name" type="text" :value="recipient.group_name" @change="
+              onSetRecipientValue({ field: 'group_name', value: $event.target.value })
+              " />
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Language" :required="true">
-            <languages-selector
-              name="language"
-              class="w-full"
-              :options="state.languages"
-              :languages="recipient.language"
-              @language-selected="
+            <languages-selector name="language" class="w-full" :options="state.languages"
+              :languages="recipient.language" @language-selected="
                 onSetRecipientValue({ field: 'language', value: $event })
-              "
-              @language-deleted="
+                " @language-deleted="
                 onSetRecipientValue({ field: 'language', value: $event })
-              "
-              :multiple="false"
-            />
+                " :multiple="false" />
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Variant">
-            <Input
-              name="variant"
-              :value="recipient.variant"
-              @change="
-                onSetRecipientValue({ field: 'variant', value: $event.target.value })
-              "
-            >
+            <Input name="variant" :value="recipient.variant" @change="
+              onSetRecipientValue({ field: 'variant', value: $event.target.value })
+              ">
               <template #suffix>
-                <Tooltip
-                  title="Please keep variant short and abbreviated. For example, use 'T' instead of Test."
-                >
+                <Tooltip title="Please keep variant short and abbreviated. For example, use 'T' instead of Test.">
                   <InfoCircleOutlined style="color: rgba(0, 0, 0, 0.45)" />
                 </Tooltip>
               </template>
@@ -132,42 +80,26 @@
       <Row :gutter="8">
         <Col :span="8">
           <FormItem label="Agent">
-            <Input
-              name="agent"
-              type="text"
-              placeholder="Agent, Health Worker, etc."
-              :value="recipient.agent"
-              @change="
-                onSetRecipientValue({ field: 'agent', value: $event.target.value })
-              "
-            />
+            <Input name="agent" type="text" placeholder="Agent, Health Worker, etc." :value="recipient.agent" @change="
+              onSetRecipientValue({ field: 'agent', value: $event.target.value })
+              " />
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Agent Gender">
-            <Select
-              name="agent=gender"
-              :options="[
-                { value: 'Male', label: 'Male' },
-                { value: 'Female', label: 'Female' },
-                { label: 'Unknown', value: 'Unknown' },
-              ]"
-              v-model:value="recipient.agent_gender"
-              placeholder="Select the agent gender"
-              @select="onSetRecipientValue({ field: 'agent_gender', value: $event })"
-            />
+            <Select name="agent=gender" :options="[
+              { value: 'Male', label: 'Male' },
+              { value: 'Female', label: 'Female' },
+              { label: 'Unknown', value: 'Unknown' },
+            ]" v-model:value="recipient.agent_gender" placeholder="Select the agent gender"
+              @select="onSetRecipientValue({ field: 'agent_gender', value: $event })" />
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Number of Talking Books">
-            <Input
-              name="numTalkingBooks"
-              type="number"
-              :value="recipient.numtbs"
-              @change="
-                onSetRecipientValue({ field: 'numtbs', value: $event.target.value })
-              "
-            />
+            <Input name="numTalkingBooks" type="number" :value="recipient.numtbs" @change="
+              onSetRecipientValue({ field: 'numtbs', value: $event.target.value })
+              " />
           </FormItem>
         </Col>
       </Row>
@@ -175,42 +107,28 @@
       <Row :gutter="8">
         <Col :span="8">
           <FormItem label="Listening Model">
-            <Select
-              id="listeningModel"
-              :options="listeningModels"
-              :value="props.recipient.listening_model"
+            <Select id="listeningModel" :options="listeningModels" :value="props.recipient.listening_model"
               :field-names="{ label: 'label', value: 'label' }"
               @select="onSetRecipientValue({ field: 'listening_model', value: $event })"
               @deselect="onSetRecipientValue({ field: 'listening_model', value: '' })"
-              placeholder="Select the listening model"
-            />
+              placeholder="Select the listening model" />
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Deployments">
-            <Select
-              id="deployments"
-              :options="deployments"
-              v-model:value="recipient.deployments"
-              mode="multiple"
-              placeholder="Select the deployments, leave blank for 'all'"
-            >
+            <Select id="deployments" :options="deployments" v-model:value="recipient.deployments" mode="multiple"
+              placeholder="Select the deployments, leave blank for 'all'">
             </Select>
           </FormItem>
         </Col>
         <Col :span="8">
           <FormItem label="Support Entity">
-            <Input
-              name="supportEntity"
-              type="text"
-              :value="recipient.support_entity"
-              @change="
-                onSetRecipientValue({
-                  field: 'support_entity',
-                  value: $event.target.value,
-                })
-              "
-            />
+            <Input name="supportEntity" type="text" :value="recipient.support_entity" @change="
+              onSetRecipientValue({
+                field: 'support_entity',
+                value: $event.target.value,
+              })
+              " />
           </FormItem>
         </Col>
       </Row>
@@ -227,48 +145,34 @@
             </Input>
 
             <template #extra>
-              <Button
-                type="link"
-                @click="recipient.access_code = Recipient.generateAccessCode()"
-                >Generate access code</Button
-              >
+              <Button type="link" @click="async () => recipient.access_code = await state.generateAccessCode()">Generate
+                access code</Button>
             </template>
           </FormItem>
         </Col>
 
         <Col :span="8">
           <FormItem label="Indirect beneficiaries">
-            <Input
-              name="indirectBeneficiaries"
-              type="text"
-              :value="recipient.indirect_beneficiaries"
-              @change="
-                onSetRecipientValue({
-                  field: 'indirect_beneficiaries',
-                  value: $event.target.value,
-                })
-              "
-            />
+            <Input name="indirectBeneficiaries" type="text" :value="recipient.indirect_beneficiaries" @change="
+              onSetRecipientValue({
+                field: 'indirect_beneficiaries',
+                value: $event.target.value,
+              })
+              " />
           </FormItem>
         </Col>
 
         <Col :span="8">
           <FormItem label="Direct Beneficiaries">
-            <Input
-              name="directBeneficiaries"
-              type="number"
-              :value="recipient.direct_beneficiaries"
-              @change="
-                onSetRecipientValue({
-                  field: 'direct_beneficiaries',
-                  value: $event.target.value,
-                })
-              "
-            >
+            <Input name="directBeneficiaries" type="number" :value="recipient.direct_beneficiaries" @change="
+              onSetRecipientValue({
+                field: 'direct_beneficiaries',
+                value: $event.target.value,
+              })
+              ">
               <template #suffix>
                 <Tooltip
-                  title="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details"
-                >
+                  title="You can modify the names for these fields or add additional fields by going to General tab> Direct Beneficiaries> Show Details">
                   <InfoCircleOutlined style="color: rgba(0, 0, 0, 0.45)" />
                 </Tooltip>
               </template>
@@ -399,48 +303,30 @@
     /> -->
 
     <div class="col-span-2 ml-4">
-      <VButton
-        tag="span"
-        :label="`${beneficiariesIsOpen ? 'Hide' : 'Show'} Direct beneficiaries details`"
+      <VButton tag="span" :label="`${beneficiariesIsOpen ? 'Hide' : 'Show'} Direct beneficiaries details`"
         :iconR="beneficiariesIsOpen ? 'chevron-up' : 'chevron-down'"
-        @click="beneficiariesIsOpen = !beneficiariesIsOpen"
-      />
+        @click="beneficiariesIsOpen = !beneficiariesIsOpen" />
     </div>
 
-    <div
-      :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
-      class="ml-6 grid grid-cols-form-2 md:grid-cols-form-4 col-gap-4 col-span-2 md:col-span-4 items-center"
-    >
-      <beneficiaries-field
-        label="Number of Households"
-        :val="recipient.numhouseholds"
+    <div :class="beneficiariesIsOpen ? 'visible' : 'hidden'"
+      class="ml-6 grid grid-cols-form-2 md:grid-cols-form-4 col-gap-4 col-span-2 md:col-span-4 items-center">
+      <beneficiaries-field label="Number of Households" :val="recipient.numhouseholds"
         :showTooltip="recipient.numhouseholds > recipient.direct_beneficiaries"
-        @input="onSetRecipientValue({ field: 'numhouseholds', value: $event })"
-      />
+        @input="onSetRecipientValue({ field: 'numhouseholds', value: $event })" />
 
-      <beneficiaries-field
-        label="Group Size"
-        :val="recipient.group_size"
+      <beneficiaries-field label="Group Size" :val="recipient.group_size"
         :showTooltip="recipient.group_size > recipient.direct_beneficiaries"
-        @input="onSetRecipientValue({ field: 'group_size', value: $event })"
-      />
+        @input="onSetRecipientValue({ field: 'group_size', value: $event })" />
 
-      <beneficiaries-field
-        v-for="opt in beneficiariesAdditionalFields"
-        :key="opt.key"
-        :label="opt.value"
-        :val="(recipient.direct_beneficiaries_additional ?? {})[opt.key]"
-        :showTooltip="
-          (recipient.direct_beneficiaries_additional ?? {})[opt.key] >
+      <beneficiaries-field v-for="opt in beneficiariesAdditionalFields" :key="opt.key" :label="opt.value"
+        :val="(recipient.direct_beneficiaries_additional ?? {})[opt.key]" :showTooltip="(recipient.direct_beneficiaries_additional ?? {})[opt.key] >
           recipient.direct_beneficiaries
-        "
-        @input="
+          " @input="
           onSetRecipientDirectBeneficiariesAdditional({
             key: opt.key,
             value: $event,
           })
-        "
-      />
+          " />
     </div>
 
     <!-- <label class="text-right" for="indirectBeneficiaries">Indirect beneficiaries</label>
@@ -465,12 +351,15 @@
 .multiselect__tags {
   border: 0 !important;
 }
+
 .suppress-int-border div {
   border: 0 !important;
 }
+
 .variant input {
   width: 7rem;
 }
+
 .deployment-number-value input {
   width: 6rem;
 }
@@ -497,6 +386,7 @@ import {
 } from "ant-design-vue";
 import { Recipient } from "@/models/recipient";
 import { InfoCircleOutlined, KeyOutlined } from "@ant-design/icons-vue";
+import { spec } from "node:test/reporters";
 
 const props = defineProps<{
   recipient: Recipient;
@@ -541,8 +431,7 @@ function onSetRecipientDirectBeneficiariesAdditional(v: {
   value: any;
 }) {
   console.log(
-    `additional: ${v}, ${props.recipient.direct_beneficiaries_additional[v.key]} -> ${
-      v.value
+    `additional: ${v}, ${props.recipient.direct_beneficiaries_additional[v.key]} -> ${v.value
     }`
   );
   props.recipient.direct_beneficiaries_additional[v.key] = v.value;
