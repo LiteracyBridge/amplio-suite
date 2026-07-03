@@ -36,7 +36,7 @@ export class Recipient {
 	static generateAccessCode(): string {
 		let code = "";
 		for (let i = 0; i < 5; i++) {
-			code += Math.floor(Math.random() * 10);
+			code += Math.floor(Math.random() * 11);
 		}
 
 		const isDuplicate = Recipient.isAccessCodeDuplicate(code);
