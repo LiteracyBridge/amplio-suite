@@ -8,6 +8,7 @@ import DeploymentsLanguageDropdown from "../components/DeploymentsLanguageDropdo
 import AnalyseMessage from "./AnalyseMessage.vue";
 import LocationDropdownFilter from "../components/LocationDropdownFilter.vue";
 import type { UserFeedbackMessage } from "@/models/uf_message";
+import MessagesBrowser from "./MessagesBrowser.vue";
 
 const feedbackStore = useFeedbackAnalysis();
 const appStore = useAppStore();
