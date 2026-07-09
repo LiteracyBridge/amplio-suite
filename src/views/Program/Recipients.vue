@@ -4,32 +4,71 @@
       class="ant-table-striped" :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)">
 
       <template #title>
-        <div class="flex items-center gap-3" style="
+        <div class="flex flex-col gap-2" style="
       background: #289B6A;
       margin: -16px -16px 0;
       padding: 12px 16px;
       border-radius: 8px 8px 0 0;
       border-bottom: 1px solid #f0f0f0;
     ">
-          <!-- Search far left -->
-          <Input v-model:value="searchQuery" type="text" placeholder="Search recipients…" allow-clear
-            style="width: 280px;" @change="filterRecipient($event.target.value)" @clear="filterRecipient('')">
-            <template #prefix>
-              <SearchOutlined />
-            </template>
-          </Input>
+          <div class="flex items-center gap-3">
+            <!-- Search far left -->
+            <Input v-model:value="searchQuery" type="text" placeholder="Search recipients…" allow-clear
+              style="width: 280px;" @change="filterRecipient($event.target.value)" @clear="filterRecipient('')">
+              <template #prefix>
+                <SearchOutlined />
+              </template>
+            </Input>
 
-          <!-- Count right beside the search bar -->
-          <span style="font-size: 15px; color: #fff; white-space: nowrap;">
-            <strong style="color: inherit;">{{ recipients.length }}</strong> of {{ store.recipients.length }} recipients
-          </span>
+            <!-- Filters toggle -->
+            <Button class="filter-toggle-btn" :ghost="true" @click="filtersOpen = !filtersOpen">
+              <FilterOutlined />
+              Filters
+              <span v-if="activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
+              <DownOutlined class="filter-chevron" :class="{ 'filter-chevron-open': filtersOpen }" />
+            </Button>
 
-          <!-- Spacer pushes button to the right -->
-          <div style="flex: 1;" />
+            <!-- Count right beside the search bar -->
+            <span style="font-size: 15px; color: #fff; white-space: nowrap;">
+              <strong style="color: inherit;">{{ recipients.length }}</strong> of {{ store.recipients.length }} recipients
+            </span>
 
-          <Button @click="addNewRecipient()" type="primary" :ghost="true" style="background: white;">
-            + Add Recipient
-          </Button>
+            <!-- Spacer pushes button to the right -->
+            <div style="flex: 1;" />
+
+            <Button @click="addNewRecipient()" type="primary" :ghost="true" style="background: white;">
+              + Add Recipient
+            </Button>
+          </div>
+
+          <!-- Collapsible filter panel -->
+          <div v-show="filtersOpen" class="filter-panel">
+            <Select v-model:value="filters.region" placeholder="Region" allow-clear class="filter-select"
+              :options="regionOptions" @change="applyFilters" />
+            <Select v-model:value="filters.language" placeholder="Language" allow-clear class="filter-select"
+              :options="languageOptions" @change="applyFilters" />
+            <Select v-model:value="filters.variant" placeholder="Variant" allow-clear class="filter-select"
+              :options="variantOptions" @change="applyFilters" />
+
+            <div v-if="activeFilterCount > 0" class="filter-divider" />
+
+            <span v-if="filters.region" class="filter-chip">
+              Region: {{ filters.region }}
+              <CloseOutlined class="filter-chip-close" @click="clearFilter('region')" />
+            </span>
+            <span v-if="filters.language" class="filter-chip">
+              Language: {{ filters.language }}
+              <CloseOutlined class="filter-chip-close" @click="clearFilter('language')" />
+            </span>
+            <span v-if="filters.variant" class="filter-chip">
+              Variant: {{ filters.variant }}
+              <CloseOutlined class="filter-chip-close" @click="clearFilter('variant')" />
+            </span>
+
+            <Button v-if="activeFilterCount > 0" type="link" class="clear-all-btn" @click="clearAllFilters">
+              Clear all
+            </Button>
+          </div>
         </div>
       </template>
 
@@ -112,8 +151,15 @@ import ProgramRecipientsForm from "@/components/ProgramRecipientsForm.vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import { computed, ref } from "vue";
 import { Recipient } from "@/models/recipient";
-import { Input, Modal, notification, Tooltip, Table, Button } from "ant-design-vue";
-import { CopyOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons-vue";
+import { Input, Modal, notification, Tooltip, Table, Button, Select } from "ant-design-vue";
+import {
+  CopyOutlined,
+  EditOutlined,
+  SearchOutlined,
+  FilterOutlined,
+  DownOutlined,
+  CloseOutlined,
+} from "@ant-design/icons-vue";
 
 const columns = [
   // @ts-ignore
@@ -135,6 +181,51 @@ const recipients = ref([...store.recipients]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const searchQuery = ref('');
+
+// --- Filters ---
+const filtersOpen = ref(false);
+const filters = ref({
+  region: undefined as string | undefined,
+  language: undefined as string | undefined,
+  variant: undefined as string | undefined,
+});
+
+function uniqueOptions(field: keyof Recipient) {
+  const values = new Set<string>();
+  store.recipients.forEach((r) => {
+    const v = (r as any)[field];
+    if (v) values.add(v);
+  });
+  return Array.from(values)
+    .sort()
+    .map((v) => ({ label: v, value: v }));
+}
+
+const regionOptions = computed(() => uniqueOptions("region"));
+const languageOptions = computed(() => uniqueOptions("language"));
+const variantOptions = computed(() => uniqueOptions("variant"));
+
+const activeFilterCount = computed(() => {
+  return Object.values(filters.value).filter((v) => !!v).length;
+});
+
+function clearFilter(key: "region" | "language" | "variant") {
+  filters.value[key] = undefined;
+  applyFilters();
+}
+
+function clearAllFilters() {
+  filters.value.region = undefined;
+  filters.value.language = undefined;
+  filters.value.variant = undefined;
+  applyFilters();
+}
+
+function applyFilters() {
+  currentPage.value = 1;
+  filterRecipient(searchQuery.value);
+}
+// --- End Filters ---
 
 const data = ref({
   selectedRecipientId: null,
@@ -243,22 +334,25 @@ const invalidBeneficiaries = computed(() => {
 
 function filterRecipient(val?: string) {
   currentPage.value = 1; // reset to page 1 on new search
-  if (!val || val.trim().length === 0) {
-    searchQuery.value = '';
-    recipients.value = [...store.recipients];
-    return;
-  }
-  const input = val.trim().toLowerCase();
+  searchQuery.value = val || '';
+  const input = (val || '').trim().toLowerCase();
+
   recipients.value = store.recipients.filter((recipient) => {
-    return (
+    const matchesSearch =
+      input.length === 0 ||
       recipient.region?.toLowerCase().includes(input) ||
       recipient.district?.toLowerCase().includes(input) ||
       recipient.community_name?.toLowerCase().includes(input) ||
       recipient.group_name?.toLowerCase().includes(input) ||
       recipient.agent?.toLowerCase().includes(input) ||
       recipient.language?.toLowerCase().includes(input) ||
-      recipient.numtbs?.toString().includes(input)
-    );
+      recipient.numtbs?.toString().includes(input);
+
+    const matchesRegion = !filters.value.region || recipient.region === filters.value.region;
+    const matchesLanguage = !filters.value.language || recipient.language === filters.value.language;
+    const matchesVariant = !filters.value.variant || recipient.variant === filters.value.variant;
+
+    return matchesSearch && matchesRegion && matchesLanguage && matchesVariant;
   });
 }
 
@@ -274,7 +368,7 @@ function onAcceptEdit() {
     // }
 
     store.updateRecipient({ recipient: recipient });
-    filterRecipient(); // trigger table refresh
+    filterRecipient(searchQuery.value); // trigger table refresh
     onCloseModal();
   } else {
     notification.error({
@@ -340,3 +434,84 @@ function onRecipientEdited(value: boolean) {
   data.value.recipientEdited = value;
 }
 </script>
+
+<style scoped>
+.filter-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #fff !important;
+}
+
+.filter-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.filter-badge {
+  background: #fff;
+  color: #085041;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0 6px;
+  line-height: 16px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.filter-chevron {
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.filter-chevron-open {
+  transform: rotate(180deg);
+}
+
+.filter-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.filter-select {
+  width: 160px;
+}
+
+.filter-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.35);
+  margin: 0 4px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  color: #085041;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 3px 8px 3px 10px;
+}
+
+.filter-chip-close {
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.clear-all-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 12px;
+  padding: 0 4px !important;
+  text-decoration: underline;
+}
+</style>
