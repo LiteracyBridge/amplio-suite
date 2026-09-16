@@ -12,49 +12,37 @@
     </Col>
 
     <Col :span="6">
-      <Input
-        aria-label="`Deployment ${name}`"
-        placeholder="Deployment Name"
-        type="text"
-        v-model:value="deployment.deploymentname"
-      />
+      <Input aria-label="`Deployment ${name}`" placeholder="Deployment Name" type="text"
+        v-model:value="deployment.deploymentname" />
     </Col>
     <Col :span="3">
-      <Input
-        type="date"
-        :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.start_date"
-      />
+      <Input type="date" :aria-label="`Start of deployment ${deployment.deploymentname}`"
+        v-model:value="deployment.start_date" />
     </Col>
     <Col :span="3">
-      <Input
-        type="date"
-        :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.end_date"
-      />
+      <Input type="date" :aria-label="`Start of deployment ${deployment.deploymentname}`"
+        v-model:value="deployment.end_date" />
     </Col>
 
     <Col :span="5">
       <div class="ml-10">
-        <Button
-          v-if="expanded"
-          type="primary"
-          :ghost="true"
-          @click="onAddPlaylist()"
-          :disabled="!canAddPlaylist"
-          class="mr-2"
-        >
+        <Button v-if="expanded" type="primary" :ghost="true" @click="onAddPlaylist()" :disabled="!canAddPlaylist"
+          class="mr-2">
           Add Playlist
         </Button>
 
-        <Popconfirm
-          title="Are you sure delete this deployment?"
-          ok-text="Yes"
-          cancel-text="No"
-          @confirm="onRemoveDeployment()"
-        >
-          <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
+        <Popconfirm title="Are you sure delete this deployment?" ok-text="Yes" cancel-text="No"
+          @confirm="onRemoveDeployment()">
         </Popconfirm>
+
+        <Button v-if="expanded" type="dashed" @click="isDrawerExpanded = true" :disabled="!canAddPlaylist" class="mr-2">
+          Convert to Survey
+        </Button>
+
+        <Popconfirm title="Are you sure change this playlist to a survey?" ok-text="Yes" cancel-text="No">
+        </Popconfirm>
+
+        <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
       </div>
     </Col>
   </Row>
@@ -64,12 +52,20 @@
     <content2-playlists :deployment="deployment" />
   </div>
   <!-- </div> -->
+
+  <!-- Survey builder drawer -->
+  <Drawer v-model:open="isDrawerExpanded" class="custom-class" root-class-name="root-class-name" title="Survey Builder"
+    :width="900" placement="right">
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+    <p>Some contents...</p>
+  </Drawer>
 </template>
 
 <script setup lang="ts">
 import Content2Playlists from "./Content2Playlists.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
+import { Row, Col, Input, Button, Popconfirm, Drawer } from "ant-design-vue";
 import type { Deployment } from "@/models/deployment";
 import { computed, ref } from "vue";
 import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons-vue";
@@ -82,6 +78,7 @@ const props = defineProps<{
 
 const store = useProgramSpecStore();
 const expanded = ref(false);
+const isDrawerExpanded = ref(false);
 const name = computed(() => {
   // get() {
   return props.deployment.deploymentname || props.deployment.deployment;
