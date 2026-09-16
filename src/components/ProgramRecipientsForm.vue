@@ -386,7 +386,6 @@ import {
 } from "ant-design-vue";
 import { Recipient } from "@/models/recipient";
 import { InfoCircleOutlined, KeyOutlined } from "@ant-design/icons-vue";
-import { spec } from "node:test/reporters";
 
 const props = defineProps<{
   recipient: Recipient;
