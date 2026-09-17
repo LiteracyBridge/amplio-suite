@@ -151,17 +151,66 @@ watch(
 );
 
 function initSurveyGraph() {
-  const graph = playlistToGraph(props.playlist);
-  surveyHeader.value = graph.header;
+  if (props.playlist.survey_questions && props.playlist.survey_edges) {
+    surveyHeader.value = props.playlist.survey_header || {
+      name: (props.playlist.title || "Survey").replace(/[^a-zA-Z0-9_]/g, ""),
+      prolog: "Welcome to the talking book satisfaction survey",
+      epilog: "Thank you for your participation",
+      confirmExit: "s1confirm",
+    };
 
-  questions.value = graph.nodes
-    .filter((n) => n.type === "question")
-    .map((n) => n.data as SurveyQuestionData);
+    questions.value = JSON.parse(JSON.stringify(props.playlist.survey_questions));
+    selectedQuestion.value = questions.value.length > 0 ? questions.value[0] : null;
 
-  selectedQuestion.value = questions.value.length > 0 ? questions.value[0] : null;
+    const restoredNodes: Node[] = [];
+    restoredNodes.push({
+      id: "prolog",
+      type: "prolog",
+      position: { x: 300, y: 50 },
+      data: {
+        title: "Prolog (Welcome)",
+        text: surveyHeader.value.prolog,
+      },
+      deletable: false,
+    });
 
-  nodes.value = graph.nodes;
-  edges.value = graph.edges;
+    questions.value.forEach((q, idx) => {
+      restoredNodes.push({
+        id: q.id,
+        type: "question",
+        position: { x: 300, y: 220 + idx * 260 },
+        data: q,
+        deletable: true,
+      });
+    });
+
+    const epilogY = questions.value.length > 0 ? 220 + questions.value.length * 260 : 300;
+    restoredNodes.push({
+      id: "epilog",
+      type: "epilog",
+      position: { x: 300, y: epilogY },
+      data: {
+        title: "Epilog (Thank You)",
+        text: surveyHeader.value.epilog,
+      },
+      deletable: false,
+    });
+
+    nodes.value = restoredNodes;
+    edges.value = JSON.parse(JSON.stringify(props.playlist.survey_edges));
+  } else {
+    const graph = playlistToGraph(props.playlist);
+    surveyHeader.value = graph.header;
+
+    questions.value = graph.nodes
+      .filter((n) => n.type === "question")
+      .map((n) => n.data as SurveyQuestionData);
+
+    selectedQuestion.value = questions.value.length > 0 ? questions.value[0] : null;
+
+    nodes.value = graph.nodes;
+    edges.value = graph.edges;
+  }
 
   nextTick(() => {
     if (canvasRef.value) {
@@ -360,6 +409,9 @@ function handleSaveSurvey() {
   const yaml = surveyToYaml(surveyHeader.value, questions.value);
   props.playlist.survey_yaml = yaml;
   props.playlist.is_survey = true;
+  props.playlist.survey_questions = JSON.parse(JSON.stringify(questions.value));
+  props.playlist.survey_edges = JSON.parse(JSON.stringify(edges.value));
+  props.playlist.survey_header = JSON.parse(JSON.stringify(surveyHeader.value));
   store.changed = true;
 
   message.success("Survey specification generated and saved to playlist in memory!");

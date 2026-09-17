@@ -21,9 +21,11 @@
       <Col :span="14">
         <!-- CHANGED: Added validation status and error message -->
         <FormItem
-          :validateStatus="titleError ? 'error' : ''"
+          :validateStatus="!playlist.is_survey && titleError ? 'error' : ''"
           :help="
-            titleError
+            playlist.is_survey
+              ? 'Message title is managed in the Survey Builder'
+              : titleError
               ? 'Invalid characters in Message Title'
               : 'Message title cannot contain these characters: \\/:*?<>|&quot;'
           "
@@ -35,6 +37,8 @@
             type="text"
             :name="`message-${message.title}`"
             v-model:value="message.title"
+            :readonly="playlist.is_survey"
+            :disabled="playlist.is_survey"
             @change="store.setMessageOrPlaylistTitle($event.target.value, message)"
             @input="handleTitleInput"
           /> </FormItem

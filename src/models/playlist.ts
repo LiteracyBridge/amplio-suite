@@ -13,6 +13,9 @@ export class Playlist {
 	messages: Message[] = [];
 	survey_yaml?: string;
 	is_survey?: boolean;
+	survey_questions?: any[];
+	survey_edges?: any[];
+	survey_header?: any;
 
 	// Form fields
 	_form_status: "error" | undefined = undefined;

@@ -8,6 +8,7 @@
         </template>
 
         Playlist {{ playlist.position }}
+        <Tag v-if="playlist.is_survey" color="purple" class="ml-2">Survey</Tag>
       </Button>
     </Col>
 
@@ -33,7 +34,7 @@
     </Col>
     <Col :span="8">
       <Button
-        v-if="expanded"
+        v-if="expanded && !playlist.is_survey"
         type="primary"
         :ghost="true"
         @click="onAddMessage()"
@@ -47,9 +48,9 @@
         v-if="expanded"
         type="dashed"
         @click="isSurveyDrawerOpen = true"
-        class="ml-3"
+        :class="playlist.is_survey ? 'ml-10' : 'ml-3'"
       >
-        Convert to Survey
+        {{ playlist.is_survey ? "Edit Survey" : "Convert to Survey" }}
       </Button>
 
       <Popconfirm
@@ -108,7 +109,7 @@
 <script lang="ts" setup>
 import Content2Message from "./Content2Message.vue";
 import Draggable from "vuedraggable";
-import { Row, Col, Input, Button, FormItem, Popconfirm } from "ant-design-vue";
+import { Row, Col, Input, Button, FormItem, Popconfirm, Tag } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import type { Deployment } from "@/models/deployment";
 import type { Playlist } from "@/models/playlist";
