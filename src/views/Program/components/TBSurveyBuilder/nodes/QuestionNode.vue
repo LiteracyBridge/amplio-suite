@@ -49,10 +49,7 @@
         class="relative flex items-center justify-between px-2 py-1 bg-gray-50 rounded text-[11px] border border-gray-100 group"
       >
         <div class="flex items-center space-x-1.5">
-          <span
-            class="w-2 h-2 rounded-full flex-shrink-0"
-            :style="{ backgroundColor: btn.iconColor }"
-          ></span>
+          <TBSurveyButtonIcon :button="btn.name" :size="14" />
           <span class="font-medium text-gray-700">{{ btn.name }}:</span>
           <span v-if="btn.isRecord" class="text-amber-600 font-semibold flex items-center gap-0.5">
             <AudioOutlined class="text-[10px]" /> record
@@ -93,6 +90,7 @@ import { computed } from "vue";
 import { Handle, Position } from "@vue-flow/core";
 import { DeleteOutlined, AudioOutlined } from "@ant-design/icons-vue";
 import { Popconfirm } from "ant-design-vue";
+import TBSurveyButtonIcon from "../TBSurveyButtonIcon.vue";
 import {
   HARDWARE_BUTTONS,
   type SurveyQuestionData,

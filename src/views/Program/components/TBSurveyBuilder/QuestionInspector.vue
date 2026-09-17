@@ -52,10 +52,7 @@
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
-                <span
-                  class="w-3 h-3 rounded-full flex-shrink-0"
-                  :style="{ backgroundColor: btn.iconColor }"
-                ></span>
+                <TBSurveyButtonIcon :button="btn.name" :size="16" />
                 <span class="text-xs font-semibold text-gray-800">{{ btn.label }}</span>
               </div>
 
@@ -143,6 +140,7 @@
 import { computed } from "vue";
 import { Button, Input, Switch, Select, Checkbox, Divider, Popconfirm } from "ant-design-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
+import TBSurveyButtonIcon from "./TBSurveyButtonIcon.vue";
 import {
   HARDWARE_BUTTONS,
   type HardwareButton,

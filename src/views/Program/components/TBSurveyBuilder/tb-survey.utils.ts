@@ -11,12 +11,12 @@ export type HardwareButton =
   | "Star";
 
 export const HARDWARE_BUTTONS: { name: HardwareButton; label: string; iconColor: string }[] = [
-  { name: "Tree", label: "Tree", iconColor: "#22c55e" },
-  { name: "Table", label: "Table", iconColor: "#f59e0b" },
-  { name: "Bowl", label: "Bowl", iconColor: "#3b82f6" },
+  { name: "Tree", label: "Tree", iconColor: "#16a34a" },
+  { name: "Table", label: "Table", iconColor: "#d97706" },
+  { name: "Bowl", label: "Bowl", iconColor: "#2563eb" },
   { name: "Right Hand", label: "Right Hand", iconColor: "#8b5cf6" },
   { name: "Left Hand", label: "Left Hand", iconColor: "#ec4899" },
-  { name: "Star", label: "Star (Record)", iconColor: "#eab308" },
+  { name: "Star", label: "Star (Record)", iconColor: "#ca8a04" },
 ];
 
 export function getButtonHandleId(button: HardwareButton): string {
