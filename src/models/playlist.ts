@@ -11,6 +11,8 @@ export class Playlist {
 	title: string;
 	audience?: string;
 	messages: Message[] = [];
+	survey_yaml?: string;
+	is_survey?: boolean;
 
 	// Form fields
 	_form_status: "error" | undefined = undefined;

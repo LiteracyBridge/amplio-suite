@@ -43,6 +43,15 @@
         Add Message
       </Button>
 
+      <Button
+        v-if="expanded"
+        type="dashed"
+        @click="isSurveyDrawerOpen = true"
+        class="ml-3"
+      >
+        Convert to Survey
+      </Button>
+
       <Popconfirm
         title="Are you sure to delete this playlist?"
         ok-text="Yes"
@@ -59,6 +68,15 @@
       </Popconfirm>
     </Col>
   </Row>
+
+  <!-- Survey Builder Drawer -->
+  <TBSurveyBuilderDrawer
+    v-if="isSurveyDrawerOpen"
+    :open="isSurveyDrawerOpen"
+    :playlist="playlist"
+    :deployment="deployment"
+    @close="isSurveyDrawerOpen = false"
+  />
 
   <div class="my-4 ml-20">
     <div v-if="expanded">
@@ -96,6 +114,7 @@ import type { Deployment } from "@/models/deployment";
 import type { Playlist } from "@/models/playlist";
 import { ref, computed } from "vue";
 import { CaretRightOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
+import TBSurveyBuilderDrawer from "./TBSurveyBuilder/TBSurveyBuilderDrawer.vue";
 
 const props = defineProps<{
   deployment: Deployment;
@@ -105,7 +124,8 @@ const props = defineProps<{
 const store = useProgramSpecStore();
 const expanded = ref(false);
 const dragging = ref(false);
-const titleError = ref(false)
+const titleError = ref(false);
+const isSurveyDrawerOpen = ref(false);
 
 // CHANGED: Added validation function
 // const validateTitle = (title: string) => {
