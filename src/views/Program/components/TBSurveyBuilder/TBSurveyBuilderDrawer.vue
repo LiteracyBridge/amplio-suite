@@ -52,6 +52,8 @@
     <div class="flex-1 flex overflow-hidden relative">
       <TBSurveyCanvas
         ref="canvasRef"
+        v-model:nodes="nodes"
+        v-model:edges="edges"
         :selected-question-id="selectedQuestion?.id ?? null"
         @select-question="handleSelectQuestion"
         @delete-question="handleDeleteQuestion"
@@ -89,7 +91,7 @@ import {
   FileTextOutlined,
   CheckOutlined,
 } from "@ant-design/icons-vue";
-import { useVueFlow } from "@vue-flow/core";
+import type { Node, Edge } from "@vue-flow/core";
 import TBSurveyCanvas from "./TBSurveyCanvas.vue";
 import QuestionInspector from "./QuestionInspector.vue";
 import TBSurveyYamlModal from "./TBSurveyYamlModal.vue";
@@ -100,6 +102,7 @@ import {
   playlistToGraph,
   surveyToYaml,
   createDefaultActions,
+  getButtonHandleId,
 } from "./tb-survey.utils";
 import type { Playlist } from "@/models/playlist";
 import type { Deployment } from "@/models/deployment";
@@ -117,7 +120,9 @@ const emit = defineEmits<{
 
 const store = useProgramSpecStore();
 const canvasRef = ref<InstanceType<typeof TBSurveyCanvas> | null>(null);
-const { setNodes, setEdges, addNodes, addEdges, removeNodes, removeEdges, findNode, edges } = useVueFlow();
+
+const nodes = ref<Node[]>([]);
+const edges = ref<Edge[]>([]);
 
 const questions = ref<SurveyQuestionData[]>([]);
 const selectedQuestion = ref<SurveyQuestionData | null>(null);
@@ -149,15 +154,14 @@ function initSurveyGraph() {
   const graph = playlistToGraph(props.playlist);
   surveyHeader.value = graph.header;
 
-  // Extract questions
   questions.value = graph.nodes
     .filter((n) => n.type === "question")
     .map((n) => n.data as SurveyQuestionData);
 
   selectedQuestion.value = questions.value.length > 0 ? questions.value[0] : null;
 
-  setNodes(graph.nodes);
-  setEdges(graph.edges);
+  nodes.value = graph.nodes;
+  edges.value = graph.edges;
 
   nextTick(() => {
     if (canvasRef.value) {
@@ -187,8 +191,8 @@ function handleUpdatePrompt({ id, prompt }: { id: string; prompt: string }) {
     store.setMessageOrPlaylistTitle(prompt, msg);
   }
 
-  // Update node data in Vue Flow
-  const node = findNode(id);
+  // Update node data in nodes array
+  const node = nodes.value.find((n) => n.id === id);
   if (node) {
     node.data = { ...q };
   }
@@ -208,37 +212,38 @@ function handleUpdateAction({
 
   q.actions[button] = config;
 
-  // Sync Vue Flow edges if branch destination changed
   const targetId = config?.targetQuestionId;
-  const existingEdge = edges.value.find(
-    (e) => e.source === id && e.sourceHandle === `btn-${button}`
+  const buttonHandle = getButtonHandleId(button);
+
+  // Find existing edge from this button handle
+  const existingIdx = edges.value.findIndex(
+    (e) => e.source === id && e.sourceHandle === buttonHandle
   );
 
   if (targetId && targetId !== "next") {
     const targetLabel = targetId === "epilog" ? "exit" : targetId;
-    if (existingEdge) {
-      existingEdge.target = targetId;
-      existingEdge.label = `${button} -> go(${targetLabel})`;
+    const newEdge: Edge = {
+      id: `edge-${id}-${buttonHandle}-${targetId}`,
+      source: id,
+      sourceHandle: buttonHandle,
+      target: targetId,
+      targetHandle: targetId === "epilog" ? "epilog-in" : "target",
+      label: `${button} -> go(${targetLabel})`,
+      animated: true,
+      style: { stroke: "#8b5cf6", strokeWidth: 2 },
+    };
+
+    if (existingIdx > -1) {
+      edges.value.splice(existingIdx, 1, newEdge);
     } else {
-      addEdges([
-        {
-          id: `edge-${id}-btn-${button}-${targetId}`,
-          source: id,
-          sourceHandle: `btn-${button}`,
-          target: targetId,
-          targetHandle: targetId === "epilog" ? "epilog-in" : "target",
-          label: `${button} -> go(${targetLabel})`,
-          animated: true,
-          style: { stroke: "#8b5cf6", strokeWidth: 2 },
-        },
-      ]);
+      edges.value.push(newEdge);
     }
-  } else if (existingEdge) {
-    removeEdges([existingEdge.id]);
+  } else if (existingIdx > -1) {
+    edges.value.splice(existingIdx, 1);
   }
 
-  // Update node data in Vue Flow
-  const node = findNode(id);
+  // Update node data in nodes array
+  const node = nodes.value.find((n) => n.id === id);
   if (node) {
     node.data = { ...q };
   }
@@ -266,7 +271,7 @@ function handleConnectBranch({
     q.actions[button]!.targetQuestionId = targetId;
   }
 
-  const node = findNode(sourceId);
+  const node = nodes.value.find((n) => n.id === sourceId);
   if (node) {
     node.data = { ...q };
   }
@@ -284,7 +289,7 @@ function handleDisconnectBranch({
 
   q.actions[button]!.targetQuestionId = undefined;
 
-  const node = findNode(sourceId);
+  const node = nodes.value.find((n) => n.id === sourceId);
   if (node) {
     node.data = { ...q };
   }
@@ -308,16 +313,13 @@ function handleAddQuestion() {
 
   questions.value.push(newQuestionData);
 
-  // Add node to Vue Flow
-  addNodes([
-    {
-      id: qId,
-      type: "question",
-      position: { x: 320, y: 220 + (newIndex - 1) * 260 },
-      data: newQuestionData,
-      deletable: true,
-    },
-  ]);
+  nodes.value.push({
+    id: qId,
+    type: "question",
+    position: { x: 320, y: 220 + (newIndex - 1) * 260 },
+    data: newQuestionData,
+    deletable: true,
+  });
 
   selectedQuestion.value = newQuestionData;
 
@@ -341,8 +343,9 @@ function handleDeleteQuestion(questionId: string) {
   // Remove question from questions list
   questions.value.splice(qIndex, 1);
 
-  // Remove node and connected edges from Vue Flow
-  removeNodes([questionId]);
+  // Remove node and connected edges from arrays
+  nodes.value = nodes.value.filter((n) => n.id !== questionId);
+  edges.value = edges.value.filter((e) => e.source !== questionId && e.target !== questionId);
 
   if (selectedQuestion.value?.id === questionId) {
     selectedQuestion.value = questions.value.length > 0 ? questions.value[0] : null;

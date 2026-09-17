@@ -74,7 +74,7 @@
 
         <!-- Output handle on the right for connecting branch -->
         <Handle
-          :id="`btn-${btn.name}`"
+          :id="getButtonHandleId(btn.name)"
           type="source"
           :position="Position.Right"
           class="!bg-purple-500 !w-2.5 !h-2.5 !border !border-white group-hover:scale-125 transition-transform"
@@ -96,6 +96,7 @@ import { Popconfirm } from "ant-design-vue";
 import {
   HARDWARE_BUTTONS,
   type SurveyQuestionData,
+  getButtonHandleId,
 } from "../tb-survey.utils";
 
 const props = defineProps<{

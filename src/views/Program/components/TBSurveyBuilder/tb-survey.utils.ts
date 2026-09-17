@@ -19,6 +19,18 @@ export const HARDWARE_BUTTONS: { name: HardwareButton; label: string; iconColor:
   { name: "Star", label: "Star (Record)", iconColor: "#eab308" },
 ];
 
+export function getButtonHandleId(button: HardwareButton): string {
+  return `btn-${button.toLowerCase().replace(/\s+/g, "-")}`;
+}
+
+export function getButtonFromHandleId(handleId?: string | null): HardwareButton | undefined {
+  if (!handleId || !handleId.startsWith("btn-")) return undefined;
+  const slug = handleId.replace("btn-", "");
+  return HARDWARE_BUTTONS.find(
+    (b) => b.name.toLowerCase().replace(/\s+/g, "-") === slug
+  )?.name;
+}
+
 export interface ButtonActionConfig {
   button: HardwareButton;
   responseValue?: string;
@@ -133,7 +145,7 @@ export function playlistToGraph(playlist: Playlist): {
       edges.push({
         id: `edge-${qId}-epilog`,
         source: qId,
-        sourceHandle: "btn-Tree",
+        sourceHandle: getButtonHandleId("Tree"),
         target: "epilog",
         targetHandle: "epilog-in",
         label: "Finish",

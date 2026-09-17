@@ -1,6 +1,7 @@
 <template>
   <div class="h-full w-full relative bg-gray-50 flex-1">
     <VueFlow
+      id="tb-survey-flow"
       v-model:nodes="nodes"
       v-model:edges="edges"
       :default-zoom="0.85"
@@ -36,8 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { VueFlow, useVueFlow, type Connection, type EdgeChange } from "@vue-flow/core";
+import { VueFlow, useVueFlow, type Connection, type EdgeChange, type Node, type Edge } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
 import { Controls } from "@vue-flow/controls";
 
@@ -52,11 +52,16 @@ import {
   type HardwareButton,
   type SurveyQuestionData,
   calculateHierarchicalLayout,
+  getButtonFromHandleId,
+  getButtonHandleId,
 } from "./tb-survey.utils";
 
 const props = defineProps<{
   selectedQuestionId: string | null;
 }>();
+
+const nodes = defineModel<Node[]>("nodes", { required: true });
+const edges = defineModel<Edge[]>("edges", { required: true });
 
 const emit = defineEmits<{
   (e: "select-question", question: SurveyQuestionData | null): void;
@@ -65,7 +70,7 @@ const emit = defineEmits<{
   (e: "disconnect-branch", payload: { sourceId: string; button: HardwareButton }): void;
 }>();
 
-const { nodes, edges, addEdges, fitView } = useVueFlow();
+const { fitView } = useVueFlow({ id: "tb-survey-flow" });
 
 function handleNodeClick(event: { node: any }) {
   if (event.node.type === "question") {
@@ -86,26 +91,32 @@ function handleDeleteQuestion(questionId: string) {
 function handleConnect(params: Connection) {
   if (!params.source || !params.target) return;
 
-  const isButtonHandle = params.sourceHandle?.startsWith("btn-");
-  const buttonName = isButtonHandle
-    ? (params.sourceHandle!.replace("btn-", "") as HardwareButton)
-    : undefined;
-
+  const buttonName = getButtonFromHandleId(params.sourceHandle);
   const targetLabel = params.target === "epilog" ? "exit" : params.target;
   const edgeLabel = buttonName ? `${buttonName} -> go(${targetLabel})` : undefined;
+  const handleId = params.sourceHandle || (buttonName ? getButtonHandleId(buttonName) : undefined);
 
-  const newEdge = {
-    id: `edge-${params.source}-${params.sourceHandle}-${params.target}`,
+  // Check if an edge from this source handle already exists and replace it
+  const existingIdx = edges.value.findIndex(
+    (e) => e.source === params.source && e.sourceHandle === handleId
+  );
+
+  const newEdge: Edge = {
+    id: `edge-${params.source}-${handleId}-${params.target}`,
     source: params.source,
-    sourceHandle: params.sourceHandle,
+    sourceHandle: handleId,
     target: params.target,
-    targetHandle: params.targetHandle,
+    targetHandle: params.target === "epilog" ? "epilog-in" : "target",
     label: edgeLabel,
     animated: true,
     style: { stroke: "#8b5cf6", strokeWidth: 2 },
   };
 
-  addEdges([newEdge]);
+  if (existingIdx > -1) {
+    edges.value.splice(existingIdx, 1, newEdge);
+  } else {
+    edges.value.push(newEdge);
+  }
 
   if (buttonName) {
     emit("connect-branch", {
@@ -120,12 +131,14 @@ function handleEdgesChange(changes: EdgeChange[]) {
   changes.forEach((change) => {
     if (change.type === "remove") {
       const removedEdge = edges.value.find((e) => e.id === change.id);
-      if (removedEdge && removedEdge.sourceHandle?.startsWith("btn-")) {
-        const buttonName = removedEdge.sourceHandle.replace("btn-", "") as HardwareButton;
-        emit("disconnect-branch", {
-          sourceId: removedEdge.source,
-          button: buttonName,
-        });
+      if (removedEdge) {
+        const buttonName = getButtonFromHandleId(removedEdge.sourceHandle);
+        if (buttonName) {
+          emit("disconnect-branch", {
+            sourceId: removedEdge.source,
+            button: buttonName,
+          });
+        }
       }
     }
   });
@@ -145,7 +158,6 @@ defineExpose({
 </script>
 
 <style>
-/* Vue Flow styling enhancements */
 .vue-flow__edge-path {
   stroke-linecap: round;
 }
