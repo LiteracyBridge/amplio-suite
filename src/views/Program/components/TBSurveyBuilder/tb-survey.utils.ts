@@ -72,20 +72,167 @@ export function createDefaultActions(): Record<HardwareButton, ButtonActionConfi
   };
 }
 
+export interface ParsedSurveyYaml {
+  header: TBSurveyHeader;
+  questions: Record<string, {
+    prompt?: string;
+    actions: Record<HardwareButton, ButtonActionConfig | undefined>;
+  }>;
+}
+
+/**
+ * Parses Talking Book survey YAML string into structured header and button actions.
+ */
+export function parseSurveyYaml(yamlStr: string): ParsedSurveyYaml {
+  const header: TBSurveyHeader = {
+    name: "Survey",
+    prolog: "Welcome to the talking book satisfaction survey",
+    epilog: "Thank you for your participation",
+    confirmExit: "s1confirm",
+  };
+  const questions: Record<string, {
+    prompt?: string;
+    actions: Record<HardwareButton, ButtonActionConfig | undefined>;
+  }> = {};
+
+  if (!yamlStr || typeof yamlStr !== "string") {
+    return { header, questions };
+  }
+
+  const lines = yamlStr.split(/\r?\n/);
+  let currentSection: "header" | "question" | null = null;
+  let currentQId = "";
+  let currentButton: HardwareButton | null = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+
+    if (line === "Survey:") {
+      currentSection = "header";
+      currentQId = "";
+      currentButton = null;
+      continue;
+    }
+
+    const qMatch = line.match(/^(q\d+):$/);
+    if (qMatch) {
+      currentSection = "question";
+      currentQId = qMatch[1];
+      currentButton = null;
+      if (!questions[currentQId]) {
+        questions[currentQId] = {
+          actions: {
+            Tree: undefined,
+            Table: undefined,
+            Bowl: undefined,
+            "Right Hand": undefined,
+            "Left Hand": undefined,
+            Star: undefined,
+          },
+        };
+      }
+      continue;
+    }
+
+    if (currentSection === "header") {
+      const nameMatch = line.match(/^Name:\s*(.*)$/);
+      if (nameMatch) header.name = nameMatch[1].trim();
+
+      const prologMatch = line.match(/^Prolog:\s*(.*)$/);
+      if (prologMatch) header.prolog = prologMatch[1].trim();
+
+      const epilogMatch = line.match(/^Epilog:\s*(.*)$/);
+      if (epilogMatch) header.epilog = epilogMatch[1].trim();
+
+      const exitMatch = line.match(/^ConfirmExit:\s*(.*)$/);
+      if (exitMatch) header.confirmExit = exitMatch[1].trim();
+      continue;
+    }
+
+    if (currentSection === "question" && currentQId) {
+      const qObj = questions[currentQId];
+
+      const promptMatch = line.match(/^Prompt:\s*(.*)$/);
+      if (promptMatch) {
+        qObj.prompt = promptMatch[1].trim();
+        currentButton = null;
+        continue;
+      }
+
+      let matchedBtn: HardwareButton | null = null;
+      let btnRest = "";
+
+      for (const hBtn of HARDWARE_BUTTONS) {
+        const prefix = `${hBtn.name}:`;
+        if (line.startsWith(prefix)) {
+          matchedBtn = hBtn.name;
+          btnRest = line.substring(prefix.length).trim();
+          break;
+        }
+      }
+
+      if (matchedBtn) {
+        currentButton = matchedBtn;
+        if (!qObj.actions[matchedBtn]) {
+          qObj.actions[matchedBtn] = { button: matchedBtn };
+        }
+        const act = qObj.actions[matchedBtn]!;
+
+        if (btnRest) {
+          if (btnRest === "record") {
+            act.isRecord = true;
+          } else if (btnRest.startsWith("go(") && btnRest.endsWith(")")) {
+            const target = btnRest.substring(3, btnRest.length - 1).trim();
+            act.targetQuestionId = target === "exit" ? "epilog" : target;
+          } else {
+            act.responseValue = btnRest.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+          }
+        }
+        continue;
+      }
+
+      if (currentButton && line.startsWith("- ")) {
+        const itemVal = line.substring(2).trim();
+        const act = qObj.actions[currentButton]!;
+
+        if (itemVal === "record") {
+          act.isRecord = true;
+        } else if (itemVal.startsWith("go(") && itemVal.endsWith(")")) {
+          const target = itemVal.substring(3, itemVal.length - 1).trim();
+          act.targetQuestionId = target === "exit" ? "epilog" : target;
+        } else {
+          act.responseValue = itemVal.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+        }
+        continue;
+      }
+    }
+  }
+
+  return { header, questions };
+}
+
 /**
  * Generates initial nodes & edges from a Playlist and its Messages.
+ * playlist.messages is the single source of truth for audio messages and metadata.
+ * playlist.survey_yaml overlays saved survey actions/branches if present.
  */
 export function playlistToGraph(playlist: Playlist): {
   nodes: Node[];
   edges: Edge[];
   header: TBSurveyHeader;
 } {
-  const header: TBSurveyHeader = {
-    name: (playlist.title || "Survey").replace(/[^a-zA-Z0-9_]/g, ""),
-    prolog: "Welcome to the talking book satisfaction survey",
-    epilog: "Thank you for your participation",
-    confirmExit: "s1confirm",
-  };
+  const parsed = playlist.survey_yaml ? parseSurveyYaml(playlist.survey_yaml) : null;
+
+  const header: TBSurveyHeader = parsed
+    ? parsed.header
+    : {
+        name: (playlist.title || "Survey").replace(/[^a-zA-Z0-9_]/g, ""),
+        prolog: "Welcome to the talking book satisfaction survey",
+        epilog: "Thank you for your participation",
+        confirmExit: "s1confirm",
+      };
 
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -104,12 +251,17 @@ export function playlistToGraph(playlist: Playlist): {
 
   const messages = playlist.messages || [];
 
-  // 2. Question nodes
+  // 2. Question nodes - playlist.messages is the single source of truth!
   messages.forEach((msg: Message, index: number) => {
     const qId = `q${index + 1}`;
     const isLast = index === messages.length - 1;
 
-    const actions = createDefaultActions();
+    let actions: Record<HardwareButton, ButtonActionConfig | undefined>;
+    if (parsed && parsed.questions[qId]) {
+      actions = parsed.questions[qId].actions;
+    } else {
+      actions = createDefaultActions();
+    }
 
     const qData: SurveyQuestionData = {
       id: qId,
@@ -140,8 +292,27 @@ export function playlistToGraph(playlist: Playlist): {
       });
     }
 
-    // Connect last question to epilog by default
-    if (isLast) {
+    // Add branch edges from actions
+    HARDWARE_BUTTONS.forEach(({ name: btnName }) => {
+      const act = actions[btnName];
+      if (act && act.targetQuestionId && act.targetQuestionId !== "next") {
+        const targetLabel = act.targetQuestionId === "epilog" ? "exit" : act.targetQuestionId;
+        const handleId = getButtonHandleId(btnName);
+        edges.push({
+          id: `edge-${qId}-${handleId}-${act.targetQuestionId}`,
+          source: qId,
+          sourceHandle: handleId,
+          target: act.targetQuestionId,
+          targetHandle: act.targetQuestionId === "epilog" ? "epilog-in" : "target",
+          label: `${btnName} -> go(${targetLabel})`,
+          animated: true,
+          style: { stroke: "#8b5cf6", strokeWidth: 2 },
+        });
+      }
+    });
+
+    // Connect last question to epilog by default if not already branching to epilog
+    if (isLast && !edges.some((e) => e.source === qId && e.target === "epilog")) {
       edges.push({
         id: `edge-${qId}-epilog`,
         source: qId,
