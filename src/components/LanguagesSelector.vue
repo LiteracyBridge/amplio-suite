@@ -7,6 +7,8 @@
     <Select
       id="language_input"
       ref="languages"
+      :size="size"
+      :max-tag-count="maxTagCount || (multiple ? 'responsive' : undefined)"
       :mode="multiple ? 'multiple' : null"
       :value="languages"
       :options="getLanguages"
@@ -39,6 +41,8 @@ const props = defineProps<{
   autofocus?: boolean;
   multiple: boolean;
   placeholder?: string;
+  size?: "small" | "middle" | "large";
+  maxTagCount?: number | "responsive";
 }>();
 
 const emit = defineEmits<{

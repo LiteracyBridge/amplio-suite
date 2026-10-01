@@ -1,58 +1,94 @@
 <template>
-  <Row :gutter="8">
-    <Col :sm="6" :lg="6" :xl="4">
-      <Button type="text" @click="onToggleExpanded">
-        <template #icon>
-          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
-          <CaretDownOutlined v-else class="ml-5 mb-2" />
-        </template>
+  <div class="bg-slate-100/80 border border-slate-200 rounded-lg p-2.5 my-2.5">
+    <div class="flex items-center justify-between gap-3 flex-wrap lg:flex-nowrap">
+      <div class="flex items-center gap-2 flex-1 min-w-0 flex-wrap sm:flex-nowrap">
+        <Button
+          type="text"
+          size="middle"
+          @click="onToggleExpanded"
+          class="flex items-center gap-1.5 font-bold text-gray-800 !px-2 flex-shrink-0"
+        >
+          <CaretRightOutlined v-if="!expanded" class="text-xs text-gray-600" />
+          <CaretDownOutlined v-else class="text-xs text-gray-600" />
+          <span>Deployment {{ deployment.deploymentnumber }}</span>
+        </Button>
 
-        Deployment {{ deployment.deploymentnumber }}
-      </Button>
-    </Col>
+        <div class="w-48 min-w-[140px] flex-shrink-0">
+          <Input
+            aria-label="`Deployment ${name}`"
+            placeholder="Deployment Name"
+            type="text"
+            size="middle"
+            v-model:value="deployment.deploymentname"
+          />
+        </div>
 
-    <Col :span="6">
-      <Input aria-label="`Deployment ${name}`" placeholder="Deployment Name" type="text"
-        v-model:value="deployment.deploymentname" />
-    </Col>
-    <Col :span="3">
-      <Input type="date" :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.start_date" />
-    </Col>
-    <Col :span="3">
-      <Input type="date" :aria-label="`Start of deployment ${deployment.deploymentname}`"
-        v-model:value="deployment.end_date" />
-    </Col>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <span class="text-xs text-gray-500 font-medium">From:</span>
+          <Input
+            type="date"
+            size="middle"
+            :aria-label="`Start of deployment ${deployment.deploymentname}`"
+            v-model:value="deployment.start_date"
+            class="w-36"
+          />
+        </div>
 
-    <Col :span="5">
-      <div class="ml-10">
-        <Button v-if="expanded" type="primary" :ghost="true" @click="onAddPlaylist()" :disabled="!canAddPlaylist"
-          class="mr-2">
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <span class="text-xs text-gray-500 font-medium">To:</span>
+          <Input
+            type="date"
+            size="middle"
+            :aria-label="`End of deployment ${deployment.deploymentname}`"
+            v-model:value="deployment.end_date"
+            class="w-36"
+          />
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <Button
+          v-if="expanded"
+          type="primary"
+          :ghost="true"
+          @click="onAddPlaylist()"
+          :disabled="!canAddPlaylist"
+          class="flex items-center gap-1"
+        >
+          <template #icon><PlusOutlined /></template>
           Add Playlist
         </Button>
 
-        <Popconfirm title="Are you sure delete this deployment?" ok-text="Yes" cancel-text="No"
-          @confirm="onRemoveDeployment()">
+        <Popconfirm
+          v-if="canRemoveDeployment"
+          title="Are you sure delete this deployment?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="onRemoveDeployment()"
+        >
+          <Button :danger="true">Delete</Button>
         </Popconfirm>
-
-        <Button v-if="canRemoveDeployment" :danger="true">Delete</Button>
       </div>
-    </Col>
-  </Row>
+    </div>
 
-  <!-- If expanded, show the playlists in the deployment -->
-  <div class="my-5" v-if="expanded">
-    <content2-playlists :deployment="deployment" />
+    <!-- If expanded, show the playlists in the deployment -->
+    <div class="mt-2.5" v-if="expanded">
+      <content2-playlists :deployment="deployment" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Content2Playlists from "./Content2Playlists.vue";
 import { useProgramSpecStore } from "@/store/programspec";
-import { Row, Col, Input, Button, Popconfirm } from "ant-design-vue";
+import { Input, Button, Popconfirm } from "ant-design-vue";
 import type { Deployment } from "@/models/deployment";
 import { computed, ref } from "vue";
-import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons-vue";
+import {
+  CaretDownOutlined,
+  CaretRightOutlined,
+  PlusOutlined,
+} from "@ant-design/icons-vue";
 
 const props = defineProps<{
   deployment: Deployment;

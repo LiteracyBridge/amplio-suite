@@ -1,148 +1,158 @@
 <template>
-  <Form layout="vertical">
-    <Row :gutter="10">
-      <Col :span="12">
-        <FormItem label="Language">
-          <languages-selector
-            :options="store.languages"
-            :languages="messageLanguages"
-            @language-selected="
-              (language) =>
-                store.addMessageLanguage({
-                  message,
-                  language,
-                })
-            "
-            @language-deleted="(code) => store.removeMessageLanguage(code, message)"
-            :multiple="true"
-          />
-        </FormItem>
-      </Col>
+  <div class="content2-message-form-compact">
+    <!-- Row 1: Language, Default Category, Format, Audience -->
+    <Row :gutter="[12, 8]">
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">Language</label>
+        <languages-selector
+          :options="store.languages"
+          :languages="messageLanguages"
 
-      <Col :span="12">
-        <FormItem label="Default Category" required>
-          <Select
-            name="defaultCat"
-            :options="categories"
-            :value="selectedCategory"
-            :field-names="{ label: 'full_name', value: 'code' }"
-            placeholder="Select the default category"
-            @select="message.default_category_code = $event.code"
-            @deselect="message.default_category_code = null"
-          >
-          </Select>
-        </FormItem>
-      </Col>
-    </Row>
-
-    <Row :gutter="8">
-      <Col :span="12">
-        <FormItem label="SDG Goals">
-          <Select
-            name="sdgGoals"
-            :options="goals"
-            :field-names="{ label: 'label', value: 'goalId' }"
-            :value="selectedGoal"
-            :max-height="200"
-            track-by="section"
-            placeholder="Select the goal"
-            @select="
-              store.setMessageSDGGoal({
-                deployment,
-                playlist,
+          @language-selected="
+            (language) =>
+              store.addMessageLanguage({
                 message,
-                goal: $event.goalId,
+                language,
               })
-            "
-            @deselect="
-              store.setMessageSDGGoal({ deployment, playlist, message, goal: null })
-            "
-          >
-          </Select>
-        </FormItem>
+          "
+          @language-deleted="(code) => store.removeMessageLanguage(code, message)"
+          :multiple="true"
+        />
       </Col>
-      <Col :span="12">
-        <FormItem label="Audience">
-          <Input v-model:value="message.audience" />
-        </FormItem>
+
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">
+          <span class="text-red-500 mr-0.5">*</span>Default Category
+        </label>
+        <Select
+          size="small"
+          class="w-full"
+          name="defaultCat"
+          :options="categories"
+          :value="selectedCategory"
+          :field-names="{ label: 'full_name', value: 'code' }"
+          placeholder="Select category"
+          @select="message.default_category_code = $event.code"
+          @deselect="message.default_category_code = null"
+        />
+      </Col>
+
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">Format</label>
+        <Select
+          size="small"
+          class="w-full"
+          name="format"
+          v-model:value="message.format"
+          :options="formatOptions"
+          placeholder="Select format"
+        />
+      </Col>
+
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">Audience</label>
+        <Input
+          size="small"
+          v-model:value="message.audience"
+          placeholder="Target audience"
+        />
       </Col>
     </Row>
 
-    <Row :gutter="8">
-      <Col :span="12">
-        <FormItem label="SDG Target">
-          <Select
-            name="sdgTarget"
-            class="md:col-span-3"
-            :value="selectedTarget"
-            :field-names="{ label: 'label', value: 'targetId' }"
-            :custom-label="(opt:any) => `${message.sdg_goal}.${opt.targetId} ${opt.label}`"
-            :max-height="200"
-            placeholder="Select the target"
-            @select="
-              store.setMessageSDGTarget({
-                deployment: props.deployment,
-                playlist,
-                message,
-                target: $event.targetId,
-              })
-            "
-            @remove="
-              store.setMessageSDGTarget({
-                deployment: props.deployment,
-                playlist,
-                message,
-                target: null,
-              })
-            "
-          >
-            <SelectOption v-for="target of targets" :value="target.targetId">
-              {{ message.sdg_goal }}.{{ target.targetId }} {{ target.label }}
-            </SelectOption>
-          </Select>
-        </FormItem>
+    <!-- Row 2: SDG Goals, SDG Target, Variant, Key Points -->
+    <Row :gutter="[12, 8]" class="mt-2.5">
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">SDG Goals</label>
+        <Select
+          size="small"
+          class="w-full"
+          name="sdgGoals"
+          :options="goals"
+          :field-names="{ label: 'label', value: 'goalId' }"
+          :value="selectedGoal"
+          :max-height="200"
+          track-by="section"
+          placeholder="Select goal"
+          @select="
+            store.setMessageSDGGoal({
+              deployment,
+              playlist,
+              message,
+              goal: $event.goalId,
+            })
+          "
+          @deselect="
+            store.setMessageSDGGoal({ deployment, playlist, message, goal: null })
+          "
+        />
       </Col>
 
-      <Col :span="12">
-        <FormItem label="Format">
-          <Select
-            name="format"
-            v-model:value="message.format"
-            :options="formatOptions"
-            placeholder="Select a format"
-          />
-        </FormItem>
+      <Col :xs="24" :sm="12" :md="6">
+        <label class="compact-label">SDG Target</label>
+        <Select
+          size="small"
+          class="w-full"
+          name="sdgTarget"
+          :value="selectedTarget"
+          :field-names="{ label: 'label', value: 'targetId' }"
+          :custom-label="(opt:any) => `${message.sdg_goal}.${opt.targetId} ${opt.label}`"
+          :max-height="200"
+          placeholder="Select target"
+          @select="
+            store.setMessageSDGTarget({
+              deployment: props.deployment,
+              playlist,
+              message,
+              target: $event.targetId,
+            })
+          "
+          @remove="
+            store.setMessageSDGTarget({
+              deployment: props.deployment,
+              playlist,
+              message,
+              target: null,
+            })
+          "
+        >
+          <SelectOption
+            v-for="target of targets"
+            :key="target.targetId"
+            :value="target.targetId"
+          >
+            {{ message.sdg_goal }}.{{ target.targetId }} {{ target.label }}
+          </SelectOption>
+        </Select>
+      </Col>
+
+      <Col :xs="24" :sm="12" :md="4">
+        <label class="compact-label flex items-center gap-1">
+          <span>Variant</span>
+          <Tooltip title="Please keep the variant short and abbreviated. For example, use 'T' instead of Test.">
+            <InfoCircleOutlined class="text-gray-400 text-xs cursor-pointer" />
+          </Tooltip>
+        </label>
+        <Input
+          size="small"
+          name="variant"
+          type="text"
+          v-model:value="message.variant"
+          placeholder="e.g. T"
+        />
+      </Col>
+
+      <Col :xs="24" :sm="12" :md="8">
+        <label class="compact-label">Key Points</label>
+        <Textarea
+          size="small"
+          name="key_points"
+          :auto-size="{ minRows: 2 }"
+          v-model:value="message.key_points"
+          placeholder="Key points summary..."
+        />
       </Col>
     </Row>
-
-    <Row :gutter="8">
-      <Col :span="12">
-        <FormItem label="Variant">
-          <Input name="variant" type="text" v-model:value="message.variant">
-            <template #suffix>
-              <Tooltip
-                text="Please keep the variant short and abbreviated. For example, use 'T' instead of Test."
-              >
-                <InfoCircleOutlined />
-              </Tooltip>
-            </template>
-          </Input>
-        </FormItem>
-      </Col>
-
-      <Col :span="12">
-        <FormItem label="Key Points">
-          <Textarea
-            name="key_points"
-            :cols="30"
-            :rows="3"
-            v-model:value="message.key_points"
-          >
-          </Textarea>
-        </FormItem>
-      </Col>
-    </Row>
-  </Form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -273,3 +283,16 @@ const selectedTarget = computed(() => {
   return target?.goalId;
 });
 </script>
+
+<style scoped>
+.compact-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+</style>

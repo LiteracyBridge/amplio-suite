@@ -1,104 +1,82 @@
 <template>
-  <div class="border rounded my-1">
+  <div class="border border-gray-200 rounded-md my-1.5 bg-white shadow-xs hover:border-gray-300 transition-colors">
     <Alert
       v-if="duplicateTitles.includes(message.title)"
       type="warning"
       show-icon
-      class="my-2"
+      class="m-2 py-1"
       message="Duplicate message title in this playlist"
     />
 
-    <Row :gutter="8">
-      <Col :span="2">
-        <Button type="text" @click="toggleExpanded" class="mt-1 mr-2" block>
-          <!-- <template #icon> -->
-          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
-          <CaretDownOutlined v-else class="ml-5 mb-2" />
-          <!-- </template> -->
-        </Button>
-      </Col>
+    <!-- Message Header Row -->
+    <div class="flex items-center justify-between px-3 py-1.5 gap-2">
+      <div class="flex items-center flex-1 min-w-0 gap-1.5">
+        <!-- Drag Handle -->
+        <HolderOutlined class="text-gray-400 hover:text-gray-600 cursor-grab msg-handle text-sm flex-shrink-0" />
 
-      <Col :span="14">
-        <!-- CHANGED: Added validation status and error message -->
-        <FormItem
-          :validateStatus="!playlist.is_survey && titleError ? 'error' : ''"
-          :help="
-            playlist.is_survey
-              ? 'Message title is managed in the Survey Builder'
-              : titleError
-              ? 'Invalid characters in Message Title'
-              : 'Message title cannot contain these characters: \\/:*?<>|&quot;'
-          "
-          class="mt-3 w-full"
+        <!-- Caret Expand / Collapse -->
+        <Button
+          type="text"
+          size="small"
+          class="!px-1.5 flex items-center justify-center flex-shrink-0"
+          @click="toggleExpanded"
         >
+          <CaretRightOutlined v-if="!expanded" class="text-xs text-gray-500" />
+          <CaretDownOutlined v-else class="text-xs text-gray-500" />
+        </Button>
+
+        <!-- Message Title Input -->
+        <div class="flex-1 max-w-lg min-w-0">
           <Input
+            size="small"
             aria-label="`message ${message.title}`"
             placeholder="Message Title"
             type="text"
             :name="`message-${message.title}`"
             v-model:value="message.title"
+            :status="!playlist.is_survey && titleError ? 'error' : ''"
             :readonly="playlist.is_survey"
             :disabled="playlist.is_survey"
             @change="store.setMessageOrPlaylistTitle($event.target.value, message)"
             @input="handleTitleInput"
-          /> </FormItem
-      ></Col>
-      <Col :span="4" align="center">
-        <Popconfirm
-          title="Are you sure you want to delete this message?"
-          ok-text="Yes"
-          cancel-text="No"
-          @confirm="deleteMessage()"
-        >
-          <Button
-            class="mt-3"
-            :aria-label="`Delete message ${message.title}`"
-            :danger="true"
-            >Delete Message</Button
-          >
-        </Popconfirm>
-      </Col>
-    </Row>
+          />
+        </div>
 
-    <!--   <div class="flex"> -->
-    <!-- <div class="m-2 p-2 cursor-grab msg-handle">
-        <font-awesome-icon icon="grip-lines" />
+        <!-- Conditional Error or Survey Tag -->
+        <span
+          v-if="!playlist.is_survey && titleError"
+          class="text-xs text-red-500 font-medium whitespace-nowrap ml-1"
+        >
+          Invalid characters in Title (\/:*?&lt;&gt;|")
+        </span>
       </div>
 
-      <div class="m-2 py-2 mt-2" style="min-width: 10px" @click="toggleExpanded">
-        <font-awesome-icon :icon="icon" size="lg" />
-      </div> -->
-
-    <!-- <v-tooltip
-      v-if="duplicateTitles.includes(message.title)"
-      text="Duplicate message title in this playlist"
-      class="my-auto border-none"
-    >
-      <font-awesome-icon class="text-orange-600 ml-2 my-auto" icon="exclamation-circle" />
-    </v-tooltip>
-
-    <VButton
-      class="mt-4 ml-2 border-none"
-      iconL="trash-alt"
-      variant="warning"
-      :ariaLabel="`Delete message ${message.title}`"
-      @click="queryDeleteMessage()"
-    /> -->
-    <!-- </div> -->
+      <!-- Delete Message Button -->
+      <Popconfirm
+        title="Are you sure you want to delete this message?"
+        ok-text="Yes"
+        cancel-text="No"
+        @confirm="deleteMessage()"
+      >
+        <Button
+          size="small"
+          :danger="true"
+          :aria-label="`Delete message ${message.title}`"
+          class="flex items-center gap-1 flex-shrink-0"
+        >
+          <template #icon><DeleteOutlined /></template>
+          Delete Message
+        </Button>
+      </Popconfirm>
+    </div>
 
     <!-- Form for editing the details of a message -->
-    <div class="px-10">
-      <div
-        :class="expanded ? 'min-h-104 md:min-h-96' : 'h-0'"
-        class="transition-all duration-300"
-      >
-        <content2-message-form
-          v-if="expanded && message != null"
-          :deployment="deployment"
-          :playlist="playlist"
-          :message="message"
-        />
-      </div>
+    <div v-if="expanded && message != null" class="p-3 bg-slate-50/70 border-t border-gray-100 rounded-b-md">
+      <content2-message-form
+        :deployment="deployment"
+        :playlist="playlist"
+        :message="message"
+      />
     </div>
   </div>
 </template>
@@ -110,8 +88,13 @@ import { computed, onMounted, ref } from "vue";
 import type { Playlist } from "@/models/playlist";
 import type { Message } from "@/models/message";
 import type { Deployment } from "@/models/deployment";
-import { FormItem, Input, Row, Col, Alert, Button, Popconfirm } from "ant-design-vue";
-import { CaretRightOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
+import { Input, Alert, Button, Popconfirm, Tag } from "ant-design-vue";
+import {
+  CaretRightOutlined,
+  CaretDownOutlined,
+  HolderOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons-vue";
 
 const props = defineProps<{
   deployment: Deployment;
@@ -125,24 +108,17 @@ const store = useProgramSpecStore();
 const expanded = ref(false);
 const titleError = ref(false);
 
-//  Added validation function
-// const validateTitle = (title: string) => {
-//   const invalidChars = /[\\/:*?<>_|"']/;
-//   return !invalidChars.test(title);
-// };
-
 const validateTitle = (title: string) => {
   // Disallow special characters (including underscore)
   const hasInvalidChars = /[^a-zA-Z0-9\s]/g.test(title);
-  
+
   // Disallow consecutive spaces (2 or more)
   const hasDoubleSpaces = /\s{2,}/g.test(title);
-  
+
   // Return false if either check fails
   return !hasInvalidChars && !hasDoubleSpaces;
 };
 
-//  Added handler for real-time input validation
 const handleTitleInput = (event: Event) => {
   const title = (event.target as HTMLInputElement).value;
   titleError.value = !validateTitle(title);

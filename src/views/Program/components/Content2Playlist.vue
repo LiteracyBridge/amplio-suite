@@ -1,58 +1,75 @@
 <template>
-  <Row :gutter="8">
-    <Col :sm="6" :lg="5" :xl="4">
-      <Button type="text" @click="onToggleExpanded" class="ml-10 mr-2">
-        <template #icon>
-          <CaretRightOutlined v-if="!expanded" class="ml-5 mb-2" />
-          <CaretDownOutlined v-else class="ml-5 mb-2" />
-        </template>
-
-        Playlist {{ playlist.position }}
-        <Tag v-if="playlist.is_survey" color="purple" class="ml-2">Survey</Tag>
-      </Button>
-    </Col>
-
-    <Col :span="10">
-      <FormItem
-       :validateStatus="titleError ? 'error' : ''"
-      :help="titleError ? 'Invalid characters in Playlist Title' :
-       'Playlist title can only contain: letters, numbers, and spaces.'"
-       class="mt-3 w-full"
-      :extra="playlist._error_message"
+  <div class="bg-gray-50/80 border border-gray-200 rounded-lg p-2.5 my-2 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-1 min-w-0">
+      <Button
+        type="text"
+        size="middle"
+        @click="onToggleExpanded"
+        class="flex items-center gap-1.5 font-semibold text-gray-700 !px-2"
       >
+        <CaretRightOutlined v-if="!expanded" class="text-xs text-gray-500" />
+        <CaretDownOutlined v-else class="text-xs text-gray-500" />
+        <span>Playlist {{ playlist.position }}</span>
+      </Button>
+      <Tag v-if="playlist.is_survey" color="purple" class="m-0">Survey</Tag>
+
+      <!-- Playlist Title -->
+      <div class="flex-1 max-w-md min-w-0">
         <Input
           :aria-label="`playlist ${playlist.title}`"
           placeholder="Playlist Title"
           type="text"
+          size="middle"
           :name="`playlist-${playlist.title}`"
           v-model:value="playlist.title"
-          :status="playlist._form_status"
+          :status="titleError || playlist._form_status ? 'error' : ''"
           @change="($event) => validatePlaylistTitle($event.target.value, playlist)"
           @input="handleTitleInput"
         />
-      </FormItem>
-    </Col>
-    <Col :span="8">
+      </div>
+
+      <span v-if="titleError" class="text-xs text-red-500 whitespace-nowrap">
+        Letters, numbers, and spaces only
+      </span>
+      <span v-else-if="playlist._error_message" class="text-xs text-red-500 whitespace-nowrap">
+        {{ playlist._error_message }}
+      </span>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <!-- Add Message -->
       <Button
         v-if="expanded && !playlist.is_survey"
         type="primary"
         :ghost="true"
         @click="onAddMessage()"
         :disabled="!canAddMessage"
-        class="ml-10"
+        class="flex items-center gap-1"
       >
+        <template #icon><PlusOutlined /></template>
         Add Message
       </Button>
 
+      <!-- Convert to Survey / Edit Survey -->
       <Button
         v-if="expanded"
-        type="dashed"
+        type="primary"
+        :class="
+          playlist.is_survey
+            ? '!bg-purple-600 hover:!bg-purple-700 !border-purple-600 text-white font-medium shadow-sm flex items-center gap-1.5'
+            : '!bg-indigo-600 hover:!bg-indigo-700 !border-indigo-600 text-white font-medium shadow-sm flex items-center gap-1.5'
+        "
         @click="isSurveyDrawerOpen = true"
-        :class="playlist.is_survey ? 'ml-10' : 'ml-3'"
       >
+        <template #icon>
+          <EditOutlined v-if="playlist.is_survey" />
+          <NodeIndexOutlined v-else />
+        </template>
         {{ playlist.is_survey ? "Edit Survey" : "Convert to Survey" }}
       </Button>
 
+      <!-- Delete Playlist -->
       <Popconfirm
         title="Are you sure to delete this playlist?"
         ok-text="Yes"
@@ -63,12 +80,13 @@
           v-if="canRemovePlaylist"
           :aria-label="`Delete playlist ${playlist.title}`"
           :danger="true"
-          class="ml-3"
-          >Delete Playlist</Button
+          class="flex items-center gap-1"
         >
+          Delete Playlist
+        </Button>
       </Popconfirm>
-    </Col>
-  </Row>
+    </div>
+  </div>
 
   <!-- Survey Builder Drawer -->
   <TBSurveyBuilderDrawer
@@ -79,7 +97,8 @@
     @close="isSurveyDrawerOpen = false"
   />
 
-  <div class="my-4 ml-20">
+  <!-- Nested Message List -->
+  <div class="my-2 ml-6 pl-3 border-l-2 border-indigo-200/70">
     <div v-if="expanded">
       <draggable
         v-model="messages"
@@ -109,12 +128,18 @@
 <script lang="ts" setup>
 import Content2Message from "./Content2Message.vue";
 import Draggable from "vuedraggable";
-import { Row, Col, Input, Button, FormItem, Popconfirm, Tag } from "ant-design-vue";
+import { Input, Button, Popconfirm, Tag } from "ant-design-vue";
 import { useProgramSpecStore } from "@/store/programspec";
 import type { Deployment } from "@/models/deployment";
 import type { Playlist } from "@/models/playlist";
 import { ref, computed } from "vue";
-import { CaretRightOutlined, CaretDownOutlined } from "@ant-design/icons-vue";
+import {
+  CaretRightOutlined,
+  CaretDownOutlined,
+  PlusOutlined,
+  EditOutlined,
+  NodeIndexOutlined,
+} from "@ant-design/icons-vue";
 import TBSurveyBuilderDrawer from "./TBSurveyBuilder/TBSurveyBuilderDrawer.vue";
 
 const props = defineProps<{
@@ -137,10 +162,10 @@ const isSurveyDrawerOpen = ref(false);
 const validateTitle = (title: string) => {
   // Disallow special characters (including underscore)
   const hasInvalidChars = /[^a-zA-Z0-9\s]/g.test(title);
-  
+
   // Disallow consecutive spaces (2 or more)
   const hasDoubleSpaces = /\s{2,}/g.test(title);
-  
+
   // Return false if either check fails
   return !hasInvalidChars && !hasDoubleSpaces;
 };
