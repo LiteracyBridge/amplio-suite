@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full" style="width: 100%">
     <label class="visually_hidden" for="language_input">
       Select { multiple ? 'multiple' : 'one'} language
     </label>
@@ -7,6 +7,8 @@
     <Select
       id="language_input"
       ref="languages"
+      class="w-full"
+      style="width: 100%"
       :size="size"
       :max-tag-count="maxTagCount || (multiple ? 'responsive' : undefined)"
       :mode="multiple ? 'multiple' : null"
